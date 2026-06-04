@@ -1029,13 +1029,6 @@ function Instructor({ mentorMembers = [] }) {
       avatarClassName: "object-[center_18%] scale-100",
     },
     {
-      ...(findMember("mrigesh-deshpande") || {}),
-      image: findMember("mrigesh-deshpande")?.image || "",
-      initial: "M",
-      chips: ["AI Integration", "Tech Mentorship", "Workflow Guidance"],
-      avatarClassName: "object-center scale-100",
-    },
-    {
       ...(findMember("narendra-singh") || {}),
       image: findMember("narendra-singh")?.image || "",
       initial: "N",
