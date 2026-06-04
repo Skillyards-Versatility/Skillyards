@@ -6,9 +6,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-
-import { carouselTeam as TEAM_MEMBERS } from "@/data/teamData";
-
 const TeamCarousel = ({
   members = [],
   title = "OUR TEAM",
@@ -434,9 +431,10 @@ const TeamCarousel = ({
   );
 };
 
-export default function OtherTeam() {
-  const [members, setMembers] = useState(TEAM_MEMBERS);
+export default function OtherTeam({ members: initialMembers = [] }) {
+  const [members, setMembers] = useState(initialMembers);
 
+  if (!members.length) return null;
 
   return (
     <section className="relative bg-background overflow-hidden border-t">

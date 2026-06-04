@@ -19,7 +19,7 @@ const DGMFAQ = dynamic(() => import("./FAQ").then(m => m.DGMFAQ));
 const DGMFinalCTA = dynamic(() => import("./FinalCTA").then(m => m.DGMFinalCTA));
 const PartnersSlider = dynamic(() => import("@/components/common/PartnersSlider"));
 
-export function DGMLandingPage({ faqs }) {
+export function DGMLandingPage({ faqs, dgmEducators }) {
   return (
     <main className="w-full bg-background text-foreground">
       <DGMHero />
@@ -31,7 +31,7 @@ export function DGMLandingPage({ faqs }) {
       <DGMPortfolioResults />
       <DGMCareerPaths />
       <DGMWhoIsThisFor />
-      <DGMEducators />
+      <DGMEducators educators={dgmEducators} />
       <DGMPlacementOutcomes />
       <DGMComparisonTable />
       <PartnersSlider />

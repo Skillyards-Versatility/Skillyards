@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 import { sanityClient } from '@/lib/sanity/client';
-import { TEAM_PROFILES } from '@/data/teamProfiles';
+import { getAllTeamSlugs } from '@/lib/sanity/getTeamMembers';
 
 const BASE_URL = 'https://www.skillyards.in';
 
@@ -110,7 +110,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // 🔹 Team dynamic routes
-  const teamUrls: MetadataRoute.Sitemap = Object.keys(TEAM_PROFILES).map((slug) => ({
+  let teamSlugs: string[] = [];
+  try {
+    teamSlugs = await getAllTeamSlugs();
+  } catch (error) {
+    console.error("Failed to fetch team slugs for sitemap:", error);
+  }
+  const teamUrls: MetadataRoute.Sitemap = teamSlugs.map((slug) => ({
     url: `${BASE_URL}/team/${slug}`,
     lastModified: now,
     changeFrequency: 'monthly',

@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { TEAM_MEMBERS } from "@/data/teamData";
 import {
   Star, Clock, Users, Calendar, Laptop, ArrowRight,
   CheckCircle2, XCircle, Check, X, Quote,
@@ -1003,7 +1002,7 @@ function WhoIsThisFor() {
   );
 }
 
-function Instructor() {
+function Instructor({ mentorMembers = [] }) {
   const mentorSupport = [
     {
       title: "Weekly Work Review",
@@ -1018,21 +1017,27 @@ function Instructor() {
       desc: "You learn how to explain your real work clearly, so interviews feel like proof not panic.",
     },
   ];
+
+  const findMember = (slug) => mentorMembers.find((m) => m.slug === slug);
+
   const mentors = [
     {
-      ...TEAM_MEMBERS.neerajDang,
+      ...(findMember("neeraj-dang") || {}),
+      image: findMember("neeraj-dang")?.image || "",
       initial: "N",
       chips: ["SEO & PPC", "Marketing Strategy", "Student Mentorship"],
       avatarClassName: "object-[center_18%] scale-100",
     },
     {
-      ...TEAM_MEMBERS.mrigeshDeshpande,
+      ...(findMember("mrigesh-deshpande") || {}),
+      image: findMember("mrigesh-deshpande")?.image || "",
       initial: "M",
       chips: ["AI Integration", "Tech Mentorship", "Workflow Guidance"],
       avatarClassName: "object-center scale-100",
     },
     {
-      ...TEAM_MEMBERS.narendraSingh,
+      ...(findMember("narendra-singh") || {}),
+      image: findMember("narendra-singh")?.image || "",
       initial: "N",
       chips: ["Program Direction", "Industry Exposure", "Progress Reviews"],
       avatarClassName: "object-[center_16%] scale-100",
@@ -1400,7 +1405,7 @@ function FinalCTA() {
 
 // ─── Root ─────────────────────────────────────────────────────────────────────
 
-export function OJDCampaignPage() {
+export function OJDCampaignPage({ mentorMembers = [] }) {
   const [active, setActive] = useState("bca");
 
   return (
@@ -1410,7 +1415,7 @@ export function OJDCampaignPage() {
       <ProgramCards active={active} setActive={setActive} />
       <WhySkillyards />
       <WhoIsThisFor />
-      <Instructor />
+      <Instructor mentorMembers={mentorMembers} />
       <Testimonials />
       <PartnersSlider />
       <FAQ />

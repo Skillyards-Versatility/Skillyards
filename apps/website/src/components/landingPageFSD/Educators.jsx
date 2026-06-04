@@ -5,9 +5,9 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Linkedin } from "lucide-react";
 
-import { fsdEducators as educators } from "@/data/teamData";
+export const FSDEducators = ({ educators = [] }) => {
+  if (!educators.length) return null;
 
-export const FSDEducators = () => {
   return (
         <section className="py-[10vh] md:py-[15vh] bg-linear-to-b from-background to-background/50 relative overflow-hidden">
           <div className="absolute bottom-0 left-0 w-87.5 md:w-125 h-87.5 md:h-125 bg-secondary/5 rounded-full blur-[80px] md:blur-[100px] -z-10 -translate-x-1/2 translate-y-1/2" />

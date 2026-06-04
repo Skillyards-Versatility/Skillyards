@@ -20,6 +20,7 @@ export function buildSEO({
   keywords = [],
   ogType = "website",
   ogImage,
+  noindex = false,
 }) {
   validateSEO({ title, description, path });
 
@@ -69,8 +70,8 @@ export function buildSEO({
     },
 
     robots: {
-      index: true,
-      follow: true,
+      index: !noindex,
+      follow: !noindex,
     },
   };
 }

@@ -1,6 +1,7 @@
 import { buildSEO } from "@/lib/seo/buildSEO";
 import TeamSection from "@/components/teampage/TeamSection";
 import Breadcrumbs from "@/components/Breadcrumbs";
+import { getTeamMembersByGroup } from "@/lib/sanity/getTeamMembers";
 
 export const revalidate = 86400;
 
@@ -18,12 +19,13 @@ export const metadata = buildSEO({
     ],
 });
 
+export default async function TeamPage() {
+    const [leadershipTeam, engineeringTeam, operationsTeam] = await Promise.all([
+        getTeamMembersByGroup("leadership"),
+        getTeamMembersByGroup("engineering"),
+        getTeamMembersByGroup("operations"),
+    ]);
 
-import { leadershipTeam, engineeringTeam, operationsTeam } from "@/data/teamData";
-
-
-
-export default function TeamPage() {
     return (
         <main className="min-h-screen bg-background relative selection:bg-primary/30 selection:text-primary">
             

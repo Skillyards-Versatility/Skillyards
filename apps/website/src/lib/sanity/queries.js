@@ -157,3 +157,37 @@ export const ALL_FAQ_CATEGORIES_QUERY = `
   }
 }
 `;
+
+const TEAM_MEMBER_FIELDS = `
+  _id,
+  name,
+  "slug": slug.current,
+  role,
+  bio,
+  specialization,
+  image,
+  imageClassName,
+  badge,
+  socials,
+  groups,
+  noindex,
+  order
+`;
+
+export const TEAM_MEMBERS_QUERY = `
+*[_type == "teamMember" && defined(groups)] | order(order asc){
+${TEAM_MEMBER_FIELDS}
+}
+`;
+
+export const TEAM_MEMBER_BY_SLUG_QUERY = `
+*[_type == "teamMember" && slug.current == $slug][0]{
+${TEAM_MEMBER_FIELDS}
+}
+`;
+
+export const TEAM_MEMBERS_SLUGS_QUERY = `
+*[_type == "teamMember" && defined(slug.current)]{
+  "slug": slug.current
+}
+`;

@@ -11,6 +11,7 @@ import { getFAQSchema } from "@/lib/seo/schema/faqSchema";
 import { getPageFaqs } from "@/lib/seo/getFaqs";
 import { getWebPageSchema } from "@/lib/seo/schema/webPageSchema";
 import { absoluteUrl } from "@/lib/seo/core/url";
+import { getTeamMembersByGroup } from "@/lib/sanity/getTeamMembers";
 
 export const metadata = buildSEO({
   ...courses.digitalmarketing.seo,
@@ -22,6 +23,7 @@ export default async function DigitalMarketingPage() {
   const courseSchema = getCourseSchema(course);
   const faqs = await getPageFaqs("digitalmarketing", 8);
   const faqSchema = getFAQSchema(faqs, absoluteUrl("/digital-marketing-course-in-agra"));
+  const dgmEducators = await getTeamMembersByGroup("dgmEducators");
 
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: "Home", url: "/" },
@@ -43,7 +45,7 @@ export default async function DigitalMarketingPage() {
     <>
       <JsonLd data={combinedSchema} id="digital-marketing-schema" />
       <div className="w-full overflow-x-hidden">
-        <DGMLandingPage faqs={faqs} />
+        <DGMLandingPage faqs={faqs} dgmEducators={dgmEducators} />
       </div>
     </>
   );

@@ -4,6 +4,7 @@ import TeamProfilePage from "@/components/teamprofile/TeamProfilePage";
 import { TEAM_PROFILES } from "@/data/teamProfiles";
 import { buildSEO } from "@/lib/seo/buildSEO";
 import { getPersonSchema } from "@/lib/seo/schema/personSchema";
+import { getTeamMemberBySlug } from "@/lib/sanity/getTeamMembers";
 
 export const revalidate = 86400;
 
@@ -19,12 +20,15 @@ export async function generateMetadata({ params }) {
 
   if (!profile) return {};
 
+  const sanityMember = await getTeamMemberBySlug(slug);
+
   return buildSEO({
     title: profile.seo.title,
     description: profile.seo.description,
     path: `/team/${profile.slug}`,
     keywords: profile.seo.keywords,
     ogImage: profile.seo.ogImage,
+    noindex: sanityMember?.noindex || false,
   });
 }
 

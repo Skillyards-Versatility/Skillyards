@@ -18,7 +18,7 @@ const FSDFAQ = dynamic(() => import("./FAQ").then(m => m.FSDFAQ));
 const FSDFinalCTA = dynamic(() => import("./FinalCTA").then(m => m.FSDFinalCTA));
 const PartnersSlider = dynamic(() => import("@/components/common/PartnersSlider"));
 
-export function FSDLandingPage({ faqs }) {
+export function FSDLandingPage({ faqs, fsdEducators }) {
   return (
     <main className="w-full bg-background text-foreground">
       <FSDHero />
@@ -26,7 +26,7 @@ export function FSDLandingPage({ faqs }) {
       <FSDOJTExplained />
       <FSDCurriculum />
       <FSDTechStack />
-      <FSDEducators />
+      <FSDEducators educators={fsdEducators} />
       <FSDPortfolioProjects />
       <FSDComparisonTable />
       <FSDWhoIsThisFor />

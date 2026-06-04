@@ -11,6 +11,7 @@ import { getFAQSchema } from "@/lib/seo/schema/faqSchema";
 import { getPageFaqs } from "@/lib/seo/getFaqs";
 import { getWebPageSchema } from "@/lib/seo/schema/webPageSchema";
 import { absoluteUrl } from "@/lib/seo/core/url";
+import { getTeamMembersByGroup } from "@/lib/sanity/getTeamMembers";
 
 export const metadata = buildSEO({
   ...courses.fullstack.seo,
@@ -22,6 +23,7 @@ export default async function FullStackPage() {
   const courseSchema = getCourseSchema(course);
   const faqs = await getPageFaqs("fullstack", 8);
   const faqSchema = getFAQSchema(faqs, absoluteUrl("/full-stack-web-development-training-in-agra"));
+  const fsdEducators = await getTeamMembersByGroup("fsdEducators");
 
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: "Home", url: "/" },
@@ -43,7 +45,7 @@ export default async function FullStackPage() {
     <>
       <JsonLd data={combinedSchema} id="fullstack-schema" />
       <div className="w-full overflow-x-hidden">
-        <FSDLandingPage faqs={faqs} />
+        <FSDLandingPage faqs={faqs} fsdEducators={fsdEducators} />
       </div>
     </>
   );

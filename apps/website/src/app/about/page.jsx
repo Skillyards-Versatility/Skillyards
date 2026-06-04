@@ -27,6 +27,7 @@ import { getFAQSchema } from "@/lib/seo/schema/faqSchema";
 import { getBreadcrumbSchema } from "@/lib/seo/schema/breadcrumbSchema";
 import { getPageFaqs } from "@/lib/seo/getFaqs";
 import { absoluteUrl } from "@/lib/seo/core/url";
+import { getTeamMembersByGroup } from "@/lib/sanity/getTeamMembers";
 
 export const metadata = buildSEO({
   title: "About SkillYards | AI-Integrated Career-Building Institute in Agra",
@@ -65,6 +66,7 @@ export default async function AboutPage() {
   const faqs = await getPageFaqs("about", 999);
   const faqSchema = getFAQSchema(faqs, absoluteUrl("/about"));
   const combinedSchema = [aboutPageSchema, breadcrumbSchema, faqSchema].filter(Boolean);
+  const carouselTeam = await getTeamMembersByGroup("carousel");
 
   return (
     <>
@@ -74,7 +76,7 @@ export default async function AboutPage() {
         <AboutWhyChoose />
         <TechnologiesWeTeach />
         <LeadersSection />
-        <OtherTeam />
+        <OtherTeam members={carouselTeam} />
         <PartnersSlider />
 
         <CTASection />

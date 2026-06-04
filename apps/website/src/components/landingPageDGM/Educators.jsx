@@ -5,9 +5,9 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { Linkedin, Twitter, ExternalLink } from "lucide-react";
 
-import { dgmEducators as educators } from "@/data/teamData";
+export const DGMEducators = ({ educators = [] }) => {
+  if (!educators.length) return null;
 
-export const DGMEducators = () => {
   return (
         <section className="relative overflow-hidden bg-linear-to-b from-background to-background/50 py-16 dark:from-neutral-950 dark:to-neutral-900 md:py-[15vh]">
           {/* Subtle background glow */}
