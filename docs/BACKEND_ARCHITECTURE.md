@@ -370,6 +370,7 @@ graph TD
     style HANDLER fill:#dc2626,color:#fff
 ```
 
+
 ### 5.2 Authentication (JWT + Cookie)
 
 ```
