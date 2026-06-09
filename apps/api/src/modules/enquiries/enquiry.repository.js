@@ -1,3 +1,4 @@
+import { desc } from "drizzle-orm";
 import { db, enquiries } from "../../../../../packages/db";
 
 export async function createEnquiry(enquiryData) {
@@ -18,7 +19,8 @@ export async function getAllEnquiries() {
     try {
         const result = await db
             .select()
-            .from(enquiries);
+            .from(enquiries)
+            .orderBy(desc(enquiries.createdAt));
 
         return result;
     } catch (err) {
