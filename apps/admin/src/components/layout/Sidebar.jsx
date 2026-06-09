@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, LogOut, ChevronsLeft, ChevronsRight, X, ShieldCheck } from "lucide-react";
+import { LayoutDashboard, Users, LogOut, ChevronsLeft, ChevronsRight, X, ShieldCheck, Inbox } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { logout } from "@/actions/auth";
@@ -10,6 +10,7 @@ import { logout } from "@/actions/auth";
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Students", href: "/students", icon: Users },
+  { name: "Enquiries", href: "/enquiries", icon: Inbox },
   { name: "Users", href: "/users", icon: ShieldCheck },
 ];
 
