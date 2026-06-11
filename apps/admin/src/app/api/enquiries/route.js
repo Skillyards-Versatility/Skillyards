@@ -1,6 +1,7 @@
 import { eq, inArray } from "drizzle-orm";
 import { db, enquiries as enquiriesTable } from "@repo/db";
 import { getSession } from "@/lib/auth";
+import { invalidateCache } from "@/lib/enquiries-cache";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,8 @@ export async function PATCH(request) {
     .update(enquiriesTable)
     .set({ status })
     .where(inArray(enquiriesTable.id, ids));
+
+  invalidateCache();
 
   const count = result?.rowCount ?? ids.length;
 

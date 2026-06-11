@@ -16,7 +16,7 @@ export function StatusBadge({ status, onClick, className }) {
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center rounded-md border px-2 py-1 text-xs font-semibold uppercase transition-colors",
+        "inline-flex items-center rounded-md border px-2 py-1 text-xs font-semibold uppercase transition-colors cursor-pointer",
         "hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1",
         option.color,
         className

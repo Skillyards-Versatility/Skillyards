@@ -60,7 +60,7 @@ export default async function EnquiriesPage({ searchParams }) {
   }
 
   if (statusFilter) {
-    filtered = filtered.filter((e) => e.status === statusFilter);
+    filtered = filtered.filter((e) => (e.status || "new") === statusFilter);
   }
 
   const sortColumn = VALID_SORT_COLUMNS.includes(sort) ? sort : "createdAt";

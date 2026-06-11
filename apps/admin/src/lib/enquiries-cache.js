@@ -25,3 +25,7 @@ export function setCachedEnquiries(data) {
   const key = getCurrentWindowKey();
   cache = { data, windowKey: key };
 }
+
+export function invalidateCache() {
+  cache = { data: null, windowKey: null };
+}
