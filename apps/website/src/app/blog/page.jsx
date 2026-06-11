@@ -149,5 +149,6 @@ export default async function BlogPage() {
         </div>
       </section>
     </div>
+    
   );
 }
