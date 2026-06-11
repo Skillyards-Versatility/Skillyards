@@ -125,7 +125,7 @@ const BlogCard = ({ post, searchQuery, onTagClick }) => {
     >
       <Link
         href={`/blog/${hrefSlug}`}
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-[2]"
         aria-label={`Read more about ${title}`}
       />
 
