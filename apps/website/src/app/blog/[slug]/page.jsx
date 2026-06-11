@@ -329,24 +329,7 @@ export default async function BlogPostPage({ params }) {
             <RelatedMoneyPages pages={post.relatedMoneyPages} />
             <SiblingArticles articles={post.siblingArticles} />
 
-            {/* Newsletter Block */}
-            <section className="mt-24 rounded-[3rem] bg-slate-50 dark:bg-white/[0.02] border border-border/50 p-8 md:p-12 relative overflow-hidden">
-              <div className="relative z-10 max-w-xl">
-                <h3 className="font-serif text-3xl font-black text-foreground mb-3">Skill Up Weekly.</h3>
-                <p className="text-muted-foreground text-lg mb-8">Join 5,000+ students receiving career tips and tech insights every Monday.</p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <input
-                    type="email"
-                    placeholder="your@email.com"
-                    className="flex-1 h-14 rounded-2xl px-6 bg-background border border-border focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
-                  />
-                  <button className="h-14 px-8 rounded-2xl bg-primary text-primary-foreground font-black text-sm tracking-widest uppercase hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-primary/20">
-                    Join Now
-                  </button>
-                </div>
-              </div>
-              <div className="absolute -right-24 -bottom-24 w-80 h-80 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
-            </section>
+
 
             {/* Discussion */}
             <div className="mt-20 border-t border-border/50 pt-10">

@@ -22,7 +22,7 @@ export default function SiblingArticles({ articles }) {
   return (
     <section className="mt-12 border-t-2 border-foreground/30 pt-6">
       <h3 className="font-serif text-lg font-black tracking-tight text-foreground mb-5 border-b border-foreground/20 pb-2">
-        More in this cluster
+        More on this Topic
       </h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

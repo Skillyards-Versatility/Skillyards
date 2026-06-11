@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, useRef } from "react";
 import BlogCard from "@/components/blog/BlogCard";
-import { Search, ChevronLeft, ChevronRight, Lightbulb, TrendingUp } from "lucide-react";
+import { Search, ChevronDown, Lightbulb, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const POSTS_PER_PAGE = 6;
@@ -22,7 +22,7 @@ const BlogSearch = ({ posts }) => {
     const [query, setQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
     const [activeCategory, setActiveCategory] = useState("all");
-    const [currentPage, setCurrentPage] = useState(1);
+    const [visibleCount, setVisibleCount] = useState(POSTS_PER_PAGE);
     const [focusedIndex, setFocusedIndex] = useState(-1);
     const inputRef = useRef(null);
 
@@ -112,7 +112,7 @@ const BlogSearch = ({ posts }) => {
 
     const paginated = debouncedQuery
         ? filtered
-        : filtered.slice((currentPage - 1) * POSTS_PER_PAGE, currentPage * POSTS_PER_PAGE);
+        : filtered.slice(0, visibleCount);
 
     const handleKeyDown = (e) => {
         if (paginated.length === 0) return;
@@ -141,7 +141,7 @@ const BlogSearch = ({ posts }) => {
                         type="text"
                         placeholder="Search articles, guides, and tutorials..."
                         value={query}
-                        onChange={(e) => { setQuery(e.target.value); setCurrentPage(1); setFocusedIndex(-1); }}
+                        onChange={(e) => { setQuery(e.target.value); setVisibleCount(POSTS_PER_PAGE); setFocusedIndex(-1); }}
                         className="w-full pl-14 pr-12 py-4 rounded-full border border-border/50 bg-background/50 backdrop-blur-sm text-base shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground"
                     />
                 </div>
@@ -152,7 +152,7 @@ const BlogSearch = ({ posts }) => {
                             type="button"
                             onClick={() => {
                                 setActiveCategory("all");
-                                setCurrentPage(1);
+                                setVisibleCount(POSTS_PER_PAGE);
                                 setFocusedIndex(-1);
                             }}
                             className={`rounded-full border px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] transition-all ${
@@ -170,7 +170,7 @@ const BlogSearch = ({ posts }) => {
                                 type="button"
                                 onClick={() => {
                                     setActiveCategory(category.value);
-                                    setCurrentPage(1);
+                                    setVisibleCount(POSTS_PER_PAGE);
                                     setFocusedIndex(-1);
                                 }}
                                 className={`rounded-full border px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] transition-all ${
@@ -205,7 +205,7 @@ const BlogSearch = ({ posts }) => {
                     {dynamicSuggestions.map((tag) => (
                         <button
                             key={tag}
-                            onClick={() => { setQuery(tag); setCurrentPage(1); }}
+                            onClick={() => { setQuery(tag); setVisibleCount(POSTS_PER_PAGE); }}
                             className="px-3 py-1 rounded-full bg-muted/50 border border-border text-[11px] font-medium hover:border-foreground transition-all text-foreground"
                         >
                             {tag}
@@ -216,16 +216,30 @@ const BlogSearch = ({ posts }) => {
 
             {/* Results Grid */}
             {paginated.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {paginated.map((post, index) => (
-                        <div
-                            key={post._id}
-                            className={`transition-all duration-300 rounded-3xl h-full ${focusedIndex === index ? "ring-4 ring-primary ring-offset-4 scale-[1.03] shadow-2xl z-10" : ""
-                                }`}
-                        >
-                            <BlogCard post={post} searchQuery={debouncedQuery} onTagClick={(tag) => { setQuery(tag); setCurrentPage(1); }} />
+                <div className="space-y-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {paginated.map((post, index) => (
+                            <div
+                                key={post._id}
+                                className={`transition-all duration-300 rounded-3xl h-full ${focusedIndex === index ? "ring-4 ring-primary ring-offset-4 scale-[1.03] shadow-2xl z-10" : ""
+                                    }`}
+                            >
+                                <BlogCard post={post} searchQuery={debouncedQuery} onTagClick={(tag) => { setQuery(tag); setVisibleCount(POSTS_PER_PAGE); }} />
+                            </div>
+                        ))}
+                    </div>
+
+                    {!debouncedQuery && visibleCount < filtered.length && (
+                        <div className="flex justify-center pt-4">
+                            <button
+                                onClick={() => setVisibleCount(prev => prev + POSTS_PER_PAGE)}
+                                className="group relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-full border border-border bg-background/80 backdrop-blur-sm px-8 py-4 text-[11px] font-bold uppercase tracking-[0.2em] text-foreground shadow-sm transition-all duration-300 hover:border-primary/50 hover:bg-primary/[0.04] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] hover:-translate-y-1 active:translate-y-0 cursor-pointer"
+                            >
+                                <span>Load More Articles</span>
+                                <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors duration-300 group-hover:translate-y-0.5" />
+                            </button>
                         </div>
-                    ))}
+                    )}
                 </div>
             ) : debouncedQuery ? (
                 <div className="flex flex-col items-center justify-center py-24 gap-8 border border-border/40 rounded-[2.5rem] bg-background/40 backdrop-blur-md shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(255,255,255,0.02)] text-center relative overflow-hidden">
@@ -246,7 +260,7 @@ const BlogSearch = ({ posts }) => {
                         {dynamicSuggestions.map((tag) => (
                             <button
                                 key={tag}
-                                onClick={() => { setQuery(tag); setCurrentPage(1); }}
+                                onClick={() => { setQuery(tag); setVisibleCount(POSTS_PER_PAGE); }}
                                 className="px-6 py-2.5 rounded-full bg-primary/5 border border-primary/20 text-sm font-medium hover:bg-primary hover:text-primary-foreground hover:border-primary shadow-sm transition-all duration-300 flex items-center gap-2 group text-foreground"
                             >
                                 <Lightbulb className="w-4 h-4 text-primary group-hover:text-primary-foreground transition-colors" />

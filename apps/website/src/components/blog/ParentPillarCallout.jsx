@@ -27,7 +27,7 @@ export default function ParentPillarCallout({ pillar }) {
 
           <div className="shrink-0 inline-flex items-center gap-2 text-sm font-semibold text-primary">
             <span className="underline underline-offset-4 decoration-primary/30 group-hover:decoration-primary">
-              Explore pillar
+              Explore the Guide
             </span>
             <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
               →
