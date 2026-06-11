@@ -500,27 +500,62 @@ export function EnquiriesClient({
                         </td>
 
                         {/* Status */}
-                        <td className="px-5 py-4 text-center">
-                          {isEditingStatus ? (
-                            <span className="inline-flex items-center gap-1">
-                              <StatusSelect
-                                value={enquiry.status || "new"}
-                                onChange={(newStatus) => handleInlineStatus(enquiry.id, newStatus)}
-                                onBlur={() => setEditingStatusId(null)}
-                                disabled={busy === `inline-status:${enquiry.id}`}
-                                autoFocus
-                              />
-                              {busy === `inline-status:${enquiry.id}` && (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
-                              )}
-                            </span>
-                          ) : (
+                        <td className="px-5 py-4 text-center relative">
+                          <div className="inline-block relative">
                             <StatusBadge
                               status={enquiry.status || "new"}
                               onClick={() => {
-                                if (!busy) setEditingStatusId(enquiry.id);
+                                if (!busy) {
+                                  setEditingStatusId(isEditingStatus ? null : enquiry.id);
+                                }
                               }}
                             />
+
+                            {isEditingStatus && (
+                              <>
+                                {/* Overlay to close on click outside */}
+                                <div
+                                  className="fixed inset-0 z-30 cursor-default"
+                                  onClick={() => setEditingStatusId(null)}
+                                />
+
+                                {/* Dropdown Menu */}
+                                <div className="absolute right-1/2 translate-x-1/2 mt-1.5 z-40 min-w-[125px] rounded-xl border border-border bg-card p-1.5 shadow-xl animate-in fade-in slide-in-from-top-1 duration-150">
+                                  <div className="flex flex-col gap-1">
+                                    {STATUS_OPTIONS.map((opt) => {
+                                      const isCurrent = (enquiry.status || "new") === opt.value;
+                                      return (
+                                        <button
+                                          key={opt.value}
+                                          type="button"
+                                          onClick={() => {
+                                            if (!isCurrent) {
+                                              handleInlineStatus(enquiry.id, opt.value);
+                                            } else {
+                                              setEditingStatusId(null);
+                                            }
+                                          }}
+                                          className={cn(
+                                            "w-full text-left rounded-lg px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all border",
+                                            isCurrent
+                                              ? "border-primary/20 bg-primary/10 text-primary font-bold cursor-default"
+                                              : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+                                          )}
+                                        >
+                                          {opt.label}
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              </>
+                            )}
+                          </div>
+
+                          {busy === `inline-status:${enquiry.id}` && (
+                            <span className="absolute right-2 top-1/2 -translate-y-1/2">
+                              <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+                            </span>
                           )}
                         </td>
 
@@ -657,6 +692,7 @@ export function EnquiriesClient({
                   <div className="flex flex-wrap gap-2">
                     {STATUS_OPTIONS.map((opt) => {
                       const isBusy = busy === `inline-status:${detailEnquiry.id}`;
+                      const isCurrent = (detailEnquiry.status || "new") === opt.value;
                       return (
                         <button
                           key={opt.value}
@@ -667,19 +703,19 @@ export function EnquiriesClient({
                           }}
                           disabled={isBusy}
                           className={cn(
-                            "inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold uppercase transition-all",
+                            "inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs font-semibold uppercase transition-all cursor-pointer",
                             isBusy && "opacity-50 cursor-not-allowed",
-                            !isBusy && "hover:opacity-80 cursor-pointer",
-                            detailEnquiry.status === opt.value
-                              ? "ring-2 ring-ring ring-offset-2 ring-offset-card"
+                            !isBusy && "hover:opacity-80",
+                            isCurrent
+                              ? "ring-2 ring-ring ring-offset-2 ring-offset-card font-bold"
                               : "",
                             opt.color,
                           )}
                         >
                           {isBusy ? (
                             <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : detailEnquiry.status === opt.value ? (
-                            <Check className="h-3 w-3" />
+                          ) : isCurrent ? (
+                             <Check className="h-3 w-3" />
                           ) : null}
                           {opt.label}
                         </button>
