@@ -2,7 +2,6 @@ import dynamic from "next/dynamic";
 
 import JsonLd from "@/components/JsonLd";
 import AboutHero from "@/components/aboutpage/AboutHero";
-import WhySkillYardsBuilt from "@/components/aboutpage/WhySkillYardsBuilt";
 
 export const revalidate = 86400;
 const AboutMissionVision = dynamic(() => import("@/components/aboutpage/AboutMissionVision"));
@@ -72,7 +71,6 @@ export default async function AboutPage() {
     <>
       <div className="bg-background text-foreground transition-colors duration-500">
         <AboutHero />
-        <WhySkillYardsBuilt />
         <AboutWhyChoose />
         <TechnologiesWeTeach />
         <LeadersSection />
