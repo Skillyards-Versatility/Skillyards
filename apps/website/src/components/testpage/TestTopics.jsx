@@ -1,4 +1,4 @@
-import { Code2, Palette, Braces, Search } from "lucide-react";
+import { Code2, Palette, Braces, Search, Book, BookOpen, Calculator } from "lucide-react";
 
 const topics = [
     {
@@ -49,6 +49,42 @@ const topics = [
             "Backlinks & authority",
         ],
     },
+    {
+        icon: <Book size={22} />,
+        title: "Hindi",
+        color: "bg-red-100 text-red-600 dark:bg-red-950/50 dark:text-red-400",
+        border: "border-red-200 dark:border-red-900/50",
+        subtopics: [
+            "संधि एवं समास",
+            "अलंकार एवं व्याकरण",
+            "मुहावरे एवं लोकोक्तियाँ",
+            "तत्सम-तद्भव शब्द",
+        ],
+    },
+    {
+        icon: <BookOpen size={22} />,
+        title: "English",
+        color: "bg-purple-100 text-purple-600 dark:bg-purple-950/50 dark:text-purple-400",
+        border: "border-purple-200 dark:border-purple-900/50",
+        subtopics: [
+            "Tenses & grammar",
+            "Active & passive voice",
+            "Prepositions & articles",
+            "Vocabulary & comprehension",
+        ],
+    },
+    {
+        icon: <Calculator size={22} />,
+        title: "Math",
+        color: "bg-cyan-100 text-cyan-600 dark:bg-cyan-950/50 dark:text-cyan-400",
+        border: "border-cyan-200 dark:border-cyan-900/50",
+        subtopics: [
+            "Percentage & profit/loss",
+            "Ratio & proportion",
+            "Simple & compound interest",
+            "Average & statistics",
+        ],
+    },
 ];
 
 export default function TestTopics() {
@@ -61,10 +97,10 @@ export default function TestTopics() {
                         What We Test
                     </p>
                     <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-foreground">
-                        4 Skills. 10 Minutes. 1 Certificate.
+                        7 Skills. 10 Minutes. 1 Certificate.
                     </h2>
                     <p className="mt-3 text-sm text-muted-foreground max-w-md mx-auto">
-                        The test covers the foundational skills every developer and digital marketer needs. Each section has 5–7 multiple choice questions.
+                        Choose from IT skills or Commerce subjects — pick what you know and test yourself in just 10 minutes.
                     </p>
                 </div>
 

@@ -4346,6 +4346,232 @@ export const TEST_QUESTIONS = [
     ],
     correctAnswer: "Time-based ads"
   },
+
+  // ============ HINDI (10 questions — Devanagari) ============
+  {
+    id: "hindi1",
+    topic: "hindi",
+    question: "'पुस्तक' का बहुवचन रूप क्या है?",
+    options: ["पुस्तकें", "पुस्तक", "पुस्तकों", "पुस्तके"],
+    correctAnswer: "पुस्तकें"
+  },
+  {
+    id: "hindi2",
+    topic: "hindi",
+    question: "'राम घर गया।' में 'राम' कौन सा कारक है?",
+    options: ["कर्ता कारक", "कर्म कारक", "करण कारक", "संप्रदान कारक"],
+    correctAnswer: "कर्ता कारक"
+  },
+  {
+    id: "hindi3",
+    topic: "hindi",
+    question: "'विद्यालय' में कौन सा समास है?",
+    options: ["तत्पुरुष समास", "द्वंद्व समास", "बहुव्रीहि समास", "अव्ययीभाव समास"],
+    correctAnswer: "तत्पुरुष समास"
+  },
+  {
+    id: "hindi4",
+    topic: "hindi",
+    question: "'सूर्योदय' में कौन सी संधि है?",
+    options: ["गुण संधि", "वृद्धि संधि", "यण संधि", "अयादि संधि"],
+    correctAnswer: "गुण संधि"
+  },
+  {
+    id: "hindi5",
+    topic: "hindi",
+    question: "'चंद्र' का तत्सम रूप क्या है?",
+    options: ["चाँद", "चंद्रमा", "चंद्रिका", "चंदन"],
+    correctAnswer: "चाँद"
+  },
+  {
+    id: "hindi6",
+    topic: "hindi",
+    question: "'सिंह' का स्त्रीलिंग क्या है?",
+    options: ["सिंहनी", "शेरनी", "सिंहिनी", "सिंहा"],
+    correctAnswer: "सिंहनी"
+  },
+  {
+    id: "hindi7",
+    topic: "hindi",
+    question: "निम्नलिखित में से शुद्ध वाक्य चुनिए।",
+    options: ["मैं पानी पीता हूँ", "मैं पानी पीता है", "मैं पानी पीते हो", "मैं पानी पीती हो"],
+    correctAnswer: "मैं पानी पीता हूँ"
+  },
+  {
+    id: "hindi8",
+    topic: "hindi",
+    question: "'जिसका कोई अंत न हो' के लिए एक शब्द क्या है?",
+    options: ["अनंत", "असीम", "अपार", "अनवरत"],
+    correctAnswer: "अनंत"
+  },
+  {
+    id: "hindi9",
+    topic: "hindi",
+    question: "'आँखों का तारा' मुहावरे का अर्थ क्या है?",
+    options: ["बहुत प्यारा", "बहुत तेज़", "बहुत बड़ा", "बहुत छोटा"],
+    correctAnswer: "बहुत प्यारा"
+  },
+  {
+    id: "hindi10",
+    topic: "hindi",
+    question: "'जो दिखाई न दे' के लिए एक शब्द बताइए।",
+    options: ["अदृश्य", "अलक्ष्य", "अगोचर", "अदेख"],
+    correctAnswer: "अदृश्य"
+  },
+
+  // ============ ENGLISH (10 questions) ============
+  {
+    id: "english1",
+    topic: "english",
+    question: "Choose the correct preposition: 'He is good ___ Mathematics.'",
+    options: ["at", "in", "on", "with"],
+    correctAnswer: "at"
+  },
+  {
+    id: "english2",
+    topic: "english",
+    question: "Which article fits best? '___ apple a day keeps the doctor away.'",
+    options: ["An", "A", "The", "No article"],
+    correctAnswer: "An"
+  },
+  {
+    id: "english3",
+    topic: "english",
+    question: "Choose the correct tense: 'She ___ to school every day.'",
+    options: ["goes", "went", "has gone", "will go"],
+    correctAnswer: "goes"
+  },
+  {
+    id: "english4",
+    topic: "english",
+    question: "Change to passive voice: 'The cat chased the mouse.'",
+    options: [
+      "The mouse was chased by the cat",
+      "The mouse is chased by the cat",
+      "The mouse has been chased by the cat",
+      "The mouse was being chased by the cat"
+    ],
+    correctAnswer: "The mouse was chased by the cat"
+  },
+  {
+    id: "english5",
+    topic: "english",
+    question: "Choose the correct form: 'Either the students ___ the teacher is responsible.'",
+    options: ["or", "nor", "and", "but"],
+    correctAnswer: "or"
+  },
+  {
+    id: "english6",
+    topic: "english",
+    question: "Identify the adverb in: 'She sings beautifully.'",
+    options: ["beautifully", "sings", "she", "beautiful"],
+    correctAnswer: "beautifully"
+  },
+  {
+    id: "english7",
+    topic: "english",
+    question: "Choose the correct plural: 'The ___ are playing in the field.'",
+    options: ["children", "childs", "childrens", "child"],
+    correctAnswer: "children"
+  },
+  {
+    id: "english8",
+    topic: "english",
+    question: "Which word means the same as 'happy'?",
+    options: ["Joyful", "Sad", "Angry", "Tired"],
+    correctAnswer: "Joyful"
+  },
+  {
+    id: "english9",
+    topic: "english",
+    question: "Choose the correct conjunction: 'I waited ___ he arrived.'",
+    options: ["until", "because", "although", "since"],
+    correctAnswer: "until"
+  },
+  {
+    id: "english10",
+    topic: "english",
+    question: "Which sentence has correct punctuation?",
+    options: [
+      "What is your name?",
+      "what is your name?",
+      "What is your name.",
+      "what is your name."
+    ],
+    correctAnswer: "What is your name?"
+  },
+
+  // ============ MATH (10 questions — UP Board 12th Commerce level) ============
+  {
+    id: "math1",
+    topic: "math",
+    question: "What is 15% of 200?",
+    options: ["30", "25", "35", "20"],
+    correctAnswer: "30"
+  },
+  {
+    id: "math2",
+    topic: "math",
+    question: "If a shirt costs ₹500 and is sold at a 20% discount, what is the selling price?",
+    options: ["₹400", "₹450", "₹480", "₹420"],
+    correctAnswer: "₹400"
+  },
+  {
+    id: "math3",
+    topic: "math",
+    question: "What is the average of 12, 15, 18, 21, and 24?",
+    options: ["18", "19", "17", "20"],
+    correctAnswer: "18"
+  },
+  {
+    id: "math4",
+    topic: "math",
+    question: "If the ratio of boys to girls in a class is 3:2 and there are 30 boys, how many girls are there?",
+    options: ["20", "15", "25", "10"],
+    correctAnswer: "20"
+  },
+  {
+    id: "math5",
+    topic: "math",
+    question: "What is the simple interest on ₹1000 at 5% per annum for 2 years?",
+    options: ["₹100", "₹50", "₹150", "₹200"],
+    correctAnswer: "₹100"
+  },
+  {
+    id: "math6",
+    topic: "math",
+    question: "If x + 5 = 12, what is the value of x?",
+    options: ["7", "17", "-7", "60"],
+    correctAnswer: "7"
+  },
+  {
+    id: "math7",
+    topic: "math",
+    question: "What is the median of the numbers: 4, 7, 9, 12, 15?",
+    options: ["9", "7", "12", "4"],
+    correctAnswer: "9"
+  },
+  {
+    id: "math8",
+    topic: "math",
+    question: "A shopkeeper buys goods for ₹800 and sells them for ₹1000. What is the profit percentage?",
+    options: ["25%", "20%", "30%", "15%"],
+    correctAnswer: "25%"
+  },
+  {
+    id: "math9",
+    topic: "math",
+    question: "What is the value of 2³ × 2²?",
+    options: ["32", "64", "16", "8"],
+    correctAnswer: "32"
+  },
+  {
+    id: "math10",
+    topic: "math",
+    question: "If a train travels 120 km in 2 hours, what is its speed?",
+    options: ["60 km/h", "50 km/h", "70 km/h", "40 km/h"],
+    correctAnswer: "60 km/h"
+  },
 ];
 
   

@@ -1,4 +1,4 @@
-import { resend } from "../notifications/resend.client";
+import { getResend } from "../notifications/resend.client";
 import {
   certificateTemplate,
   certificateEmailTemplate,
@@ -68,6 +68,12 @@ export async function generateAndSendCertificate(data) {
     console.log("PDF generated, size:", pdfBuffer.length, "bytes");
 
     // Send email with PDF attachment
+    const resend = getResend();
+    if (!resend) {
+      console.warn("Skipping email — Resend not configured");
+      return;
+    }
+
     const result = await resend.emails.send({
       from: process.env.EMAIL_FROM || "SkillYards <certificates@skillyards.in>",
       to: [data.email],

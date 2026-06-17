@@ -1,14 +1,25 @@
-import { resend } from "./resend.client";
+import { getResend } from "./resend.client";
 import {
   adminEnquiryTemplate,
   userConfirmationTemplate,
   receiptEmailTemplate
 } from "./email.template";
 
+function withResend(fn) {
+  return async (...args) => {
+    const resend = getResend();
+    if (!resend) {
+      console.warn("Skipping email — Resend not configured");
+      return;
+    }
+    return fn(resend, ...args);
+  };
+}
+
 /**
  * Notify company staff about new enquiry
  */
-export async function sendAdminEnquiryNotification(enquiry) {
+export const sendAdminEnquiryNotification = withResend((resend, enquiry) => {
   return resend.emails.send({
     from: process.env.EMAIL_FROM,
     to: [process.env.ADMIN_EMAIL],
@@ -16,24 +27,24 @@ export async function sendAdminEnquiryNotification(enquiry) {
     subject: "New enquiry from Skillyards website",
     html: adminEnquiryTemplate(enquiry)
   });
-}
+});
 
 /**
  * Send confirmation email to the user
  */
-export async function sendUserConfirmation(enquiry) {
+export const sendUserConfirmation = withResend((resend, enquiry) => {
   return resend.emails.send({
     from: process.env.EMAIL_FROM,
     to: [enquiry.email],
     subject: "We received your enquiry",
     html: userConfirmationTemplate(enquiry)
   });
-}
+});
 
 /**
  * Local test email
  */
-export async function sendTestEmail() {
+export const sendTestEmail = withResend((resend) => {
   return resend.emails.send({
     from: "Skillyards <admin@skillyards.in>",
     to: ["staff@skillyards.in"],
@@ -44,12 +55,12 @@ export async function sendTestEmail() {
       <p>Time: ${new Date().toISOString()}</p>
     `
   });
-}
+});
 
 /**
  * Send receipt email with PDF attachment
  */
-export async function sendReceiptEmail({ to, studentName, receiptNumber, pdfBuffer }) {
+export const sendReceiptEmail = withResend((resend, { to, studentName, receiptNumber, pdfBuffer }) => {
   const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
   const subject = `Payment Receipt: ${receiptNumber || "Skillyards"}`;
   const attachments = [
@@ -82,4 +93,4 @@ export async function sendReceiptEmail({ to, studentName, receiptNumber, pdfBuff
   }
 
   return studentEmailPromise;
-}
+});
