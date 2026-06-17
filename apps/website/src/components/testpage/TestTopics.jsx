@@ -1,4 +1,4 @@
-import { Code2, Palette, Braces, Search, Book, BookOpen, Calculator } from "lucide-react";
+import { Code2, Palette, Braces, Search, Book, BookOpen, Calculator, Landmark, Briefcase, TrendingUp } from "lucide-react";
 
 const topics = [
     {
@@ -85,6 +85,42 @@ const topics = [
             "Average & statistics",
         ],
     },
+    {
+        icon: <Landmark size={22} />,
+        title: "Accountancy",
+        color: "bg-emerald-100 text-emerald-600 dark:bg-emerald-950/50 dark:text-emerald-400",
+        border: "border-emerald-200 dark:border-emerald-900/50",
+        subtopics: [
+            "Journal & ledger entries",
+            "Trial balance & final accounts",
+            "Partnership & company accounts",
+            "Financial statement analysis",
+        ],
+    },
+    {
+        icon: <Briefcase size={22} />,
+        title: "Business Std",
+        color: "bg-violet-100 text-violet-600 dark:bg-violet-950/50 dark:text-violet-400",
+        border: "border-violet-200 dark:border-violet-900/50",
+        subtopics: [
+            "Principles of management",
+            "Marketing & finance",
+            "Business environment",
+            "Forms of business organisations",
+        ],
+    },
+    {
+        icon: <TrendingUp size={22} />,
+        title: "Economics",
+        color: "bg-rose-100 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400",
+        border: "border-rose-200 dark:border-rose-900/50",
+        subtopics: [
+            "Micro & macroeconomics",
+            "Demand, supply & market structures",
+            "National income & GDP",
+            "Money, banking & fiscal policy",
+        ],
+    },
 ];
 
 export default function TestTopics() {
@@ -97,7 +133,7 @@ export default function TestTopics() {
                         What We Test
                     </p>
                     <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-foreground">
-                        7 Skills. 10 Minutes. 1 Certificate.
+                        10 Skills. 10 Minutes. 1 Certificate.
                     </h2>
                     <p className="mt-3 text-sm text-muted-foreground max-w-md mx-auto">
                         Choose from IT skills or Commerce subjects — pick what you know and test yourself in just 10 minutes.
