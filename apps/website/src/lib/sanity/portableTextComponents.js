@@ -34,6 +34,7 @@ export const portableTextComponents = {
      * Image Renderer
      */
     image: ({ value }) => {
+      if (!value?.asset?._ref && !value?.asset) return null;
       const imageUrl = urlFor(value).width(1200).url();
 
       return (
