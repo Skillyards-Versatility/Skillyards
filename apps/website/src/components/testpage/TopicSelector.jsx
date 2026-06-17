@@ -15,6 +15,9 @@ const TOPICS = [
     { id: "devops", label: "DevOps" },
     { id: "seo", label: "SEO" },
     { id: "ppc", label: "PPC" },
+    { id: "hindi", label: "Hindi" },
+    { id: "english", label: "English" },
+    { id: "math", label: "Math" },
 ];
 
 export default function TopicSelector({ leadId }) {
