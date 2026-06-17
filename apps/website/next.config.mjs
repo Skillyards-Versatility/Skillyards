@@ -49,7 +49,7 @@ const nextConfig = {
                         "connect-src 'self' https://api.github.com https://www.google.com https://www.gstatic.com https://skillyards-backend.vercel.app https://api.skillyards.in https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.disqus.com https://*.disquscdn.com; " +
 
                         // Images
-                        "img-src 'self' data: blob: https://images.unsplash.com https://cdn.sanity.io https://cdn.simpleicons.org https://img.youtube.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.google.com https://www.google.co.in https://*.disquscdn.com https://referrer.disqus.com; " +
+                        "img-src 'self' data: blob: https://images.unsplash.com https://cdn.sanity.io https://cdn.simpleicons.org https://admin.skillyards.in https://img.youtube.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.google.com https://www.google.co.in https://*.disquscdn.com https://referrer.disqus.com; " +
 
                         // Styles
                         "style-src 'self' 'unsafe-inline'; " +
