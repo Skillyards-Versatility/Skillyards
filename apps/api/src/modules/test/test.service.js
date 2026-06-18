@@ -49,27 +49,31 @@ export async function startTest({ db, leadId, topics }) {
     }
 
     const elapsedMinutes = (new Date() - new Date(existingSession.startedAt)) / 60000;
-    if (elapsedMinutes > 10.5) {
-      // Auto-finalize the abandoned/expired session
-      await db
-        .update(testSessions)
-        .set({ status: "completed", completedAt: new Date() })
-        .where(eq(testSessions.id, existingSession.id));
 
-      return { alreadyCompleted: true, sessionId: existingSession.id };
+    const snapshotTopics = [...new Set(existingSession.questionsSnapshot.map(q => q.topic))].sort();
+    const sortedTopics = [...topics].sort();
+    const topicsMatch =
+      snapshotTopics.length === sortedTopics.length &&
+      snapshotTopics.every((t, i) => t === sortedTopics[i]);
+
+    if (elapsedMinutes <= 5 && topicsMatch) {
+      // Resume session — accidental refresh with same subjects
+      const questionsForFrontend = existingSession.questionsSnapshot.map(({ correctAnswer, ...q }) => q);
+      return {
+        sessionId: existingSession.id,
+        questions: questionsForFrontend,
+        startedAt: existingSession.startedAt,
+      };
     }
 
-    // Resume Session
-    const questionsForFrontend = existingSession.questionsSnapshot.map(({ correctAnswer, ...q }) => q);
-    
-    return {
-      sessionId: existingSession.id,
-      questions: questionsForFrontend,
-      startedAt: existingSession.startedAt,
-    };
+    // Abandon old session — window expired or subjects changed
+    await db
+      .update(testSessions)
+      .set({ status: "completed", completedAt: new Date() })
+      .where(eq(testSessions.id, existingSession.id));
   }
 
-  const rawQuestions = await getRandomActiveQuestions(db, topics);
+  const rawQuestions = await getRandomActiveQuestions(topics);
 
   if (!rawQuestions || rawQuestions.length === 0) {
     throw new Error("No questions available for the selected topics in the database.");
