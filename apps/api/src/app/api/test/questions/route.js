@@ -1,4 +1,3 @@
-import { db } from "@repo/db";
 import { getRandomActiveQuestions } from "@/modules/test/test.repository";
 import { createProtectedRoute } from "@/lib/middleware";
 import { canAccessAssessment } from "@/lib/permissions";
@@ -11,7 +10,7 @@ async function getHandler(req, { ctx }) {
   const topicsParam = searchParams.get("topics");
   const topics = topicsParam ? topicsParam.split(",") : [];
 
-  const questions = await getRandomActiveQuestions(db, topics);
+  const questions = await getRandomActiveQuestions(topics);
 
   return Response.json({ success: true, questions });
 }

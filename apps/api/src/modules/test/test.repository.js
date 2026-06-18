@@ -1,5 +1,6 @@
-import { testLeads, testSessions, testQuestions } from "@repo/db"; 
-import { eq, inArray, and, desc } from "drizzle-orm";
+import { testLeads, testSessions } from "@repo/db"; 
+import { eq, desc } from "drizzle-orm";
+import { sanityClient } from "@/lib/sanity/client";
 export async function findLeadByEmail(db, email) {
   console.log("Finding lead by email:", email);
 
@@ -47,25 +48,41 @@ export async function getLeadById(db, leadId) {
   });
 }
 
-export async function getRandomActiveQuestions(db, topics, maxCount = 30) {
-  let conditions = eq(testQuestions.isActive, true);
-  
-  if (topics && topics.length > 0) {
-    conditions = and(conditions, inArray(testQuestions.topic, topics));
+const SANITY_QUESTIONS_QUERY = `*[_type == "testQuestion" && isActive == true && topic == $topic] {
+  "id": slug.current,
+  topic,
+  question,
+  options,
+  correctAnswer
+}`;
+
+export async function getRandomActiveQuestions(topics, maxCount = 30) {
+  if (!topics || topics.length === 0) {
+    throw new Error("At least one topic must be selected.");
   }
 
-  const allMatches = await db.query.testQuestions.findMany({
-    where: conditions,
-  });
+  const questionsPerTopic = Math.floor(maxCount / topics.length);
+  const shuffleArray = (arr) => {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  };
 
-  const shuffled = [...allMatches].sort(() => 0.5 - Math.random());
-  const selectedQuestions = shuffled.slice(0, maxCount);
+  let selected = [];
 
-  return selectedQuestions.map((q) => {
-    const randomizedOptions = [...q.options].sort(() => 0.5 - Math.random());
-    return {
-      ...q,
-      options: randomizedOptions,
-    };
-  });
+  for (const topic of topics) {
+    const topicQuestions = await sanityClient.fetch(SANITY_QUESTIONS_QUERY, { topic });
+
+    const shuffled = shuffleArray(topicQuestions);
+    const picked = shuffled.slice(0, questionsPerTopic);
+    selected.push(...picked);
+  }
+
+  return selected.map((q) => ({
+    ...q,
+    options: shuffleArray(q.options || []),
+  }));
 }
