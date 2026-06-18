@@ -56,7 +56,7 @@ const SANITY_QUESTIONS_QUERY = `*[_type == "testQuestion" && isActive == true &&
   correctAnswer
 }`;
 
-export async function getRandomActiveQuestions(_db, topics, maxCount = 30) {
+export async function getRandomActiveQuestions(topics, maxCount = 30) {
   if (!topics || topics.length === 0) {
     throw new Error("At least one topic must be selected.");
   }
