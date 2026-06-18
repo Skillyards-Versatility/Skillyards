@@ -18,6 +18,12 @@ const TOPICS = [
     { id: "hindi", label: "Hindi" },
     { id: "english", label: "English" },
     { id: "math", label: "Math" },
+    { id: "physics", label: "Physics" },
+    { id: "chemistry", label: "Chemistry" },
+    { id: "biology", label: "Biology" },
+    { id: "accountancy", label: "Accountancy" },
+    { id: "business", label: "Business Std" },
+    { id: "economics", label: "Economics" },
 ];
 
 export default function TopicSelector({ leadId }) {
