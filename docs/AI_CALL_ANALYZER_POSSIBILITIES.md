@@ -1,6 +1,6 @@
-# SkillYards AI Call Analyzer — OpenAI Integration Plan
+# SkillYards AI Call Analyzer — Gemini 1.5 Flash Integration Plan
 
-This document outlines the design and architectural implementation details for **AI-powered Call Auditing and Sales Analytics** using the **OpenAI API Suite (Whisper & GPT-4o)** on top of the SkillYards CRM database.
+This document outlines the design and architectural implementation details for **AI-powered Call Auditing and Sales Analytics** using **Gemini 1.5 Flash** on top of the SkillYards CRM database.
 
 ---
 
@@ -15,8 +15,7 @@ sequenceDiagram
     participant R2 as Cloudflare R2
     participant DB as Neon Database
     participant Q as Background Queue (BullMQ)
-    participant Whisper as OpenAI Whisper API
-    participant GPT as OpenAI GPT-4o API
+    participant Gem as Gemini 1.5 Flash API
 
     App->>API: POST /api/telephony/gsm-callback (base64 audio + metadata)
     API->>R2: Upload audio file (.m4a/.mp3)
@@ -25,12 +24,10 @@ sequenceDiagram
     API-->>App: Return success: true (App deletes local file)
 
     rect rgb(20, 20, 30)
-        Note over Q,GPT: Asynchronous Background Processing
+        Note over Q,Gem: Asynchronous Background Processing
         Q->>R2: Fetch audio file stream
-        Q->>Whisper: Send audio for Transcription (whisper-1)
-        Whisper-->>Q: Return verbatim Hinglish text transcript
-        Q->>GPT: Request structured analysis (gpt-4o)
-        GPT-->>Q: Return structured audit JSON
+        Q->>Gem: Send raw audio + Structured Prompt
+        Gem-->>Q: Return verbatim transcript & audit JSON
         Q->>DB: Save transcript, audit JSON, and mark status: completed
     end
 ```
@@ -39,19 +36,17 @@ sequenceDiagram
 
 ## 2. Individual Call Auditing (Micro-level Insights)
 
-Every completed call lasting longer than 15 seconds is queued for auditing. The process combines two state-of-the-art OpenAI models:
-1.  **OpenAI Whisper (`whisper-1`)**: Transcribes the audio. Setting the transcription language hint to `"hi"` ensures optimal translation and processing of Hindi, English, and Hinglish accents.
-2.  **OpenAI GPT-4o**: Evaluates the transcript against compliance checkmarks, tone, and script guidelines, returning a structured JSON format.
+Every completed call lasting longer than 15 seconds is queued for auditing. The process feeds the raw audio buffer directly into **Gemini 1.5 Flash** (which natively understands audio waveforms, tone, and pacing without needing a separate transcription model).
 
 ### Key Auditing Metrics Extracted
 
-| Metric | Description | OpenAI Implementation Strategy |
+| Metric | Description | Gemini Implementation Strategy |
 | :--- | :--- | :--- |
-| **Verbatim Transcript** | Verbatim transcript in Hinglish/English/Hindi. | `openai.audio.transcriptions.create` using `whisper-1`. |
-| **Talk-to-Listen Ratio** | Percentage of time the agent spoke vs. the customer. | GPT-4o estimates block-by-block text ratio. |
-| **Sentiment Analysis** | Positive, neutral, or negative customer reaction. | GPT-4o reads conversation tone shifts and final outcome. |
-| **Script Adherence** | Checking if the agent hit mandatory pitch points. | GPT-4o semantic matching against configured sales script. |
-| **Objection Resolution** | Rating how effectively the agent handled pushbacks. | GPT-4o grades agent responses following customer objections. |
+| **Verbatim Transcript** | Verbatim transcript in Hinglish/English/Hindi. | Gemini's native audio-to-text decoding. |
+| **Talk-to-Listen Ratio** | Percentage of time the agent spoke vs. the customer. | Gemini estimates block-by-block audio speech ratio. |
+| **Sentiment Analysis** | Positive, neutral, or negative customer reaction. | Gemini evaluates voice tone shifts and final interest. |
+| **Script Adherence** | Checking if the agent hit mandatory pitch points. | Gemini compares speech against configured sales script. |
+| **Objection Resolution** | Rating how effectively the agent handled pushbacks. | Gemini grades agent responses following customer objections. |
 
 ---
 
@@ -138,86 +133,91 @@ export const performanceSnapshots = pgTable("performance_snapshots", {
 
 ---
 
-## 5. OpenAI Auditing Pipeline Implementation
+## 5. Gemini Auditing Pipeline Implementation
 
-Here is the clean Node.js implementation script using the **OpenAI SDK** to transcribe and analyze the call.
+Here is the Node.js implementation script using the **Google Generative AI SDK** to analyze call audio files stored in R2.
 
 ```javascript
-import { OpenAI } from "openai";
+import { GoogleGenAI } from "@google/genai";
 import { s3Client } from "../integrations/r2/r2.client";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
-import fs from "fs";
-import path from "path";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+// Initialize Gemini client using environment API key
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-export async function auditCallWithOpenAI(recordingKey) {
-  // 1. Download audio file from Cloudflare R2
+export async function auditCallWithGemini(recordingKey) {
+  // 1. Download audio file buffer from Cloudflare R2
   const bucketParams = { Bucket: process.env.R2_BUCKET, Key: recordingKey };
   const s3Response = await s3Client.send(new GetObjectCommand(bucketParams));
-  
-  // Write to temporary local file for Whisper ingestion
-  const tempFilePath = path.join("/tmp", path.basename(recordingKey));
-  const writeStream = fs.createWriteStream(tempFilePath);
-  
-  // Pipe S3 body to file stream
-  const responseBuffer = Buffer.from(await s3Response.Body.transformToByteArray());
-  fs.writeFileSync(tempFilePath, responseBuffer);
+  const audioBuffer = Buffer.from(await s3Response.Body.transformToByteArray());
 
-  try {
-    // 2. Transcribe using Whisper (Optimized for Hinglish/Hindi speech)
-    const transcription = await openai.audio.transcriptions.create({
-      file: fs.createReadStream(tempFilePath),
-      model: "whisper-1",
-      language: "hi", // Forces translation optimizations for Hinglish/Indian accents
-    });
+  // 2. Format the audio file as a Gemini inline part (base64)
+  const audioPart = {
+    inlineData: {
+      data: audioBuffer.toString("base64"),
+      mimeType: "audio/mp3", // supports audio/mp3, audio/m4a, audio/wav, etc.
+    },
+  };
 
-    const transcriptText = transcription.text;
-
-    // 3. Analyze using GPT-4o with Structured Outputs
-    const analysisResponse = await openai.chat.completions.create({
-      model: "gpt-4o",
-      response_format: { type: "json_object" },
-      messages: [
-        {
-          role: "system",
-          content: `You are a sales auditor. Analyze the provided sales call transcript. 
-          Return a JSON object matching this structure:
-          {
-            "summary": "Short 2 sentence summary of call.",
-            "sentiment": "Positive" | "Neutral" | "Negative",
-            "leadScore": 85, // Integer 0-100 indicating buyer intent
-            "talkRatioAgent": 65, // Percentage of time agent spoke (estimated from transcript)
-            "talkRatioCustomer": 35,
-            "scriptAdherence": {
-              "greeting": true,
-              "pricing_explained": false,
-              "next_steps_set": true
-            },
-            "objectionsHandled": ["pricing was high", "location far away"],
-            "coachingFeedback": "Agent spoke too fast when price was asked. Recommended to pause and clarify value."
-          }`
+  // 3. Define the structured response schema
+  const responseSchema = {
+    type: "OBJECT",
+    properties: {
+      transcription: { type: "STRING" },
+      summary: { type: "STRING" },
+      sentiment: { type: "STRING", enum: ["Positive", "Neutral", "Negative"] },
+      leadScore: { type: "INTEGER" },
+      talkRatioAgent: { type: "INTEGER" },
+      talkRatioCustomer: { type: "INTEGER" },
+      scriptAdherence: {
+        type: "OBJECT",
+        properties: {
+          greeting: { type: "BOOLEAN" },
+          pricing_explained: { type: "BOOLEAN" },
+          next_steps_set: { type: "BOOLEAN" },
         },
-        {
-          role: "user",
-          content: `Call Transcript:\n${transcriptText}`
-        }
-      ]
-    });
+        required: ["greeting", "pricing_explained", "next_steps_set"],
+      },
+      objectionsHandled: {
+        type: "ARRAY",
+        items: { type: "STRING" },
+      },
+      coachingFeedback: { type: "STRING" },
+    },
+    required: [
+      "transcription",
+      "summary",
+      "sentiment",
+      "leadScore",
+      "talkRatioAgent",
+      "talkRatioCustomer",
+      "scriptAdherence",
+      "objectionsHandled",
+      "coachingFeedback",
+    ],
+  };
 
-    const auditData = JSON.parse(analysisResponse.choices[0].message.content);
+  // 4. Request structured audit output from Gemini 1.5 Flash
+  const response = await ai.models.generateContent({
+    model: "gemini-1.5-flash",
+    contents: [
+      audioPart,
+      {
+        role: "user",
+        text: `You are a sales auditor. Analyze the provided audio recording of a sales call.
+        Provide a complete verbatim transcription, and analyze compliance and performance.
+        Return the final audit strictly formatted matching the requested JSON schema.`
+      }
+    ],
+    config: {
+      responseMimeType: "application/json",
+      responseSchema: responseSchema,
+    }
+  });
 
-    // Clean up temporary local file
-    fs.unlinkSync(tempFilePath);
-
-    return {
-      transcriptText,
-      auditData
-    };
-  } catch (error) {
-    if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
-    throw error;
-  }
+  // 5. Parse and return the structured audit data
+  const auditData = JSON.parse(response.text);
+  return auditData;
 }
 ```
 
@@ -230,7 +230,7 @@ gantt
     title AI Call Analyzer Integration Plan
     dateFormat  YYYY-MM-DD
     section Phase 1: Processing
-    Setup OpenAI Node Client            :active, p1, 2026-06-23, 2d
+    Setup Gemini Node Client            :active, p1, 2026-06-23, 2d
     Build Background Worker Queue       :p2, after p1, 3d
     Write Auditing Prompt Engine        :p3, after p2, 2d
     section Phase 2: Schema
