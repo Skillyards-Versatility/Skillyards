@@ -1,11 +1,11 @@
 import { pgTable, uuid, text, integer, timestamp } from "drizzle-orm/pg-core";
-import { users } from "./users.js";
+import { employees } from "./employees.js";
 
 export const followUps = pgTable("follow_ups", {
   id: uuid("id").defaultRandom().primaryKey(),
   leadPhone: text("lead_phone").notNull(),
   telecallerId: uuid("telecaller_id")
-    .references(() => users.id, { onDelete: "cascade" })
+    .references(() => employees.id, { onDelete: "cascade" })
     .notNull(),
   duration: integer("duration").notNull(),
   recordingUrl: text("recording_url"),
