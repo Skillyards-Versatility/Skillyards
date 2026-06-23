@@ -1,46 +1,44 @@
-# SkillYards AI Call Analyzer — Step-by-Step Implementation Guide (Monorepo AI Package Edition)
+# SkillYards AI Call Analyzer — Step-by-Step Implementation Guide (Independent AI Microservice Edition)
 
-This document provides the exact code specifications, file paths, and steps to implement the **Gemini 1.5 Flash Call Auditing pipeline** using a shared monorepo package architecture, complete with Weekly Reports sent via **Resend (Email)** and **Slack Webhooks**.
+This document provides the exact code specifications, file paths, and steps to implement the **Gemini 1.5 Flash Call Auditing pipeline** inside a standalone HTTP microservice (`apps/ai-service`) in the SkillYards Turborepo workspace.
 
 ---
 
-## Phase 1: Initialize the `@repo/ai` Monorepo Package
+## Step 1: Initialize the `apps/ai-service` App
 
-We will create a dedicated AI library package shared across all apps in the Turborepo monorepo.
+We will create a separate Node.js server inside the `apps` directory that communicates via HTTP API on port `3005`.
 
-### 1. Create Folder Structure
-Create the following directories and files:
-*   `packages/ai/`
-*   `packages/ai/package.json`
-*   `packages/ai/src/index.js`
-*   `packages/ai/src/call-analyzer.js`
+### 1. Create the Directory and Files
+Create the following structure:
+*   `apps/ai-service/`
+*   `apps/ai-service/package.json`
+*   `apps/ai-service/src/server.js`
+*   `apps/ai-service/src/call-analyzer.js`
 
-### 2. Configure `packages/ai/package.json`
+### 2. Configure `apps/ai-service/package.json`
 ```json
 {
-  "name": "@repo/ai",
-  "version": "0.0.0",
+  "name": "ai-service",
+  "version": "0.1.0",
   "private": true,
-  "main": "./src/index.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js"
+  },
   "dependencies": {
-    "@google/genai": "^0.1.1"
+    "@google/genai": "^0.1.1",
+    "@aws-sdk/client-s3": "^3.1032.0",
+    "@repo/db": "workspace:*",
+    "drizzle-orm": "^0.45.1",
+    "express": "^4.19.2",
+    "dotenv": "^17.3.1"
   }
 }
 ```
 
-### 3. Link the Package to App Dependencies
-Add `@repo/ai` to the dependencies inside:
-*   `apps/api/package.json`
-*   `apps/admin/package.json`
-
-Add this dependency in both packages:
-```json
-"@repo/ai": "workspace:*"
-```
-
 ---
 
-## Phase 2: Extend the Database Schema
+## Step 2: Extend the Database Schema
 
 We will add columns for the transcript and AI metrics directly into the `follow_ups` table inside the database package.
 
@@ -81,12 +79,17 @@ export const followUps = pgTable("follow_ups", {
 
 ---
 
-## Phase 3: Implement Call Analyzer in `@repo/ai`
+## Step 3: Implement the Gemini Client & Server inside `apps/ai-service`
 
-We define the prompt playbook and the audit function inside `packages/ai/src/call-analyzer.js`.
+We configure Express, S3 connection, and Gemini 1.5 Flash structured auditing.
 
+### 1. Write the Auditing Logic (`apps/ai-service/src/call-analyzer.js`)
 ```javascript
 import { GoogleGenAI } from "@google/genai";
+import { s3Client } from "./r2-client.js"; // Helper mapping standard R2 connection
+import { GetObjectCommand } from "@aws-sdk/client-s3";
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 const SYSTEM_INSTRUCTION = `
 You are the Lead Sales Auditor for SkillYards BootCamp.
@@ -114,8 +117,11 @@ Identify:
 Return the transcription and the audit data strictly matching the requested JSON schema.
 `;
 
-export async function auditCallWithGemini({ audioBuffer, apiKey }) {
-  const ai = new GoogleGenAI({ apiKey });
+export async function auditCall(recordingKey) {
+  // Fetch recording from R2
+  const bucketParams = { Bucket: process.env.R2_BUCKET, Key: recordingKey };
+  const s3Response = await s3Client.send(new GetObjectCommand(bucketParams));
+  const audioBuffer = Buffer.from(await s3Response.Body.transformToByteArray());
 
   const response = await ai.models.generateContent({
     model: "gemini-1.5-flash",
@@ -179,26 +185,62 @@ export async function auditCallWithGemini({ audioBuffer, apiKey }) {
 }
 ```
 
-Export this function in `packages/ai/src/index.js`:
+### 2. Write the Express Server (`apps/ai-service/src/server.js`)
 ```javascript
-export { auditCallWithGemini } from "./call-analyzer";
+import express from "express";
+import { auditCall } from "./call-analyzer.js";
+import { db, followUps } from "@repo/db";
+import { eq } from "drizzle-orm";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const app = express();
+app.use(express.json());
+
+app.post("/api/audit", async (req, res) => {
+  const { followUpId, recordingUrl } = req.body;
+
+  if (!followUpId || !recordingUrl) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  // Acknowledge trigger receipt instantly (keeps connection open without timeouts)
+  res.status(202).json({ status: "processing" });
+
+  // Process asynchronously in background
+  try {
+    await db.update(followUps).set({ aiStatus: "processing" }).where(eq(followUps.id, followUpId));
+
+    const result = await auditCall(recordingUrl);
+
+    await db.update(followUps).set({
+      aiStatus: "completed",
+      transcription: result.transcription,
+      analysis: result
+    }).where(eq(followUps.id, followUpId));
+
+    console.log(`Successfully audited call ID: ${followUpId}`);
+  } catch (error) {
+    console.error(`Auditing failed for call ID ${followUpId}:`, error);
+    await db.update(followUps).set({ aiStatus: "failed" }).where(eq(followUps.id, followUpId));
+  }
+});
+
+const PORT = process.env.PORT || 3005;
+app.listen(PORT, () => {
+  console.log(`AI Microservice is running on port ${PORT}`);
+});
 ```
 
 ---
 
-## Phase 4: Hook API Callback Route to `@repo/ai`
+## Step 4: Dispatch Auditing Webhook from `apps/api`
 
-In the Next.js endpoint, retrieve the audio from R2, call the library service, and update Drizzle.
+In the telephony callback route, trigger the microservice asynchronously.
 
 1. Open `apps/api/src/app/api/telephony/gsm-callback/route.js`.
-2. Import the shared module and s3 helper:
-   ```javascript
-   import { auditCallWithGemini } from "@repo/ai";
-   import { s3Client } from "@/integrations/r2/r2.client";
-   import { GetObjectCommand } from "@aws-sdk/client-s3";
-   import { eq } from "drizzle-orm";
-   ```
-3. Run background audit after database log:
+2. Trigger the HTTP POST to the microservice inside the insert callback block:
 
 ```javascript
     // (Existing code) insert database row
@@ -215,102 +257,27 @@ In the Next.js endpoint, retrieve the audio from R2, call the library service, a
       })
       .returning();
 
-    // Trigger background AI auditing
+    // Trigger background AI microservice
     if (recordingUrl && outcome === "reached") {
       (async () => {
         try {
-          // Update status to processing
-          await db.update(followUps).set({ aiStatus: "processing" }).where(eq(followUps.id, inserted.id));
-
-          // Fetch audio buffer from R2
-          const bucketParams = { Bucket: process.env.R2_BUCKET, Key: recordingUrl };
-          const s3Response = await s3Client.send(new GetObjectCommand(bucketParams));
-          const audioBuffer = Buffer.from(await s3Response.Body.transformToByteArray());
-
-          // Execute shared package logic
-          const result = await auditCallWithGemini({
-            audioBuffer,
-            apiKey: process.env.GEMINI_API_KEY
-          });
-
-          // Save completed metrics
-          await db.update(followUps).set({
-            aiStatus: "completed",
-            transcription: result.transcription,
-            analysis: result
-          }).where(eq(followUps.id, inserted.id));
-
-        } catch (aiErr) {
-          console.error("AI analysis failed:", aiErr);
-          await db.update(followUps).set({ aiStatus: "failed" }).where(eq(followUps.id, inserted.id));
+          const aiServiceUrl = process.env.AI_SERVICE_URL || "http://localhost:3005";
+          
+          // Fire-and-forget request
+          fetch(`${aiServiceUrl}/api/audit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              followUpId: inserted.id,
+              recordingUrl: recordingUrl
+            })
+          }).catch(err => console.error("AI service dispatcher connection failed:", err));
+          
+        } catch (dispatchErr) {
+          console.error("AI service trigger dispatch failed:", dispatchErr);
         }
       })();
     }
-```
 
----
-
-## Phase 5: Weekly Reports & Slack Notifier Cron Job
-
-We create a scheduled node job inside `apps/api/src/jobs/weekly-report.js`.
-
-```javascript
-import { db, followUps, employees } from "@repo/db";
-import { Resend } from "resend";
-import { gte } from "drizzle-orm";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-export async function sendWeeklyReports() {
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-  // 1. Fetch all calls completed in past 7 days
-  const weeklyCalls = await db
-    .select()
-    .from(followUps)
-    .where(gte(followUps.createdAt, oneWeekAgo));
-
-  // 2. Fetch all employees
-  const staff = await db.select().from(employees);
-
-  for (const agent of staff) {
-    const agentCalls = weeklyCalls.filter(c => c.telecallerId === agent.id);
-    if (agentCalls.length === 0) continue;
-
-    // Calculate scorecard averages
-    const completedAudits = agentCalls.filter(c => c.aiStatus === "completed");
-    const avgScore = completedAudits.reduce((acc, c) => acc + (c.analysis?.leadScore || 0), 0) / (completedAudits.length || 1);
-
-    // 3. Compile HTML Scorecard Email
-    const htmlEmail = `
-      <h2>Weekly Performance Scorecard: ${agent.name}</h2>
-      <p>Total Calls Made: <b>${agentCalls.length}</b></p>
-      <p>Average Lead Intent Score: <b>${avgScore.toFixed(1)}/100</b></p>
-      <h3>AI Core Coaching Suggestions</h3>
-      <ul>
-        ${completedAudits.map(c => `<li><b>Lead ${c.leadPhone}:</b> ${c.analysis?.improvementPlan || 'Good call.'}</li>`).join('')}
-      </ul>
-    `;
-
-    // 4. Send Email via Resend
-    await resend.emails.send({
-      from: "SkillYards Audits <audits@skillyards.com>",
-      to: agent.email || "manager@skillyards.com",
-      subject: `Weekly Calling Report: ${agent.name}`,
-      html: htmlEmail,
-    });
-
-    // 5. Fire Push Notification to Slack Channel Webhook
-    if (process.env.SLACK_WEBHOOK_URL) {
-      await fetch(process.env.SLACK_WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: `📊 *Weekly Report Compiled*\n*Agent*: ${agent.name}\n*Total Calls*: ${agentCalls.length}\n*Average Score*: ${avgScore.toFixed(0)}/100\n📧 _Scorecard details sent to email._`
-        })
-      });
-    }
-  }
-}
+    return Response.json({ success: true, message: "Call Logged" });
 ```
