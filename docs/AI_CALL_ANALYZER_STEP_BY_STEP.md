@@ -1,28 +1,51 @@
-# SkillYards AI Call Analyzer — Step-by-Step Implementation Guide
+# SkillYards AI Call Analyzer — Step-by-Step Implementation Guide (Monorepo AI Package Edition)
 
-This document provides the exact code specifications, file paths, and steps to implement the **Gemini 1.5 Flash Call Auditing and Analytics pipeline** in the SkillYards monorepo.
-
----
-
-## Step 1: Install Node.js Dependencies
-
-We need to install the official Google GenAI Node.js SDK inside the API application.
-
-1. Open your terminal.
-2. Run the following command:
-   ```bash
-   cd apps/api
-   npm install @google/genai
-   ```
+This document provides the exact code specifications, file paths, and steps to implement the **Gemini 1.5 Flash Call Auditing pipeline** using a shared monorepo package architecture, complete with Weekly Reports sent via **Resend (Email)** and **Slack Webhooks**.
 
 ---
 
-## Step 2: Extend the Database Schema
+## Phase 1: Initialize the `@repo/ai` Monorepo Package
+
+We will create a dedicated AI library package shared across all apps in the Turborepo monorepo.
+
+### 1. Create Folder Structure
+Create the following directories and files:
+*   `packages/ai/`
+*   `packages/ai/package.json`
+*   `packages/ai/src/index.js`
+*   `packages/ai/src/call-analyzer.js`
+
+### 2. Configure `packages/ai/package.json`
+```json
+{
+  "name": "@repo/ai",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.js",
+  "dependencies": {
+    "@google/genai": "^0.1.1"
+  }
+}
+```
+
+### 3. Link the Package to App Dependencies
+Add `@repo/ai` to the dependencies inside:
+*   `apps/api/package.json`
+*   `apps/admin/package.json`
+
+Add this dependency in both packages:
+```json
+"@repo/ai": "workspace:*"
+```
+
+---
+
+## Phase 2: Extend the Database Schema
 
 We will add columns for the transcript and AI metrics directly into the `follow_ups` table inside the database package.
 
 1. Open `packages/db/src/schema/followUps.js`.
-2. Update the schema definition to include the `aiStatus`, `transcription`, and `analysis` fields:
+2. Update the schema definition to include the new AI columns:
 
 ```javascript
 import { pgTable, uuid, text, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
@@ -49,36 +72,22 @@ export const followUps = pgTable("follow_ups", {
 });
 ```
 
-3. Generate the database migration:
+3. Run schema generation and migrations:
    ```bash
    cd packages/db
    npm run db:generate
-   ```
-4. Run the migration to apply changes to Neon Postgres:
-   ```bash
    npm run db:migrate
    ```
 
 ---
 
-## Step 3: Create the Gemini Client
+## Phase 3: Implement Call Analyzer in `@repo/ai`
 
-We will create the Gemini service client to fetch recording streams from Cloudflare R2, send them to Gemini 1.5 Flash, and store the structured audit output back to the database.
-
-1. Create a new folder: `apps/api/src/integrations/gemini`.
-2. Create a new file: `apps/api/src/integrations/gemini/gemini.client.js`.
-3. Add the following code:
+We define the prompt playbook and the audit function inside `packages/ai/src/call-analyzer.js`.
 
 ```javascript
 import { GoogleGenAI } from "@google/genai";
-import { s3Client } from "../r2/r2.client";
-import { GetObjectCommand } from "@aws-sdk/client-s3";
-import { db, followUps } from "@repo/db";
-import { eq } from "drizzle-orm";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-// SkillYards Custom Playbook & Prompt
 const SYSTEM_INSTRUCTION = `
 You are the Lead Sales Auditor for SkillYards BootCamp.
 Your task is to analyze the audio recording of a sales phone call.
@@ -98,130 +107,98 @@ Verify if the telecaller met the company standards:
 Identify:
 1. Student Interest: Was the student interested in counselling? If not, why?
 2. Objection Handling: Did they handle fee or time objections using EMI or learning support guidelines?
-3. Speech Pacing: Rate the speech speed of the agent (words per minute pacing).
+3. Speech Pacing: Rate the speech speed of the agent.
 4. Lack of Pitch: What did the telecaller lack on this call?
 5. Improvement Plan: Actionable advice for the telecaller.
 
 Return the transcription and the audit data strictly matching the requested JSON schema.
 `;
 
-export async function auditCallWithGemini(followUpId, recordingKey) {
-  try {
-    // 1. Mark status as processing in database
-    await db
-      .update(followUps)
-      .set({ aiStatus: "processing" })
-      .where(eq(followUps.id, followUpId));
+export async function auditCallWithGemini({ audioBuffer, apiKey }) {
+  const ai = new GoogleGenAI({ apiKey });
 
-    // 2. Fetch file from R2
-    const bucketParams = { Bucket: process.env.R2_BUCKET, Key: recordingKey };
-    const s3Response = await s3Client.send(new GetObjectCommand(bucketParams));
-    const audioBuffer = Buffer.from(await s3Response.Body.transformToByteArray());
-
-    // 3. Request analysis from Gemini 1.5 Flash
-    const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
-      contents: [
-        {
-          inlineData: {
-            data: audioBuffer.toString("base64"),
-            mimeType: "audio/mp3",
-          },
-        },
-        {
-          role: "user",
-          text: "Perform the auditing process for this call recording."
-        }
-      ],
-      config: {
-        systemInstruction: SYSTEM_INSTRUCTION,
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: "OBJECT",
-          properties: {
-            transcription: { type: "STRING" },
-            summary: { type: "STRING" },
-            sentiment: { type: "STRING", enum: ["Positive", "Neutral", "Negative"] },
-            leadScore: { type: "INTEGER" }, // 0-100 buyer intent
-            talkRatioAgent: { type: "INTEGER" }, // e.g. 60
-            talkRatioCustomer: { type: "INTEGER" }, // e.g. 40
-            scriptAdherence: {
-              type: "OBJECT",
-              properties: {
-                professional_greeting: { type: "BOOLEAN" },
-                background_discovery: { type: "BOOLEAN" },
-                counselling_pitched: { type: "BOOLEAN" },
-              },
-              required: ["professional_greeting", "background_discovery", "counselling_pitched"],
-            },
-            objectionsHandled: {
-              type: "ARRAY",
-              items: { type: "STRING" },
-            },
-            telecallerLacking: { type: "STRING" },
-            improvementPlan: { type: "STRING" },
-          },
-          required: [
-            "transcription",
-            "summary",
-            "sentiment",
-            "leadScore",
-            "talkRatioAgent",
-            "talkRatioCustomer",
-            "scriptAdherence",
-            "objectionsHandled",
-            "telecallerLacking",
-            "improvementPlan",
-          ],
+  const response = await ai.models.generateContent({
+    model: "gemini-1.5-flash",
+    contents: [
+      {
+        inlineData: {
+          data: audioBuffer.toString("base64"),
+          mimeType: "audio/mp3",
         },
       },
-    });
-
-    const result = JSON.parse(response.text);
-
-    // 4. Update follow_ups record with results
-    await db
-      .update(followUps)
-      .set({
-        aiStatus: "completed",
-        transcription: result.transcription,
-        analysis: {
-          summary: result.summary,
-          sentiment: result.sentiment,
-          leadScore: result.leadScore,
-          talkRatioAgent: result.talkRatioAgent,
-          talkRatioCustomer: result.talkRatioCustomer,
-          scriptAdherence: result.scriptAdherence,
-          objectionsHandled: result.objectionsHandled,
-          telecallerLacking: result.telecallerLacking,
-          improvementPlan: result.improvementPlan,
+      {
+        role: "user",
+        text: "Perform the auditing process for this call recording."
+      }
+    ],
+    config: {
+      systemInstruction: SYSTEM_INSTRUCTION,
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: "OBJECT",
+        properties: {
+          transcription: { type: "STRING" },
+          summary: { type: "STRING" },
+          sentiment: { type: "STRING", enum: ["Positive", "Neutral", "Negative"] },
+          leadScore: { type: "INTEGER" },
+          talkRatioAgent: { type: "INTEGER" },
+          talkRatioCustomer: { type: "INTEGER" },
+          scriptAdherence: {
+            type: "OBJECT",
+            properties: {
+              professional_greeting: { type: "BOOLEAN" },
+              background_discovery: { type: "BOOLEAN" },
+              counselling_pitched: { type: "BOOLEAN" },
+            },
+            required: ["professional_greeting", "background_discovery", "counselling_pitched"],
+          },
+          objectionsHandled: {
+            type: "ARRAY",
+            items: { type: "STRING" },
+          },
+          telecallerLacking: { type: "STRING" },
+          improvementPlan: { type: "STRING" },
         },
-      })
-      .where(eq(followUps.id, followUpId));
+        required: [
+          "transcription",
+          "summary",
+          "sentiment",
+          "leadScore",
+          "talkRatioAgent",
+          "talkRatioCustomer",
+          "scriptAdherence",
+          "objectionsHandled",
+          "telecallerLacking",
+          "improvementPlan",
+        ],
+      },
+    },
+  });
 
-    console.log(`AI Auditing Completed for FollowUp ID: ${followUpId}`);
-  } catch (error) {
-    console.error("AI Auditing Failed:", error);
-    await db
-      .update(followUps)
-      .set({ aiStatus: "failed" })
-      .where(eq(followUps.id, followUpId));
-  }
+  return JSON.parse(response.text);
 }
+```
+
+Export this function in `packages/ai/src/index.js`:
+```javascript
+export { auditCallWithGemini } from "./call-analyzer";
 ```
 
 ---
 
-## Step 4: Hook Gemini into the Ingestion Endpoint
+## Phase 4: Hook API Callback Route to `@repo/ai`
 
-We will trigger the audit function asynchronously inside the telephony callback handler.
+In the Next.js endpoint, retrieve the audio from R2, call the library service, and update Drizzle.
 
 1. Open `apps/api/src/app/api/telephony/gsm-callback/route.js`.
-2. Import the client at the top of the file:
+2. Import the shared module and s3 helper:
    ```javascript
-   import { auditCallWithGemini } from "@/integrations/gemini/gemini.client";
+   import { auditCallWithGemini } from "@repo/ai";
+   import { s3Client } from "@/integrations/r2/r2.client";
+   import { GetObjectCommand } from "@aws-sdk/client-s3";
+   import { eq } from "drizzle-orm";
    ```
-3. Update the insert database block to run the background auditor:
+3. Run background audit after database log:
 
 ```javascript
     // (Existing code) insert database row
@@ -238,40 +215,102 @@ We will trigger the audit function asynchronously inside the telephony callback 
       })
       .returning();
 
-    ctx.log("CALL_RECORDING_LOGGED", { followUpId: inserted.id, telecaller_id, cleanPhone });
-
-    // === NEW BACKGROUND TRIGGER ===
+    // Trigger background AI auditing
     if (recordingUrl && outcome === "reached") {
-      // Execute asynchronously in background without blocking callback response
       (async () => {
         try {
-          await auditCallWithGemini(inserted.id, recordingUrl);
+          // Update status to processing
+          await db.update(followUps).set({ aiStatus: "processing" }).where(eq(followUps.id, inserted.id));
+
+          // Fetch audio buffer from R2
+          const bucketParams = { Bucket: process.env.R2_BUCKET, Key: recordingUrl };
+          const s3Response = await s3Client.send(new GetObjectCommand(bucketParams));
+          const audioBuffer = Buffer.from(await s3Response.Body.transformToByteArray());
+
+          // Execute shared package logic
+          const result = await auditCallWithGemini({
+            audioBuffer,
+            apiKey: process.env.GEMINI_API_KEY
+          });
+
+          // Save completed metrics
+          await db.update(followUps).set({
+            aiStatus: "completed",
+            transcription: result.transcription,
+            analysis: result
+          }).where(eq(followUps.id, inserted.id));
+
         } catch (aiErr) {
-          console.error(`AI queue trigger error for ${inserted.id}:`, aiErr);
+          console.error("AI analysis failed:", aiErr);
+          await db.update(followUps).set({ aiStatus: "failed" }).where(eq(followUps.id, inserted.id));
         }
       })();
     }
-
-    return Response.json({ success: true, message: "Call Logged" });
 ```
 
 ---
 
-## Step 5: Render Analysis in the Admin Dashboard
+## Phase 5: Weekly Reports & Slack Notifier Cron Job
 
-Now we expose the new AI auditing fields in the Admin Portal.
+We create a scheduled node job inside `apps/api/src/jobs/weekly-report.js`.
 
-1. Open `apps/admin/src/actions/calls.js` (Server Action).
-2. Ensure you are selecting `aiStatus`, `transcription`, and `analysis` from the database query.
-3. Open `apps/admin/src/app/(authenticated)/calls/page.js` (or related UI views).
-4. Add an **AI Audit** column to the Call Logs table.
-5. If `aiStatus` is:
-   *   `pending` / `processing`: Render a loading spinner or "Analyzing..." badge.
-   *   `completed`: Render a button "View AI Insights" that opens a modal.
-   *   `failed`: Render "Failed" badge.
-6. Design the modal to display:
-   *   **Lead Sentiment & Score**: Positive/Negative badge and circular progress indicator.
-   *   **Script Adherence Checklist**: Checkboxes showing whether greeting, discovery, and pitch were completed.
-   *   **Objections raised**: Objections handled listing.
-   *   **Coaching Advice**: *"What did this agent lack?"* and *"How can they improve?"* recommendations.
-   *   **Transcript**: Verbatim scrollable conversation transcript box.
+```javascript
+import { db, followUps, employees } from "@repo/db";
+import { Resend } from "resend";
+import { gte } from "drizzle-orm";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+export async function sendWeeklyReports() {
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+  // 1. Fetch all calls completed in past 7 days
+  const weeklyCalls = await db
+    .select()
+    .from(followUps)
+    .where(gte(followUps.createdAt, oneWeekAgo));
+
+  // 2. Fetch all employees
+  const staff = await db.select().from(employees);
+
+  for (const agent of staff) {
+    const agentCalls = weeklyCalls.filter(c => c.telecallerId === agent.id);
+    if (agentCalls.length === 0) continue;
+
+    // Calculate scorecard averages
+    const completedAudits = agentCalls.filter(c => c.aiStatus === "completed");
+    const avgScore = completedAudits.reduce((acc, c) => acc + (c.analysis?.leadScore || 0), 0) / (completedAudits.length || 1);
+
+    // 3. Compile HTML Scorecard Email
+    const htmlEmail = `
+      <h2>Weekly Performance Scorecard: ${agent.name}</h2>
+      <p>Total Calls Made: <b>${agentCalls.length}</b></p>
+      <p>Average Lead Intent Score: <b>${avgScore.toFixed(1)}/100</b></p>
+      <h3>AI Core Coaching Suggestions</h3>
+      <ul>
+        ${completedAudits.map(c => `<li><b>Lead ${c.leadPhone}:</b> ${c.analysis?.improvementPlan || 'Good call.'}</li>`).join('')}
+      </ul>
+    `;
+
+    // 4. Send Email via Resend
+    await resend.emails.send({
+      from: "SkillYards Audits <audits@skillyards.com>",
+      to: agent.email || "manager@skillyards.com",
+      subject: `Weekly Calling Report: ${agent.name}`,
+      html: htmlEmail,
+    });
+
+    // 5. Fire Push Notification to Slack Channel Webhook
+    if (process.env.SLACK_WEBHOOK_URL) {
+      await fetch(process.env.SLACK_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: `📊 *Weekly Report Compiled*\n*Agent*: ${agent.name}\n*Total Calls*: ${agentCalls.length}\n*Average Score*: ${avgScore.toFixed(0)}/100\n📧 _Scorecard details sent to email._`
+        })
+      });
+    }
+  }
+}
+```
