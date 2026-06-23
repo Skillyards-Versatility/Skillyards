@@ -4,7 +4,7 @@ This document provides the exact code specifications, file paths, and steps to i
 
 ---
 
-## Step 1: Initialize the `apps/ai-service` App
+## Step 1: Initialize the `apps/ai-service` App (COMPLETED)
 
 We will create a separate Node.js server inside the `apps` directory that communicates via HTTP API on port `3005`.
 
