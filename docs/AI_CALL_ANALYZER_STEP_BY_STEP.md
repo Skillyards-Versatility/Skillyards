@@ -38,7 +38,7 @@ Create the following structure:
 
 ---
 
-## Step 2: Extend the Database Schema
+## Step 2: Extend the Database Schema (COMPLETED)
 
 We will add columns for the transcript and AI metrics directly into the `follow_ups` table inside the database package.
 
@@ -79,7 +79,7 @@ export const followUps = pgTable("follow_ups", {
 
 ---
 
-## Step 3: Implement the Gemini Client & Server inside `apps/ai-service`
+## Step 3: Implement the Gemini Client & Server inside `apps/ai-service` (COMPLETED)
 
 We configure Express, S3 connection, and Gemini 1.5 Flash structured auditing.
 
@@ -235,7 +235,7 @@ app.listen(PORT, () => {
 
 ---
 
-## Step 4: Dispatch Auditing Webhook from `apps/api`
+## Step 4: Dispatch Auditing Webhook from `apps/api` (COMPLETED)
 
 In the telephony callback route, trigger the microservice asynchronously.
 

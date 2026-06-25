@@ -34,6 +34,16 @@ async function postHandler(req, { ctx }) {
     call_start_time,
   } = body;
 
+  console.log("☎️ Received gsm-callback payload:", {
+    telecaller_id,
+    to_number,
+    call_duration_seconds,
+    has_base64: !!recording_base64,
+    base64_length: recording_base64 ? recording_base64.length : 0,
+    recording_ext,
+    call_start_time
+  });
+
   if (!telecaller_id || !to_number || call_duration_seconds === undefined || !call_start_time) {
     return Response.json(
       { success: false, message: "Missing required fields" },
@@ -85,6 +95,29 @@ async function postHandler(req, { ctx }) {
       .returning();
 
     ctx.log("CALL_RECORDING_LOGGED", { followUpId: inserted.id, telecaller_id, cleanPhone });
+
+    // Auto auditing disabled by administrator. Audits are now triggered manually via the UI.
+    if (false && recordingUrl && outcome === "reached") {
+      (async () => {
+        try {
+          const aiServiceUrl = process.env.AI_SERVICE_URL || "http://localhost:3005";
+          
+          fetch(`${aiServiceUrl}/api/audit`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              followUpId: inserted.id,
+              recordingUrl: recordingUrl,
+            }),
+          }).catch((err) =>
+            console.error("AI service dispatcher connection failed:", err)
+          );
+        } catch (dispatchErr) {
+          console.error("AI service trigger dispatch failed:", dispatchErr);
+        }
+      })();
+    }
+
     return Response.json({ success: true, message: "Call Logged" });
   } catch (dbError) {
     ctx.error("DB_LOGGING_FAILED", { error: dbError.message });

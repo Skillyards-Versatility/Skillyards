@@ -37,9 +37,9 @@ Identify:
 Return the transcription and the audit data strictly matching the requested JSON schema.
 `;
 
-  // 2. Request analysis from Gemini 1.5 Flash
+  // 2. Request analysis from Gemini 2.5 Flash
   const response = await ai.models.generateContent({
-    model: "gemini-1.5-flash",
+    model: "gemini-2.5-flash",
     contents: [
       {
         inlineData: {

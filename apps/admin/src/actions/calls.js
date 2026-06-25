@@ -17,6 +17,9 @@ export async function getCalls() {
         type: followUps.type,
         contactedAt: followUps.contactedAt,
         createdAt: followUps.createdAt,
+        aiStatus: followUps.aiStatus,
+        transcription: followUps.transcription,
+        analysis: followUps.analysis,
       })
       .from(followUps)
       .innerJoin(employees, eq(followUps.telecallerId, employees.id))
@@ -24,5 +27,24 @@ export async function getCalls() {
   } catch (error) {
     console.error("Error fetching calls:", error);
     return [];
+  }
+}
+
+export async function refreshCall(callId) {
+  try {
+    const results = await db
+      .select({
+        id: followUps.id,
+        aiStatus: followUps.aiStatus,
+        transcription: followUps.transcription,
+        analysis: followUps.analysis,
+      })
+      .from(followUps)
+      .where(eq(followUps.id, callId))
+      .limit(1);
+    return results[0] || null;
+  } catch (error) {
+    console.error("Error refreshing call:", error);
+    return null;
   }
 }
