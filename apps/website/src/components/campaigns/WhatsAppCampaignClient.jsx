@@ -6,7 +6,7 @@ import { MessageCircle, ArrowRight, CheckCircle2, Shield, GraduationCap, ArrowUp
 
 export default function WhatsAppCampaignClient({ whatsappNumber }) {
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    "Hi, I want to know more about SkillYards career programs and OJT pathways."
+    "Hi, I'm interested in the BCA/BBA program at Skillyards."
   )}`;
 
   return (
