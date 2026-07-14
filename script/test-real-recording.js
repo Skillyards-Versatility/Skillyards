@@ -18,17 +18,17 @@ async function main() {
   console.log("🎧 Testing AI call audit with REAL recording...");
 
   // 1. Load DB
-  const { db, employees, followUps } = await import("@repo/db");
+  const { db, users, followUps } = await import("@repo/db");
   const { eq, desc } = await import("drizzle-orm");
 
-  // 2. Fetch an employee (telecaller)
-  console.log("🔍 Fetching a telecaller from DB...");
-  const [employee] = await db.select().from(employees).limit(1);
-  if (!employee) {
-    console.error("❌ No employees found in DB. Seed one first.");
+  // 2. Fetch a user (telecaller)
+  console.log("🔍 Fetching a user from DB...");
+  const [user] = await db.select().from(users).limit(1);
+  if (!user) {
+    console.error("❌ No users found in DB. Seed one first.");
     process.exit(1);
   }
-  console.log(`✅ Using employee: ${employee.name} (${employee.id})`);
+  console.log(`✅ Using user: ${user.name} (${user.id})`);
 
   // 3. Read real recording file
   console.log(`📂 Reading real recording from: ${RECORDING_FILE}`);
@@ -56,7 +56,7 @@ async function main() {
     .insert(followUps)
     .values({
       leadPhone: TEST_PHONE,
-      telecallerId: employee.id,
+      telecallerId: user.id,
       duration: 120,
       recordingUrl: R2_KEY,
       outcome: "reached",
