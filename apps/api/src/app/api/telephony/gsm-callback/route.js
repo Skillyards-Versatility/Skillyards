@@ -2,6 +2,7 @@ import { db } from "@repo/db";
 import { followUps } from "@repo/db";
 import { createProtectedRoute } from "@/lib/middleware";
 import { uploadAudioToR2 } from "@/integrations/r2/r2.client";
+import { and, eq, gte, lte } from "drizzle-orm";
 
 async function postHandler(req, { ctx }) {
   const secret = req.headers.get("x-app-secret");
@@ -53,6 +54,34 @@ async function postHandler(req, { ctx }) {
 
   // 1. Normalize number
   const cleanPhone = to_number.replace(/\D/g, "").slice(-10);
+
+  // 1b. Deduplication Check: Skip inserting if this call was already logged within 10 seconds
+  const contactedTime = new Date(call_start_time);
+  const timeThresholdMs = 10 * 1000;
+  const startTimeMin = new Date(contactedTime.getTime() - timeThresholdMs);
+  const startTimeMax = new Date(contactedTime.getTime() + timeThresholdMs);
+
+  try {
+    const existing = await db
+      .select({ id: followUps.id })
+      .from(followUps)
+      .where(
+        and(
+          eq(followUps.telecallerId, telecaller_id),
+          eq(followUps.leadPhone, cleanPhone),
+          gte(followUps.contactedAt, startTimeMin),
+          lte(followUps.contactedAt, startTimeMax)
+        )
+      )
+      .limit(1);
+
+    if (existing.length > 0) {
+      ctx.log("CALL_RECORDING_LOGGED_DUPLICATE_SKIPPED", { telecaller_id, cleanPhone, call_start_time });
+      return Response.json({ success: true, message: "Call already logged (duplicate skipped)" });
+    }
+  } catch (dedupError) {
+    ctx.error("DEDUPLICATION_CHECK_FAILED", { error: dedupError.message });
+  }
 
   // 2. Process Audio if exists
   let recordingUrl = null;
