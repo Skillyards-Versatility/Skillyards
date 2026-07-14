@@ -14,17 +14,17 @@ async function main() {
   console.log("🚀 Starting Full End-to-End AI Call Analyzer Test...");
 
   // Load database module dynamically after environment is configured
-  const { db, employees, followUps } = await import("@repo/db");
+  const { db, users, followUps } = await import("@repo/db");
   const { desc, eq } = await import("drizzle-orm");
 
-  // 1. Fetch a valid telecaller (employee) ID
+  // 1. Fetch a valid telecaller (user) ID
   console.log("🔍 Fetching a valid telecaller from the database...");
-  const [employee] = await db.select().from(employees).limit(1);
-  if (!employee) {
-    console.error("❌ No employees found in the database. Please seed or add an employee first!");
+  const [user] = await db.select().from(users).limit(1);
+  if (!user) {
+    console.error("❌ No users found in the database. Please seed or add a user first!");
     process.exit(1);
   }
-  console.log(`✅ Found employee: ${employee.name} (${employee.id})`);
+  console.log(`✅ Found user: ${user.name} (${user.id})`);
 
   // 2. Fetch a sample audio file from public URL
   const sampleAudioUrl = "https://www.w3schools.com/html/horse.mp3";
@@ -44,7 +44,7 @@ async function main() {
   // 3. Prepare payload for gsm-callback API
   const base64Audio = audioBuffer.toString("base64");
   const payload = {
-    telecaller_id: employee.id,
+    telecaller_id: user.id,
     to_number: "9876543210",
     call_duration_seconds: 45, // >15s to classify as "reached"
     recording_base64: base64Audio,
