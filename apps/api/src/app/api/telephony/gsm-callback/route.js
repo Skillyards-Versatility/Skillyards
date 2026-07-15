@@ -32,6 +32,7 @@ async function postHandler(req, { ctx }) {
     recording_base64,
     recording_ext,
     call_start_time,
+    recording_key,
   } = body;
 
   console.log("☎️ Received gsm-callback payload:", {
@@ -41,7 +42,8 @@ async function postHandler(req, { ctx }) {
     has_base64: !!recording_base64,
     base64_length: recording_base64 ? recording_base64.length : 0,
     recording_ext,
-    call_start_time
+    call_start_time,
+    recording_key
   });
 
   if (!telecaller_id || !to_number || call_duration_seconds === undefined || !call_start_time) {
@@ -117,7 +119,9 @@ async function postHandler(req, { ctx }) {
 
   // 2. Process Audio if exists
   let recordingUrl = null;
-  if (recording_base64) {
+  if (recording_key) {
+    recordingUrl = recording_key;
+  } else if (recording_base64) {
     try {
       const buffer = Buffer.from(recording_base64, "base64");
       const ext = recording_ext || "mp3";
