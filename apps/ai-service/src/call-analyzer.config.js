@@ -103,14 +103,41 @@ Reference rebuttal patterns: price -> ROI/stipend math; "papa se puchna" -> invi
 SkillYards policy is verified-facts-only (no fabricated placement rates, no unconfirmed hiring partners, no "India's #1"). Scan for risky claims and add each to complianceFlags with a verbatim quote and riskLevel. Flag: absolute "100% job guarantee", guaranteed salary figures, guaranteed stipend, free laptop, specific hiring-partner counts (e.g. "500+"), government-scholarship claims, and high-pressure artificial scarcity. A call can be high on scriptAdherence yet high on compliance risk — report both honestly. The compliance score DROPS as risky/absolute claims increase.
 
 ======================= LEAD PROFILE & GRADING =======================
-Infer prospectName, who you're speaking with, programInterest, persona, decisionMaker, budgetSensitivity from the dialogue. Assign leadGrade per CRM rules:
+Infer prospectName, who you're speaking with, programInterest, persona, decisionMaker, budgetSensitivity from the dialogue. Assign leadGrade (buying intent) per CRM rules:
 - A_hot   : high career anxiety + decision-ready + aptitude/parent support.
 - B_warm  : interested but has trust or price concerns.
 - C_cold  : unaware of job-market reality / low urgency.
 - unqualified : wrong fit, not the target, or no real interest.
 
+Compute scores.overall (0-100) as a comprehensive rating:
+- Reflects overall call quality and student engagement.
+- High scores require strong script adherence, good language framing/grammar, effective consultative career counseling (empathy, pathway explanation), and clean objection handling without cost escalation.
+- Penalize heavily for high compliance risk, robotic tone, and excessive counselor monologue.
+
+
 ======================= TONE =======================
 Desired tone is "calm confident / consultative advisor". Flag salesy_pushy, robotic_scripted, unsure_weak, or rude_dismissive. Assess talk-to-listen balance and language professionalism.
+- monologueFlagged: Set to true if counselor speaks in long, uninterrupted monologue blocks (e.g. single turns exceeding 150 words) without checking in or asking discovery questions.
+- monologueFeedback: Specific feedback on conversational flow and turn-taking.
+
+======================= LANGUAGE QUALITY & GRAMMAR =======================
+Assess Hinglish/Hindi/English grammar correctness. Look for poor sentence framing, incomplete thoughts, and word-reorder issues.
+- grammarScore (0-100): Measure grammar correctness. Flag poor framing in both Hindi and English.
+- sentenceFramingScore (0-100): Evaluate if counselor properly frames sentences. Poor framing breaks student/parent trust.
+- sentenceFramingFeedback: Quote specific examples of bad sentence construction.
+- fillerRepetitions: Array of frequently repeated filler words (e.g., "like", "basically", "मतलब", "तो", "जी").
+- redundantTranslations: Set to true if counselor translates the same concept back-to-back in English and Hindi unnecessarily.
+- redundantTranslationFeedback: Quote evidence of consecutive translation repetition.
+- clarityConcerns: Array of quotes where student/parent was confused or asked for translation/clarification.
+
+======================= CONSULTATIVE CAREER COUNSELING QUALITY =======================
+Audit whether the counselor acted as a supportive advisor for confused 12th-pass/lost students.
+Evaluate if they:
+- Validated career doubts and uncertainty.
+- Explained career pathways (traditional degrees vs skill-based learning).
+- Provided genuine guidance rather than just aggressively pitching a specific course.
+Report these under "coaching.counsellingQuality" with isConsultative (boolean), empathyRating (excellent/good/neutral/poor), pathwayExplanation (evaluation summary), and lostStudentSupport (evaluation summary).
+Also check "coaching.pitchAlignment": check if the counselor's pitch matches the student's stated program or stream interest (e.g. pitching Full Stack when student asks for CS AI). Report as isAligned (boolean) and feedback (string).
 
 ======================= OUTPUT RULES =======================
 - Output ONLY the JSON object. No markdown, no backticks, no commentary.
@@ -142,9 +169,24 @@ export const RESPONSE_SCHEMA = {
         primary: { type: "string", enum: ["hindi", "english", "hinglish", "other"] },
         codeSwitching: { type: "string", enum: ["none", "light", "heavy"] },
         transcriptQualityConcern: { type: "boolean" },
+        grammarScore: { type: "integer" },
+        sentenceFramingScore: { type: "integer" },
+        sentenceFramingFeedback: { type: "string" },
+        fillerRepetitions: { type: "array", items: { type: "string" } },
+        redundantTranslations: { type: "boolean" },
+        redundantTranslationFeedback: { type: "string" },
+        clarityConcerns: { type: "array", items: { type: "string" } },
       },
-      required: ["primary", "codeSwitching", "transcriptQualityConcern"],
-      propertyOrdering: ["primary", "codeSwitching", "transcriptQualityConcern"],
+      required: [
+        "primary", "codeSwitching", "transcriptQualityConcern",
+        "grammarScore", "sentenceFramingScore", "sentenceFramingFeedback",
+        "fillerRepetitions", "redundantTranslations", "redundantTranslationFeedback", "clarityConcerns"
+      ],
+      propertyOrdering: [
+        "primary", "codeSwitching", "transcriptQualityConcern",
+        "grammarScore", "sentenceFramingScore", "sentenceFramingFeedback",
+        "fillerRepetitions", "redundantTranslations", "redundantTranslationFeedback", "clarityConcerns"
+      ],
     },
 
     leadProfile: {
@@ -237,9 +279,11 @@ export const RESPONSE_SCHEMA = {
             propertyOrdering: ["listened", "accepted", "clarified", "executed"],
           },
           handledEffectively: { type: "string", enum: ["well", "adequate", "poor", "ignored"] },
+          costEscalated: { type: "boolean" },
+          costEscalationDetails: { type: "string" },
         },
-        required: ["objectionType", "customerQuote", "counselorResponse", "laceAdherence", "handledEffectively"],
-        propertyOrdering: ["objectionType", "customerQuote", "counselorResponse", "laceAdherence", "handledEffectively"],
+        required: ["objectionType", "customerQuote", "counselorResponse", "laceAdherence", "handledEffectively", "costEscalated", "costEscalationDetails"],
+        propertyOrdering: ["objectionType", "customerQuote", "counselorResponse", "laceAdherence", "handledEffectively", "costEscalated", "costEscalationDetails"],
       },
     },
 
@@ -272,9 +316,11 @@ export const RESPONSE_SCHEMA = {
         talkToListenBalance: { type: "string", enum: ["good", "counselor_dominated", "customer_dominated"] },
         languageProfessionalism: { type: "string", enum: ["professional", "acceptable", "poor"] },
         concerns: { type: "array", items: { type: "string" } },
+        monologueFlagged: { type: "boolean" },
+        monologueFeedback: { type: "string" },
       },
-      required: ["tone", "talkToListenBalance", "languageProfessionalism", "concerns"],
-      propertyOrdering: ["tone", "talkToListenBalance", "languageProfessionalism", "concerns"],
+      required: ["tone", "talkToListenBalance", "languageProfessionalism", "concerns", "monologueFlagged", "monologueFeedback"],
+      propertyOrdering: ["tone", "talkToListenBalance", "languageProfessionalism", "concerns", "monologueFlagged", "monologueFeedback"],
     },
 
     scores: {
@@ -309,9 +355,29 @@ export const RESPONSE_SCHEMA = {
             propertyOrdering: ["label", "quote"],
           },
         },
+        pitchAlignment: {
+          type: "object",
+          properties: {
+            isAligned: { type: "boolean" },
+            feedback: { type: "string" },
+          },
+          required: ["isAligned", "feedback"],
+          propertyOrdering: ["isAligned", "feedback"],
+        },
+        counsellingQuality: {
+          type: "object",
+          properties: {
+            isConsultative: { type: "boolean" },
+            empathyRating: { type: "string", enum: ["excellent", "good", "neutral", "poor"] },
+            pathwayExplanation: { type: "string" },
+            lostStudentSupport: { type: "string" },
+          },
+          required: ["isConsultative", "empathyRating", "pathwayExplanation", "lostStudentSupport"],
+          propertyOrdering: ["isConsultative", "empathyRating", "pathwayExplanation", "lostStudentSupport"],
+        },
       },
-      required: ["strengths", "improvements", "exampleQuotes"],
-      propertyOrdering: ["strengths", "improvements", "exampleQuotes"],
+      required: ["strengths", "improvements", "exampleQuotes", "pitchAlignment", "counsellingQuality"],
+      propertyOrdering: ["strengths", "improvements", "exampleQuotes", "pitchAlignment", "counsellingQuality"],
     },
 
     recommendedNextAction: { type: "string" },
