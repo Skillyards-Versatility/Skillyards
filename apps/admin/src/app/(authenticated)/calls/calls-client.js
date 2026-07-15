@@ -993,6 +993,8 @@ export function CallsClient({ initialCalls }) {
               </div>
             </>
           )}
+        </div>
+      )}
     </div>
   );
 }
