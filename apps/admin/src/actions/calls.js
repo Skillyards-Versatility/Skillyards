@@ -1,6 +1,6 @@
 "use server";
 
-import { db, followUps, users } from "@repo/db";
+import { db, followUps, users, callAnalyses } from "@repo/db";
 import { eq, desc } from "drizzle-orm";
 
 export async function getCalls() {
@@ -19,10 +19,11 @@ export async function getCalls() {
         createdAt: followUps.createdAt,
         aiStatus: followUps.aiStatus,
         transcription: followUps.transcription,
-        analysis: followUps.analysis,
+        analysis: callAnalyses,
       })
       .from(followUps)
       .innerJoin(users, eq(followUps.telecallerId, users.id))
+      .leftJoin(callAnalyses, eq(followUps.id, callAnalyses.followUpId))
       .orderBy(desc(followUps.contactedAt));
   } catch (error) {
     console.error("Error fetching calls:", error);
@@ -37,9 +38,10 @@ export async function refreshCall(callId) {
         id: followUps.id,
         aiStatus: followUps.aiStatus,
         transcription: followUps.transcription,
-        analysis: followUps.analysis,
+        analysis: callAnalyses,
       })
       .from(followUps)
+      .leftJoin(callAnalyses, eq(followUps.id, callAnalyses.followUpId))
       .where(eq(followUps.id, callId))
       .limit(1);
     return results[0] || null;

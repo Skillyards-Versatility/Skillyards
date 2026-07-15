@@ -29,16 +29,14 @@ async function processQueue() {
       .set({ aiStatus: "processing" })
       .where(eq(followUps.id, followUpId));
 
-    // Audit with Gemini 1.5 Flash / 2.5 Flash
-    const result = await auditCall(recordingUrl);
+    // Audit with Gemini 2.5 Flash (with audio Files API support)
+    await auditCall(recordingUrl, followUpId);
 
-    // Save completed analysis
+    // Mark as completed
     await db
       .update(followUps)
       .set({
         aiStatus: "completed",
-        transcription: result.transcription,
-        analysis: result,
       })
       .where(eq(followUps.id, followUpId));
 
