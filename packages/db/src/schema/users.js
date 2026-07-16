@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, boolean } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -6,5 +6,6 @@ export const users = pgTable("users", {
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
   role: text("role").default("STAFF").notNull(), // ADMIN, MANAGER, SALES, STAFF
+  isTraining: boolean("is_training").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow()
 });
