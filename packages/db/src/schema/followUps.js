@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, integer, timestamp, jsonb, boolean } from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 
 export const followUps = pgTable("follow_ups", {
@@ -17,6 +17,7 @@ export const followUps = pgTable("follow_ups", {
   aiStatus: text("ai_status").default("pending").notNull(), // 'pending' | 'processing' | 'completed' | 'failed'
   transcription: text("transcription"),
   analysis: jsonb("analysis"),
+  isTraining: boolean("is_training").default(false).notNull(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });

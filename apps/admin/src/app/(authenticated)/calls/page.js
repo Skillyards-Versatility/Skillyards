@@ -1,4 +1,5 @@
 import { getCalls } from "@/actions/calls";
+import { getUsers } from "@/actions/users";
 import { getSession } from "@/lib/auth";
 import { CallsClient } from "./calls-client";
 
@@ -16,10 +17,11 @@ export default async function CallsPage() {
   }
 
   const initialCalls = await getCalls();
+  const allUsers = await getUsers();
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-8">
-      <CallsClient initialCalls={initialCalls} />
+      <CallsClient initialCalls={initialCalls} allUsers={allUsers} />
     </div>
   );
 }

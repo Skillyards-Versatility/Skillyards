@@ -93,13 +93,20 @@ export function UserManagementClient({ initialUsers }) {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
-                      user.role === 'MANAGER' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
-                      'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
-                    }`}>
-                      {user.role}
-                    </span>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
+                        user.role === 'MANAGER' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                        'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                      }`}>
+                        {user.role}
+                      </span>
+                      {user.isTraining && (
+                        <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50">
+                          Trainee
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-muted-foreground">
                     {user.createdAt ? format(new Date(user.createdAt), 'MMM dd, yyyy') : 'N/A'}
@@ -189,6 +196,19 @@ export function UserManagementClient({ initialUsers }) {
                   <option value="ADMIN">Administrator</option>
                 </select>
               </div>
+            </div>
+
+            <div className="flex items-center gap-2 py-1">
+              <input 
+                id="isTraining"
+                name="isTraining"
+                type="checkbox" 
+                value="true"
+                className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer" 
+              />
+              <label htmlFor="isTraining" className="text-sm font-medium text-foreground cursor-pointer select-none">
+                In Training BDA (Trainee)
+              </label>
             </div>
 
             <button 

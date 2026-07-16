@@ -3,14 +3,16 @@
 import { useState, useMemo, useEffect } from "react";
 import { 
   Search, Phone, PhoneCall, PhoneMissed, Play, Pause, Volume2, Clock, Calendar, User, FileAudio,
-  Brain, CheckCircle2, XCircle, AlertCircle, X, MessageSquare, Sparkles, Loader2, ListChecks, ThumbsUp, ShieldAlert
+  Brain, CheckCircle2, XCircle, AlertCircle, X, MessageSquare, Sparkles, Loader2, ListChecks, ThumbsUp, ShieldAlert,
+  Filter
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import { API } from "@/lib/api";
-import { refreshCall } from "@/actions/calls";
+import { refreshCall, uploadRecordingAction } from "@/actions/calls";
+import { toast } from "sonner";
 
-export function CallsClient({ initialCalls }) {
+export function CallsClient({ initialCalls, allUsers = [] }) {
   const [calls, setCalls] = useState(initialCalls);
   const [searchInput, setSearchInput] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState("");
@@ -23,19 +25,35 @@ export function CallsClient({ initialCalls }) {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [selectedTelecallerId, setSelectedTelecallerId] = useState(null);
 
-  const telecallers = useMemo(() => {
+  // Manual Analyzer states
+  const [isUploadOpen, setIsUploadOpen] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [selectedUserForUpload, setSelectedUserForUpload] = useState("");
+  const [manualPhone, setManualPhone] = useState("");
+  const [manualDuration, setManualDuration] = useState(0);
+  const [manualIsTraining, setManualIsTraining] = useState(false);
+  const [uploadFile, setUploadFile] = useState(null);
+  const [uploadError, setUploadError] = useState("");
+
+  // Filters under cards
+  const [durationFilter, setDurationFilter] = useState("all");
+  const [startDateFilter, setStartDateFilter] = useState("");
+  const [endDateFilter, setEndDateFilter] = useState("");
+
+  const computedUsers = useMemo(() => {
     const map = {};
+    allUsers.forEach((u) => {
+      map[u.id] = {
+        id: u.id,
+        name: u.name,
+        isTraining: u.isTraining,
+        totalCalls: 0,
+        reachedCalls: 0,
+        notReachedCalls: 0,
+      };
+    });
     calls.forEach((c) => {
-      if (!c.telecallerId) return;
-      if (!map[c.telecallerId]) {
-        map[c.telecallerId] = {
-          id: c.telecallerId,
-          name: c.telecallerName,
-          totalCalls: 0,
-          reachedCalls: 0,
-          notReachedCalls: 0,
-        };
-      }
+      if (!c.telecallerId || !map[c.telecallerId]) return;
       map[c.telecallerId].totalCalls++;
       if (c.outcome === "reached") {
         map[c.telecallerId].reachedCalls++;
@@ -44,7 +62,10 @@ export function CallsClient({ initialCalls }) {
       }
     });
     return Object.values(map);
-  }, [calls]);
+  }, [allUsers, calls]);
+
+  const traineeUsers = useMemo(() => computedUsers.filter(u => u.isTraining), [computedUsers]);
+  const regularUsers = useMemo(() => computedUsers.filter(u => !u.isTraining), [computedUsers]);
 
   const getInitials = (name) => {
     if (!name) return "TC";
@@ -206,18 +227,43 @@ export function CallsClient({ initialCalls }) {
   };
 
   const filteredCalls = useMemo(() => {
+    if (!selectedTelecallerId) return [];
+
     return calls.filter((call) => {
+      // 1. Matches selected telecaller
+      if (call.telecallerId !== selectedTelecallerId) return false;
+
+      // 2. Matches search text
       const matchesSearch = 
         call.leadPhone.includes(searchInput) ||
         call.telecallerName.toLowerCase().includes(searchInput.toLowerCase());
+      if (!matchesSearch) return false;
       
+      // 3. Matches outcome
       const matchesOutcome = outcomeFilter === "" || call.outcome === outcomeFilter;
+      if (!matchesOutcome) return false;
 
-      const matchesTelecaller = !selectedTelecallerId || call.telecallerId === selectedTelecallerId;
+      // 4. Matches duration
+      if (durationFilter === "short" && call.duration >= 30) return false;
+      if (durationFilter === "medium" && (call.duration < 30 || call.duration > 120)) return false;
+      if (durationFilter === "long" && call.duration <= 120) return false;
 
-      return matchesSearch && matchesOutcome && matchesTelecaller;
+      // 5. Matches custom date range
+      const callDate = new Date(call.contactedAt);
+      if (startDateFilter) {
+        const start = new Date(startDateFilter);
+        start.setHours(0, 0, 0, 0);
+        if (callDate < start) return false;
+      }
+      if (endDateFilter) {
+        const end = new Date(endDateFilter);
+        end.setHours(23, 59, 59, 999);
+        if (callDate > end) return false;
+      }
+
+      return true;
     });
-  }, [calls, searchInput, outcomeFilter, selectedTelecallerId]);
+  }, [calls, searchInput, outcomeFilter, selectedTelecallerId, durationFilter, startDateFilter, endDateFilter]);
 
   const handlePlayCall = (call) => {
     if (!call.recordingUrl) return;
@@ -264,10 +310,84 @@ export function CallsClient({ initialCalls }) {
     return phone;
   };
 
+  const handleFileChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadFile(file);
+    setUploadError("");
+
+    try {
+      const audio = new Audio();
+      audio.src = URL.createObjectURL(file);
+      audio.addEventListener("loadedmetadata", () => {
+        setManualDuration(Math.round(audio.duration));
+        URL.revokeObjectURL(audio.src);
+      });
+      audio.addEventListener("error", () => {
+        setManualDuration(60);
+        URL.revokeObjectURL(audio.src);
+      });
+    } catch (err) {
+      console.error("Error loading audio metadata:", err);
+      setManualDuration(60);
+    }
+  };
+
+  const handleUploadSubmit = async (e) => {
+    e.preventDefault();
+    if (!uploadFile) {
+      setUploadError("Please select a recording file.");
+      return;
+    }
+    if (!selectedUserForUpload) {
+      setUploadError("Please assign a telecaller.");
+      return;
+    }
+    if (!manualPhone || manualPhone.replace(/\D/g, "").length < 10) {
+      setUploadError("Please enter a valid 10-digit phone number.");
+      return;
+    }
+
+    setUploading(true);
+    setUploadError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("file", uploadFile);
+      formData.append("telecallerId", selectedUserForUpload);
+      formData.append("phone", manualPhone);
+      formData.append("duration", manualDuration.toString());
+      formData.append("isTraining", manualIsTraining.toString());
+      formData.append("outcome", "reached");
+      formData.append("contactedAt", new Date().toISOString());
+
+      const result = await uploadRecordingAction(formData);
+
+      if (result.success && result.call) {
+        setCalls((prev) => [result.call, ...prev]);
+        setIsUploadOpen(false);
+        setUploadFile(null);
+        setSelectedUserForUpload("");
+        setManualPhone("");
+        setManualDuration(0);
+        setManualIsTraining(false);
+        toast.success("Recording uploaded. AI Auditing triggered.");
+        handleTriggerAudit(result.call);
+      } else {
+        setUploadError(result.error || "Failed to upload recording.");
+      }
+    } catch (err) {
+      setUploadError(err.message || "Something went wrong.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="space-y-6 relative min-h-[80vh]">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-5">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
             Call Tracker Logs
@@ -276,128 +396,244 @@ export function CallsClient({ initialCalls }) {
             Track, audit, and listen to outbound sales calls recorded by the mobile app.
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-sm font-semibold text-foreground">
-          <FileAudio className="h-4 w-4 text-primary" />
-          {filteredCalls.length} logs
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative w-full sm:max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search by caller or phone..."
-            className="input pl-10 pr-4 text-sm w-full"
-          />
-        </div>
-        <div className="w-full sm:w-auto">
-          <select
-            value={outcomeFilter}
-            onChange={(e) => setOutcomeFilter(e.target.value)}
-            className="input w-full sm:w-48 text-sm py-2 pr-8"
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsUploadOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-primary-foreground bg-primary hover:bg-primary/95 rounded-xl transition-all shadow-sm cursor-pointer"
           >
-            <option value="">All outcomes</option>
-            <option value="reached">Reached (&gt;15s)</option>
-            <option value="not_reached">Not Reached (&le;15s)</option>
-          </select>
+            <Sparkles className="h-4 w-4" />
+            Upload & Analyze Call
+          </button>
+          {selectedTelecallerId && (
+            <div className="flex items-center gap-2 rounded-xl border border-border bg-card px-3 py-2 text-xs font-bold text-foreground animate-fade-in">
+              <FileAudio className="h-4 w-4 text-primary" />
+              {filteredCalls.length} logs
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Telecaller Profiles Cards Selection */}
-      {calls.length > 0 && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
-              <User className="h-4 w-4 text-indigo-500" />
-              Filter by Telecaller Profile
-            </h3>
-            {selectedTelecallerId && (
-              <button
-                onClick={() => setSelectedTelecallerId(null)}
-                className="text-xs font-semibold text-primary hover:underline cursor-pointer"
-              >
-                Clear filter
-              </button>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {/* All Telecallers Card */}
-            <div
-              onClick={() => setSelectedTelecallerId(null)}
-              className={cn(
-                "cursor-pointer p-4 rounded-xl border transition-all flex items-center gap-3 bg-card hover:shadow-md",
-                !selectedTelecallerId
-                  ? "border-primary ring-2 ring-primary/10 shadow-sm"
-                  : "border-border hover:border-muted-foreground/30"
-              )}
-            >
-              <div className={cn(
-                "h-10 w-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0",
-                !selectedTelecallerId ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-              )}>
-                ALL
-              </div>
-              <div className="min-w-0 flex-1">
-                <span className="font-bold text-sm block text-foreground">All Telecallers</span>
-                <span className="text-xs text-muted-foreground block truncate">{calls.length} total call logs</span>
-              </div>
-            </div>
-
-            {/* Individual Telecaller Cards */}
-            {telecallers.map((tc) => {
+      {/* Trainee Profiles Section */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+            <Brain className="h-4 w-4 text-amber-500" />
+            Trainee BDAs (Trainings)
+          </h3>
+        </div>
+        {traineeUsers.length === 0 ? (
+          <p className="text-xs text-muted-foreground italic pl-1">No trainee BDAs configured in User Management.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {traineeUsers.map((tc) => {
               const isSelected = selectedTelecallerId === tc.id;
               return (
                 <div
                   key={tc.id}
                   onClick={() => setSelectedTelecallerId(tc.id)}
                   className={cn(
-                    "cursor-pointer p-4 rounded-xl border transition-all flex flex-col justify-between bg-card hover:shadow-md space-y-3",
+                    "cursor-pointer p-3 rounded-xl border transition-all flex items-center justify-between bg-card hover:bg-muted/40",
                     isSelected
-                      ? "border-primary ring-2 ring-primary/10 shadow-sm"
-                      : "border-border hover:border-muted-foreground/30"
+                      ? "border-primary/50 bg-primary/[0.03] shadow-sm ring-1 ring-primary/20"
+                      : "border-border hover:border-border/80"
                   )}
                 >
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
                     <div className={cn(
-                      "h-10 w-10 rounded-full flex items-center justify-center font-bold text-xs shrink-0 uppercase",
-                      isSelected ? "bg-primary text-primary-foreground" : "bg-indigo-50 text-indigo-700 border border-indigo-100"
+                      "h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 uppercase",
+                      isSelected
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-amber-100/60 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 border border-amber-200/55 dark:border-amber-900/30"
                     )}>
                       {getInitials(tc.name)}
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="font-bold text-sm block text-foreground truncate">{tc.name}</span>
-                      <span className="text-[10px] font-mono text-muted-foreground block truncate" title={tc.id}>
-                        ID: {tc.id}
-                      </span>
+                    <div className="min-w-0">
+                      <span className="font-bold text-xs block text-foreground truncate leading-snug">{tc.name}</span>
+                      <span className="text-[9px] text-muted-foreground block font-medium truncate">Trainee BDA</span>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-between text-xs pt-1 border-t border-border/50">
-                    <span className="font-semibold text-foreground">{tc.totalCalls} Calls</span>
-                    <div className="flex gap-1.5">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
-                        {tc.reachedCalls} R
-                      </span>
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-100">
-                        {tc.notReachedCalls} M
-                      </span>
-                    </div>
+                  <div className="shrink-0 pl-1">
+                    <span className="text-[10px] font-bold text-foreground bg-muted border border-border px-2 py-0.5 rounded-full">
+                      {tc.totalCalls}
+                    </span>
                   </div>
                 </div>
               );
             })}
           </div>
+        )}
+      </div>
+
+      {/* Regular Profiles Section */}
+      <div className="space-y-4 pt-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-bold text-foreground flex items-center gap-1.5">
+            <User className="h-4 w-4 text-indigo-500" />
+            Regular BDAs & Staff
+          </h3>
+        </div>
+        {regularUsers.length === 0 ? (
+          <p className="text-xs text-muted-foreground italic pl-1">No regular BDAs configured in User Management.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+            {regularUsers.map((tc) => {
+              const isSelected = selectedTelecallerId === tc.id;
+              return (
+                <div
+                  key={tc.id}
+                  onClick={() => setSelectedTelecallerId(tc.id)}
+                  className={cn(
+                    "cursor-pointer p-3 rounded-xl border transition-all flex items-center justify-between bg-card hover:bg-muted/40",
+                    isSelected
+                      ? "border-primary/50 bg-primary/[0.03] shadow-sm ring-1 ring-primary/20"
+                      : "border-border hover:border-border/80"
+                  )}
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className={cn(
+                      "h-8 w-8 rounded-full flex items-center justify-center font-bold text-xs shrink-0 uppercase",
+                      isSelected
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-indigo-100/60 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-300 border border-indigo-200/55 dark:border-indigo-900/30"
+                    )}>
+                      {getInitials(tc.name)}
+                    </div>
+                    <div className="min-w-0">
+                      <span className="font-bold text-xs block text-foreground truncate leading-snug">{tc.name}</span>
+                      <span className="text-[9px] text-muted-foreground block font-medium truncate">Regular BDA</span>
+                    </div>
+                  </div>
+                  <div className="shrink-0 pl-1">
+                    <span className="text-[10px] font-bold text-foreground bg-muted border border-border px-2 py-0.5 rounded-full">
+                      {tc.totalCalls}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Selected Workspace with Filters under Cards */}
+      {selectedTelecallerId && (
+        <div className="space-y-4 pt-4 border-t border-border/60">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+                {getInitials(allUsers.find(u => u.id === selectedTelecallerId)?.name)}
+              </div>
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
+                <span>Call Logs for {allUsers.find(u => u.id === selectedTelecallerId)?.name}</span>
+                {allUsers.find(u => u.id === selectedTelecallerId)?.isTraining && (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50">
+                    Trainee
+                  </span>
+                )}
+              </h3>
+            </div>
+            <button
+              onClick={() => setSelectedTelecallerId(null)}
+              className="text-xs font-bold text-rose-600 hover:text-rose-500 cursor-pointer"
+            >
+              Clear selection
+            </button>
+          </div>
+
+          {/* Filter Toolbar */}
+          <div className="card p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+            {/* Search */}
+            <div className="space-y-1.5 sm:col-span-2 lg:col-span-2">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1">
+                <Search className="h-3 w-3" /> Search
+              </label>
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search by phone..."
+                className="input py-2 text-xs w-full bg-background"
+              />
+            </div>
+
+            {/* Outcome Filter */}
+            <div className="space-y-1.5 sm:col-span-1">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1">
+                <Filter className="h-3 w-3" /> Outcome
+              </label>
+              <select
+                value={outcomeFilter}
+                onChange={(e) => setOutcomeFilter(e.target.value)}
+                className="input py-2 text-xs w-full bg-background pr-8"
+              >
+                <option value="">All outcomes</option>
+                <option value="reached">Reached (&gt;15s)</option>
+                <option value="not_reached">Not Reached (&le;15s)</option>
+              </select>
+            </div>
+
+            {/* Duration Filter */}
+            <div className="space-y-1.5 sm:col-span-1">
+              <label className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1">
+                <Clock className="h-3 w-3" /> Duration
+              </label>
+              <select
+                value={durationFilter}
+                onChange={(e) => setDurationFilter(e.target.value)}
+                className="input py-2 text-xs w-full bg-background pr-8"
+              >
+                <option value="all">All Durations</option>
+                <option value="short">Short (&lt; 30s)</option>
+                <option value="medium">Medium (30s - 2m)</option>
+                <option value="long">Long (&gt; 2m)</option>
+              </select>
+            </div>
+
+            {/* Custom Datepicker (From/To) */}
+            <div className="space-y-1.5 sm:col-span-2 lg:col-span-1 flex gap-2 w-full">
+              <div className="w-1/2">
+                <label className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1">
+                  <Calendar className="h-3 w-3" /> From
+                </label>
+                <input
+                  type="date"
+                  value={startDateFilter}
+                  onChange={(e) => setStartDateFilter(e.target.value)}
+                  className="input py-2 text-[10px] w-full bg-background"
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1">
+                  <Calendar className="h-3 w-3" /> To
+                </label>
+                <input
+                  type="date"
+                  value={endDateFilter}
+                  onChange={(e) => setEndDateFilter(e.target.value)}
+                  className="input py-2 text-[10px] w-full bg-background"
+                />
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
       {/* Table / Cards Card */}
-      <div className="card overflow-hidden">
-        {filteredCalls.length === 0 ? (
+      {!selectedTelecallerId ? (
+        <div className="card p-12 text-center flex flex-col items-center justify-center space-y-4 bg-muted/10 border-dashed border-2 border-border/80">
+          <div className="p-4 bg-indigo-50 dark:bg-indigo-950/20 text-indigo-600 dark:text-indigo-400 rounded-full animate-pulse">
+            <Brain className="h-10 w-10" />
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-foreground">Select a BDA Profile</h3>
+            <p className="text-xs text-muted-foreground max-w-sm mt-1 mx-auto leading-relaxed">
+              Choose a team member from the Trainee or Regular sections above to view their call logs, play recordings, and inspect AI-driven compliance reports.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="card overflow-hidden">
+          {filteredCalls.length === 0 ? (
           <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
             <PhoneCall className="mb-4 h-10 w-10 text-muted-foreground/40 animate-bounce" />
             <h2 className="text-base font-semibold text-foreground">No call logs found</h2>
@@ -740,6 +976,7 @@ export function CallsClient({ initialCalls }) {
           </>
         )}
       </div>
+      )}
 
       {/* Floating Global Audio Player */}
       {activeCall && (
@@ -1462,6 +1699,159 @@ export function CallsClient({ initialCalls }) {
               </div>
             </>
           )}
+        </div>
+      )}
+
+      {/* Upload and Analyze Modal */}
+      {isUploadOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg p-6 relative flex flex-col space-y-4 animate-in zoom-in-95 duration-200">
+            <button 
+              onClick={() => setIsUploadOpen(false)}
+              className="absolute right-4 top-4 text-muted-foreground hover:text-foreground cursor-pointer"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            
+            <div>
+              <h3 className="text-lg font-bold text-foreground">Upload & Analyze Call</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Upload a call recording, assign it to a BDA, and trigger AI compliance auditing.
+              </p>
+            </div>
+
+            <form onSubmit={handleUploadSubmit} className="space-y-4 pt-2">
+              {/* File Upload Drop Area */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground uppercase">Call Recording File</label>
+                <div className={cn(
+                  "border-2 border-dashed rounded-xl p-4 flex flex-col items-center justify-center text-center cursor-pointer transition-all hover:bg-muted/10",
+                  uploadFile ? "border-emerald-500/50 bg-emerald-50/5 dark:bg-emerald-950/5" : "border-border hover:border-primary/50"
+                )}>
+                  <input 
+                    type="file" 
+                    accept="audio/*" 
+                    onChange={handleFileChange}
+                    className="hidden" 
+                    id="recording-file-input"
+                  />
+                  <label htmlFor="recording-file-input" className="cursor-pointer w-full h-full flex flex-col items-center justify-center space-y-1">
+                    {uploadFile ? (
+                      <>
+                        <FileAudio className="h-8 w-8 text-emerald-500 animate-bounce" />
+                        <span className="text-xs font-bold text-foreground max-w-[250px] truncate">{uploadFile.name}</span>
+                        <span className="text-[10px] text-muted-foreground">{(uploadFile.size / (1024 * 1024)).toFixed(2)} MB</span>
+                      </>
+                    ) : (
+                      <>
+                        <FileAudio className="h-8 w-8 text-muted-foreground/50" />
+                        <span className="text-xs font-bold text-foreground">Click to upload audio file</span>
+                        <span className="text-[10px] text-muted-foreground">Supports MP3, WAV, M4A, etc.</span>
+                      </>
+                    )}
+                  </label>
+                </div>
+              </div>
+
+              {/* Assign Telecaller Profile */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-muted-foreground uppercase">Assign BDA / Telecaller</label>
+                <select
+                  value={selectedUserForUpload}
+                  onChange={(e) => {
+                    setSelectedUserForUpload(e.target.value);
+                    const user = allUsers.find(u => u.id === e.target.value);
+                    if (user) {
+                      setManualIsTraining(user.isTraining);
+                    }
+                  }}
+                  className="input text-xs w-full py-2 bg-background border-border"
+                  required
+                >
+                  <option value="">Select BDA Profile...</option>
+                  <optgroup label="Trainee BDAs">
+                    {allUsers.filter(u => u.isTraining).map(u => (
+                      <option key={u.id} value={u.id}>{u.name} (Trainee)</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Regular BDAs">
+                    {allUsers.filter(u => !u.isTraining).map(u => (
+                      <option key={u.id} value={u.id}>{u.name}</option>
+                    ))}
+                  </optgroup>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                {/* Dialed Number */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">Dialed Phone Number</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., 9876543210"
+                    value={manualPhone}
+                    onChange={(e) => setManualPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                    className="input text-xs w-full py-2"
+                    required
+                  />
+                </div>
+
+                {/* Duration */}
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">Duration (auto-filled)</label>
+                  <input
+                    type="text"
+                    value={manualDuration > 0 ? formatDuration(manualDuration) : "No audio loaded"}
+                    disabled
+                    className="input text-xs w-full py-2 bg-muted/30 text-muted-foreground font-semibold"
+                  />
+                </div>
+              </div>
+
+              {/* Training Period Toggle */}
+              <div className="flex items-center gap-2 py-1">
+                <input
+                  id="modal-is-training"
+                  type="checkbox"
+                  checked={manualIsTraining}
+                  onChange={(e) => setManualIsTraining(e.target.checked)}
+                  className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                />
+                <label htmlFor="modal-is-training" className="text-xs font-semibold text-foreground cursor-pointer select-none">
+                  Trainee Session (Save to separate Trainings section)
+                </label>
+              </div>
+
+              {uploadError && (
+                <div className="text-xs font-semibold text-rose-600 bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/50 p-2.5 rounded-lg">
+                  {uploadError}
+                </div>
+              )}
+
+              {/* Progress/Upload Loader */}
+              {uploading ? (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-primary">
+                    <span className="flex items-center gap-1.5">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Uploading & Triggering Audit...
+                    </span>
+                  </div>
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary animate-pulse w-4/5 rounded-full" />
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="submit"
+                  className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-xl font-bold hover:bg-primary/90 transition-all cursor-pointer"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Analyze Recording
+                </button>
+              )}
+            </form>
+          </div>
         </div>
       )}
     </div>
