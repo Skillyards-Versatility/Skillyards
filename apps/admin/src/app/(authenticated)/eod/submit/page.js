@@ -3,11 +3,16 @@ import { getSession } from "@/lib/auth";
 import { db, users, eodReports } from "@repo/db";
 import { eq, and } from "drizzle-orm";
 import { getIstDate } from "@/lib/ist";
+import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function EodSubmitPage() {
   const session = await getSession();
+
+  if (session?.role === "ADMIN") {
+    redirect("/eod/history");
+  }
 
   const [user] = await db
     .select({ team: users.team })
