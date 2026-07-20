@@ -3,8 +3,10 @@ const nextConfig = {
   /* config options here */
   reactCompiler: true,
   transpilePackages: ["@repo/db"],
-  serverActions: {
-    bodySizeLimit: '50mb',
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb',
+    },
   },
   async rewrites() {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
