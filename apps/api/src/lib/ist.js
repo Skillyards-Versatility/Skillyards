@@ -20,3 +20,22 @@ export function isIstSunday(now = new Date()) {
   });
   return dayName === "Sunday";
 }
+
+export function isIstBeforeCutoff(now = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: IST_TIMEZONE,
+    hour12: false,
+    hour: "numeric",
+    minute: "numeric",
+  }).formatToParts(now);
+  
+  const hourPart = parts.find((p) => p.type === "hour");
+  const minutePart = parts.find((p) => p.type === "minute");
+  
+  const hour = parseInt(hourPart ? hourPart.value : "0", 10);
+  const minute = parseInt(minutePart ? minutePart.value : "0", 10);
+  
+  if (hour < 18) return true;
+  if (hour === 18 && minute < 30) return true;
+  return false;
+}
