@@ -54,6 +54,13 @@ const ROLE_OPTIONS = [
   { value: "ADMIN", label: "Administrator" },
 ];
 
+const ROLE_LABELS = {
+  STAFF: "Staff",
+  SALES: "Sales",
+  MANAGER: "Manager",
+  ADMIN: "Admin",
+};
+
 const TEAM_FILTER_OPTIONS = [
   { value: "", label: "All Teams" },
   { value: "sales", label: "Sales" },
@@ -201,12 +208,12 @@ export function UserManagementClient({ initialUsers, currentUserId }) {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(280px,320px)] gap-4 lg:gap-6 items-start">
 
       {/* User List Section */}
-      <div className="lg:col-span-2 space-y-4">
+      <div className="space-y-4 min-w-0">
         {/* Search + Filters */}
-        <div className="card p-4 space-y-3">
+        <div className="card p-3 sm:p-4 space-y-2.5">
           <div className="flex items-center gap-3">
             <Search className="h-5 w-5 text-muted-foreground shrink-0" />
             <input
@@ -249,7 +256,7 @@ export function UserManagementClient({ initialUsers, currentUserId }) {
         </div>
 
         {/* Team Count Summary */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5">
           <button
             onClick={() => { setTeamFilter(""); setRoleFilter(""); }}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
@@ -286,20 +293,20 @@ export function UserManagementClient({ initialUsers, currentUserId }) {
         </div>
 
         {/* User Table */}
-        <div className="card overflow-hidden">
+        <div className="card overflow-hidden min-w-0">
+          <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-muted/50 border-b border-border">
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">User</th>
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Role</th>
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Team</th>
-                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Created</th>
-                <th className="px-6 py-4 text-right"></th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">User</th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Role</th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Team</th>
+                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Created</th>
+                <th className="px-4 py-3 text-right"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
               {filteredUsers.map((user) => {
-                const isSelf = user.id === currentUserId;
                 const isEditing = editingUser?.id === user.id;
                 return (
                   <tr
@@ -310,63 +317,61 @@ export function UserManagementClient({ initialUsers, currentUserId }) {
                         : "hover:bg-muted/20"
                     }`}
                   >
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
                           {user.name.charAt(0)}
                         </div>
-                        <div>
-                          <div className="font-medium text-foreground">{user.name}</div>
-                          <div className="text-sm text-muted-foreground">{user.email}</div>
+                        <div className="min-w-0">
+                          <div className="font-medium text-foreground truncate">{user.name}</div>
+                          <div className="text-xs text-muted-foreground truncate">{user.email}</div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
                           user.role === 'MANAGER' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
                           'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
                         }`}>
-                          {user.role}
+                          {ROLE_LABELS[user.role] || user.role}
                         </span>
                         {user.isTraining && (
-                          <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50">
+                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50">
                             Trainee
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       {user.team ? (
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${TEAM_BADGE_CLASSES[user.team] || ""}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${TEAM_BADGE_CLASSES[user.team] || ""}`}>
                           {TEAM_LABELS[user.team] || user.team}
                         </span>
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                    <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
                       {user.createdAt ? format(new Date(user.createdAt), 'MMM dd, yyyy') : 'N/A'}
                     </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-1">
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex items-center justify-end gap-0.5">
                         <button
                           onClick={() => startEdit(user)}
-                          className="p-2 hover:text-primary transition-colors rounded-lg hover:bg-primary/10"
+                          className="p-1.5 hover:text-primary transition-colors rounded-lg hover:bg-primary/10"
                           title="Edit user"
                         >
-                          <Pencil className="h-4 w-4" />
+                          <Pencil className="h-3.5 w-3.5" />
                         </button>
-                        {!isSelf && (
-                          <button
-                            onClick={() => handleDelete(user.id)}
-                            className="p-2 hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10"
-                            title="Delete user"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        )}
+                        <button
+                          onClick={() => handleDelete(user.id)}
+                          className="p-1.5 hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10"
+                          title="Delete user"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -374,6 +379,7 @@ export function UserManagementClient({ initialUsers, currentUserId }) {
               })}
             </tbody>
           </table>
+          </div>
           {filteredUsers.length === 0 && (
             <div className="p-12 text-center text-muted-foreground">
               <Users className="h-12 w-12 mx-auto mb-4 opacity-20" />
@@ -384,7 +390,7 @@ export function UserManagementClient({ initialUsers, currentUserId }) {
       </div>
 
       {/* Right Panel — Create or Edit */}
-      <div className="space-y-6">
+      <div className="space-y-6 lg:sticky lg:top-6">
         {editingUser ? (
           /* ── Edit Mode ── */
           <div className="card p-6 border-primary/20 bg-primary/5">
@@ -442,7 +448,7 @@ export function UserManagementClient({ initialUsers, currentUserId }) {
                   >
                     <option value="STAFF">Staff Member</option>
                     <option value="SALES">Sales Associate</option>
-                    <option value="MANAGER">Manager</option>
+                    <option value="MANAGER">Category Manager</option>
                     <option value="ADMIN">Administrator</option>
                   </select>
                 </div>
@@ -598,7 +604,7 @@ export function UserManagementClient({ initialUsers, currentUserId }) {
                   <select name="role" className="input pl-10 appearance-none bg-background">
                     <option value="STAFF">Staff Member</option>
                     <option value="SALES">Sales Associate</option>
-                    <option value="MANAGER">Manager</option>
+                    <option value="MANAGER">Category Manager</option>
                     <option value="ADMIN">Administrator</option>
                   </select>
                 </div>
