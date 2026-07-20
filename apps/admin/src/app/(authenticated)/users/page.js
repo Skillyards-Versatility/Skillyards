@@ -5,9 +5,6 @@ import { UserManagementClient } from "./UserManagementClient";
 
 export default async function UsersPage() {
   const session = await getSession();
-  if (session?.role !== "ADMIN") {
-    redirect("/dashboard");
-  }
 
   const initialUsers = await getUsers();
 
@@ -20,7 +17,11 @@ export default async function UsersPage() {
         </div>
       </div>
 
-      <UserManagementClient initialUsers={initialUsers} currentUserId={session.userId} />
+      <UserManagementClient
+        initialUsers={initialUsers}
+        currentUserId={session?.userId}
+        userRole={session?.role}
+      />
     </div>
   );
 }

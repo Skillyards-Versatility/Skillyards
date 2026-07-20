@@ -9,7 +9,7 @@ export function LayoutContent({ children, user }) {
 
   return (
     <div className="min-h-screen bg-background flex">
-      <Sidebar />
+      <Sidebar user={user} />
       <div
         className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
           isCollapsed ? "lg:pl-20" : "lg:pl-64"

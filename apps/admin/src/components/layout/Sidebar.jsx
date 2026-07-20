@@ -8,15 +8,22 @@ import { useSidebar } from "@/components/providers/SidebarProvider";
 import { logout } from "@/actions/auth";
 
 const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Students", href: "/students", icon: Users },
-  { name: "Enquiries", href: "/enquiries", icon: Inbox },
-  { name: "Calls", href: "/calls", icon: PhoneCall },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, minRole: "MANAGER" },
+  { name: "Students", href: "/students", icon: Users, minRole: "MANAGER" },
+  { name: "Enquiries", href: "/enquiries", icon: Inbox, minRole: "MANAGER" },
+  { name: "Calls", href: "/calls", icon: PhoneCall, minRole: "MANAGER" },
   { name: "EOD Reports", href: "/eod", icon: ClipboardList },
   { name: "Users", href: "/users", icon: ShieldCheck },
 ];
 
-function SidebarContent({ variant }) {
+const ROLE_LEVEL = { STAFF: 0, SALES: 0, MANAGER: 1, ADMIN: 2 };
+
+function canSee(minRole, userRole) {
+  if (!minRole) return true;
+  return (ROLE_LEVEL[userRole] ?? 0) >= (ROLE_LEVEL[minRole] ?? 0);
+}
+
+function SidebarContent({ variant, user }) {
   const pathname = usePathname();
   const { isCollapsed, toggle, closeMobile } = useSidebar();
   const collapsed = variant === "desktop" && isCollapsed;
@@ -69,28 +76,30 @@ function SidebarContent({ variant }) {
         {!collapsed && (
           <p className="px-3 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider mb-4">Core</p>
         )}
-        {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
-          const Icon = item.icon;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={handleNavClick}
-              title={collapsed ? item.name : undefined}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                collapsed ? "justify-center" : ""
-              } ${
-                isActive
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-              }`}
-            >
-              <Icon className="w-5 h-5 shrink-0" />
-              {!collapsed && item.name}
-            </Link>
-          );
-        })}
+        {navItems
+          .filter((item) => canSee(item.minRole, user?.role))
+          .map((item) => {
+            const isActive = pathname.startsWith(item.href);
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={handleNavClick}
+                title={collapsed ? item.name : undefined}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  collapsed ? "justify-center" : ""
+                } ${
+                  isActive
+                    ? "bg-primary text-primary-foreground shadow-sm"
+                    : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                }`}
+              >
+                <Icon className="w-5 h-5 shrink-0" />
+                {!collapsed && item.name}
+              </Link>
+            );
+          })}
       </nav>
 
       {/* Footer */}
@@ -108,7 +117,7 @@ function SidebarContent({ variant }) {
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ user }) {
   const { isCollapsed, isMobileOpen, closeMobile } = useSidebar();
 
   return (
@@ -119,7 +128,7 @@ export function Sidebar() {
           isCollapsed ? "w-20" : "w-64"
         }`}
       >
-        <SidebarContent variant="desktop" />
+        <SidebarContent variant="desktop" user={user} />
       </div>
 
       {/* Mobile Overlay */}
@@ -137,7 +146,7 @@ export function Sidebar() {
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <SidebarContent variant="mobile" />
+        <SidebarContent variant="mobile" user={user} />
       </div>
     </>
   );

@@ -71,7 +71,8 @@ const TEAM_FILTER_OPTIONS = [
   { value: "__none__", label: "Unassigned" },
 ];
 
-export function UserManagementClient({ initialUsers, currentUserId }) {
+export function UserManagementClient({ initialUsers, currentUserId, userRole }) {
+  const isAdmin = userRole === "ADMIN";
   const router = useRouter();
   const [users, setUsers] = useState(initialUsers);
   const [searchTerm, setSearchTerm] = useState("");
@@ -358,20 +359,24 @@ export function UserManagementClient({ initialUsers, currentUserId }) {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-0.5">
-                        <button
-                          onClick={() => startEdit(user)}
-                          className="p-1.5 hover:text-primary transition-colors rounded-lg hover:bg-primary/10"
-                          title="Edit user"
-                        >
-                          <Pencil className="h-3.5 w-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(user.id)}
-                          className="p-1.5 hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10"
-                          title="Delete user"
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                        {(isAdmin || user.id === currentUserId) && (
+                          <button
+                            onClick={() => startEdit(user)}
+                            className="p-1.5 hover:text-primary transition-colors rounded-lg hover:bg-primary/10"
+                            title="Edit user"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDelete(user.id)}
+                            className="p-1.5 hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10"
+                            title="Delete user"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -389,7 +394,8 @@ export function UserManagementClient({ initialUsers, currentUserId }) {
         </div>
       </div>
 
-      {/* Right Panel — Create or Edit */}
+      {/* Right Panel — Create or Edit (Admin only) */}
+      {isAdmin ? (
       <div className="space-y-6 lg:sticky lg:top-6">
         {editingUser ? (
           /* ── Edit Mode ── */
@@ -653,6 +659,7 @@ export function UserManagementClient({ initialUsers, currentUserId }) {
           </ul>
         </div>
       </div>
+      ) : null}
 
     </div>
   );
