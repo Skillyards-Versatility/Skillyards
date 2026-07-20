@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Calendar, Users, FileText, Clock, CheckCircle2, Filter } from "lucide-react";
-import { getEodHistory, formatIstDate, getIstDate } from "@/actions/eod";
+import { getEodHistory } from "@/actions/eod";
+import { formatIstDate, getIstDate } from "@/lib/ist";
 
 const TEAM_LABELS = {
   sales: "Sales",
