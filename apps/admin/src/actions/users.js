@@ -4,6 +4,15 @@ import { db, users } from "@repo/db";
 import { eq, desc, sql } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
+import { getSession } from "@/lib/auth";
+
+async function requireAdmin() {
+    const session = await getSession();
+    if (session?.role !== "ADMIN") {
+        throw new Error("Unauthorized: admin access required");
+    }
+    return session;
+}
 
 let migrated = false;
 
@@ -52,6 +61,8 @@ export async function getUsers() {
 }
 
 export async function createUser(_prevState, formData) {
+    await requireAdmin();
+
     const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");
@@ -88,8 +99,15 @@ export async function createUser(_prevState, formData) {
 }
 
 export async function updateUser(userId, { name, email, role, team, isTraining }) {
+    const session = await requireAdmin();
+
     if (!name || !email) {
         return { error: "Name and email are required" };
+    }
+
+    // Prevent self-demotion
+    if (session.userId === userId && role !== "ADMIN") {
+        return { error: "Cannot change your own role from ADMIN" };
     }
 
     try {
@@ -113,6 +131,12 @@ export async function updateUser(userId, { name, email, role, team, isTraining }
 }
 
 export async function deleteUser(id) {
+    const session = await requireAdmin();
+
+    if (session.userId === id) {
+        return { error: "Cannot delete your own account" };
+    }
+
     try {
         await db.delete(users).where(eq(users.id, id));
         revalidatePath("/users");
@@ -120,5 +144,22 @@ export async function deleteUser(id) {
     } catch (err) {
         console.error("User Deletion Error:", err);
         return { error: "Failed to delete user", details: err.message };
+    }
+}
+
+export async function resetPassword(userId, newPassword) {
+    await requireAdmin();
+
+    if (!newPassword || newPassword.length < 6) {
+        return { error: "Password must be at least 6 characters" };
+    }
+
+    try {
+        const hashed = await bcrypt.hash(newPassword, 10);
+        await db.update(users).set({ password: hashed }).where(eq(users.id, userId));
+        return { success: true };
+    } catch (err) {
+        console.error("Password Reset Error:", err);
+        return { error: "Failed to reset password" };
     }
 }
