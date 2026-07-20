@@ -240,38 +240,24 @@ export function BreakWidget() {
           }
           setPanelOpen(!panelOpen);
         }}
-        className={`group relative flex items-center gap-2 overflow-hidden shadow-xl rounded-full transition-all duration-300 cursor-pointer active:scale-95 ${
-          panelOpen ? "ring-2 ring-primary/50 ring-offset-2 ring-offset-background" : ""
+        className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 text-white ${
+          panelOpen ? "ring-2 ring-amber-500 ring-offset-2 ring-offset-background" : ""
         } ${
           isOngoing
-            ? "px-5 py-3 bg-background/90 backdrop-blur-xl border border-orange-500/30 shadow-[0_4px_20px_rgba(249,115,22,0.15)]"
+            ? "bg-orange-500 hover:bg-orange-600 shadow-[0_4px_20px_rgba(249,115,22,0.3)] animate-pulse"
             : hasOverage
-            ? "p-4 bg-background/90 backdrop-blur-xl border border-red-500/50 shadow-[0_4px_20px_rgba(239,68,68,0.15)]"
+            ? "bg-red-500 hover:bg-red-600 shadow-[0_4px_20px_rgba(239,68,68,0.3)]"
             : isLimitDone
-            ? "p-4 bg-background/90 backdrop-blur-xl border border-border"
-            : "p-4 bg-background/90 backdrop-blur-xl border border-border hover:border-primary/50"
+            ? "bg-slate-400 hover:bg-slate-500"
+            : "bg-amber-500 hover:bg-amber-600 shadow-[0_4px_20px_rgba(245,158,11,0.3)]"
         }`}
       >
-        {isOngoing && (
-          <div className="absolute inset-0 rounded-full ring-1 ring-inset ring-orange-500/30 pointer-events-none" />
-        )}
-        
         {isOngoing ? (
-          <>
-            <div className="relative">
-              <Coffee className="w-5 h-5 text-orange-500 animate-pulse" />
-            </div>
-            <span className="text-sm font-bold font-mono text-orange-500 ml-1">{formatTime(remaining)}</span>
-          </>
+          <span className="text-xs font-bold font-mono tracking-tighter">{formatTime(remaining)}</span>
         ) : hasOverage ? (
-          <Clock className="w-6 h-6 text-red-500" />
+          <Clock className="w-6 h-6" />
         ) : (
-          <>
-            <Coffee className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
-            <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 group-hover:max-w-xs group-hover:opacity-100 group-hover:ml-1 transition-all duration-300 ease-out text-sm font-bold text-foreground">
-              Take Break
-            </span>
-          </>
+          <Coffee className="w-6 h-6" />
         )}
       </button>
     </div>
