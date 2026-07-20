@@ -124,11 +124,11 @@ export async function finalizeCallUploadAction(payload) {
     }
 
     const { telecallerId, userName, phone, duration, outcome, contactedAt, isTraining, recordingKey } = payload;
-    
+
     if (!phone) {
       return { success: false, error: "Missing phone number in payload." };
     }
-    
+
     const cleanPhone = phone.replace(/\D/g, "").slice(-10);
 
     // Create follow-up call log record
@@ -163,9 +163,9 @@ export async function finalizeCallUploadAction(payload) {
     }
 
     revalidatePath("/calls");
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       call: {
         id: inserted.id,
         leadPhone: inserted.leadPhone,

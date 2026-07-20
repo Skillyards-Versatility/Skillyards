@@ -76,7 +76,11 @@ export async function login(prevState, formData) {
 
 export async function logout() {
   const cookieStore = await cookies();
-  cookieStore.delete("session");
+  cookieStore.set("session", "", {
+    maxAge: 0,
+    path: "/",
+    domain: process.env.NODE_ENV === "production" ? ".skillyards.in" : undefined,
+  });
   redirect("/login");
 }
 

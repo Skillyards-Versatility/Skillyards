@@ -10,9 +10,14 @@ async function getHandler(req, { ctx }) {
     const team = url.searchParams.get("team");
 
     const conditions = [];
+    if (ctx.session.role !== "ADMIN" && ctx.session.role !== "MANAGER") {
+      conditions.push(eq(eodReports.userId, ctx.session.userId));
+    } else if (team) {
+      conditions.push(eq(eodReports.team, team));
+    }
+
     if (startDate) conditions.push(gte(eodReports.date, startDate));
     if (endDate) conditions.push(lte(eodReports.date, endDate));
-    if (team) conditions.push(eq(eodReports.team, team));
 
     const reports = await db
       .select({
