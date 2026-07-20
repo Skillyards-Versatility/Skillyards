@@ -309,6 +309,47 @@ export function eodReportTemplate({ team, date, reports, adminUrl }) {
   `;
 }
 
+export function passwordResetTemplate({ resetLink }) {
+  const year = new Date().getFullYear();
+
+  return `
+  <div style="background:#f1f5f9;padding:2rem;font-family:Arial,sans-serif;">
+    <div style="max-width:560px;margin:auto;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;">
+
+      <div style="background:#0f172a;padding:24px;text-align:center;">
+        <img src="${LOGO_URL}" style="max-width:180px;height:auto;display:block;margin:auto;" alt="Skillyards" />
+      </div>
+
+      <div style="padding:28px 28px 0;">
+        <h1 style="font-size:20px;color:#1e293b;margin:0 0 12px;">Reset Your Password</h1>
+        <p style="color:#64748b;font-size:14px;line-height:1.6;margin:0 0 24px;">
+          We received a request to reset the password for your Skillyards account. Click the button below to set a new password.
+        </p>
+
+        <div style="margin:24px 0;">
+          <a href="${resetLink}" style="display:block;text-align:center;padding:12px 0;background:#635ee7;color:#ffffff;font-size:14px;font-weight:600;border-radius:10px;text-decoration:none;">Reset Password</a>
+        </div>
+
+        <div style="background:#f8fafc;border-radius:10px;padding:16px 18px;border-left:3px solid #f59e0b;margin-bottom:24px;">
+          <p style="font-size:13px;color:#1e293b;line-height:1.6;margin:0;">
+            This link expires in <b>1 hour</b>. If you didn't request a password reset, you can safely ignore this email.
+          </p>
+        </div>
+
+        <p style="font-size:12px;color:#94a3b8;margin:0 0 24px;">
+          If the button above doesn't work, copy and paste this link into your browser:<br>
+          <a href="${resetLink}" style="color:#635ee7;text-decoration:none;word-break:break-all;">${resetLink}</a>
+        </p>
+      </div>
+
+      <div style="border-top:1px solid #e2e8f0;padding:16px 28px;background:#f8fafc;">
+        <p style="text-align:center;font-size:11px;color:#94a3b8;margin:0;">Password reset request · Skillyards · © ${year}</p>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
 export function eodAllTeamsTemplate({ date, teamSummaries, adminUrl }) {
   const year = new Date().getFullYear();
 

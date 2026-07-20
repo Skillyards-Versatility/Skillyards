@@ -9,6 +9,8 @@ export const users = pgTable("users", {
   team: text("team"), // sales | tech | hr | ceo_office | admin_head | marketing | outside_sales
   phone: text("phone"),
   profileImageKey: text("profile_image_key"),
+  resetToken: text("reset_token"),
+  resetTokenExpiry: timestamp("reset_token_expiry"),
   isTraining: boolean("is_training").default(false).notNull(),
   createdAt: timestamp("created_at").defaultNow()
 });

@@ -34,6 +34,12 @@ export async function getUsers() {
             await db.execute(
                 sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS profile_image_key TEXT;`
             );
+            await db.execute(
+                sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token TEXT;`
+            );
+            await db.execute(
+                sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expiry TIMESTAMP;`
+            );
             await db.execute(sql`
                 CREATE TABLE IF NOT EXISTS eod_reports (
                     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

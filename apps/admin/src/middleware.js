@@ -3,7 +3,7 @@ import { decrypt } from "@/lib/auth";
 
 const protectedRoutes = ["/dashboard", "/students", "/enquiries", "/analytics", "/users", "/calls", "/eod"];
 const adminRoutes = ["/dashboard", "/students", "/enquiries", "/calls"];
-const publicRoutes = ["/login", "/"];
+const publicRoutes = ["/login", "/forgot-password", "/reset-password", "/"];
 
 export default async function middleware(req) {
   const path = req.nextUrl.pathname;

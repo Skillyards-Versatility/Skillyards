@@ -4,7 +4,8 @@ import {
   userConfirmationTemplate,
   receiptEmailTemplate,
   eodReportTemplate,
-  eodAllTeamsTemplate
+  eodAllTeamsTemplate,
+  passwordResetTemplate
 } from "./email.template";
 
 function withResend(fn) {
@@ -133,5 +134,19 @@ export const sendEodAllTeamsEmail = withResend((resend, { to, date, teamSummarie
     to: [to],
     subject,
     html: eodAllTeamsTemplate({ date, teamSummaries, adminUrl }),
+  });
+});
+
+/**
+ * Send password reset email
+ */
+export const sendPasswordResetEmail = withResend((resend, { to, resetLink }) => {
+  const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
+
+  return resend.emails.send({
+    from,
+    to: [to],
+    subject: "Reset Your Skillyards Password",
+    html: passwordResetTemplate({ resetLink }),
   });
 });
