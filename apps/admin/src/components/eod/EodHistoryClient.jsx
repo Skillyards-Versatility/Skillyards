@@ -70,40 +70,42 @@ export function EodHistoryClient() {
   return (
     <div className="space-y-6">
       {/* Filters */}
-      <div className="card p-4 flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-2">
+      <div className="card p-3 sm:p-4">
+        <div className="flex items-center gap-2 mb-2 sm:mb-0">
           <Filter className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-medium">Filters</span>
         </div>
-        <input
-          type="date"
-          className="input text-sm py-1.5"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-        />
-        <span className="text-muted-foreground text-sm">to</span>
-        <input
-          type="date"
-          className="input text-sm py-1.5"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-        />
-        <select
-          className="input text-sm py-1.5"
-          value={teamFilter}
-          onChange={(e) => setTeamFilter(e.target.value)}
-        >
-          {TEAM_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-2 sm:mt-0">
+          <input
+            type="date"
+            className="input text-sm py-1.5"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+          />
+          <span className="text-muted-foreground text-sm hidden sm:inline">to</span>
+          <input
+            type="date"
+            className="input text-sm py-1.5"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+          />
+          <select
+            className="input text-sm py-1.5"
+            value={teamFilter}
+            onChange={(e) => setTeamFilter(e.target.value)}
+          >
+            {TEAM_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {loading ? (
-        <div className="card p-12 text-center text-muted-foreground">Loading...</div>
+        <div className="card p-6 sm:p-12 text-center text-muted-foreground">Loading...</div>
       ) : dates.length === 0 ? (
-        <div className="card p-12 text-center text-muted-foreground">
-          <FileText className="h-12 w-12 mx-auto mb-3 opacity-30" />
+        <div className="card p-6 sm:p-12 text-center text-muted-foreground">
+          <FileText className="h-10 sm:h-12 w-10 sm:w-12 mx-auto mb-3 opacity-30" />
           <p>No reports found for this period.</p>
         </div>
       ) : (
@@ -116,16 +118,16 @@ export function EodHistoryClient() {
               </h3>
               <div className="space-y-2">
                 {grouped[date].map((report) => (
-                  <div key={report.id} className="card p-4">
-                    <div className="flex items-center justify-between">
+                  <div key={report.id} className="card p-3 sm:p-4">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                       <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+                        <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0">
                           {(report.userName || "U").charAt(0)}
                         </div>
                         <div>
                           <div className="font-medium text-sm">{report.userName}</div>
                           <div className="text-xs text-muted-foreground">
-                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium mr-2 ${
+                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
                               report.team === "sales" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
                               report.team === "tech" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" :
                               report.team === "hr" ? "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400" :
@@ -140,7 +142,7 @@ export function EodHistoryClient() {
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground pl-12 sm:pl-0">
                         {report.emailedAt && (
                           <span className="flex items-center gap-1">
                             <CheckCircle2 className="h-3 w-3 text-emerald-500" />

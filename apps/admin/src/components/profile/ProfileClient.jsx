@@ -183,7 +183,7 @@ export function ProfileClient({ user }) {
       </div>
 
       {/* Photo */}
-      <div className="card p-6 flex items-center gap-6">
+      <div className="card p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
         <div className="relative">
           <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden">
             {photoPreview ? (
@@ -255,7 +255,7 @@ export function ProfileClient({ user }) {
       </div>
 
       {/* Personal Info */}
-      <div className="card p-6 space-y-4">
+      <div className="card p-4 sm:p-6 space-y-4">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <User className="h-5 w-5 text-primary" />
           Personal Information
@@ -312,7 +312,7 @@ export function ProfileClient({ user }) {
       </div>
 
       {/* Password */}
-      <div className="card p-6 space-y-4">
+      <div className="card p-4 sm:p-6 space-y-4">
         <h2 className="text-lg font-semibold flex items-center gap-2">
           <Lock className="h-5 w-5 text-primary" />
           Change Password

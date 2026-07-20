@@ -31,10 +31,10 @@ export function EodHubClient({ userName }) {
       </div>
 
       {/* Today's Status */}
-      <div className="card p-6">
-        <div className="flex items-center justify-between">
+      <div className="card p-4 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className={`p-3 rounded-xl ${status === "submitted" ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-amber-100 dark:bg-amber-900/30"}`}>
+            <div className={`p-3 rounded-xl shrink-0 ${status === "submitted" ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-amber-100 dark:bg-amber-900/30"}`}>
               {status === "submitted" ? (
                 <CheckCircle2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
               ) : (
@@ -57,7 +57,7 @@ export function EodHubClient({ userName }) {
           {canSubmit && status !== "submitted" && (
             <Link
               href="/eod/submit"
-              className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-all text-sm"
+              className="flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-all text-sm sm:w-auto"
             >
               <Send className="h-4 w-4" />
               Submit Now
@@ -66,7 +66,7 @@ export function EodHubClient({ userName }) {
           {canSubmit && status === "submitted" && (
             <Link
               href="/eod/submit"
-              className="flex items-center gap-2 border border-border px-4 py-2.5 rounded-xl font-medium hover:bg-muted transition-all text-sm"
+              className="flex items-center justify-center gap-2 border border-border px-4 py-2.5 rounded-xl font-medium hover:bg-muted transition-all text-sm sm:w-auto"
             >
               Edit Report
             </Link>
@@ -75,10 +75,10 @@ export function EodHubClient({ userName }) {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Link href="/eod/submit" className="card p-6 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Link href="/eod/submit" className="card p-4 sm:p-6 hover:border-primary/50 hover:bg-primary/5 transition-all group">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary/20 transition-colors">
+            <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary/20 transition-colors shrink-0">
               <Send className="h-5 w-5" />
             </div>
             <div>
@@ -87,9 +87,9 @@ export function EodHubClient({ userName }) {
             </div>
           </div>
         </Link>
-        <Link href="/eod/history" className="card p-6 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+        <Link href="/eod/history" className="card p-4 sm:p-6 hover:border-primary/50 hover:bg-primary/5 transition-all group">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary/20 transition-colors">
+            <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary/20 transition-colors shrink-0">
               <History className="h-5 w-5" />
             </div>
             <div>

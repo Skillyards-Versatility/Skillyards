@@ -145,8 +145,8 @@ export function EodFormClient({ team, existingReport }) {
 
   if (success) {
     return (
-      <div className="card p-12 text-center">
-        <CheckCircle2 className="h-16 w-16 text-emerald-500 mx-auto mb-4" />
+      <div className="card p-6 sm:p-12 text-center">
+        <CheckCircle2 className="h-12 sm:h-16 w-12 sm:w-16 text-emerald-500 mx-auto mb-4" />
         <h2 className="text-xl font-semibold mb-2">Report Submitted!</h2>
         <p className="text-muted-foreground">Redirecting...</p>
       </div>
@@ -155,8 +155,8 @@ export function EodFormClient({ team, existingReport }) {
 
   if (!canSubmit) {
     return (
-      <div className="card p-12 text-center">
-        <AlertCircle className="h-16 w-16 text-amber-500 mx-auto mb-4" />
+      <div className="card p-6 sm:p-12 text-center">
+        <AlertCircle className="h-12 sm:h-16 w-12 sm:w-16 text-amber-500 mx-auto mb-4" />
         <h2 className="text-xl font-semibold mb-2">
           {isIstSunday() ? "Submissions Closed on Sundays" : "Cutoff Time Passed"}
         </h2>
@@ -168,14 +168,14 @@ export function EodFormClient({ team, existingReport }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="card p-6">
+    <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+      <div className="card p-4 sm:p-6">
         <h2 className="text-lg font-semibold mb-1">{TEAM_LABELS[team] || team} Report</h2>
-        <p className="text-sm text-muted-foreground mb-6">{today}</p>
+        <p className="text-sm text-muted-foreground mb-4 sm:mb-6">{today}</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {fields.map((field) => (
-            <div key={field.key} className={field.type === "textarea" ? "md:col-span-2" : ""}>
+            <div key={field.key} className={field.type === "textarea" ? "sm:col-span-2" : ""}>
               <label className="text-sm font-medium block mb-1.5">{field.label}</label>
               {field.type === "textarea" ? (
                 <textarea
@@ -199,12 +199,12 @@ export function EodFormClient({ team, existingReport }) {
       </div>
 
       {/* Screenshot */}
-      <div className="card p-6">
+      <div className="card p-4 sm:p-6">
         <h3 className="text-sm font-semibold mb-3">Screenshot (optional)</h3>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
           <label className="flex items-center gap-2 border border-dashed border-border rounded-xl px-4 py-3 cursor-pointer hover:bg-muted/50 transition-colors text-sm">
-            <Upload className="h-4 w-4" />
-            {screenshotFile ? screenshotFile.name : "Choose image"}
+            <Upload className="h-4 w-4 shrink-0" />
+            <span className="truncate">{screenshotFile ? screenshotFile.name : "Choose image"}</span>
             <input
               type="file"
               accept="image/png,image/jpeg,image/jpg,image/webp"
@@ -213,7 +213,7 @@ export function EodFormClient({ team, existingReport }) {
             />
           </label>
           {screenshotPreview && (
-            <img src={screenshotPreview} alt="Preview" className="h-16 w-16 rounded-lg object-cover border" />
+            <img src={screenshotPreview} alt="Preview" className="h-12 w-12 sm:h-16 sm:w-16 rounded-lg object-cover border shrink-0" />
           )}
         </div>
         <p className="text-xs text-muted-foreground mt-2">PNG, JPEG, or WebP — max 5MB</p>
@@ -223,7 +223,7 @@ export function EodFormClient({ team, existingReport }) {
         <button
           type="submit"
           disabled={submitting}
-          className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-all disabled:opacity-50"
+          className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-all disabled:opacity-50"
         >
           {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
           {existingReport ? "Update Report" : "Submit Report"}

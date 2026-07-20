@@ -313,11 +313,11 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-muted/50 border-b border-border">
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">User</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Role</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Team</th>
-                <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Created</th>
-                <th className="px-4 py-3 text-right"></th>
+                <th className="px-3 sm:px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">User</th>
+                <th className="hidden sm:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Role</th>
+                <th className="hidden md:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Team</th>
+                <th className="hidden lg:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Created</th>
+                <th className="px-3 sm:px-4 py-3 text-right"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -332,7 +332,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                         : "hover:bg-muted/20"
                     }`}
                   >
-                    <td className="px-4 py-3">
+                    <td className="px-3 sm:px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
                           {user.name.charAt(0)}
@@ -340,10 +340,28 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                         <div className="min-w-0">
                           <div className="font-medium text-foreground truncate">{user.name}</div>
                           <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+                          <div className="flex items-center gap-1.5 mt-1 sm:hidden flex-wrap">
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                              user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
+                              user.role === 'MANAGER' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                              user.role === 'HR' ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' :
+                              user.role === 'DEVELOPER' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' :
+                              user.role === 'DIGITAL_MARKETER' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                              user.role === 'OUTSIDE_SALES' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
+                              'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                            }`}>
+                              {ROLE_LABELS[user.role] || user.role}
+                            </span>
+                            {user.team && (
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${TEAM_BADGE_CLASSES[user.team] || ""}`}>
+                                {TEAM_LABELS[user.team] || user.team}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="hidden sm:table-cell px-4 py-3">
                       <div className="flex items-center gap-1.5 flex-wrap">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
@@ -363,7 +381,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="hidden md:table-cell px-4 py-3">
                       {user.team ? (
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${TEAM_BADGE_CLASSES[user.team] || ""}`}>
                           {TEAM_LABELS[user.team] || user.team}
@@ -372,10 +390,10 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                         <span className="text-xs text-muted-foreground">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                    <td className="hidden lg:table-cell px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
                       {user.createdAt ? format(new Date(user.createdAt), 'MMM dd, yyyy') : 'N/A'}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-3 sm:px-4 py-3 text-right">
                       <div className="flex items-center justify-end gap-0.5">
                         {(isAdmin || user.id === currentUserId) && (
                           <button
@@ -404,8 +422,8 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
           </table>
           </div>
           {filteredUsers.length === 0 && (
-            <div className="p-12 text-center text-muted-foreground">
-              <Users className="h-12 w-12 mx-auto mb-4 opacity-20" />
+            <div className="p-8 sm:p-12 text-center text-muted-foreground">
+              <Users className="h-10 sm:h-12 w-10 sm:w-12 mx-auto mb-3 sm:mb-4 opacity-20" />
               <p>No users found matching your search.</p>
             </div>
           )}
@@ -417,7 +435,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
       <div className="space-y-6 lg:sticky lg:top-6">
         {editingUser ? (
           /* ── Edit Mode ── */
-          <div className="card p-6 border-primary/20 bg-primary/5">
+          <div className="card p-4 sm:p-6 border-primary/20 bg-primary/5">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-primary/10 rounded-lg text-primary">
@@ -573,7 +591,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
           </div>
         ) : (
           /* ── Create Mode ── */
-          <div className="card p-6 border-primary/20 bg-primary/5">
+          <div className="card p-4 sm:p-6 border-primary/20 bg-primary/5">
             <div className="flex items-center gap-3 mb-6">
               <div className="p-2 bg-primary/10 rounded-lg text-primary">
                 <UserPlus className="h-5 w-5" />
@@ -674,7 +692,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
           </div>
         )}
 
-        <div className="card p-6 bg-muted/30">
+        <div className="card p-4 sm:p-6 bg-muted/30">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Security Notice</h3>
           <ul className="text-xs text-muted-foreground space-y-2 list-disc pl-4">
             <li>New users should change their password upon first login.</li>
