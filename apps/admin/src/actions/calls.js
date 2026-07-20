@@ -72,78 +72,6 @@ export async function refreshCall(callId) {
   }
 }
 
-import crypto from "crypto";
-
-function hmac(key, string) {
-  return crypto.createHmac("sha256", key).update(string).digest();
-}
-
-function hmacHex(key, string) {
-  return crypto.createHmac("sha256", key).update(string).digest("hex");
-}
-
-function sha256Hex(string) {
-  return crypto.createHash("sha256").update(string).digest("hex");
-}
-
-function getPresignedPutUrl({ bucket, key, accessKeyId, secretAccessKey, endpoint, expiresIn = 3600 }) {
-  const baseUrl = endpoint.replace(/\/$/, "");
-  const url = new URL(baseUrl);
-  const host = url.host;
-  
-  const now = new Date();
-  const amzDate = now.toISOString().replace(/[:-]/g, "").split(".")[0] + "Z";
-  const dateStamp = amzDate.substring(0, 8);
-  
-  const region = "auto";
-  const service = "s3";
-  
-  const credentialScope = `${dateStamp}/${region}/${service}/aws4_request`;
-  
-  const queryParams = {
-    "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
-    "X-Amz-Credential": `${accessKeyId}/${credentialScope}`,
-    "X-Amz-Date": amzDate,
-    "X-Amz-Expires": expiresIn.toString(),
-    "X-Amz-SignedHeaders": "host"
-  };
-  
-  const sortedQueryString = Object.keys(queryParams)
-    .sort()
-    .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(queryParams[k])}`)
-    .join("&");
-    
-  const path = `/${bucket}/${key}`;
-  
-  const canonicalHeaders = `host:${host}\n`;
-  const canonicalRequest = [
-    "PUT",
-    path,
-    sortedQueryString,
-    canonicalHeaders,
-    "host",
-    "UNSIGNED-PAYLOAD"
-  ].join("\n");
-  
-  const hashedCanonicalRequest = sha256Hex(canonicalRequest);
-  
-  const stringToSign = [
-    "AWS4-HMAC-SHA256",
-    amzDate,
-    credentialScope,
-    hashedCanonicalRequest
-  ].join("\n");
-  
-  const kDate = hmac("AWS4" + secretAccessKey, dateStamp);
-  const kRegion = hmac(kDate, region);
-  const kService = hmac(kRegion, service);
-  const kSigning = hmac(kService, "aws4_request");
-  
-  const signature = hmacHex(kSigning, stringToSign);
-  
-  return `${baseUrl}${path}?${sortedQueryString}&X-Amz-Signature=${signature}`;
-}
-
 export async function getUploadPresignedUrlAction(telecallerId, phone, ext, isTrainingInput) {
   try {
     const session = await getSession();
@@ -165,19 +93,19 @@ export async function getUploadPresignedUrlAction(telecallerId, phone, ext, isTr
     }
 
     const isTraining = isTrainingInput === true || (isTrainingInput === null && user.isTraining);
-    const keyPrefix = isTraining ? "trainings" : "recordings";
-    const recordingKey = `${keyPrefix}/${telecallerId}/${cleanPhone}_${Date.now()}.${ext}`;
 
-    const uploadUrl = getPresignedPutUrl({
-      bucket: process.env.R2_BUCKET,
-      key: recordingKey,
-      accessKeyId: process.env.R2_ACCESS_KEY,
-      secretAccessKey: process.env.R2_SECRET_KEY,
-      endpoint: process.env.R2_ENDPOINT,
-      expiresIn: 3600
+    const response = await fetch(`${API}/api/telephony/presign?telecaller_id=${telecallerId}&to_number=${cleanPhone}&recording_ext=${ext}&is_training=${isTraining}`, {
+      headers: {
+        "x-app-secret": process.env.CALL_TRACKER_SECRET || "skillyards_call_tracker_secret_default",
+      },
     });
 
-    return { success: true, uploadUrl, recordingKey, isTraining, userName: user.name };
+    const data = await response.json();
+    if (!response.ok || !data.success) {
+      return { success: false, error: data.message || "Failed to get presigned URL from API" };
+    }
+
+    return { success: true, uploadUrl: data.uploadUrl, recordingKey: data.key, isTraining, userName: user.name };
   } catch (error) {
     console.error("getUploadPresignedUrlAction error:", error);
     return { success: false, error: error.message };
