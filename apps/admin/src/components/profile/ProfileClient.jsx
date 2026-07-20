@@ -183,9 +183,10 @@ export function ProfileClient({ user }) {
       </div>
 
       {/* Photo */}
-      <div className="card p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
-        <div className="relative">
-          <div className="h-20 w-20 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden">
+      <div className="card p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-8 shadow-sm hover:shadow-md transition-all text-center sm:text-left relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-50 pointer-events-none"></div>
+        <div className="relative shrink-0">
+          <div className="h-28 w-28 sm:h-24 sm:w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-4xl sm:text-3xl overflow-hidden ring-4 ring-background shadow-xl">
             {photoPreview ? (
               <img src={photoPreview} alt={user.name} className="h-full w-full object-cover" />
             ) : (
@@ -200,20 +201,21 @@ export function ProfileClient({ user }) {
             onChange={handlePhotoChange}
           />
         </div>
-        <div className="flex-1">
-          <h2 className="text-lg font-semibold">{user.name}</h2>
-          <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-0.5">
-            <Shield className="h-3.5 w-3.5" />
-            {ROLE_LABELS[user.role] || user.role}
+        <div className="flex-1 relative z-10 flex flex-col items-center sm:items-start w-full">
+          <h2 className="text-xl sm:text-lg font-bold">{user.name}</h2>
+          <div className="text-sm text-muted-foreground flex flex-wrap justify-center sm:justify-start items-center gap-2 mt-1.5">
+            <span className="flex items-center gap-1.5 bg-muted/50 px-2 py-1 rounded-md">
+              <Shield className="h-3.5 w-3.5" />
+              {ROLE_LABELS[user.role] || user.role}
+            </span>
             {user.team && (
-              <>
-                <span className="text-muted-foreground/50">·</span>
+              <span className="flex items-center gap-1.5 bg-muted/50 px-2 py-1 rounded-md">
                 <Building2 className="h-3.5 w-3.5" />
                 {TEAM_LABELS[user.team] || user.team}
-              </>
+              </span>
             )}
-          </p>
-          <div className="mt-3 flex items-center gap-3">
+          </div>
+          <div className="mt-5 flex items-center justify-center sm:justify-start gap-3 w-full">
             <button
               onClick={handlePhotoClick}
               disabled={uploadingPhoto || removingPhoto}
@@ -255,13 +257,13 @@ export function ProfileClient({ user }) {
       </div>
 
       {/* Personal Info */}
-      <div className="card p-4 sm:p-6 space-y-4">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
+      <div className="card p-5 sm:p-6 space-y-5 shadow-sm hover:shadow-md transition-all">
+        <h2 className="text-lg font-semibold flex items-center gap-2 border-b border-border/50 pb-3">
           <User className="h-5 w-5 text-primary" />
           Personal Information
         </h2>
 
-        <div className="space-y-2">
+        <div className="space-y-4 pt-1">
           <label className="text-sm font-medium">Full Name</label>
           <div className="relative">
             <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -301,22 +303,28 @@ export function ProfileClient({ user }) {
           </div>
         </div>
 
-        <button
-          onClick={handleSaveProfile}
-          disabled={saving}
-          className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-all disabled:opacity-50 cursor-pointer"
-        >
-          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          Save Changes
-        </button>
+        <div className="pt-2">
+          <button
+            onClick={handleSaveProfile}
+            disabled={saving}
+            className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-3 sm:py-2.5 text-base sm:text-sm rounded-xl font-medium hover:bg-primary/90 transition-all disabled:opacity-50 active:scale-[0.98] cursor-pointer shadow-sm hover:shadow"
+          >
+            {saving ? <Loader2 className="h-5 w-5 sm:h-4 sm:w-4 animate-spin" /> : <Save className="h-5 w-5 sm:h-4 sm:w-4" />}
+            Save Changes
+          </button>
+        </div>
       </div>
 
       {/* Password */}
-      <div className="card p-4 sm:p-6 space-y-4">
-        <h2 className="text-lg font-semibold flex items-center gap-2">
-          <Lock className="h-5 w-5 text-primary" />
-          Change Password
+      <div className="card p-5 sm:p-6 space-y-5 shadow-sm hover:shadow-md transition-all border-amber-500/20">
+        <h2 className="text-lg font-semibold flex items-center gap-2 border-b border-border/50 pb-3">
+          <div className="p-1.5 bg-amber-500/10 rounded-lg text-amber-500">
+            <Lock className="h-4 w-4" />
+          </div>
+          Security Settings
         </h2>
+
+        <div className="space-y-4 pt-1">
 
         {passwordSuccess && (
           <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 rounded-xl">
@@ -366,15 +374,18 @@ export function ProfileClient({ user }) {
             />
           </div>
         </div>
+        </div>
 
-        <button
-          onClick={handleChangePassword}
-          disabled={changingPassword}
-          className="w-full flex items-center justify-center gap-2 bg-amber-500 text-white py-2.5 rounded-xl font-medium hover:bg-amber-600 transition-all disabled:opacity-50 cursor-pointer"
-        >
-          {changingPassword ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
-          Change Password
-        </button>
+        <div className="pt-2">
+          <button
+            onClick={handleChangePassword}
+            disabled={changingPassword}
+            className="w-full flex items-center justify-center gap-2 bg-amber-500 text-white py-3 sm:py-2.5 text-base sm:text-sm rounded-xl font-medium hover:bg-amber-600 transition-all disabled:opacity-50 active:scale-[0.98] cursor-pointer shadow-sm hover:shadow"
+          >
+            {changingPassword ? <Loader2 className="h-5 w-5 sm:h-4 sm:w-4 animate-spin" /> : <KeyRound className="h-5 w-5 sm:h-4 sm:w-4" />}
+            Update Password
+          </button>
+        </div>
       </div>
     </div>
   );

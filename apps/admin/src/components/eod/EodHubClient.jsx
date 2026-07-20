@@ -30,45 +30,43 @@ export function EodHubClient({ userName }) {
         </p>
       </div>
 
-      {/* Today's Status */}
-      <div className="card p-4 sm:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <div className={`p-3 rounded-xl shrink-0 ${status === "submitted" ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-amber-100 dark:bg-amber-900/30"}`}>
-              {status === "submitted" ? (
-                <CheckCircle2 className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
-              ) : (
-                <Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
-              )}
+      {/* Today's Status Banner */}
+      <div className={`rounded-2xl p-6 sm:p-8 text-white relative overflow-hidden shadow-lg transition-all ${status === "submitted" ? "bg-gradient-to-br from-emerald-500 to-emerald-700" : "bg-gradient-to-br from-amber-500 to-orange-600"}`}>
+        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none transform translate-x-1/4 -translate-y-1/4">
+          {status === "submitted" ? <CheckCircle2 className="h-48 w-48" /> : <Clock className="h-48 w-48" />}
+        </div>
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+          <div className="space-y-1.5">
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+              {isSunday ? "Rest Day" : status === "submitted" ? "Completed" : canSubmit ? "Action Required" : "Locked"}
             </div>
-            <div>
-              <h2 className="text-lg font-semibold">{formatIstDate(today)}</h2>
-              <p className="text-sm text-muted-foreground">
-                {isSunday
-                  ? "No submissions on Sundays"
-                  : status === "submitted"
-                    ? "Report submitted"
-                    : canSubmit
-                      ? "Report pending — submit before 6:30 PM IST"
-                      : "Cutoff passed — submissions locked"}
-              </p>
-            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{formatIstDate(today)}</h2>
+            <p className="text-white/90 text-sm sm:text-base max-w-sm mt-1">
+              {isSunday
+                ? "Take a break! No EOD submissions are required on Sundays."
+                : status === "submitted"
+                  ? "Great job! Your end-of-day report has been successfully submitted."
+                  : canSubmit
+                    ? "Your report is pending. Please submit before 6:30 PM IST."
+                    : "The submission window for today has closed."}
+            </p>
           </div>
+          
           {canSubmit && status !== "submitted" && (
             <Link
               href="/eod/submit"
-              className="flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-all text-sm sm:w-auto"
+              className="flex items-center justify-center gap-2 bg-white text-amber-700 hover:bg-white/90 px-6 py-3.5 rounded-xl font-bold transition-all shadow-sm hover:shadow-md active:scale-[0.98] whitespace-nowrap w-full sm:w-auto text-base"
             >
-              <Send className="h-4 w-4" />
-              Submit Now
+              <Send className="h-5 w-5" />
+              Submit Report
             </Link>
           )}
           {canSubmit && status === "submitted" && (
             <Link
               href="/eod/submit"
-              className="flex items-center justify-center gap-2 border border-border px-4 py-2.5 rounded-xl font-medium hover:bg-muted transition-all text-sm sm:w-auto"
+              className="flex items-center justify-center gap-2 bg-white/20 backdrop-blur-sm hover:bg-white/30 border border-white/20 px-6 py-3.5 rounded-xl font-bold transition-all active:scale-[0.98] whitespace-nowrap w-full sm:w-auto text-base"
             >
-              Edit Report
+              Update Report
             </Link>
           )}
         </div>
@@ -76,25 +74,25 @@ export function EodHubClient({ userName }) {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link href="/eod/submit" className="card p-4 sm:p-6 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+        <Link href="/eod/submit" className="card p-5 sm:p-6 hover:shadow-md hover:border-primary/30 hover:bg-primary/5 transition-all group active:scale-[0.98]">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary/20 transition-colors shrink-0">
-              <Send className="h-5 w-5" />
+            <div className="p-3.5 bg-primary/10 rounded-2xl text-primary group-hover:bg-primary/20 group-hover:scale-110 transition-all shrink-0">
+              <Send className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-semibold">Submit Report</h3>
-              <p className="text-sm text-muted-foreground">Fill in today&apos;s EOD report</p>
+              <h3 className="font-semibold text-lg">Submit Report</h3>
+              <p className="text-sm text-muted-foreground mt-0.5">Fill in today&apos;s EOD report</p>
             </div>
           </div>
         </Link>
-        <Link href="/eod/history" className="card p-4 sm:p-6 hover:border-primary/50 hover:bg-primary/5 transition-all group">
+        <Link href="/eod/history" className="card p-5 sm:p-6 hover:shadow-md hover:border-primary/30 hover:bg-primary/5 transition-all group active:scale-[0.98]">
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-primary/10 rounded-xl text-primary group-hover:bg-primary/20 transition-colors shrink-0">
-              <History className="h-5 w-5" />
+            <div className="p-3.5 bg-primary/10 rounded-2xl text-primary group-hover:bg-primary/20 group-hover:scale-110 transition-all shrink-0">
+              <History className="h-6 w-6" />
             </div>
             <div>
-              <h3 className="font-semibold">View History</h3>
-              <p className="text-sm text-muted-foreground">Browse past submissions</p>
+              <h3 className="font-semibold text-lg">View History</h3>
+              <p className="text-sm text-muted-foreground mt-0.5">Browse past submissions</p>
             </div>
           </div>
         </Link>

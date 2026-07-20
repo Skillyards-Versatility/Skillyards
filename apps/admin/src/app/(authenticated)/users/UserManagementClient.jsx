@@ -94,6 +94,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
   const [roleFilter, setRoleFilter] = useState("");
   const [state, action, isPending] = useActionState(createUser, undefined);
   const [editingUser, setEditingUser] = useState(null);
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
   const [editForm, setEditForm] = useState({ name: "", email: "", role: "SALES", team: "", isTraining: false });
   const [saving, setSaving] = useState(false);
   const [resetPwUserId, setResetPwUserId] = useState(null);
@@ -110,6 +111,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
   }, [state, router]);
 
   const startEdit = useCallback((user) => {
+    setIsCreatingUser(false);
     setEditingUser(user);
     setEditForm({
       name: user.name,
@@ -124,6 +126,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
 
   const cancelEdit = useCallback(() => {
     setEditingUser(null);
+    setIsCreatingUser(false);
     setEditForm({ name: "", email: "", role: "SALES", team: "", isTraining: false });
     setResetPwUserId(null);
     setNewPassword("");
@@ -223,26 +226,27 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(280px,320px)] gap-4 lg:gap-6 items-start">
+    <div className="flex flex-col gap-6">
 
-      {/* User List Section */}
-      <div className="space-y-4 min-w-0">
-        {/* Search + Filters */}
-        <div className="card p-3 sm:p-4 space-y-2.5">
-          <div className="flex items-center gap-3">
+      {/* Command Bar */}
+      <div className="card p-4 flex flex-col md:flex-row items-center gap-4 justify-between bg-background/80 backdrop-blur-md sticky top-0 z-10 shadow-sm border-b border-border/50">
+        <div className="flex flex-col sm:flex-row w-full md:w-auto items-center gap-3 flex-1 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
+          <div className="flex items-center gap-3 bg-muted/30 px-3 py-2 rounded-xl border border-border w-full sm:w-64 shrink-0">
             <Search className="h-5 w-5 text-muted-foreground shrink-0" />
             <input
               type="text"
               placeholder="Search users..."
-              className="bg-transparent border-none outline-none w-full text-sm"
+              className="bg-transparent border-none outline-none w-full text-sm focus:ring-0"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <Filter className="h-4 w-4 text-muted-foreground" />
+          
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="h-8 w-px bg-border mx-1 hidden sm:block"></div>
+            <Filter className="h-4 w-4 text-muted-foreground shrink-0 hidden sm:block" />
             <select
-              className="input text-sm py-1.5 w-auto"
+              className="input text-sm py-2 px-3 bg-muted/30 border-border w-auto rounded-xl"
               value={teamFilter}
               onChange={(e) => setTeamFilter(e.target.value)}
             >
@@ -251,7 +255,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
               ))}
             </select>
             <select
-              className="input text-sm py-1.5 w-auto"
+              className="input text-sm py-2 px-3 bg-muted/30 border-border w-auto rounded-xl"
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
             >
@@ -262,19 +266,32 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
             {(teamFilter || roleFilter) && (
               <button
                 onClick={() => { setTeamFilter(""); setRoleFilter(""); }}
-                className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors px-2 py-1 bg-muted/50 rounded-lg shrink-0"
               >
-                Clear filters
+                Clear
               </button>
             )}
           </div>
         </div>
 
+        {isAdmin && (
+          <button
+            onClick={() => { setEditingUser(null); setIsCreatingUser(true); }}
+            className="w-full md:w-auto flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-bold shadow-sm hover:shadow-md hover:bg-primary/90 transition-all active:scale-[0.98] shrink-0"
+          >
+            <UserPlus className="h-5 w-5" />
+            Add User
+          </button>
+        )}
+      </div>
+
+      {/* User List Section */}
+      <div className="space-y-5 min-w-0">
         {/* Team Count Summary */}
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 no-scrollbar -mx-1 px-1">
           <button
             onClick={() => { setTeamFilter(""); setRoleFilter(""); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
               !teamFilter && !roleFilter
                 ? "bg-primary text-primary-foreground"
                 : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -286,7 +303,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
             <button
               key={opt.value}
               onClick={() => { setTeamFilter(opt.value); setRoleFilter(""); }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
                 teamFilter === opt.value
                   ? `${TEAM_BADGE_CLASSES[opt.value]} ring-1 ring-current`
                   : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -297,7 +314,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
           ))}
           <button
             onClick={() => { setTeamFilter("__none__"); setRoleFilter(""); }}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
               teamFilter === "__none__"
                 ? "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300 ring-1 ring-current"
                 : "bg-muted text-muted-foreground hover:bg-muted/80"
@@ -307,39 +324,39 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
           </button>
         </div>
 
-        {/* User Table */}
-        <div className="card overflow-hidden min-w-0">
-          <div className="overflow-x-auto">
+        {/* User Table (Desktop) & Cards (Mobile) */}
+        <div className="card overflow-hidden min-w-0 bg-background/50 sm:bg-card shadow-sm hover:shadow transition-shadow">
+          <div className="hidden md:block overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-muted/50 border-b border-border">
-                <th className="px-3 sm:px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">User</th>
-                <th className="hidden sm:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Role</th>
-                <th className="hidden md:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Team</th>
-                <th className="hidden lg:table-cell px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Created</th>
-                <th className="px-3 sm:px-4 py-3 text-right"></th>
+              <tr className="bg-muted/40 border-b border-border/60">
+                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">User</th>
+                <th className="hidden sm:table-cell px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Role</th>
+                <th className="hidden md:table-cell px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Team</th>
+                <th className="hidden lg:table-cell px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Created</th>
+                <th className="px-6 py-4 text-right"></th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
+            <tbody className="divide-y divide-border/60">
               {filteredUsers.map((user) => {
                 const isEditing = editingUser?.id === user.id;
                 return (
                   <tr
                     key={user.id}
-                    className={`transition-colors ${
+                    className={`transition-colors group ${
                       isEditing
                         ? "bg-primary/5 ring-1 ring-inset ring-primary/20"
-                        : "hover:bg-muted/20"
+                        : "hover:bg-muted/30"
                     }`}
                   >
-                    <td className="px-3 sm:px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0 shadow-sm">
                           {user.name.charAt(0)}
                         </div>
                         <div className="min-w-0">
-                          <div className="font-medium text-foreground truncate">{user.name}</div>
-                          <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+                          <div className="font-semibold text-foreground truncate">{user.name}</div>
+                          <div className="text-xs text-muted-foreground truncate mt-0.5">{user.email}</div>
                           <div className="flex items-center gap-1.5 mt-1 sm:hidden flex-wrap">
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                               user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
@@ -361,8 +378,8 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                         </div>
                       </div>
                     </td>
-                    <td className="hidden sm:table-cell px-4 py-3">
-                      <div className="flex items-center gap-1.5 flex-wrap">
+                    <td className="hidden sm:table-cell px-6 py-4">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
                           user.role === 'MANAGER' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
@@ -381,7 +398,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                         )}
                       </div>
                     </td>
-                    <td className="hidden md:table-cell px-4 py-3">
+                    <td className="hidden md:table-cell px-6 py-4">
                       {user.team ? (
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${TEAM_BADGE_CLASSES[user.team] || ""}`}>
                           {TEAM_LABELS[user.team] || user.team}
@@ -390,14 +407,20 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                         <span className="text-xs text-muted-foreground">—</span>
                       )}
                     </td>
-                    <td className="hidden lg:table-cell px-4 py-3 text-xs text-muted-foreground whitespace-nowrap">
+                    <td className="hidden lg:table-cell px-6 py-4 text-xs font-medium text-muted-foreground whitespace-nowrap">
                       {user.createdAt ? format(new Date(user.createdAt), 'MMM dd, yyyy') : 'N/A'}
                     </td>
-                    <td className="px-3 sm:px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-0.5">
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                         {(isAdmin || user.id === currentUserId) && (
                           <button
-                            onClick={() => startEdit(user)}
+                            onClick={() => {
+                              if (!isAdmin && user.id === currentUserId) {
+                                router.push("/profile");
+                              } else {
+                                startEdit(user);
+                              }
+                            }}
                             className="p-1.5 hover:text-primary transition-colors rounded-lg hover:bg-primary/10"
                             title="Edit user"
                           >
@@ -421,6 +444,81 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
             </tbody>
           </table>
           </div>
+
+          {/* Mobile User Cards */}
+          <div className="md:hidden flex flex-col divide-y divide-border/50">
+            {filteredUsers.map((user) => {
+              const isEditing = editingUser?.id === user.id;
+              return (
+                <div
+                  key={user.id}
+                  className={`p-4 flex flex-col gap-3 transition-colors ${
+                    isEditing ? "bg-primary/5 ring-1 ring-inset ring-primary/20" : "active:bg-muted/20"
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center text-primary font-bold text-lg shrink-0 shadow-sm">
+                        {user.name.charAt(0)}
+                      </div>
+                      <div className="min-w-0 space-y-0.5">
+                        <div className="font-semibold text-base text-foreground truncate">{user.name}</div>
+                        <div className="text-xs font-medium text-muted-foreground truncate">{user.email}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      {(isAdmin || user.id === currentUserId) && (
+                        <button
+                          onClick={() => {
+                            if (!isAdmin && user.id === currentUserId) {
+                              router.push("/profile");
+                            } else {
+                              startEdit(user);
+                            }
+                          }}
+                          className="p-2 text-muted-foreground hover:text-primary transition-colors rounded-full bg-muted/50 active:scale-95"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                      )}
+                      {isAdmin && (
+                        <button
+                          onClick={() => handleDelete(user.id)}
+                          className="p-2 text-muted-foreground hover:text-destructive transition-colors rounded-full bg-muted/50 active:scale-95"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 flex-wrap pl-16">
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
+                      user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
+                      user.role === 'MANAGER' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                      user.role === 'HR' ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' :
+                      user.role === 'DEVELOPER' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' :
+                      user.role === 'DIGITAL_MARKETER' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                      user.role === 'OUTSIDE_SALES' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
+                      'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                    }`}>
+                      {ROLE_LABELS[user.role] || user.role}
+                    </span>
+                    {user.team && (
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${TEAM_BADGE_CLASSES[user.team] || ""}`}>
+                        {TEAM_LABELS[user.team] || user.team}
+                      </span>
+                    )}
+                    {user.isTraining && (
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50">
+                        Trainee
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
           {filteredUsers.length === 0 && (
             <div className="p-8 sm:p-12 text-center text-muted-foreground">
               <Users className="h-10 sm:h-12 w-10 sm:w-12 mx-auto mb-3 sm:mb-4 opacity-20" />
@@ -430,26 +528,34 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
         </div>
       </div>
 
-      {/* Right Panel — Create or Edit (Admin only) */}
-      {isAdmin ? (
-      <div className="space-y-6 lg:sticky lg:top-6">
-        {editingUser ? (
-          /* ── Edit Mode ── */
-          <div className="card p-4 sm:p-6 border-primary/20 bg-primary/5">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                  <Pencil className="h-5 w-5" />
+      {/* Right Panel — Slide-Over Drawer (Admin only) */}
+      {isAdmin && (editingUser || isCreatingUser) ? (
+      <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-sm transition-opacity" onClick={cancelEdit}>
+        <div 
+          className="w-full max-w-md bg-background h-full overflow-y-auto shadow-2xl border-l border-border animate-in slide-in-from-right duration-300"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="p-6 sm:p-8 space-y-8">
+            {editingUser ? (
+              /* ── Edit Mode ── */
+              <div className="space-y-6">
+                <div className="flex items-center justify-between pb-4 border-b border-border/50">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 bg-primary/10 rounded-xl text-primary shadow-sm">
+                      <Pencil className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold tracking-tight">Edit User</h2>
+                      <p className="text-xs text-muted-foreground mt-0.5">{editingUser.name}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={cancelEdit}
+                    className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
                 </div>
-                <h2 className="text-xl font-semibold">Edit: {editingUser.name}</h2>
-              </div>
-              <button
-                onClick={cancelEdit}
-                className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
 
             <div className="space-y-4">
               <div className="space-y-2">
@@ -515,31 +621,31 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                 </select>
               </div>
 
-              <div className="flex items-center gap-2 py-1">
+              <div className="flex items-center gap-2 py-2">
                 <input
                   id="editIsTraining"
                   type="checkbox"
                   checked={editForm.isTraining}
                   onChange={(e) => setEditForm((f) => ({ ...f, isTraining: e.target.checked }))}
-                  className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                  className="rounded border-gray-300 text-primary focus:ring-primary h-4.5 w-4.5 cursor-pointer"
                 />
                 <label htmlFor="editIsTraining" className="text-sm font-medium text-foreground cursor-pointer select-none">
                   In Training BDA (Trainee)
                 </label>
               </div>
 
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-3 pt-4 border-t border-border/50">
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-all disabled:opacity-50"
+                  className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground py-3 rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50 shadow-sm active:scale-[0.98]"
                 >
-                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+                  {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
                   Save Changes
                 </button>
                 <button
                   onClick={cancelEdit}
-                  className="px-4 py-2.5 rounded-xl font-medium border border-border hover:bg-muted transition-all"
+                  className="px-5 py-3 rounded-xl font-bold border border-border hover:bg-muted transition-all active:scale-[0.98]"
                 >
                   Cancel
                 </button>
@@ -547,7 +653,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
             </div>
 
             {/* Password Reset */}
-            <div className="mt-6 pt-6 border-t border-border">
+            <div className="pt-6 border-t border-border/50">
               {resetPwUserId === editingUser.id ? (
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm font-medium">
@@ -589,14 +695,25 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
               )}
             </div>
           </div>
-        ) : (
+        ) : isCreatingUser ? (
           /* ── Create Mode ── */
-          <div className="card p-4 sm:p-6 border-primary/20 bg-primary/5">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                <UserPlus className="h-5 w-5" />
+          <div className="space-y-6">
+            <div className="flex items-center justify-between pb-4 border-b border-border/50">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 bg-primary/10 rounded-xl text-primary shadow-sm">
+                  <UserPlus className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold tracking-tight">New User</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">Create a new account</p>
+                </div>
               </div>
-              <h2 className="text-xl font-semibold">New User</h2>
+              <button
+                onClick={cancelEdit}
+                className="p-2 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
             </div>
 
             <form action={action} className="space-y-4">
@@ -680,25 +797,32 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                 </label>
               </div>
 
-              <button
-                type="submit"
-                disabled={isPending}
-                className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-2.5 rounded-xl font-medium hover:bg-primary/90 transition-all disabled:opacity-50"
-              >
-                {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <UserPlus className="h-4 w-4" />}
-                Create User Account
-              </button>
+              <div className="pt-4 border-t border-border/50">
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-3 rounded-xl font-bold hover:bg-primary/90 transition-all disabled:opacity-50 shadow-sm active:scale-[0.98]"
+                >
+                  {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <UserPlus className="h-5 w-5" />}
+                  Create User Account
+                </button>
+              </div>
             </form>
           </div>
-        )}
+        ) : null}
 
-        <div className="card p-4 sm:p-6 bg-muted/30">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">Security Notice</h3>
-          <ul className="text-xs text-muted-foreground space-y-2 list-disc pl-4">
+        <div className="bg-muted/30 p-5 rounded-2xl border border-border/50 mt-8">
+          <h3 className="text-sm font-bold tracking-tight text-foreground flex items-center gap-2 mb-3">
+            <Shield className="h-4 w-4 text-amber-500" />
+            Security Notice
+          </h3>
+          <ul className="text-xs text-muted-foreground space-y-2.5 list-disc pl-4">
             <li>New users should change their password upon first login.</li>
             <li>Administrator roles have full access to database schema and settings.</li>
             <li>Session tokens expire after 7 days of inactivity.</li>
           </ul>
+        </div>
+          </div>
         </div>
       </div>
       ) : null}
