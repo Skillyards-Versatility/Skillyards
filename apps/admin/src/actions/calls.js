@@ -100,7 +100,7 @@ export async function getUploadPresignedUrlAction(telecallerId, phone, ext, isTr
 
     const response = await fetch(`${API}/api/telephony/presign?telecaller_id=${telecallerId}&to_number=${cleanPhone}&recording_ext=${ext}&is_training=${isTraining}`, {
       headers: {
-        "x-app-secret": process.env.CALL_TRACKER_SECRET || "f8fe36033866cd8b2630e77a3322784d",
+        "x-app-secret": process.env.CALL_TRACKER_SECRET || "skillyards_call_tracker_secret_default",
       },
     });
 
@@ -124,11 +124,11 @@ export async function finalizeCallUploadAction(payload) {
     }
 
     const { telecallerId, userName, phone, duration, outcome, contactedAt, isTraining, recordingKey } = payload;
-    
+
     if (!phone) {
       return { success: false, error: "Missing phone number in payload." };
     }
-    
+
     const cleanPhone = phone.replace(/\D/g, "").slice(-10);
 
     // Create follow-up call log record
@@ -163,9 +163,9 @@ export async function finalizeCallUploadAction(payload) {
     }
 
     revalidatePath("/calls");
-    
-    return { 
-      success: true, 
+
+    return {
+      success: true,
       call: {
         id: inserted.id,
         leadPhone: inserted.leadPhone,
