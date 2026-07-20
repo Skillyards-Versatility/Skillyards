@@ -62,7 +62,7 @@ export async function login(prevState, formData) {
       domain: process.env.NODE_ENV === "production" ? ".skillyards.in" : undefined,
     });
 
-    return { success: true };
+    return { success: true, role: user.role };
 
   } catch (error) {
     console.error("Login Error:", error);

@@ -15,7 +15,8 @@ export default function LoginPage() {
     if (state?.success) {
       toast.success("Login successful");
       router.refresh();
-      router.push("/students");
+      const isAdminish = ["ADMIN", "MANAGER"].includes(state.role);
+      router.push(isAdminish ? "/students" : "/eod");
     } else if (state?.error) {
       toast.error(state.error);
     }
