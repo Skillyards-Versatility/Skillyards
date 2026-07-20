@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import { API } from "@/lib/api";
-import { refreshCall, uploadRecordingAction } from "@/actions/calls";
+import { refreshCall, getUploadPresignedUrlAction, finalizeCallUploadAction } from "@/actions/calls";
 import { toast } from "sonner";
 
 export function CallsClient({ initialCalls, allUsers = [] }) {
@@ -353,19 +353,53 @@ export function CallsClient({ initialCalls, allUsers = [] }) {
     setUploadError("");
 
     try {
-      const formData = new FormData();
-      formData.append("file", uploadFile);
-      formData.append("telecallerId", selectedUserForUpload);
-      formData.append("phone", manualPhone);
-      formData.append("duration", manualDuration.toString());
-      formData.append("isTraining", manualIsTraining.toString());
-      formData.append("outcome", "reached");
-      formData.append("contactedAt", new Date().toISOString());
+      const ext = uploadFile.name.split(".").pop().toLowerCase() || "mp3";
+      
+      // 1. Get Presigned URL
+      const presignResult = await getUploadPresignedUrlAction(
+        selectedUserForUpload,
+        manualPhone,
+        ext,
+        manualIsTraining
+      );
 
-      const result = await uploadRecordingAction(formData);
+      if (!presignResult.success) {
+        throw new Error(presignResult.error || "Failed to generate upload URL");
+      }
 
-      if (result.success && result.call) {
-        setCalls((prev) => [result.call, ...prev]);
+      // 2. Upload directly to Cloudflare R2
+      let contentType = "audio/mpeg";
+      if (ext === "m4a") contentType = "audio/x-m4a";
+      else if (ext === "wav") contentType = "audio/wav";
+      else if (ext === "ogg") contentType = "audio/ogg";
+      else if (ext === "aac") contentType = "audio/aac";
+
+      const uploadResponse = await fetch(presignResult.uploadUrl, {
+        method: "PUT",
+        headers: {
+          "Content-Type": contentType,
+        },
+        body: uploadFile,
+      });
+
+      if (!uploadResponse.ok) {
+        throw new Error("Failed to upload file to storage bucket");
+      }
+
+      // 3. Finalize
+      const finalizeResult = await finalizeCallUploadAction({
+        telecallerId: selectedUserForUpload,
+        userName: presignResult.userName,
+        phone: manualPhone,
+        duration: manualDuration,
+        outcome: "reached",
+        contactedAt: new Date().toISOString(),
+        isTraining: presignResult.isTraining,
+        recordingKey: presignResult.recordingKey
+      });
+
+      if (finalizeResult.success && finalizeResult.call) {
+        setCalls((prev) => [finalizeResult.call, ...prev]);
         setIsUploadOpen(false);
         setUploadFile(null);
         setSelectedUserForUpload("");
@@ -373,9 +407,9 @@ export function CallsClient({ initialCalls, allUsers = [] }) {
         setManualDuration(0);
         setManualIsTraining(false);
         toast.success("Recording uploaded. AI Auditing triggered.");
-        handleTriggerAudit(result.call);
+        handleTriggerAudit(finalizeResult.call);
       } else {
-        setUploadError(result.error || "Failed to upload recording.");
+        setUploadError(finalizeResult.error || "Failed to finalize upload.");
       }
     } catch (err) {
       setUploadError(err.message || "Something went wrong.");
