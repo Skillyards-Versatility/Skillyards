@@ -79,6 +79,10 @@ export async function getUploadPresignedUrlAction(telecallerId, phone, ext, isTr
       return { success: false, error: "Unauthorized" };
     }
 
+    if (!telecallerId || !phone) {
+      return { success: false, error: "Missing required fields. Please hard-refresh your browser." };
+    }
+
     const cleanPhone = phone.replace(/\D/g, "").slice(-10);
 
     // Fetch user to verify and get default training status
@@ -120,6 +124,11 @@ export async function finalizeCallUploadAction(payload) {
     }
 
     const { telecallerId, userName, phone, duration, outcome, contactedAt, isTraining, recordingKey } = payload;
+    
+    if (!phone) {
+      return { success: false, error: "Missing phone number in payload." };
+    }
+    
     const cleanPhone = phone.replace(/\D/g, "").slice(-10);
 
     // Create follow-up call log record
