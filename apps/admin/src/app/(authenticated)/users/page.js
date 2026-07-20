@@ -1,11 +1,15 @@
+import { redirect } from "next/navigation";
 import { getUsers } from "@/actions/users";
+import { getSession } from "@/lib/auth";
 import { UserManagementClient } from "./UserManagementClient";
 
 export default async function UsersPage() {
+  const session = await getSession();
+
   const initialUsers = await getUsers();
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-8">
+    <div className="p-4 sm:p-6 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">User Management</h1>
@@ -13,7 +17,11 @@ export default async function UsersPage() {
         </div>
       </div>
 
-      <UserManagementClient initialUsers={initialUsers} />
+      <UserManagementClient
+        initialUsers={initialUsers}
+        currentUserId={session?.userId}
+        userRole={session?.role}
+      />
     </div>
   );
 }

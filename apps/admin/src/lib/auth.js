@@ -59,6 +59,31 @@ export async function updateSession() {
 }
 
 /**
+ * Update the session cookie with new user data (name, profileImageKey).
+ * Used after profile updates so the UI reflects changes without re-login.
+ */
+export async function updateSessionCookie(updates) {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  if (!session) return;
+
+  const parsed = await decrypt(session);
+  Object.assign(parsed, updates, {
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  });
+  const res = await encrypt(parsed);
+
+  cookieStore.set("session", res, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    expires: parsed.expires,
+    sameSite: "lax",
+    path: "/",
+    domain: process.env.NODE_ENV === "production" ? ".skillyards.in" : undefined,
+  });
+}
+
+/**
  * Standardized headers for server-to-api fetches.
  * Forwards the session cookie to satisfy createProtectedRoute requirements.
  */

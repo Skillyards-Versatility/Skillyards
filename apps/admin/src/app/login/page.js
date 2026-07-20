@@ -4,6 +4,7 @@ import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Mail, Lock, Loader2 } from "lucide-react";
+import Link from "next/link";
 import { Logo } from "@/components/layout/Logo";
 import { login } from "@/actions/auth";
 
@@ -15,7 +16,8 @@ export default function LoginPage() {
     if (state?.success) {
       toast.success("Login successful");
       router.refresh();
-      router.push("/students");
+      const isAdminish = ["ADMIN", "MANAGER"].includes(state.role);
+      router.push(isAdminish ? "/students" : "/eod");
     } else if (state?.error) {
       toast.error(state.error);
     }
@@ -63,6 +65,12 @@ export default function LoginPage() {
                 <p className="text-xs text-red-500 mt-1">{state.errors.password}</p>
               )}
             </div>
+          </div>
+
+          <div className="text-right">
+            <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-primary">
+              Forgot password?
+            </Link>
           </div>
 
           {/* Button */}

@@ -4,8 +4,7 @@
  * Centralized logic for resource access control.
  * Rules:
  * - ADMIN, MANAGER: Full system access.
- * - SALES: Scoped access (TBD: assigned students only). CURRENTLY DENIED for receipts.
- * - STAFF: Restricted access by default.
+ * - SALES, HR, DEVELOPER: Scoped access.
  * - STUDENT: Ownership-based access (Self only).
  */
 
@@ -13,7 +12,10 @@ export const ROLES = {
   ADMIN: "ADMIN",
   MANAGER: "MANAGER",
   SALES: "SALES",
-  STAFF: "STAFF",
+  HR: "HR",
+  DEVELOPER: "DEVELOPER",
+  DIGITAL_MARKETER: "DIGITAL_MARKETER",
+  OUTSIDE_SALES: "OUTSIDE_SALES",
   STUDENT: "STUDENT",
 };
 

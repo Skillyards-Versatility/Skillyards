@@ -1,0 +1,24 @@
+name: EOD Report Cron
+
+on:
+  schedule:
+    # Runs at 13:00 UTC (6:30 PM IST) Monday through Saturday
+    - cron: '0 13 * * 1-6'
+  workflow_dispatch: # Allows manual trigger for testing
+
+jobs:
+  run-eod-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger EOD Report API
+        run: |
+          # The PRODUCTION_API_URL and CRON_SECRET need to be added to GitHub Repository Secrets
+          # Example URL: https://api.skillyards.in
+          API_URL="${{ secrets.PRODUCTION_API_URL }}/api/cron/eod"
+          
+          echo "Pinging EOD Report API at $API_URL"
+          
+          # We use -f to fail the action on HTTP errors (like 401, 500)
+          curl -f -X POST "$API_URL" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "Content-Type: application/json"

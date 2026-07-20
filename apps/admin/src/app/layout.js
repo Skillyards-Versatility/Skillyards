@@ -16,6 +16,19 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Skillyards Admin",
   description: "Skillyards ERP + CRM",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Skillyards",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+};
+
+export const viewport = {
+  themeColor: "#111827",
 };
 
 export default function RootLayout({ children }) {
