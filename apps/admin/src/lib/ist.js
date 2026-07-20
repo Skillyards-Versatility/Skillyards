@@ -1,13 +1,18 @@
-const IST_OFFSET = 5.5 * 60 * 60 * 1000; // IST is UTC+5:30
+const IST_TIMEZONE = "Asia/Kolkata";
 
 /**
  * Get the current IST date as YYYY-MM-DD string.
  */
 export function getIstDate(now = new Date()) {
-  const ist = new Date(now.getTime() + IST_OFFSET);
-  const y = ist.getUTCFullYear();
-  const m = String(ist.getUTCMonth() + 1).padStart(2, "0");
-  const d = String(ist.getUTCDate()).padStart(2, "0");
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: IST_TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const y = parts.find((p) => p.type === "year").value;
+  const m = parts.find((p) => p.type === "month").value;
+  const d = parts.find((p) => p.type === "day").value;
   return `${y}-${m}-${d}`;
 }
 
@@ -15,11 +20,18 @@ export function getIstDate(now = new Date()) {
  * Get current IST time components.
  */
 export function getIstTime(now = new Date()) {
-  const ist = new Date(now.getTime() + IST_OFFSET);
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: IST_TIMEZONE,
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+  }).formatToParts(now);
+  const hours = parseInt(parts.find((p) => p.type === "hour").value, 10);
+  const minutes = parseInt(parts.find((p) => p.type === "minute").value, 10);
   return {
-    hours: ist.getUTCHours(),
-    minutes: IST_OFFSET / 60000 > 0 ? ist.getUTCMinutes() : ist.getUTCMinutes(),
-    totalMinutes: ist.getUTCHours() * 60 + ist.getUTCMinutes(),
+    hours,
+    minutes,
+    totalMinutes: hours * 60 + minutes,
   };
 }
 
@@ -36,8 +48,11 @@ export function isIstBeforeCutoff(now = new Date()) {
  * Check if today is a Sunday in IST.
  */
 export function isIstSunday(now = new Date()) {
-  const ist = new Date(now.getTime() + IST_OFFSET);
-  return ist.getUTCDay() === 0;
+  const dayName = now.toLocaleDateString("en-US", {
+    timeZone: IST_TIMEZONE,
+    weekday: "long",
+  });
+  return dayName === "Sunday";
 }
 
 /**

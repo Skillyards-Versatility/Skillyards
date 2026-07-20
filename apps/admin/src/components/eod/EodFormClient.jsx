@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, Upload, CheckCircle2, AlertCircle } from "lucide-react";
-import { submitEodReport, uploadScreenshot, getIstDate, isIstBeforeCutoff, isIstSunday } from "@/actions/eod";
+import { getIstDate, isIstBeforeCutoff, isIstSunday } from "@/lib/ist";
+import { submitEodReport, uploadScreenshot } from "@/actions/eod";
 
 const TEAM_FIELDS = {
   sales: [

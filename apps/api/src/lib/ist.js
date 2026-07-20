@@ -1,14 +1,22 @@
-const IST_OFFSET = 5.5 * 60 * 60 * 1000;
+const IST_TIMEZONE = "Asia/Kolkata";
 
 export function getIstDate(now = new Date()) {
-  const ist = new Date(now.getTime() + IST_OFFSET);
-  const y = ist.getUTCFullYear();
-  const m = String(ist.getUTCMonth() + 1).padStart(2, "0");
-  const d = String(ist.getUTCDate()).padStart(2, "0");
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: IST_TIMEZONE,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const y = parts.find((p) => p.type === "year").value;
+  const m = parts.find((p) => p.type === "month").value;
+  const d = parts.find((p) => p.type === "day").value;
   return `${y}-${m}-${d}`;
 }
 
 export function isIstSunday(now = new Date()) {
-  const ist = new Date(now.getTime() + IST_OFFSET);
-  return ist.getUTCDay() === 0;
+  const dayName = now.toLocaleDateString("en-US", {
+    timeZone: IST_TIMEZONE,
+    weekday: "long",
+  });
+  return dayName === "Sunday";
 }
