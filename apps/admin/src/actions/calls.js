@@ -100,7 +100,7 @@ export async function getUploadPresignedUrlAction(telecallerId, phone, ext, isTr
 
     const response = await fetch(`${API}/api/telephony/presign?telecaller_id=${telecallerId}&to_number=${cleanPhone}&recording_ext=${ext}&is_training=${isTraining}`, {
       headers: {
-        "x-app-secret": process.env.CALL_TRACKER_SECRET || "skillyards_call_tracker_secret_default",
+        "x-app-secret": process.env.CALL_TRACKER_SECRET || "f8fe36033866cd8b2630e77a3322784d",
       },
     });
 
