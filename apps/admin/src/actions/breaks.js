@@ -5,7 +5,8 @@ import { eq, and, sql, desc } from "drizzle-orm";
 import { getSession } from "@/lib/auth";
 import { getIstDate } from "@/lib/ist";
 
-const MAX_BREAK_SECONDS = 900; // 15 minutes
+const MAX_BREAK_SECONDS = 900; // 15 minutes per break
+const DAILY_BREAK_LIMIT = 1800; // 30 minutes per day
 const PRIVILEGED_ROLES = ["ADMIN", "HR", "MANAGER"];
 
 function isPrivilegedRole(role) {
@@ -32,12 +33,23 @@ export async function startBreak() {
       return { success: false, error: "You already have an active break. End it before starting a new one." };
     }
 
+    const [totalRow] = await db
+      .select({ total: sql`coalesce(sum(${breaks.duration}), 0)::int` })
+      .from(breaks)
+      .where(and(eq(breaks.userId, userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NOT NULL`));
+
+    if (totalRow.total >= DAILY_BREAK_LIMIT) {
+      const over = totalRow.total - DAILY_BREAK_LIMIT;
+      return { success: false, error: `Daily break limit of 30 minutes used up. You have exceeded by ${Math.floor(over / 60)}m ${over % 60}s.` };
+    }
+
     const [record] = await db
       .insert(breaks)
       .values({ userId, date })
       .returning();
 
-    return { success: true, break: record };
+    const remaining = DAILY_BREAK_LIMIT - totalRow.total;
+    return { success: true, break: record, dailyRemaining: remaining };
   } catch (err) {
     console.error("Start break error:", err);
     return { success: false, error: "Failed to start break" };
@@ -101,6 +113,28 @@ export async function getActiveBreak() {
   } catch (err) {
     console.error("Get active break error:", err);
     return null;
+  }
+}
+
+export async function getDailyBreakTotal() {
+  const session = await getSession();
+  if (!session) return { total: 0, remaining: DAILY_BREAK_LIMIT, overage: 0 };
+
+  const date = getIstDate();
+
+  try {
+    const [row] = await db
+      .select({ total: sql`coalesce(sum(${breaks.duration}), 0)::int` })
+      .from(breaks)
+      .where(and(eq(breaks.userId, session.userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NOT NULL`));
+
+    const total = row?.total || 0;
+    const overage = Math.max(0, total - DAILY_BREAK_LIMIT);
+    const remaining = Math.max(0, DAILY_BREAK_LIMIT - total);
+    return { total, remaining, overage };
+  } catch (err) {
+    console.error("Get daily break total error:", err);
+    return { total: 0, remaining: DAILY_BREAK_LIMIT, overage: 0 };
   }
 }
 
