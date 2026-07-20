@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 
 export const s3Client = new S3Client({
   region: "auto",
@@ -65,4 +65,22 @@ export async function uploadImageToR2({ key, buffer, contentType }) {
 
   await s3Client.send(command);
   return key;
+}
+
+/**
+ * Get an object from R2 by key.
+ * @param {Object} params
+ * @param {string} params.key - R2 storage key
+ * @returns {Promise<{ body: ReadableStream, contentType: string }>}
+ */
+export async function getObjectFromR2({ key }) {
+  const command = new GetObjectCommand({
+    Bucket: BUCKET,
+    Key: key,
+  });
+  const response = await s3Client.send(command);
+  return {
+    body: response.Body,
+    contentType: response.ContentType || "application/octet-stream",
+  };
 }
