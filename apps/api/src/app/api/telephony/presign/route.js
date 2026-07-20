@@ -87,6 +87,7 @@ async function getHandler(req, { ctx }) {
   const telecallerId = searchParams.get("telecaller_id");
   const toNumber = searchParams.get("to_number");
   const ext = searchParams.get("recording_ext") || "mp3";
+  const isTraining = searchParams.get("is_training") === "true";
 
   if (!telecallerId || !toNumber) {
     return Response.json(
@@ -96,7 +97,8 @@ async function getHandler(req, { ctx }) {
   }
 
   const cleanPhone = toNumber.replace(/\D/g, "").slice(-10);
-  const key = `recordings/${telecallerId}/${cleanPhone}_${Date.now()}.${ext}`;
+  const keyPrefix = isTraining ? "trainings" : "recordings";
+  const key = `${keyPrefix}/${telecallerId}/${cleanPhone}_${Date.now()}.${ext}`;
 
   try {
     const uploadUrl = getPresignedPutUrl({
