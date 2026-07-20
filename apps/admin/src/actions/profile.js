@@ -4,7 +4,7 @@ import { db, users } from "@repo/db";
 import { eq, sql } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
-import { getSession, updateSessionCookie } from "@/lib/auth";
+import { getSession, updateSessionCookie, getRawToken } from "@/lib/auth";
 import { API } from "@/lib/api";
 
 export async function getProfile() {
@@ -105,13 +105,16 @@ export async function uploadProfilePhoto(formData) {
   }
 
   try {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const blob = new Blob([buffer], { type: file.type });
     const uploadFormData = new FormData();
-    uploadFormData.append("file", file);
+    uploadFormData.append("file", blob, file.name);
 
+    const token = await getRawToken();
     const res = await fetch(`${API}/api/users/avatar`, {
       method: "POST",
+      headers: token ? { Cookie: `session=${token}` } : {},
       body: uploadFormData,
-      credentials: "include",
     });
 
     const result = await res.json();
@@ -128,7 +131,28 @@ export async function uploadProfilePhoto(formData) {
 
     revalidatePath("/profile");
     return { success: true, profileImageKey: result.profileImageKey };
-  } catch {
+  } catch (err) {
+    console.error("Profile photo upload error:", err);
     return { error: "Upload failed" };
+  }
+}
+
+export async function removeProfilePhoto() {
+  const session = await getSession();
+  if (!session) return { error: "Not authenticated" };
+
+  try {
+    await db
+      .update(users)
+      .set({ profileImageKey: null })
+      .where(eq(users.id, session.userId));
+
+    await updateSessionCookie({ profileImageKey: null });
+
+    revalidatePath("/profile");
+    return { success: true };
+  } catch (err) {
+    console.error("Remove photo error:", err);
+    return { error: "Failed to remove photo" };
   }
 }

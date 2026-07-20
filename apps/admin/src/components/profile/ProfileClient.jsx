@@ -16,8 +16,9 @@ import {
   AlertCircle,
   Shield,
   Building2,
+  Trash2,
 } from "lucide-react";
-import { updateProfile, changePassword, uploadProfilePhoto } from "@/actions/profile";
+import { updateProfile, changePassword, uploadProfilePhoto, removeProfilePhoto } from "@/actions/profile";
 
 const ROLE_LABELS = {
   ADMIN: "Administrator",
@@ -54,6 +55,7 @@ export function ProfileClient({ user }) {
   const [passwordSuccess, setPasswordSuccess] = useState(false);
 
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [removingPhoto, setRemovingPhoto] = useState(false);
   const [photoPreview, setPhotoPreview] = useState(user.profileImageKey ? `/api/files/${user.profileImageKey}` : null);
 
   const initials = user.name
@@ -64,6 +66,23 @@ export function ProfileClient({ user }) {
     .slice(0, 2);
 
   const handlePhotoClick = () => fileInputRef.current?.click();
+
+  const handleRemovePhoto = async () => {
+    setRemovingPhoto(true);
+    try {
+      const res = await removeProfilePhoto();
+      if (res.success) {
+        setPhotoPreview(null);
+        toast.success("Photo removed");
+      } else {
+        toast.error(res.error || "Failed to remove photo");
+      }
+    } catch {
+      toast.error("Failed to remove photo");
+    } finally {
+      setRemovingPhoto(false);
+    }
+  };
 
   const handlePhotoChange = async (e) => {
     const file = e.target.files?.[0];
@@ -173,18 +192,6 @@ export function ProfileClient({ user }) {
               initials
             )}
           </div>
-          <button
-            onClick={handlePhotoClick}
-            disabled={uploadingPhoto}
-            className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all disabled:opacity-50 cursor-pointer"
-            title="Change photo"
-          >
-            {uploadingPhoto ? (
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-            ) : (
-              <Camera className="h-3.5 w-3.5" />
-            )}
-          </button>
           <input
             ref={fileInputRef}
             type="file"
@@ -193,7 +200,7 @@ export function ProfileClient({ user }) {
             onChange={handlePhotoChange}
           />
         </div>
-        <div>
+        <div className="flex-1">
           <h2 className="text-lg font-semibold">{user.name}</h2>
           <p className="text-sm text-muted-foreground flex items-center gap-1.5 mt-0.5">
             <Shield className="h-3.5 w-3.5" />
@@ -206,6 +213,44 @@ export function ProfileClient({ user }) {
               </>
             )}
           </p>
+          <div className="mt-3 flex items-center gap-3">
+            <button
+              onClick={handlePhotoClick}
+              disabled={uploadingPhoto || removingPhoto}
+              className="inline-flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors disabled:opacity-50 cursor-pointer"
+            >
+              {uploadingPhoto ? (
+                <>
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Camera className="h-3.5 w-3.5" />
+                  {photoPreview ? "Change Photo" : "Upload Photo"}
+                </>
+              )}
+            </button>
+            {photoPreview && (
+              <button
+                onClick={handleRemovePhoto}
+                disabled={uploadingPhoto || removingPhoto}
+                className="inline-flex items-center gap-1.5 text-xs font-medium text-red-500 hover:text-red-600 transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                {removingPhoto ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    Removing...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Remove
+                  </>
+                )}
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

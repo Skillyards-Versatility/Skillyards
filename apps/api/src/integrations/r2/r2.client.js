@@ -9,7 +9,11 @@ export const s3Client = new S3Client({
   },
 });
 
-const BUCKET = process.env.R2_BUCKET;
+function getBucket() {
+  const bucket = process.env.R2_BUCKET;
+  if (!bucket) throw new Error("R2_BUCKET environment variable is not set");
+  return bucket;
+}
 
 /**
  * Upload a PDF document directly to R2
@@ -19,7 +23,7 @@ const BUCKET = process.env.R2_BUCKET;
  */
 export async function uploadPdfToR2({ key, buffer }) {
   const command = new PutObjectCommand({
-    Bucket: BUCKET,
+    Bucket: getBucket(),
     Key: key,
     Body: buffer,
     ContentType: "application/pdf",
@@ -38,7 +42,7 @@ export async function uploadPdfToR2({ key, buffer }) {
  */
 export async function uploadAudioToR2({ key, buffer, contentType }) {
   const command = new PutObjectCommand({
-    Bucket: BUCKET,
+    Bucket: getBucket(),
     Key: key,
     Body: buffer,
     ContentType: contentType || "audio/mpeg",
@@ -57,7 +61,7 @@ export async function uploadAudioToR2({ key, buffer, contentType }) {
  */
 export async function uploadImageToR2({ key, buffer, contentType }) {
   const command = new PutObjectCommand({
-    Bucket: BUCKET,
+    Bucket: getBucket(),
     Key: key,
     Body: buffer,
     ContentType: contentType || "image/png",
@@ -75,7 +79,7 @@ export async function uploadImageToR2({ key, buffer, contentType }) {
  */
 export async function getObjectFromR2({ key }) {
   const command = new GetObjectCommand({
-    Bucket: BUCKET,
+    Bucket: getBucket(),
     Key: key,
   });
   const response = await s3Client.send(command);

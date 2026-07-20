@@ -2,6 +2,12 @@
 
 import { API } from "@/lib/api";
 import { getIstDate, isIstBeforeCutoff, isIstSunday, formatIstDate } from "@/lib/ist";
+import { getRawToken } from "@/lib/auth";
+
+async function authHeaders() {
+  const token = await getRawToken();
+  return token ? { Cookie: `session=${token}` } : {};
+}
 
 export async function submitEodReport({ data, screenshotKey }) {
   const date = getIstDate();
@@ -16,9 +22,8 @@ export async function submitEodReport({ data, screenshotKey }) {
 
   const res = await fetch(`${API}/api/eod`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...(await authHeaders()) },
     body: JSON.stringify({ date, data, screenshotKey }),
-    credentials: "include",
   });
 
   const result = await res.json();
@@ -31,8 +36,8 @@ export async function uploadScreenshot(file) {
 
   const res = await fetch(`${API}/api/eod/screenshot`, {
     method: "POST",
+    headers: await authHeaders(),
     body: formData,
-    credentials: "include",
   });
 
   const result = await res.json();
@@ -45,7 +50,7 @@ export async function getEodReports({ date, team } = {}) {
   if (team) params.set("team", team);
 
   const res = await fetch(`${API}/api/eod?${params.toString()}`, {
-    credentials: "include",
+    headers: await authHeaders(),
   });
 
   const result = await res.json();
@@ -59,7 +64,7 @@ export async function getEodHistory({ startDate, endDate, team } = {}) {
   if (team) params.set("team", team);
 
   const res = await fetch(`${API}/api/eod/history?${params.toString()}`, {
-    credentials: "include",
+    headers: await authHeaders(),
   });
 
   const result = await res.json();
@@ -68,7 +73,7 @@ export async function getEodHistory({ startDate, endDate, team } = {}) {
 
 export async function getMyEodSubmissions() {
   const res = await fetch(`${API}/api/eod/mine`, {
-    credentials: "include",
+    headers: await authHeaders(),
   });
 
   const result = await res.json();
