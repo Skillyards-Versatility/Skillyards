@@ -27,7 +27,7 @@ const TEAM_OPTIONS = [
   { value: "outside_sales", label: "Outside Sales" },
 ];
 
-export function EodHistoryClient() {
+export function EodHistoryClient({ isAdmin = false }) {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [teamFilter, setTeamFilter] = useState("");
@@ -89,15 +89,17 @@ export function EodHistoryClient() {
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
-          <select
-            className="input text-sm py-1.5"
-            value={teamFilter}
-            onChange={(e) => setTeamFilter(e.target.value)}
-          >
-            {TEAM_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
-            ))}
-          </select>
+          {isAdmin && (
+            <select
+              className="input text-sm py-1.5"
+              value={teamFilter}
+              onChange={(e) => setTeamFilter(e.target.value)}
+            >
+              {TEAM_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 
