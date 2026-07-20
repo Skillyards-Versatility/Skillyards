@@ -10,6 +10,8 @@ const ROLE_LABEL = {
   SALES: "Sales",
   HR: "HR",
   DEVELOPER: "Developer",
+  DIGITAL_MARKETER: "Digital Marketer",
+  OUTSIDE_SALES: "Outside Sales",
   STUDENT: "Student",
 };
 

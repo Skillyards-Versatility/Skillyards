@@ -10,7 +10,7 @@ export const eodReports = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
 
-    team: text("team").notNull(), // sales | tech | hr | ceo_office | admin_head
+    team: text("team").notNull(), // sales | tech | hr | ceo_office | admin_head | marketing | outside_sales
 
     date: text("date").notNull(), // YYYY-MM-DD in IST
 

@@ -12,6 +12,8 @@ const TEAM_LABELS = {
   hr: "HR",
   ceo_office: "CEO Office",
   admin_head: "Admin Head",
+  marketing: "Marketing",
+  outside_sales: "Outside Sales",
 };
 
 const TEAM_OPTIONS = [
@@ -21,6 +23,8 @@ const TEAM_OPTIONS = [
   { value: "hr", label: "HR" },
   { value: "ceo_office", label: "CEO Office" },
   { value: "admin_head", label: "Admin Head" },
+  { value: "marketing", label: "Marketing" },
+  { value: "outside_sales", label: "Outside Sales" },
 ];
 
 export function EodHistoryClient() {
@@ -126,6 +130,9 @@ export function EodHistoryClient() {
                               report.team === "tech" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" :
                               report.team === "hr" ? "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400" :
                               report.team === "ceo_office" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
+                              report.team === "admin_head" ? "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400" :
+                              report.team === "marketing" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" :
+                              report.team === "outside_sales" ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400" :
                               "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400"
                             }`}>
                               {TEAM_LABELS[report.team] || report.team}

@@ -6,6 +6,8 @@ const TEAM_LABELS = {
   hr: "HR",
   ceo_office: "CEO Office",
   admin_head: "Admin Head",
+  marketing: "Marketing",
+  outside_sales: "Outside Sales",
 };
 
 const SALES_FIELDS = [
@@ -45,12 +47,31 @@ const ADMIN_FIELDS = [
   { key: "facilityIssues", label: "Facility Issues" },
 ];
 
+const MARKETING_FIELDS = [
+  { key: "leadsGenerated", label: "Leads Generated" },
+  { key: "contentPieces", label: "Content Pieces" },
+  { key: "campaignsActive", label: "Active Campaigns" },
+  { key: "socialMediaPosts", label: "Social Media Posts" },
+  { key: "websiteVisits", label: "Website Visits" },
+];
+
+const OUTSIDE_SALES_FIELDS = [
+  { key: "dialedCalls", label: "Dialed Calls" },
+  { key: "connectedCalls", label: "Connected Calls" },
+  { key: "meetingsScheduled", label: "Meetings Scheduled" },
+  { key: "meetingsDone", label: "Meetings Done" },
+  { key: "siteVisits", label: "Site Visits" },
+  { key: "leadsCollected", label: "Leads Collected" },
+];
+
 const TEAM_FIELDS = {
   sales: SALES_FIELDS,
   tech: TECH_FIELDS,
   hr: HR_FIELDS,
   ceo_office: CEO_FIELDS,
   admin_head: ADMIN_FIELDS,
+  marketing: MARKETING_FIELDS,
+  outside_sales: OUTSIDE_SALES_FIELDS,
 };
 
 function cellStyle(isHeader = false) {

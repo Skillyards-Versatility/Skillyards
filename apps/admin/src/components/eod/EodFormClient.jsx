@@ -42,6 +42,23 @@ const TEAM_FIELDS = {
     { key: "vendorPayments", label: "Vendor Payments", type: "text", placeholder: "₹0" },
     { key: "facilityIssues", label: "Facility Issues", type: "textarea", placeholder: "Any issues..." },
   ],
+  marketing: [
+    { key: "leadsGenerated", label: "Leads Generated", type: "number", placeholder: "0" },
+    { key: "contentPieces", label: "Content Pieces", type: "number", placeholder: "0" },
+    { key: "campaignsActive", label: "Active Campaigns", type: "number", placeholder: "0" },
+    { key: "socialMediaPosts", label: "Social Media Posts", type: "number", placeholder: "0" },
+    { key: "websiteVisits", label: "Website Visits", type: "number", placeholder: "0" },
+    { key: "notes", label: "Notes", type: "textarea", placeholder: "Additional notes..." },
+  ],
+  outside_sales: [
+    { key: "dialedCalls", label: "Dialed Calls", type: "number", placeholder: "0" },
+    { key: "connectedCalls", label: "Connected Calls", type: "number", placeholder: "0" },
+    { key: "meetingsScheduled", label: "Meetings Scheduled", type: "number", placeholder: "0" },
+    { key: "meetingsDone", label: "Meetings Done", type: "number", placeholder: "0" },
+    { key: "siteVisits", label: "Site Visits", type: "number", placeholder: "0" },
+    { key: "leadsCollected", label: "Leads Collected", type: "number", placeholder: "0" },
+    { key: "notes", label: "Notes", type: "textarea", placeholder: "Additional notes..." },
+  ],
 };
 
 const TEAM_LABELS = {
@@ -50,6 +67,8 @@ const TEAM_LABELS = {
   hr: "HR",
   ceo_office: "CEO Office",
   admin_head: "Admin Head",
+  marketing: "Marketing",
+  outside_sales: "Outside Sales",
 };
 
 export function EodFormClient({ team, existingReport }) {

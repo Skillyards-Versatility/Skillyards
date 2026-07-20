@@ -108,6 +108,8 @@ export const sendEodReportEmail = withResend((resend, { to, team, date, reports,
     hr: "HR",
     ceo_office: "CEO Office",
     admin_head: "Admin Head",
+    marketing: "Marketing",
+    outside_sales: "Outside Sales",
   };
   const subject = `EOD Report — ${TEAM_LABELS[team] || team} — ${date}`;
 

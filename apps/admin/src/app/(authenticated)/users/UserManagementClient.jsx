@@ -28,6 +28,8 @@ const TEAM_OPTIONS = [
   { value: "hr", label: "HR" },
   { value: "ceo_office", label: "CEO Office" },
   { value: "admin_head", label: "Admin Head" },
+  { value: "marketing", label: "Marketing" },
+  { value: "outside_sales", label: "Outside Sales" },
 ];
 
 const TEAM_LABELS = {
@@ -36,6 +38,8 @@ const TEAM_LABELS = {
   hr: "HR",
   ceo_office: "CEO Office",
   admin_head: "Admin Head",
+  marketing: "Marketing",
+  outside_sales: "Outside Sales",
 };
 
 const TEAM_BADGE_CLASSES = {
@@ -44,6 +48,8 @@ const TEAM_BADGE_CLASSES = {
   hr: "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400",
   ceo_office: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
   admin_head: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400",
+  marketing: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
+  outside_sales: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400",
 };
 
 const ROLE_OPTIONS = [
@@ -51,6 +57,8 @@ const ROLE_OPTIONS = [
   { value: "SALES", label: "Sales Associate" },
   { value: "HR", label: "HR" },
   { value: "DEVELOPER", label: "Developer" },
+  { value: "DIGITAL_MARKETER", label: "Digital Marketer" },
+  { value: "OUTSIDE_SALES", label: "Outside Sales" },
   { value: "MANAGER", label: "Manager" },
   { value: "ADMIN", label: "Administrator" },
 ];
@@ -59,6 +67,8 @@ const ROLE_LABELS = {
   SALES: "Sales",
   HR: "HR",
   DEVELOPER: "Developer",
+  DIGITAL_MARKETER: "Digital Marketer",
+  OUTSIDE_SALES: "Outside Sales",
   MANAGER: "Manager",
   ADMIN: "Admin",
 };
@@ -70,6 +80,8 @@ const TEAM_FILTER_OPTIONS = [
   { value: "hr", label: "HR" },
   { value: "ceo_office", label: "CEO Office" },
   { value: "admin_head", label: "Admin Head" },
+  { value: "marketing", label: "Marketing" },
+  { value: "outside_sales", label: "Outside Sales" },
   { value: "__none__", label: "Unassigned" },
 ];
 
@@ -338,6 +350,8 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                           user.role === 'MANAGER' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
                           user.role === 'HR' ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' :
                           user.role === 'DEVELOPER' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' :
+                          user.role === 'DIGITAL_MARKETER' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                          user.role === 'OUTSIDE_SALES' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
                           'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
                         }`}>
                           {ROLE_LABELS[user.role] || user.role}
@@ -459,7 +473,9 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                     <option value="SALES">Sales Associate</option>
                     <option value="HR">HR</option>
                     <option value="DEVELOPER">Developer</option>
-                    <option value="MANAGER">Manager</option>
+                    <option value="DIGITAL_MARKETER">Digital Marketer</option>
+                    <option value="OUTSIDE_SALES">Outside Sales</option>
+                    <option value="MANAGER">Category Manager</option>
                     <option value="ADMIN">Administrator</option>
                   </select>
                 </div>
@@ -616,7 +632,9 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                     <option value="SALES">Sales Associate</option>
                     <option value="HR">HR</option>
                     <option value="DEVELOPER">Developer</option>
-                    <option value="MANAGER">Manager</option>
+                    <option value="DIGITAL_MARKETER">Digital Marketer</option>
+                    <option value="OUTSIDE_SALES">Outside Sales</option>
+                    <option value="MANAGER">Category Manager</option>
                     <option value="ADMIN">Administrator</option>
                   </select>
                 </div>

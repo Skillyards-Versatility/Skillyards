@@ -3,7 +3,7 @@ import { eq, and, gte, lte, desc } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
 import { getIstDate, isIstBeforeCutoff, isIstSunday } from "@/lib/ist.js";
 
-const VALID_TEAMS = ["sales", "tech", "hr", "ceo_office", "admin_head"];
+const VALID_TEAMS = ["sales", "tech", "hr", "ceo_office", "admin_head", "marketing", "outside_sales"];
 
 async function postHandler(req, { ctx }) {
   try {
