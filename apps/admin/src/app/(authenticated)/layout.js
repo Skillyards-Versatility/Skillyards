@@ -1,12 +1,13 @@
 import { SidebarProvider } from "@/components/providers/SidebarProvider";
 import { LayoutContent } from "@/components/layout/LayoutContent";
+import { BreakWidget } from "@/components/breaks/BreakWidget";
 import { getSession } from "@/lib/auth";
 import { db, users } from "@repo/db";
 import { eq } from "drizzle-orm";
 
 export default async function AuthenticatedLayout({ children }) {
   const session = await getSession();
-  let user = session ? { name: session.name, role: session.role, profileImageKey: null } : null;
+  let user = session ? { name: session.name, role: session.role, userId: session.userId, profileImageKey: null } : null;
 
   if (session) {
     try {
@@ -26,6 +27,7 @@ export default async function AuthenticatedLayout({ children }) {
   return (
     <SidebarProvider>
       <LayoutContent user={user}>{children}</LayoutContent>
+      {session && <BreakWidget userId={session.userId} />}
     </SidebarProvider>
   );
 }

@@ -55,6 +55,20 @@ export async function getUsers() {
             await db.execute(
                 sql`CREATE UNIQUE INDEX IF NOT EXISTS eod_reports_user_date_idx ON eod_reports(user_id, date);`
             );
+            await db.execute(sql`
+                CREATE TABLE IF NOT EXISTS breaks (
+                    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+                    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+                    started_at TIMESTAMP DEFAULT NOW() NOT NULL,
+                    ended_at TIMESTAMP,
+                    duration INTEGER,
+                    date TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT NOW() NOT NULL
+                );
+            `);
+            await db.execute(
+                sql`CREATE INDEX IF NOT EXISTS breaks_user_date_idx ON breaks(user_id, date);`
+            );
             migrated = true;
             console.log("Programmatic database migrations applied successfully from getUsers.");
         } catch (migError) {
