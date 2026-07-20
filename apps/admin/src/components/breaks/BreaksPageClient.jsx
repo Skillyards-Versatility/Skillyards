@@ -201,16 +201,19 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
-    const data = await getMyBreaks(selectedDate);
-    setBreaks(data);
-    setLoading(false);
+    try {
+      const data = await getMyBreaks(selectedDate);
+      setBreaks(data || []);
+    } catch {
+      setBreaks([]);
+    } finally {
+      setLoading(false);
+    }
   }, [selectedDate]);
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      await fetchData();
-    })();
+    setLoading(true);
+    fetchData();
   }, [fetchData]);
 
   const completedBreaks = breaks.filter((b) => b.endedAt);
@@ -271,20 +274,24 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday }) {
   const [activeTab, setActiveTab] = useState("overview");
 
   const fetchData = useCallback(async () => {
-    const [statsData, breaksData] = await Promise.all([
-      getBreakStats(selectedDate),
-      getAllBreaks(selectedDate),
-    ]);
-    setStats(statsData);
-    setAllBreaks(breaksData);
-    setLoading(false);
+    try {
+      const [statsData, breaksData] = await Promise.all([
+        getBreakStats(selectedDate),
+        getAllBreaks(selectedDate),
+      ]);
+      setStats(statsData || []);
+      setAllBreaks(breaksData || []);
+    } catch {
+      setStats([]);
+      setAllBreaks([]);
+    } finally {
+      setLoading(false);
+    }
   }, [selectedDate]);
 
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      await fetchData();
-    })();
+    setLoading(true);
+    fetchData();
   }, [fetchData]);
 
   return (

@@ -183,9 +183,9 @@ export async function getBreakStats(date) {
         userId: breaks.userId,
         userName: users.name,
         userTeam: users.team,
-        breakCount: sql<number>`count(*)::int`,
-        totalDuration: sql<number`coalesce(sum(${breaks.duration}), 0)::int`,
-        avgDuration: sql<number>`coalesce(avg(${breaks.duration}), 0)::int`,
+        breakCount: sql`count(*)::int`,
+        totalDuration: sql`coalesce(sum(${breaks.duration}), 0)::int`,
+        avgDuration: sql`coalesce(avg(${breaks.duration}), 0)::int`,
       })
       .from(breaks)
       .innerJoin(users, eq(breaks.userId, users.id))

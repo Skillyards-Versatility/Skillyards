@@ -17,7 +17,6 @@ export const metadata = {
   title: "Skillyards Admin",
   description: "Skillyards ERP + CRM",
   manifest: "/manifest.json",
-  themeColor: "#111827",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -26,6 +25,10 @@ export const metadata = {
   formatDetection: {
     telephone: false,
   },
+};
+
+export const viewport = {
+  themeColor: "#111827",
 };
 
 export default function RootLayout({ children }) {
