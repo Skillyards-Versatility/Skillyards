@@ -2,7 +2,9 @@ import { getResend } from "./resend.client";
 import {
   adminEnquiryTemplate,
   userConfirmationTemplate,
-  receiptEmailTemplate
+  receiptEmailTemplate,
+  eodReportTemplate,
+  eodAllTeamsTemplate
 } from "./email.template";
 
 function withResend(fn) {
@@ -93,4 +95,41 @@ export const sendReceiptEmail = withResend((resend, { to, studentName, receiptNu
   }
 
   return studentEmailPromise;
+});
+
+/**
+ * Send EOD report email to a specific recipient
+ */
+export const sendEodReportEmail = withResend((resend, { to, team, date, reports, adminUrl }) => {
+  const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
+  const TEAM_LABELS = {
+    sales: "Sales",
+    tech: "Tech",
+    hr: "HR",
+    ceo_office: "CEO Office",
+    admin_head: "Admin Head",
+  };
+  const subject = `EOD Report — ${TEAM_LABELS[team] || team} — ${date}`;
+
+  return resend.emails.send({
+    from,
+    to: [to],
+    subject,
+    html: eodReportTemplate({ team, date, reports, adminUrl }),
+  });
+});
+
+/**
+ * Send combined EOD report (all teams) to a single recipient
+ */
+export const sendEodAllTeamsEmail = withResend((resend, { to, date, teamSummaries, adminUrl }) => {
+  const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
+  const subject = `All Teams EOD Report — ${date}`;
+
+  return resend.emails.send({
+    from,
+    to: [to],
+    subject,
+    html: eodAllTeamsTemplate({ date, teamSummaries, adminUrl }),
+  });
 });

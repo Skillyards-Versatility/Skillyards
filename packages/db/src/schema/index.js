@@ -11,3 +11,4 @@ export * from "./pdfFailures.js";
 export * from "./followUps.js";
 export * from "./employees.js";
 export * from "./callAnalyses.js";
+export * from "./eodReports.js";

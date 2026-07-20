@@ -47,3 +47,22 @@ export async function uploadAudioToR2({ key, buffer, contentType }) {
   await s3Client.send(command);
   return key;
 }
+
+/**
+ * Upload an image file to R2
+ * @param {Object} params
+ * @param {string} params.key - R2 storage destination path
+ * @param {Buffer} params.buffer - Image binary buffer
+ * @param {string} params.contentType - Image mime type
+ */
+export async function uploadImageToR2({ key, buffer, contentType }) {
+  const command = new PutObjectCommand({
+    Bucket: BUCKET,
+    Key: key,
+    Body: buffer,
+    ContentType: contentType || "image/png",
+  });
+
+  await s3Client.send(command);
+  return key;
+}

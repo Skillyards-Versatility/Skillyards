@@ -1,5 +1,110 @@
 const LOGO_URL = "https://raw.githubusercontent.com/skillyards/.github/be315000f3f0e8efe5b2f92eb5cf2e00fdf22579/skillyards-dark.svg#gh-dark-mode-only";
 
+const TEAM_LABELS = {
+  sales: "Sales Team",
+  tech: "Tech Team",
+  hr: "HR",
+  ceo_office: "CEO Office",
+  admin_head: "Admin Head",
+};
+
+const SALES_FIELDS = [
+  { key: "dialedCalls", label: "Dialed Calls" },
+  { key: "connectedCalls", label: "Connected Calls" },
+  { key: "counsellingVirtual", label: "Counselling (Virtual)" },
+  { key: "counsellingWalkin", label: "Counselling (Walk-in)" },
+  { key: "sessionBooked", label: "Sessions Booked" },
+  { key: "admissionRegistration", label: "Admissions / Registrations" },
+  { key: "admissionProjection", label: "Admission Projection" },
+];
+
+const TECH_FIELDS = [
+  { key: "classesTaken", label: "Classes Taken" },
+  { key: "projectsWorkedOn", label: "Projects Worked On" },
+  { key: "bugsFixed", label: "Bugs Fixed" },
+  { key: "deploymentsDone", label: "Deployments Done" },
+];
+
+const HR_FIELDS = [
+  { key: "interviewsConducted", label: "Interviews Conducted" },
+  { key: "hires", label: "Hires" },
+  { key: "attrition", label: "Attrition" },
+  { key: "policiesNotes", label: "Policies / Notes" },
+];
+
+const CEO_FIELDS = [
+  { key: "keyPriorities", label: "Key Priorities" },
+  { key: "decisionsMade", label: "Decisions Made" },
+  { key: "escalations", label: "Escalations" },
+];
+
+const ADMIN_FIELDS = [
+  { key: "tasksCompleted", label: "Tasks Completed" },
+  { key: "expenses", label: "Expenses" },
+  { key: "vendorPayments", label: "Vendor Payments" },
+  { key: "facilityIssues", label: "Facility Issues" },
+];
+
+const TEAM_FIELDS = {
+  sales: SALES_FIELDS,
+  tech: TECH_FIELDS,
+  hr: HR_FIELDS,
+  ceo_office: CEO_FIELDS,
+  admin_head: ADMIN_FIELDS,
+};
+
+function cellStyle(isHeader = false) {
+  const base = "padding:10px 14px;text-align:left;font-size:13px;border-bottom:1px solid #e2e8f0;";
+  if (isHeader) {
+    return base + "background:#f8fafc;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-size:11px;";
+  }
+  return base + "color:#1e293b;";
+}
+
+function renderReportTable(reports, team) {
+  const fields = TEAM_FIELDS[team] || [];
+  if (!reports.length || !fields.length) return "<p style='color:#94a3b8;font-size:13px;'>No submissions today.</p>";
+
+  let html = '<table style="width:100%;border-collapse:collapse;margin:16px 0;">';
+
+  // Header
+  html += "<thead><tr>";
+  html += `<th style="${cellStyle(true)}">Name</th>`;
+  for (const f of fields) {
+    html += `<th style="${cellStyle(true)}">${f.label}</th>`;
+  }
+  html += "</tr></thead>";
+
+  // Body
+  html += "<tbody>";
+  for (const report of reports) {
+    html += "<tr>";
+    html += `<td style="${cellStyle()}"><b>${report.userName}</b></td>`;
+    for (const f of fields) {
+      const val = report.data?.[f.key];
+      html += `<td style="${cellStyle()}">${val !== undefined && val !== null && val !== "" ? val : "—"}</td>`;
+    }
+    html += "</tr>";
+  }
+  html += "</tbody></table>";
+
+  // Notes
+  const notesReports = reports.filter((r) => r.data?.notes);
+  if (notesReports.length > 0) {
+    html += '<div style="margin-top:16px;">';
+    html += '<p style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-weight:600;margin:0 0 8px;">Notes</p>';
+    for (const r of notesReports) {
+      html += `<div style="background:#f8fafc;border-radius:8px;padding:12px 14px;border-left:3px solid #00adb5;margin-bottom:8px;">`;
+      html += `<p style="font-size:12px;color:#64748b;margin:0 0 4px;font-weight:600;">${r.userName}</p>`;
+      html += `<p style="font-size:13px;color:#1e293b;margin:0;line-height:1.5;">${r.data.notes}</p>`;
+      html += "</div>";
+    }
+    html += "</div>";
+  }
+
+  return html;
+}
+
 export function adminEnquiryTemplate(enquiry) {
   const year = new Date().getFullYear();
   const fullName = `${enquiry.firstName} ${enquiry.lastName || ""}`.trim();
@@ -138,6 +243,88 @@ export function userConfirmationTemplate(enquiry) {
             </a>
         </div>
         <p style="font-size:11px;color:#94a3b8;margin:0;">© ${year} Skillyards. All rights reserved. · Ref: ${uniqueId}</p>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+export function eodReportTemplate({ team, date, reports, adminUrl }) {
+  const year = new Date().getFullYear();
+  const teamLabel = TEAM_LABELS[team] || team;
+  const submittedCount = reports.length;
+
+  return `
+  <div style="background:#f1f5f9;padding:2rem;font-family:Arial,sans-serif;">
+    <div style="max-width:720px;margin:auto;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;">
+
+      <div style="background:#0f172a;padding:24px;text-align:center;">
+        <img src="${LOGO_URL}" style="max-width:180px;height:auto;display:block;margin:auto;" alt="Skillyards" />
+      </div>
+
+      <div style="padding:28px 28px 0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <div>
+            <h1 style="font-size:20px;color:#1e293b;margin:0;">EOD Report</h1>
+            <p style="font-size:14px;color:#64748b;margin:4px 0 0;">${teamLabel} — ${date}</p>
+          </div>
+          <div style="background:#00adb5;color:#ffffff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;">
+            ${submittedCount} submitted
+          </div>
+        </div>
+
+        ${renderReportTable(reports, team)}
+
+        <div style="margin:24px 0;">
+          <a href="${adminUrl}/eod/history?date=${date}&team=${team}" style="display:block;text-align:center;padding:12px 0;background:#00adb5;color:#ffffff;font-size:14px;font-weight:600;border-radius:10px;text-decoration:none;">View Full Report in Dashboard</a>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #e2e8f0;padding:16px 28px;background:#f8fafc;">
+        <p style="text-align:center;font-size:11px;color:#94a3b8;margin:0;">Automated EOD Report · Skillyards · © ${year}</p>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+export function eodAllTeamsTemplate({ date, teamSummaries, adminUrl }) {
+  const year = new Date().getFullYear();
+
+  let sectionsHtml = "";
+  for (const { team, reports } of teamSummaries) {
+    const teamLabel = TEAM_LABELS[team] || team;
+    sectionsHtml += `
+      <div style="margin-bottom:32px;">
+        <h2 style="font-size:16px;color:#1e293b;margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid #00adb5;display:inline-block;">
+          ${teamLabel}
+        </h2>
+        ${renderReportTable(reports, team)}
+      </div>
+    `;
+  }
+
+  return `
+  <div style="background:#f1f5f9;padding:2rem;font-family:Arial,sans-serif;">
+    <div style="max-width:720px;margin:auto;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;">
+
+      <div style="background:#0f172a;padding:24px;text-align:center;">
+        <img src="${LOGO_URL}" style="max-width:180px;height:auto;display:block;margin:auto;" alt="Skillyards" />
+      </div>
+
+      <div style="padding:28px 28px 0;">
+        <h1 style="font-size:20px;color:#1e293b;margin:0 0 4px;">All Teams EOD Report</h1>
+        <p style="font-size:14px;color:#64748b;margin:0 0 24px;">${date}</p>
+
+        ${sectionsHtml || '<p style="color:#94a3b8;font-size:14px;">No reports submitted today.</p>'}
+
+        <div style="margin:24px 0;">
+          <a href="${adminUrl}/eod/history?date=${date}" style="display:block;text-align:center;padding:12px 0;background:#00adb5;color:#ffffff;font-size:14px;font-weight:600;border-radius:10px;text-decoration:none;">View in Dashboard</a>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #e2e8f0;padding:16px 28px;background:#f8fafc;">
+        <p style="text-align:center;font-size:11px;color:#94a3b8;margin:0;">Automated EOD Report · Skillyards · © ${year}</p>
       </div>
     </div>
   </div>
