@@ -16,7 +16,7 @@ const navItems = [
   { name: "Users", href: "/users", icon: ShieldCheck },
 ];
 
-const ROLE_LEVEL = { STAFF: 0, SALES: 0, MANAGER: 1, ADMIN: 2 };
+const ROLE_LEVEL = { SALES: 0, HR: 0, DEVELOPER: 0, MANAGER: 1, ADMIN: 2 };
 
 function canSee(minRole, userRole) {
   if (!minRole) return true;

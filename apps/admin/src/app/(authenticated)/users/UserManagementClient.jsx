@@ -48,15 +48,17 @@ const TEAM_BADGE_CLASSES = {
 
 const ROLE_OPTIONS = [
   { value: "", label: "All Roles" },
-  { value: "STAFF", label: "Staff" },
   { value: "SALES", label: "Sales Associate" },
+  { value: "HR", label: "HR" },
+  { value: "DEVELOPER", label: "Developer" },
   { value: "MANAGER", label: "Manager" },
   { value: "ADMIN", label: "Administrator" },
 ];
 
 const ROLE_LABELS = {
-  STAFF: "Staff",
   SALES: "Sales",
+  HR: "HR",
+  DEVELOPER: "Developer",
   MANAGER: "Manager",
   ADMIN: "Admin",
 };
@@ -80,7 +82,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
   const [roleFilter, setRoleFilter] = useState("");
   const [state, action, isPending] = useActionState(createUser, undefined);
   const [editingUser, setEditingUser] = useState(null);
-  const [editForm, setEditForm] = useState({ name: "", email: "", role: "STAFF", team: "", isTraining: false });
+  const [editForm, setEditForm] = useState({ name: "", email: "", role: "SALES", team: "", isTraining: false });
   const [saving, setSaving] = useState(false);
   const [resetPwUserId, setResetPwUserId] = useState(null);
   const [newPassword, setNewPassword] = useState("");
@@ -110,7 +112,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
 
   const cancelEdit = useCallback(() => {
     setEditingUser(null);
-    setEditForm({ name: "", email: "", role: "STAFF", team: "", isTraining: false });
+    setEditForm({ name: "", email: "", role: "SALES", team: "", isTraining: false });
     setResetPwUserId(null);
     setNewPassword("");
   }, []);
@@ -334,6 +336,8 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                           user.role === 'ADMIN' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' :
                           user.role === 'MANAGER' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' :
+                          user.role === 'HR' ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' :
+                          user.role === 'DEVELOPER' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' :
                           'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
                         }`}>
                           {ROLE_LABELS[user.role] || user.role}
@@ -452,9 +456,10 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                     onChange={(e) => setEditForm((f) => ({ ...f, role: e.target.value }))}
                     disabled={editingUser.id === currentUserId}
                   >
-                    <option value="STAFF">Staff Member</option>
                     <option value="SALES">Sales Associate</option>
-                    <option value="MANAGER">Category Manager</option>
+                    <option value="HR">HR</option>
+                    <option value="DEVELOPER">Developer</option>
+                    <option value="MANAGER">Manager</option>
                     <option value="ADMIN">Administrator</option>
                   </select>
                 </div>
@@ -557,7 +562,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
               <div className="p-2 bg-primary/10 rounded-lg text-primary">
                 <UserPlus className="h-5 w-5" />
               </div>
-              <h2 className="text-xl font-semibold">New Staff Member</h2>
+              <h2 className="text-xl font-semibold">New User</h2>
             </div>
 
             <form action={action} className="space-y-4">
@@ -608,9 +613,10 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                 <div className="relative">
                   <Shield className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <select name="role" className="input pl-10 appearance-none bg-background">
-                    <option value="STAFF">Staff Member</option>
                     <option value="SALES">Sales Associate</option>
-                    <option value="MANAGER">Category Manager</option>
+                    <option value="HR">HR</option>
+                    <option value="DEVELOPER">Developer</option>
+                    <option value="MANAGER">Manager</option>
                     <option value="ADMIN">Administrator</option>
                   </select>
                 </div>

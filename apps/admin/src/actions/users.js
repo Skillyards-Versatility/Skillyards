@@ -66,7 +66,7 @@ export async function createUser(_prevState, formData) {
     const name = formData.get("name");
     const email = formData.get("email");
     const password = formData.get("password");
-    const role = formData.get("role") || "STAFF";
+    const role = formData.get("role") || "SALES";
     const team = formData.get("team") || null;
     const isTraining = formData.get("isTraining") === "true";
 

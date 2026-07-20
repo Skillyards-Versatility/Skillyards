@@ -8,7 +8,8 @@ const ROLE_LABEL = {
   ADMIN: "Full Access",
   MANAGER: "Manager",
   SALES: "Sales",
-  STAFF: "Staff",
+  HR: "HR",
+  DEVELOPER: "Developer",
   STUDENT: "Student",
 };
 
