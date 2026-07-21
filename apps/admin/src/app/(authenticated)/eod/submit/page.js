@@ -15,7 +15,7 @@ export default async function EodSubmitPage() {
   }
 
   const [user] = await db
-    .select({ team: users.team })
+    .select({ team: users.team, role: users.role })
     .from(users)
     .where(eq(users.id, session.userId))
     .limit(1);
@@ -35,5 +35,5 @@ export default async function EodSubmitPage() {
     );
   }
 
-  return <EodFormClient team={user.team} existingReport={existing || null} />;
+  return <EodFormClient team={user.team} role={user.role} existingReport={existing || null} />;
 }
