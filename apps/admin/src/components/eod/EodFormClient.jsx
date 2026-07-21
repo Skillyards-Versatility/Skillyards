@@ -43,12 +43,51 @@ const TEAM_FIELDS = {
     { key: "facilityIssues", label: "Facility Issues", type: "textarea", placeholder: "Any issues..." },
   ],
   marketing: [
-    { key: "leadsGenerated", label: "Leads Generated", type: "number", placeholder: "0" },
-    { key: "contentPieces", label: "Content Pieces", type: "number", placeholder: "0" },
-    { key: "campaignsActive", label: "Active Campaigns", type: "number", placeholder: "0" },
-    { key: "socialMediaPosts", label: "Social Media Posts", type: "number", placeholder: "0" },
-    { key: "websiteVisits", label: "Website Visits", type: "number", placeholder: "0" },
-    { key: "notes", label: "Notes", type: "textarea", placeholder: "Additional notes..." },
+    { 
+      key: "activityType", 
+      label: "Primary Activity Today", 
+      type: "select", 
+      options: [
+        { label: "Select Activity...", value: "" },
+        { label: "Graphic Design", value: "graphic_design" },
+        { label: "Video Editing", value: "video_editing" },
+        { label: "Ads / PPC", value: "ads_ppc" },
+        { label: "Content / Blogs", value: "content_blogs" },
+        { label: "Team Management & Strategy", value: "management" },
+        { label: "General / Mixed Tasks", value: "general" },
+      ]
+    },
+    // Graphic Design
+    { key: "creativesDone", label: "Number of Creatives Done", type: "number", placeholder: "0", condition: { field: "activityType", value: "graphic_design" } },
+    { key: "campaignName", label: "Campaign Name / Topic", type: "text", placeholder: "e.g., Summer Sale", condition: { field: "activityType", value: "graphic_design" } },
+    { key: "designLinks", label: "Figma / Drive Links", type: "text", placeholder: "https://...", condition: { field: "activityType", value: "graphic_design" } },
+    
+    // Video Editing
+    { key: "minutesEdited", label: "Minutes of Video Edited", type: "number", placeholder: "0", condition: { field: "activityType", value: "video_editing" } },
+    { key: "reelsCompleted", label: "Reels / Shorts Completed", type: "number", placeholder: "0", condition: { field: "activityType", value: "video_editing" } },
+    { key: "renderStatus", label: "Render/Export Status", type: "text", placeholder: "e.g., Exported and Uploaded", condition: { field: "activityType", value: "video_editing" } },
+    
+    // Ads / PPC
+    { key: "totalSpend", label: "Total Spend Today", type: "text", placeholder: "₹0", condition: { field: "activityType", value: "ads_ppc" } },
+    { key: "leadsGenerated", label: "Leads Generated", type: "number", placeholder: "0", condition: { field: "activityType", value: "ads_ppc" } },
+    { key: "cpa", label: "Estimated CPA", type: "text", placeholder: "₹0", condition: { field: "activityType", value: "ads_ppc" } },
+    
+    // Content / Blogs
+    { key: "blogsWritten", label: "Blogs/Articles Written", type: "number", placeholder: "0", condition: { field: "activityType", value: "content_blogs" } },
+    { key: "wordCount", label: "Total Word Count", type: "number", placeholder: "0", condition: { field: "activityType", value: "content_blogs" } },
+    { key: "seoScore", label: "SEO Score / Status", type: "text", placeholder: "e.g., 85/100, Published", condition: { field: "activityType", value: "content_blogs" } },
+    
+    // Team Management & Strategy
+    { key: "reviewsCompleted", label: "Team Reviews / Approvals Completed", type: "number", placeholder: "0", condition: { field: "activityType", value: "management" } },
+    { key: "meetingsConducted", label: "Meetings Conducted", type: "number", placeholder: "0", condition: { field: "activityType", value: "management" } },
+    { key: "strategicTasks", label: "Strategic Planning / Focus Areas", type: "textarea", placeholder: "What strategic areas were focused on today?", condition: { field: "activityType", value: "management" } },
+    { key: "escalations", label: "Escalations or Roadblocks", type: "textarea", placeholder: "Any blockers for the team?", condition: { field: "activityType", value: "management" } },
+    
+    // General / Mixed Tasks
+    { key: "tasksCompleted", label: "Tasks Completed", type: "textarea", placeholder: "List tasks completed...", condition: { field: "activityType", value: "general" } },
+    
+    // Always show notes
+    { key: "notes", label: "Additional Notes", type: "textarea", placeholder: "Any extra information..." },
   ],
   outside_sales: [
     { key: "dialedCalls", label: "Dialed Calls", type: "number", placeholder: "0" },
@@ -61,6 +100,15 @@ const TEAM_FIELDS = {
   ],
 };
 
+const MANAGER_FIELDS = [
+  { key: "reviewsCompleted", label: "Team Reviews / Approvals Completed", type: "number", placeholder: "0" },
+  { key: "meetingsConducted", label: "Meetings Conducted", type: "number", placeholder: "0" },
+  { key: "strategicTasks", label: "Strategic Planning / Focus Areas", type: "textarea", placeholder: "What strategic areas were focused on today?" },
+  { key: "escalations", label: "Escalations or Roadblocks", type: "textarea", placeholder: "Any blockers for the team?" },
+  { key: "tasksCompleted", label: "General Tasks Completed", type: "textarea", placeholder: "List tasks completed..." },
+  { key: "notes", label: "Additional Notes", type: "textarea", placeholder: "Any extra information..." },
+];
+
 const TEAM_LABELS = {
   sales: "Sales",
   tech: "Tech",
@@ -71,7 +119,7 @@ const TEAM_LABELS = {
   outside_sales: "Outside Sales",
 };
 
-export function EodFormClient({ team, existingReport }) {
+export function EodFormClient({ team, role, existingReport }) {
   const router = useRouter();
   const [formData, setFormData] = useState(existingReport?.data || {});
   const [screenshotFile, setScreenshotFile] = useState(null);
@@ -79,7 +127,7 @@ export function EodFormClient({ team, existingReport }) {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const fields = TEAM_FIELDS[team] || [];
+  const fields = role === "MANAGER" ? MANAGER_FIELDS : (TEAM_FIELDS[team] || []);
   const today = getIstDate();
   const canSubmit = !isIstSunday() && isIstBeforeCutoff();
 
@@ -170,14 +218,31 @@ export function EodFormClient({ team, existingReport }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
       <div className="card p-4 sm:p-6">
-        <h2 className="text-lg font-semibold mb-1">{TEAM_LABELS[team] || team} Report</h2>
+        <h2 className="text-lg font-semibold mb-1">{role === "MANAGER" ? "Manager" : (TEAM_LABELS[team] || team)} Report</h2>
         <p className="text-sm text-muted-foreground mb-4 sm:mb-6">{today}</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-          {fields.map((field) => (
-            <div key={field.key} className={field.type === "textarea" ? "sm:col-span-2" : ""}>
+          {fields
+            .filter((field) => {
+              if (!field.condition) return true;
+              return formData[field.condition.field] === field.condition.value;
+            })
+            .map((field) => (
+            <div key={field.key} className={field.type === "textarea" || field.type === "select" ? "sm:col-span-2" : ""}>
               <label className="text-sm font-medium block mb-1.5">{field.label}</label>
-              {field.type === "textarea" ? (
+              {field.type === "select" ? (
+                <select
+                  className="input w-full"
+                  value={formData[field.key] || ""}
+                  onChange={(e) => updateField(field.key, e.target.value)}
+                >
+                  {field.options.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              ) : field.type === "textarea" ? (
                 <textarea
                   className="input w-full min-h-[80px] resize-y"
                   placeholder={field.placeholder}
