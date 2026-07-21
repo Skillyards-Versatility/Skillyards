@@ -58,6 +58,7 @@ const ROLE_OPTIONS = [
   { value: "HR", label: "HR" },
   { value: "DEVELOPER", label: "Developer" },
   { value: "DIGITAL_MARKETER", label: "Digital Marketer" },
+  { value: "EDITOR", label: "Video Editor" },
   { value: "OUTSIDE_SALES", label: "Outside Sales" },
   { value: "MANAGER", label: "Manager" },
   { value: "ADMIN", label: "Administrator" },
@@ -68,6 +69,7 @@ const ROLE_LABELS = {
   HR: "HR",
   DEVELOPER: "Developer",
   DIGITAL_MARKETER: "Digital Marketer",
+  EDITOR: "Editor",
   OUTSIDE_SALES: "Outside Sales",
   MANAGER: "Manager",
   ADMIN: "Admin",
@@ -364,6 +366,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                               user.role === 'HR' ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' :
                               user.role === 'DEVELOPER' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' :
                               user.role === 'DIGITAL_MARKETER' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                              user.role === 'EDITOR' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
                               user.role === 'OUTSIDE_SALES' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
                               'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
                             }`}>
@@ -386,6 +389,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                           user.role === 'HR' ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' :
                           user.role === 'DEVELOPER' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' :
                           user.role === 'DIGITAL_MARKETER' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                          user.role === 'EDITOR' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
                           user.role === 'OUTSIDE_SALES' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
                           'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
                         }`}>
@@ -498,6 +502,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                       user.role === 'HR' ? 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400' :
                       user.role === 'DEVELOPER' ? 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-400' :
                       user.role === 'DIGITAL_MARKETER' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
+                      user.role === 'EDITOR' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' :
                       user.role === 'OUTSIDE_SALES' ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' :
                       'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
                     }`}>
@@ -598,6 +603,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                     <option value="HR">HR</option>
                     <option value="DEVELOPER">Developer</option>
                     <option value="DIGITAL_MARKETER">Digital Marketer</option>
+                    <option value="EDITOR">Video Editor</option>
                     <option value="OUTSIDE_SALES">Outside Sales</option>
                     <option value="MANAGER">Category Manager</option>
                     <option value="ADMIN">Administrator</option>
@@ -768,6 +774,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                     <option value="HR">HR</option>
                     <option value="DEVELOPER">Developer</option>
                     <option value="DIGITAL_MARKETER">Digital Marketer</option>
+                    <option value="EDITOR">Video Editor</option>
                     <option value="OUTSIDE_SALES">Outside Sales</option>
                     <option value="MANAGER">Category Manager</option>
                     <option value="ADMIN">Administrator</option>

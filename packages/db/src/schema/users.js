@@ -5,7 +5,7 @@ export const users = pgTable("users", {
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   password: text("password").notNull(),
-  role: text("role").default("SALES").notNull(), // ADMIN, MANAGER, SALES, HR, DEVELOPER, DIGITAL_MARKETER, OUTSIDE_SALES
+  role: text("role").default("SALES").notNull(), // ADMIN, MANAGER, SALES, HR, DEVELOPER, DIGITAL_MARKETER, OUTSIDE_SALES, EDITOR
   team: text("team"), // sales | tech | hr | ceo_office | admin_head | marketing | outside_sales
   phone: text("phone"),
   profileImageKey: text("profile_image_key"),
