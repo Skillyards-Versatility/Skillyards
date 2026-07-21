@@ -110,9 +110,10 @@ const MANAGER_FIELDS = [
 ];
 
 const EDITOR_FIELDS = [
-  { key: "minutesEdited", label: "Minutes of Video Edited", type: "number", placeholder: "0" },
-  { key: "reelsCompleted", label: "Reels / Shorts Completed", type: "number", placeholder: "0" },
-  { key: "renderStatus", label: "Render/Export Status", type: "text", placeholder: "e.g., Exported and Uploaded" },
+  { key: "videosShot", label: "Long-form Videos Shot", type: "number", placeholder: "0" },
+  { key: "videosEdited", label: "Long-form Videos Edited", type: "number", placeholder: "0" },
+  { key: "reelsShot", label: "Reels / Shorts Shot", type: "number", placeholder: "0" },
+  { key: "reelsEdited", label: "Reels / Shorts Edited", type: "number", placeholder: "0" },
   { key: "tasksCompleted", label: "General Tasks Completed", type: "textarea", placeholder: "List any other tasks completed..." },
   { key: "notes", label: "Additional Notes", type: "textarea", placeholder: "Any extra information..." },
 ];

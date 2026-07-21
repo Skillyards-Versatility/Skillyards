@@ -13,6 +13,29 @@ function isPrivilegedRole(role) {
   return PRIVILEGED_ROLES.includes(role);
 }
 
+export async function savePushSubscription(subscription) {
+  const session = await getSession();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  try {
+    await db.update(users)
+      .set({ pushSubscription: subscription })
+      .where(eq(users.id, session.userId));
+    return { success: true };
+  } catch (err) {
+    console.error("Save push subscription error:", err);
+    return { success: false, error: "Failed to save subscription" };
+  }
+}
+
+import { Client } from "@upstash/qstash";
+
+const qstashClient = new Client({
+  token: process.env.QSTASH_TOKEN || "",
+});
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
 export async function startBreak() {
   const session = await getSession();
   if (!session) {
@@ -43,13 +66,38 @@ export async function startBreak() {
       return { success: false, error: `Daily break limit of 30 minutes used up. You have exceeded by ${Math.floor(over / 60)}m ${over % 60}s.` };
     }
 
+    const remainingSeconds = DAILY_BREAK_LIMIT - totalRow.total;
+
     const [record] = await db
       .insert(breaks)
       .values({ userId, date })
       .returning();
 
-    const remaining = DAILY_BREAK_LIMIT - totalRow.total;
-    return { success: true, break: record, dailyRemaining: remaining };
+    // Schedule QStash Notification for exactly remainingSeconds in the future
+    let scheduleId = null;
+    if (process.env.QSTASH_TOKEN) {
+      try {
+        const res = await qstashClient.publishJSON({
+          url: `${API_BASE}/api/breaks/check-limit`,
+          body: { breakId: record.id, userId },
+          delay: `${remainingSeconds}s`,
+        });
+        scheduleId = res.messageId;
+        
+        // Save the scheduleId so we can cancel it if they end break early
+        // We'll just add it to a metadata column or duration for now. 
+        // Wait, we don't have a scheduleId column in `breaks`. 
+        // We can just query Upstash to cancel it using the messageId, but we need to store it somewhere.
+        // For zero-downtime, I will use `duration` to temporarily store it as a negative number? No.
+        // Let's just create a new column `qstashMsgId` in `breaks` schema quickly or just not cancel it and check status in `/check-limit`.
+        // Actually, if we don't cancel it, the `/check-limit` endpoint can just check if the break is still active!
+        // If it's no longer active, the `/check-limit` route just does nothing! That is brilliant and requires zero DB changes for cancellation.
+      } catch (err) {
+        console.error("QStash schedule failed:", err);
+      }
+    }
+
+    return { success: true, break: record, dailyRemaining: remainingSeconds };
   } catch (err) {
     console.error("Start break error:", err);
     return { success: false, error: "Failed to start break" };
@@ -85,6 +133,9 @@ export async function endBreak(breakId) {
       .set({ endedAt: now, duration: durationSec })
       .where(eq(breaks.id, breakId))
       .returning();
+      
+    // QStash cancellation: We don't need to cancel! 
+    // The webhook will fire, and our `/check-limit` route will see `endedAt !== null` and just exit quietly.
 
     return { success: true, break: updated };
   } catch (err) {

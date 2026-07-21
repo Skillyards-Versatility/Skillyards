@@ -284,10 +284,24 @@ export function userConfirmationTemplate(enquiry) {
   `;
 }
 
-export function eodReportTemplate({ team, date, reports, adminUrl }) {
+export function eodReportTemplate({ team, date, reports, missingUsers = [], adminUrl }) {
   const year = new Date().getFullYear();
   const teamLabel = TEAM_LABELS[team] || team;
   const submittedCount = reports.length;
+
+  let missingHtml = "";
+  if (missingUsers.length > 0) {
+    missingHtml = `
+      <div style="margin-top:32px;background:#fef2f2;border:1px solid #fecaca;border-radius:12px;padding:20px;">
+        <h3 style="margin:0 0 12px;font-size:15px;color:#991b1b;display:flex;align-items:center;">
+          <span style="margin-right:8px;font-size:18px;">⚠️</span> Missing Submissions (${missingUsers.length})
+        </h3>
+        <ul style="margin:0;padding-left:24px;color:#b91c1c;font-size:14px;line-height:1.6;">
+          ${missingUsers.map(u => `<li><b>${u.name}</b> (${u.email})</li>`).join("")}
+        </ul>
+      </div>
+    `;
+  }
 
   return `
   <div style="background:#f8fafc;background-image:radial-gradient(#e2e8f0 1px, transparent 1px);background-size:20px 20px;padding:2rem;font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
@@ -309,6 +323,8 @@ export function eodReportTemplate({ team, date, reports, adminUrl }) {
         </div>
 
         ${renderReportTable(reports, team)}
+        
+        ${missingHtml}
 
         <div style="margin:32px 0;">
           <a href="${adminUrl}/eod/history?date=${date}&team=${team}" style="display:block;text-align:center;padding:14px 0;background:linear-gradient(to right, #0ea5e9, #0284c7);color:#ffffff;font-size:15px;font-weight:600;border-radius:12px;text-decoration:none;box-shadow:0 4px 6px -1px rgba(14, 165, 233, 0.3);">
@@ -403,6 +419,41 @@ export function eodAllTeamsTemplate({ date, teamSummaries, adminUrl }) {
 
       <div style="border-top:1px solid #e2e8f0;padding:16px 28px;background:#f8fafc;">
         <p style="text-align:center;font-size:11px;color:#94a3b8;margin:0;">Automated EOD Report · Skillyards · © ${year}</p>
+      </div>
+    </div>
+  </div>
+  `;
+}
+
+export function eodWarningTemplate({ userName, date }) {
+  const year = new Date().getFullYear();
+
+  return `
+  <div style="background:#f1f5f9;padding:2rem;font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+    <div style="max-width:560px;margin:auto;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);">
+
+      <div style="background:#0f172a;padding:24px;text-align:center;">
+        <img src="${LOGO_URL}" style="max-width:180px;height:auto;display:block;margin:auto;" alt="Skillyards" />
+      </div>
+
+      <div style="padding:28px 28px 0;">
+        <h1 style="font-size:20px;color:#1e293b;margin:0 0 12px;display:flex;align-items:center;">
+          <span style="margin-right:8px;font-size:24px;">⚠️</span> Action Required
+        </h1>
+        <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 24px;">
+          Hi <b>${userName}</b>,<br><br>
+          We noticed that you have not submitted your End-of-Day (EOD) report for today (<b>${date}</b>) before the 7:30 PM cutoff.
+        </p>
+
+        <div style="background:#fef2f2;border-radius:12px;padding:16px;border:1px solid #fecaca;border-left:4px solid #ef4444;margin-bottom:28px;">
+          <p style="font-size:14px;color:#991b1b;line-height:1.6;margin:0;">
+            Your Team Lead and the Admin team have been notified of this missing submission. Please ensure you submit your daily reports on time in the future.
+          </p>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #e2e8f0;padding:16px 28px;background:#f8fafc;">
+        <p style="text-align:center;font-size:11px;color:#94a3b8;margin:0;">Automated Alert · Skillyards · © ${year}</p>
       </div>
     </div>
   </div>

@@ -30,6 +30,9 @@ async function handler(req) {
 
   const today = getIstDate();
 
+  // Fetch all users who belong to a team
+  const allUsers = await db.select().from(users).where(and(inArray(users.team, Object.keys(TEAM_LEADS).concat(["marketing", "sales", "tech", "hr", "outside_sales", "ceo_office", "admin_head"]))));
+  
   // Fetch all reports submitted today with user info
   const reports = await db
     .select({
@@ -47,52 +50,89 @@ async function handler(req) {
     .leftJoin(users, eq(eodReports.userId, users.id))
     .where(eq(eodReports.date, today));
 
-  if (reports.length === 0) {
-    return Response.json({ success: true, message: "No reports today", sent: 0 });
+  // Group users by team
+  const usersByTeam = {};
+  for (const u of allUsers) {
+    if (!u.team) continue;
+    if (!usersByTeam[u.team]) usersByTeam[u.team] = [];
+    usersByTeam[u.team].push(u);
   }
 
-  // Group by team
-  const byTeam = {};
+  // Group reports by team
+  const reportsByTeam = {};
   for (const r of reports) {
-    if (!byTeam[r.team]) byTeam[r.team] = [];
-    byTeam[r.team].push(r);
+    if (!reportsByTeam[r.team]) reportsByTeam[r.team] = [];
+    reportsByTeam[r.team].push(r);
   }
 
-  const teams = Object.keys(byTeam);
-  let totalSent = 0;
+  // Determine which teams to process (all teams that have users or reports)
+  const teams = Array.from(new Set([...Object.keys(usersByTeam), ...Object.keys(reportsByTeam)]));
 
-  // Send per-team emails to team leads and BCC admin heads
+  if (teams.length === 0) {
+    return Response.json({ success: true, message: "No teams to process", sent: 0 });
+  }
+
+  let totalSent = 0;
+  let totalWarningsSent = 0;
+
   const adminEmails = ADMIN_HEADS.map((a) => a.email).filter(Boolean);
-  const teamEmailPromises = [];
+  const emailPromises = [];
   
   for (const team of teams) {
-    const lead = TEAM_LEADS[team];
+    const teamReports = reportsByTeam[team] || [];
+    const teamUsers = usersByTeam[team] || [];
     
-    // If a team has no dedicated lead, send directly to the first admin and BCC the rest
+    // Compute missing users
+    const submittedUserIds = new Set(teamReports.map(r => r.userId));
+    const missingUsers = teamUsers.filter(u => !submittedUserIds.has(u.id));
+
+    // Queue Warning Emails for missing users
+    for (const missingUser of missingUsers) {
+      emailPromises.push(
+        import("@/modules/notifications/email.service").then(({ sendEodWarningEmail }) => 
+          sendEodWarningEmail({
+            to: missingUser.email,
+            userName: missingUser.name,
+            date: today
+          })
+        ).then(() => {
+          totalWarningsSent++;
+          return { type: "warning", recipient: missingUser.email, status: "sent" };
+        }).catch(err => {
+          console.error(`Failed to send warning email to ${missingUser.email}`, err);
+          return { type: "warning", recipient: missingUser.email, status: "failed", error: err.message };
+        })
+      );
+    }
+
+    const lead = TEAM_LEADS[team];
     const to = lead?.email || adminEmails[0];
     const bcc = lead?.email ? adminEmails : adminEmails.slice(1);
     
     if (to) {
-      teamEmailPromises.push(
-        sendEodReportEmail({
-          to,
-          bcc,
-          team,
-          date: today,
-          reports: byTeam[team],
-          adminUrl: ADMIN_URL,
-        }).then(() => {
+      emailPromises.push(
+        import("@/modules/notifications/email.service").then(({ sendEodReportEmail }) =>
+          sendEodReportEmail({
+            to,
+            bcc,
+            team,
+            date: today,
+            reports: teamReports,
+            missingUsers: missingUsers.map(u => ({ name: u.name, email: u.email })),
+            adminUrl: ADMIN_URL,
+          })
+        ).then(() => {
           totalSent++;
-          return { team, recipient: to, status: "sent" };
+          return { type: "report", team, recipient: to, status: "sent" };
         }).catch((err) => {
           console.error(`Failed to send EOD email for ${team}:`, err);
-          return { team, recipient: to, status: "failed", error: err.message };
+          return { type: "report", team, recipient: to, status: "failed", error: err.message };
         })
       );
     }
   }
 
-  const results = await Promise.allSettled(teamEmailPromises);
+  const results = await Promise.allSettled(emailPromises);
 
   // Mark all today's reports as emailed
   const reportIds = reports.map((r) => r.id);
@@ -109,6 +149,7 @@ async function handler(req) {
     reportsFound: reports.length,
     teams: teams,
     emailsSent: totalSent,
+    warningsSent: totalWarningsSent,
     results: results.map((r) => r.value || r.reason),
   });
 }

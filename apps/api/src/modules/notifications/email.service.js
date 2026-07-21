@@ -5,8 +5,9 @@ import {
   receiptEmailTemplate,
   eodReportTemplate,
   eodAllTeamsTemplate,
-  passwordResetTemplate
-} from "./email.template";
+  passwordResetTemplate,
+  eodWarningTemplate,
+} from "./email.template.js";
 
 function withResend(fn) {
   return async (...args) => {
@@ -101,7 +102,7 @@ export const sendReceiptEmail = withResend((resend, { to, studentName, receiptNu
 /**
  * Send EOD report email to a specific recipient
  */
-export const sendEodReportEmail = withResend((resend, { to, bcc, team, date, reports, adminUrl }) => {
+export const sendEodReportEmail = withResend((resend, { to, bcc, team, date, reports, missingUsers, adminUrl }) => {
   const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
   const TEAM_LABELS = {
     sales: "Sales",
@@ -118,11 +119,25 @@ export const sendEodReportEmail = withResend((resend, { to, bcc, team, date, rep
     from,
     to: [to],
     subject,
-    html: eodReportTemplate({ team, date, reports, adminUrl }),
+    html: eodReportTemplate({ team, date, reports, missingUsers, adminUrl }),
   };
   if (bcc && bcc.length > 0) payload.bcc = bcc;
 
   return resend.emails.send(payload);
+});
+
+/**
+ * Send EOD missing warning email to user
+ */
+export const sendEodWarningEmail = withResend((resend, { to, userName, date }) => {
+  const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
+  
+  return resend.emails.send({
+    from,
+    to: [to],
+    subject: `Action Required: Missing EOD Report — ${date}`,
+    html: eodWarningTemplate({ userName, date }),
+  });
 });
 
 /**

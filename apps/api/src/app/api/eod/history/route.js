@@ -37,7 +37,12 @@ async function getHandler(req, { ctx }) {
       .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(desc(eodReports.date), desc(eodReports.submittedAt));
 
-    return Response.json({ success: true, reports });
+    let activeUsers = [];
+    if (ctx.session.role === "ADMIN" || ctx.session.role === "MANAGER") {
+      activeUsers = await db.select({ id: users.id, name: users.name, team: users.team, email: users.email }).from(users);
+    }
+
+    return Response.json({ success: true, reports, activeUsers });
   } catch (error) {
     ctx.error("EOD_HISTORY_FETCH_FAILED", { error: error.message });
     return Response.json(
