@@ -7,7 +7,7 @@ export default async function BreaksPage() {
   const session = await getSession();
   if (!session) redirect("/login");
 
-  await getUsers();
+  const allUsers = await getUsers();
 
-  return <BreaksPageClient userId={session.userId} userRole={session.role} />;
+  return <BreaksPageClient userId={session.userId} userRole={session.role} users={allUsers} />;
 }
