@@ -3,8 +3,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { Coffee, Clock, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { getAllBreaks, getBreakStats } from "@/actions/breaks";
-import { getMyBreaks } from "@/actions/breaks";
+import { getMyBreaks, savePushSubscription } from "@/actions/breaks";
 import { getIstDate } from "@/lib/ist";
+import { subscribeToPushNotifications } from "@/lib/push";
+import { Bell } from "lucide-react";
 
 const PRIVILEGED_ROLES = ["ADMIN", "HR", "MANAGER"];
 
@@ -85,20 +87,34 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
   const totalBreaks = stats.reduce((sum, s) => sum + s.breakCount, 0);
   const totalDuration = stats.reduce((sum, s) => sum + s.totalDuration, 0);
   const avgDuration = totalBreaks > 0 ? Math.round(totalDuration / totalBreaks) : 0;
-  const topUser = stats.length > 0 ? stats[0] : null;
+  // Calculate flagged users based on 30-minute (1800s) DAILY limit
+  const flaggedUsersSet = new Set();
+  
+  // Group breaks by user
+  const userBreaks = {};
+  for (const b of allBreaks) {
+    if (!userBreaks[b.userId]) {
+      userBreaks[b.userId] = { total: 0, breaks: [], userTeam: b.userTeam, userName: b.userName };
+    }
+    const dur = b.endedAt ? b.duration : Math.floor((new Date() - new Date(b.startedAt)) / 1000);
+    userBreaks[b.userId].total += dur;
+    userBreaks[b.userId].breaks.push({ ...b, calculatedDuration: dur });
+    
+    if (userBreaks[b.userId].total > 1800) {
+      flaggedUsersSet.add(b.userId);
+    }
+  }
 
-  const flaggedBreaks = allBreaks.filter(b => {
-    if (b.endedAt) return b.duration > 1200;
-    const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
-    return activeSeconds > 1200;
-  });
+  const flaggedCount = flaggedUsersSet.size;
+
+  const topUser = stats.length > 0 ? stats[0] : null;
 
   const cards = [
     { label: "Active Agents", value: totalUsers - activeBreakCount, color: "text-green-600" },
     { label: "On Break (Inactive)", value: activeBreakCount, color: "text-orange-600", clickable: true },
     { label: "Avg Duration", value: formatDuration(avgDuration), color: "text-blue-600" },
     { label: "Most Breaks", value: topUser ? topUser.userName : "—", sub: topUser ? `${topUser.breakCount} breaks` : "", color: "text-purple-600" },
-    { label: "Flagged (Overage)", value: flaggedBreaks.length, color: "text-red-600", clickable: true },
+    { label: "Flagged (Overage)", value: flaggedCount, color: "text-red-600", clickable: true },
   ];
 
   return (
@@ -201,13 +217,13 @@ function BreakTimeline({ breaks, showUser }) {
               {b.endedAt ? (
                 <div className="flex flex-col items-end gap-1">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    b.duration > 1200 
+                    b.duration > 1800 
                       ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50' 
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
                   }`}>
                     {formatDuration(b.duration)}
                   </span>
-                  {b.duration > 1200 && showUser && (
+                  {b.duration > 1800 && showUser && (
                     <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider">
                       Flagged (Overage)
                     </span>
@@ -220,7 +236,7 @@ function BreakTimeline({ breaks, showUser }) {
                   </span>
                   {(() => {
                     const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
-                    if (activeSeconds > 1200 && showUser) {
+                    if (activeSeconds > 1800 && showUser) {
                       return (
                          <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider animate-pulse">
                            Flagged (Overage)
@@ -242,6 +258,29 @@ function BreakTimeline({ breaks, showUser }) {
 function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today }) {
   const [breaks, setBreaks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pushStatus, setPushStatus] = useState("unknown"); // unknown, unsupported, denied, granted
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      setPushStatus(Notification.permission);
+    } else {
+      setPushStatus("unsupported");
+    }
+  }, []);
+
+  const handleEnablePush = async () => {
+    const res = await subscribeToPushNotifications();
+    if (res.success) {
+      await savePushSubscription(res.subscription);
+      setPushStatus("granted");
+      toast.success("Push notifications enabled!");
+    } else {
+      toast.error(res.message || "Failed to enable notifications");
+      if (typeof window !== "undefined" && "Notification" in window) {
+        setPushStatus(Notification.permission);
+      }
+    }
+  };
 
   const fetchData = useCallback(async () => {
     try {
@@ -272,6 +311,26 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
         </h1>
         <p className="text-sm text-gray-500 mt-1">View your break history</p>
       </div>
+
+      {(pushStatus === "default" || pushStatus === "unknown") && (
+        <div className="bg-blue-50/50 dark:bg-blue-900/10 border border-blue-200 dark:border-blue-900/50 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="bg-blue-100 dark:bg-blue-900/50 p-2 rounded-lg shrink-0 mt-0.5">
+              <Bell className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-300">Enable Notifications</h3>
+              <p className="text-xs text-blue-700/80 dark:text-blue-400/80 mt-1">Get an alert when your daily 30-minute break limit is reached.</p>
+            </div>
+          </div>
+          <button 
+            onClick={handleEnablePush}
+            className="shrink-0 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            Enable Alerts
+          </button>
+        </div>
+      )}
 
       <DateNavigator
         selectedDate={selectedDate}
@@ -525,24 +584,41 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
             
             <div className="overflow-y-auto p-5 space-y-3 flex-1">
               {(() => {
-                const flagged = allBreaks.filter(b => (!teamFilter || b.userTeam === teamFilter) && (b.endedAt ? b.duration > 1200 : Math.floor((new Date() - new Date(b.startedAt)) / 1000) > 1200));
-                if (flagged.length === 0) {
-                  return <div className="text-center py-8 text-gray-500">No flagged breaks for this date.</div>;
+                // We already grouped by user in StatsCards, but that was scoped locally. 
+                // We can recalculate here since it's cheap, or just do it again.
+                const flaggedUsersMap = new Map();
+                for (const b of allBreaks) {
+                  if (teamFilter && b.userTeam !== teamFilter) continue;
+                  
+                  if (!flaggedUsersMap.has(b.userId)) {
+                    flaggedUsersMap.set(b.userId, { total: 0, userName: b.userName, userTeam: b.userTeam, isActive: false });
+                  }
+                  
+                  const dur = b.endedAt ? b.duration : Math.floor((new Date() - new Date(b.startedAt)) / 1000);
+                  const data = flaggedUsersMap.get(b.userId);
+                  data.total += dur;
+                  if (!b.endedAt) data.isActive = true;
                 }
-                return flagged.sort((a,b) => new Date(b.startedAt) - new Date(a.startedAt)).map(b => {
-                  const duration = b.endedAt ? b.duration : Math.floor((new Date() - new Date(b.startedAt)) / 1000);
+                
+                const flagged = Array.from(flaggedUsersMap.values()).filter(u => u.total > 1800);
+
+                if (flagged.length === 0) {
+                  return <div className="text-center py-8 text-gray-500">No flagged employees for this date.</div>;
+                }
+                
+                return flagged.sort((a,b) => b.total - a.total).map(u => {
                   return (
-                    <div key={b.id} className="flex items-center justify-between p-3 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-900/10">
+                    <div key={u.userName} className="flex items-center justify-between p-3 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-900/10">
                       <div>
-                        <p className="font-medium text-sm text-red-900 dark:text-red-300">{b.userName}</p>
-                        <p className="text-xs text-red-700/70 dark:text-red-400/70 capitalize">{b.userTeam?.replace("_", " ") || "No Team"}</p>
+                        <p className="font-medium text-sm text-red-900 dark:text-red-300">{u.userName}</p>
+                        <p className="text-xs text-red-700/70 dark:text-red-400/70 capitalize">{u.userTeam?.replace("_", " ") || "No Team"}</p>
                       </div>
                       <div className="text-right flex flex-col items-end gap-1">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50">
-                          {formatDuration(duration)}
+                          {formatDuration(u.total)}
                         </span>
                         <span className="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">
-                          {!b.endedAt ? "Active" : "Completed"}
+                          {u.isActive ? "Active Break" : "Exceeded"}
                         </span>
                       </div>
                     </div>
