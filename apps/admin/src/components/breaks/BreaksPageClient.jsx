@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Coffee, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { Coffee, Clock, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { getAllBreaks, getBreakStats } from "@/actions/breaks";
 import { getMyBreaks } from "@/actions/breaks";
 import { getIstDate } from "@/lib/ist";
@@ -80,23 +80,32 @@ function DateNavigator({ selectedDate, onPrev, onNext, onToday, isToday }) {
   );
 }
 
-function StatsCards({ stats }) {
+function StatsCards({ stats, allBreaks, totalUsers, onBreakClick }) {
+  const activeBreakCount = allBreaks.filter(b => !b.endedAt).length;
   const totalBreaks = stats.reduce((sum, s) => sum + s.breakCount, 0);
   const totalDuration = stats.reduce((sum, s) => sum + s.totalDuration, 0);
   const avgDuration = totalBreaks > 0 ? Math.round(totalDuration / totalBreaks) : 0;
   const topUser = stats.length > 0 ? stats[0] : null;
 
   const cards = [
-    { label: "Total Breaks", value: totalBreaks, color: "text-orange-600" },
+    { label: "Active Agents", value: totalUsers - activeBreakCount, color: "text-green-600" },
+    { label: "On Break (Inactive)", value: activeBreakCount, color: "text-orange-600" },
     { label: "Avg Duration", value: formatDuration(avgDuration), color: "text-blue-600" },
-    { label: "Team Break Time", value: formatDuration(totalDuration), color: "text-purple-600" },
-    { label: "Most Breaks", value: topUser ? topUser.userName : "—", sub: topUser ? `${topUser.breakCount} breaks` : "", color: "text-green-600" },
+    { label: "Most Breaks", value: topUser ? topUser.userName : "—", sub: topUser ? `${topUser.breakCount} breaks` : "", color: "text-purple-600" },
   ];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       {cards.map((card) => (
-        <div key={card.label} className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
+        <div 
+          key={card.label} 
+          onClick={card.label === "On Break (Inactive)" ? onBreakClick : undefined}
+          className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 ${
+            card.label === "On Break (Inactive)" 
+              ? "cursor-pointer hover:shadow-md hover:ring-1 hover:ring-orange-500/50 transition-all active:scale-[0.98]" 
+              : ""
+          }`}
+        >
           <div className="flex items-center gap-3">
             <div className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-800 ${card.color}`}>
               <Coffee className="w-5 h-5" />
@@ -113,7 +122,7 @@ function StatsCards({ stats }) {
   );
 }
 
-function UserBreakCards({ stats }) {
+function UserBreakCards({ stats, onUserClick }) {
   if (stats.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -128,7 +137,10 @@ function UserBreakCards({ stats }) {
       {stats.map((s) => (
         <div
           key={s.userId}
-          className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4"
+          onClick={() => onUserClick && onUserClick(s)}
+          className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 ${
+            onUserClick ? "cursor-pointer hover:shadow-md hover:ring-1 hover:ring-blue-500/50 transition-all active:scale-[0.98]" : ""
+          }`}
         >
           <div className="flex items-center justify-between mb-2">
             <div>
@@ -180,13 +192,37 @@ function BreakTimeline({ breaks, showUser }) {
             </div>
             <div className="text-right">
               {b.endedAt ? (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-                  {formatDuration(b.duration)}
-                </span>
+                <div className="flex flex-col items-end gap-1">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    b.duration > 1200 
+                      ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50' 
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                  }`}>
+                    {formatDuration(b.duration)}
+                  </span>
+                  {b.duration > 1200 && showUser && (
+                    <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider">
+                      Flagged (Overage)
+                    </span>
+                  )}
+                </div>
               ) : (
-                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 animate-pulse">
-                  Active
-                </span>
+                <div className="flex flex-col items-end gap-1">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 animate-pulse">
+                    Active
+                  </span>
+                  {(() => {
+                    const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
+                    if (activeSeconds > 1200 && showUser) {
+                      return (
+                         <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider animate-pulse">
+                           Flagged (Overage)
+                         </span>
+                      );
+                    }
+                    return null;
+                  })()}
+                </div>
               )}
             </div>
           </div>
@@ -267,11 +303,25 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
   );
 }
 
-function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday }) {
+const TEAM_OPTIONS = [
+  { value: "", label: "All Teams" },
+  { value: "sales", label: "Sales" },
+  { value: "tech", label: "Tech" },
+  { value: "hr", label: "HR" },
+  { value: "ceo_office", label: "CEO Office" },
+  { value: "admin_head", label: "Admin Head" },
+  { value: "marketing", label: "Marketing" },
+  { value: "outside_sales", label: "Outside Sales" },
+];
+
+function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users }) {
   const [stats, setStats] = useState([]);
   const [allBreaks, setAllBreaks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
+  const [teamFilter, setTeamFilter] = useState("");
+  const [showActiveModal, setShowActiveModal] = useState(false);
+  const [selectedUserTimeline, setSelectedUserTimeline] = useState(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -313,6 +363,16 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday }) {
           isToday={isToday}
         />
 
+        <select
+          className="p-1.5 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 outline-none focus:ring-1 focus:ring-primary"
+          value={teamFilter}
+          onChange={(e) => setTeamFilter(e.target.value)}
+        >
+          {TEAM_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+
         <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
           <button
             onClick={() => setActiveTab("overview")}
@@ -347,31 +407,127 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday }) {
           <div className="h-48 rounded-xl bg-gray-200 dark:bg-gray-800 animate-pulse" />
         </div>
       ) : (
-        <>
-          <StatsCards stats={stats} />
+        (() => {
+          const filteredStats = teamFilter ? stats.filter(s => s.userTeam === teamFilter) : stats;
+          const filteredBreaks = teamFilter ? allBreaks.filter(b => b.userTeam === teamFilter) : allBreaks;
+          const filteredUsersCount = teamFilter ? users.filter(u => u.team === teamFilter).length : users.length;
+          
+          return (
+            <>
+              <StatsCards 
+                stats={filteredStats} 
+                allBreaks={filteredBreaks} 
+                totalUsers={filteredUsersCount} 
+                onBreakClick={() => setShowActiveModal(true)}
+              />
 
-          {activeTab === "overview" ? (
-            <div>
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                Per-User Summary
+              {activeTab === "overview" ? (
+                <div>
+                  <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                    Per-User Summary
+                  </h2>
+                  <UserBreakCards 
+                    stats={filteredStats} 
+                    onUserClick={(userStats) => setSelectedUserTimeline(userStats)}
+                  />
+                </div>
+              ) : (
+                <div>
+                  <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                    Break Timeline ({filteredBreaks.length})
+                  </h2>
+                  <BreakTimeline breaks={filteredBreaks} showUser={true} />
+                </div>
+              )}
+            </>
+          );
+        })()
+      )}
+      
+      {showActiveModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <Coffee className="w-5 h-5 text-orange-600" />
+                Currently On Break ({allBreaks.filter(b => !b.endedAt && (!teamFilter || b.userTeam === teamFilter)).length})
               </h2>
-              <UserBreakCards stats={stats} />
+              <button 
+                onClick={() => setShowActiveModal(false)}
+                className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-          ) : (
-            <div>
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                Break Timeline ({allBreaks.length})
+            
+            <div className="overflow-y-auto p-5 space-y-3 flex-1">
+              {(() => {
+                const active = allBreaks.filter(b => !b.endedAt && (!teamFilter || b.userTeam === teamFilter));
+                if (active.length === 0) {
+                  return <div className="text-center py-8 text-gray-500">No one is currently on break.</div>;
+                }
+                return active.sort((a,b) => new Date(a.startedAt) - new Date(b.startedAt)).map(b => {
+                  const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
+                  const isFlagged = activeSeconds > 1200;
+                  return (
+                    <div key={b.id} className="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
+                      <div>
+                        <p className="font-medium text-sm">{b.userName}</p>
+                        <p className="text-xs text-gray-500 capitalize">{b.userTeam?.replace("_", " ") || "No Team"}</p>
+                      </div>
+                      <div className="text-right flex flex-col items-end gap-1">
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          isFlagged 
+                            ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50"
+                            : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 animate-pulse"
+                        }`}>
+                          {formatDuration(activeSeconds)}
+                        </span>
+                        {isFlagged && (
+                          <span className="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider animate-pulse">
+                            Flagged
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {selectedUserTimeline && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <Clock className="w-5 h-5 text-blue-600" />
+                {selectedUserTimeline.userName}&apos;s Timeline
               </h2>
-              <BreakTimeline breaks={allBreaks} showUser={true} />
+              <button 
+                onClick={() => setSelectedUserTimeline(null)}
+                className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-          )}
-        </>
+            
+            <div className="overflow-y-auto p-5 space-y-3 flex-1">
+              <BreakTimeline 
+                breaks={allBreaks.filter(b => b.userId === selectedUserTimeline.userId)} 
+                showUser={false} 
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
 }
 
-export function BreaksPageClient({ userId, userRole }) {
+export function BreaksPageClient({ userId, userRole, users = [] }) {
   const today = getIstDate();
   const [selectedDate, setSelectedDate] = useState(today);
   const isToday = selectedDate === today;
@@ -389,6 +545,7 @@ export function BreaksPageClient({ userId, userRole }) {
         onNext={handleNextDay}
         onToday={handleToday}
         isToday={isToday}
+        users={users}
       />
     );
   }

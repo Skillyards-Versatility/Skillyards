@@ -74,19 +74,29 @@ const TEAM_FIELDS = {
   outside_sales: OUTSIDE_SALES_FIELDS,
 };
 
-function cellStyle(isHeader = false) {
-  const base = "padding:10px 14px;text-align:left;font-size:13px;border-bottom:1px solid #e2e8f0;";
+function cellStyle(isHeader = false, isZebra = false) {
+  const base = "padding:12px 16px;text-align:left;font-size:14px;border-bottom:1px solid #e2e8f0;";
   if (isHeader) {
-    return base + "background:#f8fafc;color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-size:11px;";
+    return base + "background:linear-gradient(to right, #f8fafc, #f1f5f9);color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-size:11px;";
   }
-  return base + "color:#1e293b;";
+  const bg = isZebra ? "background:#fafafa;" : "background:#ffffff;";
+  return base + bg + "color:#1e293b;";
+}
+
+function renderValue(val) {
+  if (val === undefined || val === null || val === "") return "<span style='color:#cbd5e1;'>—</span>";
+  if (!isNaN(val) && typeof val !== 'boolean') {
+    return `<span style="display:inline-block;padding:2px 8px;background:#e0f2fe;color:#0369a1;border-radius:12px;font-size:12px;font-weight:600;border:1px solid #bae6fd;">${val}</span>`;
+  }
+  return val;
 }
 
 function renderReportTable(reports, team) {
   const fields = TEAM_FIELDS[team] || [];
-  if (!reports.length || !fields.length) return "<p style='color:#94a3b8;font-size:13px;'>No submissions today.</p>";
+  if (!reports.length || !fields.length) return "<p style='color:#94a3b8;font-size:13px;font-style:italic;'>No submissions today.</p>";
 
-  let html = '<table style="width:100%;border-collapse:collapse;margin:16px 0;">';
+  let html = '<div style="border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0, 0, 0, 0.05);margin:20px 0;">';
+  html += '<table style="width:100%;border-collapse:collapse;">';
 
   // Header
   html += "<thead><tr>";
@@ -98,26 +108,30 @@ function renderReportTable(reports, team) {
 
   // Body
   html += "<tbody>";
-  for (const report of reports) {
+  reports.forEach((report, index) => {
+    const isZebra = index % 2 === 1;
     html += "<tr>";
-    html += `<td style="${cellStyle()}"><b>${report.userName}</b></td>`;
+    html += `<td style="${cellStyle(false, isZebra)}"><b style="color:#0f172a;">${report.userName}</b></td>`;
     for (const f of fields) {
       const val = report.data?.[f.key];
-      html += `<td style="${cellStyle()}">${val !== undefined && val !== null && val !== "" ? val : "—"}</td>`;
+      html += `<td style="${cellStyle(false, isZebra)}">${renderValue(val)}</td>`;
     }
     html += "</tr>";
-  }
-  html += "</tbody></table>";
+  });
+  html += "</tbody></table></div>";
 
   // Notes
   const notesReports = reports.filter((r) => r.data?.notes);
   if (notesReports.length > 0) {
-    html += '<div style="margin-top:16px;">';
-    html += '<p style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-weight:600;margin:0 0 8px;">Notes</p>';
+    html += '<div style="margin-top:24px;">';
+    html += '<p style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-weight:700;margin:0 0 12px;">Notes & Updates</p>';
     for (const r of notesReports) {
-      html += `<div style="background:#f8fafc;border-radius:8px;padding:12px 14px;border-left:3px solid #00adb5;margin-bottom:8px;">`;
-      html += `<p style="font-size:12px;color:#64748b;margin:0 0 4px;font-weight:600;">${r.userName}</p>`;
-      html += `<p style="font-size:13px;color:#1e293b;margin:0;line-height:1.5;">${r.data.notes}</p>`;
+      html += `<div style="background:#ffffff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 4px rgba(0,0,0,0.02);border:1px solid #e2e8f0;border-left:4px solid #0ea5e9;">`;
+      html += `<p style="font-size:13px;color:#0f172a;margin:0 0 6px;font-weight:700;">
+        <span style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#e0f2fe;color:#0369a1;text-align:center;line-height:24px;font-size:10px;margin-right:8px;vertical-align:middle;">${r.userName.charAt(0)}</span>
+        ${r.userName}
+      </p>`;
+      html += `<p style="font-size:14px;color:#475569;margin:0;line-height:1.6;padding-left:32px;">${r.data.notes}</p>`;
       html += "</div>";
     }
     html += "</div>";
@@ -276,33 +290,35 @@ export function eodReportTemplate({ team, date, reports, adminUrl }) {
   const submittedCount = reports.length;
 
   return `
-  <div style="background:#f1f5f9;padding:2rem;font-family:Arial,sans-serif;">
-    <div style="max-width:720px;margin:auto;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;">
+  <div style="background:#f8fafc;background-image:radial-gradient(#e2e8f0 1px, transparent 1px);background-size:20px 20px;padding:2rem;font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+    <div style="max-width:760px;margin:auto;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);">
 
-      <div style="background:#0f172a;padding:24px;text-align:center;">
+      <div style="background:linear-gradient(135deg, #0f172a 0%, #1e293b 100%);padding:28px;text-align:center;border-bottom:1px solid #334155;">
         <img src="${LOGO_URL}" style="max-width:180px;height:auto;display:block;margin:auto;" alt="Skillyards" />
       </div>
 
-      <div style="padding:28px 28px 0;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="padding:32px 32px 0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
           <div>
-            <h1 style="font-size:20px;color:#1e293b;margin:0;">EOD Report</h1>
-            <p style="font-size:14px;color:#64748b;margin:4px 0 0;">${teamLabel} — ${date}</p>
+            <h1 style="font-size:22px;color:#0f172a;margin:0 0 6px;font-weight:800;">EOD Report</h1>
+            <p style="font-size:14px;color:#64748b;margin:0;font-weight:500;">${teamLabel} — <span style="color:#0ea5e9;">${date}</span></p>
           </div>
-          <div style="background:#00adb5;color:#ffffff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:20px;">
+          <div style="background:linear-gradient(to right, #0ea5e9, #0284c7);color:#ffffff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:24px;box-shadow:0 4px 6px -1px rgba(14, 165, 233, 0.2);">
             ${submittedCount} submitted
           </div>
         </div>
 
         ${renderReportTable(reports, team)}
 
-        <div style="margin:24px 0;">
-          <a href="${adminUrl}/eod/history?date=${date}&team=${team}" style="display:block;text-align:center;padding:12px 0;background:#00adb5;color:#ffffff;font-size:14px;font-weight:600;border-radius:10px;text-decoration:none;">View Full Report in Dashboard</a>
+        <div style="margin:32px 0;">
+          <a href="${adminUrl}/eod/history?date=${date}&team=${team}" style="display:block;text-align:center;padding:14px 0;background:linear-gradient(to right, #0ea5e9, #0284c7);color:#ffffff;font-size:15px;font-weight:600;border-radius:12px;text-decoration:none;box-shadow:0 4px 6px -1px rgba(14, 165, 233, 0.3);">
+            View Full Report in Dashboard
+          </a>
         </div>
       </div>
 
-      <div style="border-top:1px solid #e2e8f0;padding:16px 28px;background:#f8fafc;">
-        <p style="text-align:center;font-size:11px;color:#94a3b8;margin:0;">Automated EOD Report · Skillyards · © ${year}</p>
+      <div style="border-top:1px solid #e2e8f0;padding:20px 32px;background:#f8fafc;">
+        <p style="text-align:center;font-size:12px;color:#94a3b8;margin:0;font-weight:500;">Automated EOD Report · Skillyards · © ${year}</p>
       </div>
     </div>
   </div>

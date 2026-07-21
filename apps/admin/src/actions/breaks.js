@@ -78,10 +78,7 @@ export async function endBreak(breakId) {
     }
 
     const now = new Date();
-    const durationSec = Math.min(
-      Math.floor((now.getTime() - new Date(record.startedAt).getTime()) / 1000),
-      MAX_BREAK_SECONDS
-    );
+    const durationSec = Math.floor((now.getTime() - new Date(record.startedAt).getTime()) / 1000);
 
     const [updated] = await db
       .update(breaks)
