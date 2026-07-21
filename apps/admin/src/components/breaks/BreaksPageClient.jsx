@@ -263,6 +263,11 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
   useEffect(() => {
     if (typeof window !== "undefined" && "Notification" in window) {
       setPushStatus(Notification.permission);
+      
+      // Always ensure service worker is registered if they are already granted
+      if (Notification.permission === "granted") {
+        import("@/lib/push").then(m => m.registerServiceWorker());
+      }
     } else {
       setPushStatus("unsupported");
     }
