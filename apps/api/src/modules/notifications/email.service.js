@@ -101,7 +101,7 @@ export const sendReceiptEmail = withResend((resend, { to, studentName, receiptNu
 /**
  * Send EOD report email to a specific recipient
  */
-export const sendEodReportEmail = withResend((resend, { to, team, date, reports, adminUrl }) => {
+export const sendEodReportEmail = withResend((resend, { to, bcc, team, date, reports, adminUrl }) => {
   const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
   const TEAM_LABELS = {
     sales: "Sales",
@@ -114,12 +114,15 @@ export const sendEodReportEmail = withResend((resend, { to, team, date, reports,
   };
   const subject = `EOD Report — ${TEAM_LABELS[team] || team} — ${date}`;
 
-  return resend.emails.send({
+  const payload = {
     from,
     to: [to],
     subject,
     html: eodReportTemplate({ team, date, reports, adminUrl }),
-  });
+  };
+  if (bcc && bcc.length > 0) payload.bcc = bcc;
+
+  return resend.emails.send(payload);
 });
 
 /**

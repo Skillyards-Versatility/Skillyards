@@ -4,8 +4,9 @@ import { sendEodReportEmail, sendEodAllTeamsEmail } from "@/modules/notification
 import { getIstDate, isIstSunday } from "@/lib/ist.js";
 
 const TEAM_LEADS = {
-  sales: { name: "Rahul Singh", email: "rahul@skillyards.in" },
-  tech: { name: "Mrigesh Deshpande", email: "mrigesh@skillyards.in" },
+  sales: { name: "Rahul Singh", email: "sskillyards@gmail.com" },
+  tech: { name: "Mrigesh Deshpande", email: "mrigeshdeshpande@skillyards.in" },
+  marketing: { name: "Neeraj Dang", email: "neeraj@skillyards.in" },
 };
 
 const ADMIN_HEADS = [
@@ -60,44 +61,32 @@ async function handler(req) {
   const teams = Object.keys(byTeam);
   let totalSent = 0;
 
-  // Send per-team emails to team leads
+  // Send per-team emails to team leads and BCC admin heads
+  const adminEmails = ADMIN_HEADS.map((a) => a.email).filter(Boolean);
   const teamEmailPromises = [];
+  
   for (const team of teams) {
     const lead = TEAM_LEADS[team];
-    if (lead?.email) {
+    
+    // If a team has no dedicated lead, send directly to the first admin and BCC the rest
+    const to = lead?.email || adminEmails[0];
+    const bcc = lead?.email ? adminEmails : adminEmails.slice(1);
+    
+    if (to) {
       teamEmailPromises.push(
         sendEodReportEmail({
-          to: lead.email,
+          to,
+          bcc,
           team,
           date: today,
           reports: byTeam[team],
           adminUrl: ADMIN_URL,
         }).then(() => {
           totalSent++;
-          return { team, recipient: lead.email, status: "sent" };
+          return { team, recipient: to, status: "sent" };
         }).catch((err) => {
-          console.error(`Failed to send EOD email to ${lead.email}:`, err);
-          return { team, recipient: lead.email, status: "failed", error: err.message };
-        })
-      );
-    }
-  }
-
-  // Send combined report to admin heads
-  for (const admin of ADMIN_HEADS) {
-    if (admin.email) {
-      teamEmailPromises.push(
-        sendEodAllTeamsEmail({
-          to: admin.email,
-          date: today,
-          teamSummaries: teams.map((t) => ({ team: t, reports: byTeam[t] })),
-          adminUrl: ADMIN_URL,
-        }).then(() => {
-          totalSent++;
-          return { recipient: admin.email, status: "sent" };
-        }).catch((err) => {
-          console.error(`Failed to send combined EOD email to ${admin.email}:`, err);
-          return { recipient: admin.email, status: "failed", error: err.message };
+          console.error(`Failed to send EOD email for ${team}:`, err);
+          return { team, recipient: to, status: "failed", error: err.message };
         })
       );
     }
