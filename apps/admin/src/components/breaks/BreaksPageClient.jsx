@@ -80,29 +80,36 @@ function DateNavigator({ selectedDate, onPrev, onNext, onToday, isToday }) {
   );
 }
 
-function StatsCards({ stats, allBreaks, totalUsers, onBreakClick }) {
+function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick }) {
   const activeBreakCount = allBreaks.filter(b => !b.endedAt).length;
   const totalBreaks = stats.reduce((sum, s) => sum + s.breakCount, 0);
   const totalDuration = stats.reduce((sum, s) => sum + s.totalDuration, 0);
   const avgDuration = totalBreaks > 0 ? Math.round(totalDuration / totalBreaks) : 0;
   const topUser = stats.length > 0 ? stats[0] : null;
 
+  const flaggedBreaks = allBreaks.filter(b => {
+    if (b.endedAt) return b.duration > 1200;
+    const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
+    return activeSeconds > 1200;
+  });
+
   const cards = [
     { label: "Active Agents", value: totalUsers - activeBreakCount, color: "text-green-600" },
-    { label: "On Break (Inactive)", value: activeBreakCount, color: "text-orange-600" },
+    { label: "On Break (Inactive)", value: activeBreakCount, color: "text-orange-600", clickable: true },
     { label: "Avg Duration", value: formatDuration(avgDuration), color: "text-blue-600" },
     { label: "Most Breaks", value: topUser ? topUser.userName : "—", sub: topUser ? `${topUser.breakCount} breaks` : "", color: "text-purple-600" },
+    { label: "Flagged (Overage)", value: flaggedBreaks.length, color: "text-red-600", clickable: true },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
       {cards.map((card) => (
         <div 
           key={card.label} 
-          onClick={card.label === "On Break (Inactive)" ? onBreakClick : undefined}
+          onClick={card.label === "On Break (Inactive)" ? onBreakClick : card.label === "Flagged (Overage)" ? onFlaggedClick : undefined}
           className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 ${
-            card.label === "On Break (Inactive)" 
-              ? "cursor-pointer hover:shadow-md hover:ring-1 hover:ring-orange-500/50 transition-all active:scale-[0.98]" 
+            card.clickable 
+              ? `cursor-pointer hover:shadow-md hover:ring-1 hover:ring-${card.color.split('-')[1]}-500/50 transition-all active:scale-[0.98]` 
               : ""
           }`}
         >
@@ -321,6 +328,7 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
   const [activeTab, setActiveTab] = useState("overview");
   const [teamFilter, setTeamFilter] = useState("");
   const [showActiveModal, setShowActiveModal] = useState(false);
+  const [showFlaggedModal, setShowFlaggedModal] = useState(false);
   const [selectedUserTimeline, setSelectedUserTimeline] = useState(null);
 
   const fetchData = useCallback(async () => {
@@ -419,6 +427,7 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                 allBreaks={filteredBreaks} 
                 totalUsers={filteredUsersCount} 
                 onBreakClick={() => setShowActiveModal(true)}
+                onFlaggedClick={() => setShowFlaggedModal(true)}
               />
 
               {activeTab === "overview" ? (
@@ -488,6 +497,53 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                             Flagged
                           </span>
                         )}
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showFlaggedModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <Coffee className="w-5 h-5 text-red-600" />
+                Flagged Employees
+              </h2>
+              <button 
+                onClick={() => setShowFlaggedModal(false)}
+                className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="overflow-y-auto p-5 space-y-3 flex-1">
+              {(() => {
+                const flagged = allBreaks.filter(b => (!teamFilter || b.userTeam === teamFilter) && (b.endedAt ? b.duration > 1200 : Math.floor((new Date() - new Date(b.startedAt)) / 1000) > 1200));
+                if (flagged.length === 0) {
+                  return <div className="text-center py-8 text-gray-500">No flagged breaks for this date.</div>;
+                }
+                return flagged.sort((a,b) => new Date(b.startedAt) - new Date(a.startedAt)).map(b => {
+                  const duration = b.endedAt ? b.duration : Math.floor((new Date() - new Date(b.startedAt)) / 1000);
+                  return (
+                    <div key={b.id} className="flex items-center justify-between p-3 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-900/10">
+                      <div>
+                        <p className="font-medium text-sm text-red-900 dark:text-red-300">{b.userName}</p>
+                        <p className="text-xs text-red-700/70 dark:text-red-400/70 capitalize">{b.userTeam?.replace("_", " ") || "No Team"}</p>
+                      </div>
+                      <div className="text-right flex flex-col items-end gap-1">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50">
+                          {formatDuration(duration)}
+                        </span>
+                        <span className="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">
+                          {!b.endedAt ? "Active" : "Completed"}
+                        </span>
                       </div>
                     </div>
                   );
