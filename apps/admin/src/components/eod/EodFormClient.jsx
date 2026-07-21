@@ -109,6 +109,14 @@ const MANAGER_FIELDS = [
   { key: "notes", label: "Additional Notes", type: "textarea", placeholder: "Any extra information..." },
 ];
 
+const EDITOR_FIELDS = [
+  { key: "minutesEdited", label: "Minutes of Video Edited", type: "number", placeholder: "0" },
+  { key: "reelsCompleted", label: "Reels / Shorts Completed", type: "number", placeholder: "0" },
+  { key: "renderStatus", label: "Render/Export Status", type: "text", placeholder: "e.g., Exported and Uploaded" },
+  { key: "tasksCompleted", label: "General Tasks Completed", type: "textarea", placeholder: "List any other tasks completed..." },
+  { key: "notes", label: "Additional Notes", type: "textarea", placeholder: "Any extra information..." },
+];
+
 const TEAM_LABELS = {
   sales: "Sales",
   tech: "Tech",
@@ -127,7 +135,7 @@ export function EodFormClient({ team, role, existingReport }) {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const fields = role === "MANAGER" ? MANAGER_FIELDS : (TEAM_FIELDS[team] || []);
+  const fields = role === "MANAGER" ? MANAGER_FIELDS : role === "EDITOR" ? EDITOR_FIELDS : (TEAM_FIELDS[team] || []);
   const today = getIstDate();
   const canSubmit = !isIstSunday() && isIstBeforeCutoff();
 
@@ -218,7 +226,7 @@ export function EodFormClient({ team, role, existingReport }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
       <div className="card p-4 sm:p-6">
-        <h2 className="text-lg font-semibold mb-1">{role === "MANAGER" ? "Manager" : (TEAM_LABELS[team] || team)} Report</h2>
+        <h2 className="text-lg font-semibold mb-1">{role === "MANAGER" ? "Manager" : role === "EDITOR" ? "Video Editor" : (TEAM_LABELS[team] || team)} Report</h2>
         <p className="text-sm text-muted-foreground mb-4 sm:mb-6">{today}</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
