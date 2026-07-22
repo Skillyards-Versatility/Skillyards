@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Calendar, Users, FileText, Clock, CheckCircle2, Filter } from "lucide-react";
-import { getEodHistory } from "@/actions/eod";
+import { Calendar, Users, FileText, Clock, CheckCircle2, Filter, Send } from "lucide-react";
+import { getEodHistory, triggerEodEmails } from "@/actions/eod";
 import { formatIstDate, getIstDate } from "@/lib/ist";
 
 const TEAM_LABELS = {
@@ -38,6 +38,25 @@ export function EodHistoryClient({ isAdmin = false }) {
     return d.toISOString().split("T")[0];
   });
   const [endDate, setEndDate] = useState(getIstDate());
+  const [triggering, setTriggering] = useState(false);
+
+  const handleTriggerEmails = async () => {
+    if (!window.confirm(`Send EOD emails for ${endDate}?`)) return;
+    setTriggering(true);
+    try {
+      const res = await triggerEodEmails({ date: endDate });
+      if (res.success) {
+        toast.success(`Sent ${res.reportsSent} team reports and ${res.warningsSent} warnings. ${res.failed?.length ? `(${res.failed.length} failed)` : ""}`);
+        fetchHistory();
+      } else {
+        toast.error(res.error || res.message || "Failed to send emails");
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setTriggering(false);
+    }
+  };
 
   const fetchHistory = async () => {
     setLoading(true);
@@ -119,6 +138,16 @@ export function EodHistoryClient({ isAdmin = false }) {
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
             </select>
+          )}
+          {isAdmin && (
+            <button 
+              onClick={handleTriggerEmails} 
+              disabled={triggering}
+              className="btn btn-primary text-sm py-1.5 px-3 ml-auto flex items-center gap-1.5"
+            >
+              <Send className="h-4 w-4" />
+              {triggering ? "Sending..." : "Send EOD Emails"}
+            </button>
           )}
         </div>
       </div>

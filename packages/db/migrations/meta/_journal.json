@@ -127,6 +127,13 @@
       "when": 1784103485362,
       "tag": "0017_yellow_sabretooth",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1784697617442,
+      "tag": "0018_red_ted_forrester",
+      "breakpoints": true
     }
   ]
 }

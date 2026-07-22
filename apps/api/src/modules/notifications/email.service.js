@@ -16,7 +16,16 @@ function withResend(fn) {
       console.warn("Skipping email — Resend not configured");
       return;
     }
-    return fn(resend, ...args);
+    const result = await fn(resend, ...args);
+    
+    if (Array.isArray(result)) {
+      const error = result.find(r => r?.error)?.error;
+      if (error) throw new Error(`Resend API error: ${JSON.stringify(error)}`);
+    } else if (result?.error) {
+      throw new Error(`Resend API error: ${JSON.stringify(result.error)}`);
+    }
+    
+    return result;
   };
 }
 
