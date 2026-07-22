@@ -4,6 +4,7 @@ import { useState } from "react";
 import { updateStatus } from "@/actions/status";
 import { toast } from "sonner";
 import { SmilePlus, X } from "lucide-react";
+import EmojiPicker from 'emoji-picker-react';
 
 const PRESETS = [
   { emoji: "💻", text: "Deep Work" },
@@ -22,6 +23,8 @@ export function UserStatus({ initialEmoji, initialText }) {
   // Optimistic UI state
   const [currentEmoji, setCurrentEmoji] = useState(initialEmoji);
   const [currentText, setCurrentText] = useState(initialText);
+
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   const handleSave = async (selectedEmoji = emoji, selectedText = text) => {
     setIsSaving(true);
@@ -74,7 +77,7 @@ export function UserStatus({ initialEmoji, initialText }) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-64 bg-card border border-border rounded-xl shadow-lg p-3 z-50 animate-in fade-in slide-in-from-top-2">
+        <div className="absolute right-0 top-full mt-2 w-[300px] sm:w-[320px] bg-card border border-border rounded-xl shadow-2xl p-3 z-[100] animate-in fade-in slide-in-from-top-2 origin-top-right">
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-sm font-semibold">Set status</h4>
             <button onClick={() => setIsOpen(false)} className="text-muted-foreground hover:text-foreground">
@@ -82,23 +85,38 @@ export function UserStatus({ initialEmoji, initialText }) {
             </button>
           </div>
 
-          <div className="flex gap-2 mb-4">
-            <input
-              type="text"
-              placeholder="Emoji"
-              value={emoji}
-              onChange={(e) => setEmoji(e.target.value)}
-              className="w-12 h-9 rounded-md border border-input bg-transparent px-2 text-center text-lg focus:outline-none focus:ring-1 focus:ring-ring"
-              maxLength={2}
-            />
-            <input
-              type="text"
-              placeholder="What's your status?"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              className="flex-1 h-9 rounded-md border border-input bg-transparent px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
-              maxLength={50}
-            />
+          <div className="relative mb-4">
+            <div className="flex items-center gap-2 p-1 rounded-lg border border-input bg-muted/30 focus-within:ring-1 focus-within:ring-ring focus-within:border-ring transition-all">
+              <button
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                className="w-8 h-8 flex items-center justify-center rounded-md hover:bg-background/80 hover:shadow-sm text-lg transition-all shrink-0"
+              >
+                {emoji || "😊"}
+              </button>
+              
+              <input
+                type="text"
+                placeholder="What's your status?"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                className="flex-1 bg-transparent border-none shadow-none focus:outline-none focus:ring-0 text-sm px-1 text-foreground placeholder:text-muted-foreground"
+                maxLength={50}
+              />
+            </div>
+
+            {showEmojiPicker && (
+              <div className="absolute top-12 left-0 right-0 z-[100] shadow-2xl rounded-lg overflow-hidden border border-border animate-in fade-in zoom-in-95 duration-200 bg-card">
+                <EmojiPicker
+                  onEmojiClick={(emojiObject) => {
+                    setEmoji(emojiObject.emoji);
+                    setShowEmojiPicker(false);
+                  }}
+                  theme="auto"
+                  width="100%"
+                  height={350}
+                />
+              </div>
+            )}
           </div>
 
           <div className="space-y-1 mb-4">
