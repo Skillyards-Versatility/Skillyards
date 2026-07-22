@@ -18,10 +18,13 @@ export default async function CallsPage() {
 
   const initialCalls = await getCalls();
   const allUsers = await getUsers();
+  
+  // Filter users to only show BDAs (SALES role)
+  const bdaUsers = allUsers.filter(u => u.role === "SALES");
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-8">
-      <CallsClient initialCalls={initialCalls} allUsers={allUsers} />
+      <CallsClient initialCalls={initialCalls} allUsers={bdaUsers} />
     </div>
   );
 }
