@@ -158,7 +158,7 @@ export function EodFormClient({ team, role, existingReport }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!canSubmit) {
-      toast.error("Submission cutoff (6:30 PM IST) has passed");
+      toast.error("Submission cutoff (7:30 PM IST) has passed");
       return;
     }
 
@@ -218,7 +218,7 @@ export function EodFormClient({ team, role, existingReport }) {
           {isIstSunday() ? "Submissions Closed on Sundays" : "Cutoff Time Passed"}
         </h2>
         <p className="text-muted-foreground">
-          EOD reports must be submitted before 6:30 PM IST.
+          EOD reports must be submitted before 7:30 PM IST.
         </p>
       </div>
     );
