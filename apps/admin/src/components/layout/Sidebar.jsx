@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, LogOut, ChevronsLeft, ChevronsRight, X, ShieldCheck, Inbox, PhoneCall, ClipboardList, UserCircle, Coffee } from "lucide-react";
+import { LayoutDashboard, Users, LogOut, ChevronsLeft, ChevronsRight, X, ShieldCheck, Inbox, PhoneCall, ClipboardList, UserCircle, Coffee, CalendarRange } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { logout } from "@/actions/auth";
@@ -13,6 +13,7 @@ const navItems = [
   { name: "Enquiries", href: "/enquiries", icon: Inbox, minRole: "MANAGER" },
   { name: "Calls", href: "/calls", icon: PhoneCall, minRole: "MANAGER" },
   { name: "EOD Reports", href: "/eod", icon: ClipboardList },
+  { name: "Leaves", href: "/leaves", icon: CalendarRange },
   { name: "Breaks", href: "/breaks", icon: Coffee },
   { name: "Profile", href: "/profile", icon: UserCircle },
   { name: "Users", href: "/users", icon: ShieldCheck },
