@@ -1,5 +1,5 @@
 import { db, eodReports, users, eodWarnings } from "@repo/db";
-import { eq, isNotNull, inArray } from "drizzle-orm";
+import { eq, isNotNull, inArray, and } from "drizzle-orm";
 import { sendEodReportEmail, sendEodWarningEmail } from "@/modules/notifications/email.service";
 
 const TEAM_LEADS = {
@@ -13,7 +13,7 @@ const ADMIN_HEADS = [
   { name: "Admin Head", email: process.env.ADMIN_EMAIL || "admin@skillyards.in" },
 ];
 
-const ADMIN_URL = process.env.ADMIN_URL || (process.env.NODE_ENV === "production" ? "https://admin.skillyards.in" : "http://localhost:3002");
+const ADMIN_URL = process.env.ADMIN_URL || "https://admin.skillyards.in";
 
 const delay = (ms) => new Promise(r => setTimeout(r, ms));
 
@@ -30,6 +30,11 @@ export async function processEodEmails(date, targetUserId = null) {
   }
   
   // Fetch all reports submitted for the date
+  const reportConditions = [eq(eodReports.date, date)];
+  if (targetUserId) {
+    reportConditions.push(eq(eodReports.userId, targetUserId));
+  }
+
   const reports = await db
     .select({
       id: eodReports.id,
@@ -45,7 +50,7 @@ export async function processEodEmails(date, targetUserId = null) {
     })
     .from(eodReports)
     .leftJoin(users, eq(eodReports.userId, users.id))
-    .where(eq(eodReports.date, date));
+    .where(and(...reportConditions));
 
   // Fetch all warnings sent for the date to avoid duplicates
   const warningsSentList = await db
@@ -110,7 +115,7 @@ export async function processEodEmails(date, targetUserId = null) {
             to: missingUser.email,
             userName: missingUser.name,
             date: date,
-            adminUrl: adminUrl
+            adminUrl: ADMIN_URL
           });
           // Track it in DB immediately to prevent future runs from picking it up
           await db.insert(eodWarnings).values({
