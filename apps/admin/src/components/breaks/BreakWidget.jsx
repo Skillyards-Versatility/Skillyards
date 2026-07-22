@@ -5,8 +5,8 @@ import { Coffee, Square, Clock } from "lucide-react";
 import { startBreak, endBreak, getActiveBreak, getDailyBreakTotal } from "@/actions/breaks";
 import { toast } from "sonner";
 
-const MAX_SECONDS = 900;
-const DAILY_LIMIT = 1800;
+const MAX_BREAK_SECONDS = 600;
+const MAX_BREAKS = 3;
 
 function formatTime(seconds) {
   const m = Math.floor(seconds / 60);
@@ -23,9 +23,9 @@ function formatMinutes(seconds) {
 
 export function BreakWidget() {
   const [activeBreak, setActiveBreak] = useState(null);
-  const [remaining, setRemaining] = useState(MAX_SECONDS);
+  const [elapsed, setElapsed] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [dailyInfo, setDailyInfo] = useState({ total: 0, remaining: DAILY_LIMIT, overage: 0 });
+  const [dailyInfo, setDailyInfo] = useState({ breakCount: 0, maxBreaks: MAX_BREAKS, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0 });
   const [panelOpen, setPanelOpen] = useState(false);
   const intervalRef = useRef(null);
   const panelRef = useRef(null);
@@ -45,24 +45,11 @@ export function BreakWidget() {
   const tick = useCallback(() => {
     setActiveBreak((prev) => {
       if (!prev) return prev;
-      const elapsed = Math.floor((Date.now() - new Date(prev.startedAt).getTime()) / 1000);
-      const limit = Math.min(MAX_SECONDS, dailyInfo.remaining);
-      const rem = Math.max(0, limit - elapsed);
-      setRemaining(rem);
-
-      if (rem <= 0) {
-        clearTimer();
-        endBreak(prev.id).then((res) => {
-          if (res.success) {
-            toast.warning("Break time limit reached. Break ended automatically.");
-            refreshDailyInfo();
-          }
-        });
-        return null;
-      }
+      const currentElapsed = Math.floor((Date.now() - new Date(prev.startedAt).getTime()) / 1000);
+      setElapsed(currentElapsed);
       return prev;
     });
-  }, [clearTimer, refreshDailyInfo, dailyInfo.remaining]);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -72,9 +59,7 @@ export function BreakWidget() {
         setDailyInfo(info);
         if (b) {
           setActiveBreak(b);
-          const elapsed = Math.floor((Date.now() - new Date(b.startedAt).getTime()) / 1000);
-          const limit = Math.min(MAX_SECONDS, info.remaining);
-          setRemaining(Math.max(0, limit - elapsed));
+          setElapsed(Math.floor((Date.now() - new Date(b.startedAt).getTime()) / 1000));
         }
       }
     })();
@@ -111,13 +96,10 @@ export function BreakWidget() {
 
     if (res.success) {
       setActiveBreak(res.break);
-      const limit = res.dailyRemaining !== undefined ? Math.min(MAX_SECONDS, res.dailyRemaining) : MAX_SECONDS;
-      setRemaining(limit);
+      setElapsed(0);
       setPanelOpen(false);
-      if (res.dailyRemaining !== undefined) {
-        setDailyInfo((prev) => ({ ...prev, remaining: res.dailyRemaining }));
-      }
-      toast.success(`Break started! ${formatTime(limit)} remaining for this break.`);
+      refreshDailyInfo();
+      toast.success(`Break started! 10:00 remaining for this break.`);
     } else {
       toast.error(res.error);
       refreshDailyInfo();
@@ -134,16 +116,16 @@ export function BreakWidget() {
     if (res.success) {
       const dur = res.break.duration || 0;
       setActiveBreak(null);
-      setRemaining(MAX_SECONDS);
+      setElapsed(0);
       setPanelOpen(false);
       const info = await getDailyBreakTotal();
       setDailyInfo(info);
-      if (info.overage > 0) {
-        toast.warning(`Break ended (${formatTime(dur)}). Exceeded by ${formatMinutes(info.overage)} of 30m.`);
-      } else if (info.remaining > 0) {
-        toast.success(`Break ended (${formatTime(dur)}). ${formatTime(info.remaining)} remaining today.`);
+      
+      const breakOverage = Math.max(0, dur - (info.maxSeconds || MAX_BREAK_SECONDS));
+      if (breakOverage > 0) {
+        toast.warning(`Break ended. You went ${formatMinutes(breakOverage)} over the 10m limit!`);
       } else {
-        toast(`Break ended (${formatTime(dur)}). Daily limit reached.`);
+        toast.success(`Break ended successfully (${formatTime(dur)}).`);
       }
     } else {
       toast.error(res.error);
@@ -152,8 +134,11 @@ export function BreakWidget() {
   };
 
   const isOngoing = !!activeBreak;
-  const hasOverage = dailyInfo.overage > 0;
-  const isLimitDone = dailyInfo.remaining <= 0 && !hasOverage;
+  const maxSec = dailyInfo.maxSeconds || MAX_BREAK_SECONDS;
+  const currentOverage = isOngoing ? Math.max(0, elapsed - maxSec) : 0;
+  const isLimitDone = dailyInfo.breakCount >= (dailyInfo.maxBreaks || MAX_BREAKS);
+  
+  const displayRemaining = Math.max(0, maxSec - elapsed);
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50" ref={panelRef}>
@@ -164,23 +149,25 @@ export function BreakWidget() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">On Break</span>
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Break {dailyInfo.breakCount || 1} of {dailyInfo.maxBreaks || 3}</span>
                 </div>
-                <span className="text-xl font-mono font-bold text-foreground tracking-tight">{formatTime(remaining)}</span>
+                <span className={`text-xl font-mono font-bold tracking-tight ${currentOverage > 0 ? "text-red-500" : "text-foreground"}`}>
+                  {currentOverage > 0 ? `+ ${formatTime(currentOverage)}` : formatTime(displayRemaining)}
+                </span>
               </div>
               <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden shadow-inner">
                 <div
                   className={`h-full rounded-full transition-all duration-1000 ${
-                    remaining <= 60 ? "bg-red-500" : remaining <= 300 ? "bg-amber-500" : "bg-orange-500"
+                    currentOverage > 0 ? "bg-red-500 animate-pulse" : displayRemaining <= 60 ? "bg-red-500" : displayRemaining <= 300 ? "bg-amber-500" : "bg-orange-500"
                   }`}
-                  style={{ width: `${((Math.max(1, Math.min(MAX_SECONDS, dailyInfo.remaining)) - remaining) / Math.max(1, Math.min(MAX_SECONDS, dailyInfo.remaining))) * 100}%` }}
+                  style={{ width: `${currentOverage > 0 ? 100 : (displayRemaining / maxSec) * 100}%` }}
                 />
               </div>
               <div className="bg-muted/30 p-2.5 rounded-xl border border-border/50">
-                {hasOverage ? (
-                  <p className="text-xs font-medium text-red-500 text-center">Over by {formatMinutes(dailyInfo.overage)} (Limit: 30m)</p>
+                {currentOverage > 0 ? (
+                  <p className="text-xs font-medium text-red-500 text-center">Exceeded 10-minute limit!</p>
                 ) : (
-                  <p className="text-xs font-medium text-muted-foreground text-center">{formatTime(dailyInfo.remaining)} remaining today</p>
+                  <p className="text-xs font-medium text-muted-foreground text-center">{formatTime(displayRemaining)} remaining for this break</p>
                 )}
               </div>
               <button
@@ -200,24 +187,22 @@ export function BreakWidget() {
                 </div>
                 <div>
                   <h3 className="font-bold text-sm text-foreground">Break Time</h3>
-                  <p className="text-xs text-muted-foreground">{isLimitDone ? "Limit Reached" : "Take a moment to recharge"}</p>
+                  <p className="text-xs text-muted-foreground">{isLimitDone ? "Limit Reached" : `Ready for break ${dailyInfo.breakCount + 1}`}</p>
                 </div>
               </div>
               
               <div className="bg-muted/30 p-3 rounded-xl border border-border/50 space-y-1 text-center">
-                {hasOverage ? (
-                  <p className="text-xs font-bold text-red-500">Exceeded by {formatMinutes(dailyInfo.overage)} (Limit: 30m)</p>
-                ) : isLimitDone ? (
-                  <p className="text-xs font-bold text-muted-foreground">Daily 30m limit used up</p>
+                {isLimitDone ? (
+                  <p className="text-xs font-bold text-muted-foreground">Daily limit of 3 breaks used up.</p>
                 ) : (
                   <>
-                    <p className="text-xs font-bold text-foreground">{formatTime(dailyInfo.remaining)}</p>
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Remaining Today</p>
+                    <p className="text-xs font-bold text-foreground">{dailyInfo.breakCount} / {dailyInfo.maxBreaks || 3}</p>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Breaks Taken Today</p>
                   </>
                 )}
               </div>
               
-              {!isLimitDone && !hasOverage && (
+              {!isLimitDone && (
                 <button
                   onClick={handleStart}
                   disabled={loading}
@@ -234,8 +219,8 @@ export function BreakWidget() {
 
       <button
         onClick={() => {
-          if (!panelOpen && !isOngoing && (hasOverage || isLimitDone)) {
-            toast.info(isOngoing ? "End your current break first." : "Daily 30m break limit reached.");
+          if (!panelOpen && !isOngoing && isLimitDone) {
+            toast.info("Daily break limit of 3 breaks reached.");
             return;
           }
           setPanelOpen(!panelOpen);
@@ -244,17 +229,19 @@ export function BreakWidget() {
           panelOpen ? "ring-2 ring-amber-500 ring-offset-2 ring-offset-background" : ""
         } ${
           isOngoing
-            ? "bg-orange-500 hover:bg-orange-600 shadow-[0_4px_20px_rgba(249,115,22,0.3)] animate-pulse"
-            : hasOverage
-            ? "bg-red-500 hover:bg-red-600 shadow-[0_4px_20px_rgba(239,68,68,0.3)]"
+            ? currentOverage > 0 
+              ? "bg-red-500 hover:bg-red-600 shadow-[0_4px_20px_rgba(239,68,68,0.3)] animate-pulse" 
+              : "bg-orange-500 hover:bg-orange-600 shadow-[0_4px_20px_rgba(249,115,22,0.3)] animate-pulse"
             : isLimitDone
             ? "bg-slate-400 hover:bg-slate-500"
             : "bg-amber-500 hover:bg-amber-600 shadow-[0_4px_20px_rgba(245,158,11,0.3)]"
         }`}
       >
         {isOngoing ? (
-          <span className="text-xs font-bold font-mono tracking-tighter">{formatTime(remaining)}</span>
-        ) : hasOverage ? (
+          <span className={`text-xs font-bold font-mono tracking-tighter ${currentOverage > 0 ? "text-white" : ""}`}>
+            {currentOverage > 0 ? `+${formatTime(currentOverage)}` : formatTime(displayRemaining)}
+          </span>
+        ) : isLimitDone ? (
           <Clock className="w-6 h-6" />
         ) : (
           <Coffee className="w-6 h-6" />

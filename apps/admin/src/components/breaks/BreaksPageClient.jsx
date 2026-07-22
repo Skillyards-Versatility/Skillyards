@@ -87,7 +87,7 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
   const totalBreaks = stats.reduce((sum, s) => sum + s.breakCount, 0);
   const totalDuration = stats.reduce((sum, s) => sum + s.totalDuration, 0);
   const avgDuration = totalBreaks > 0 ? Math.round(totalDuration / totalBreaks) : 0;
-  // Calculate flagged users based on 30-minute (1800s) DAILY limit
+  // Calculate flagged users based on 10-minute (600s) PER BREAK limit
   const flaggedUsersSet = new Set();
   
   // Group breaks by user
@@ -100,7 +100,8 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
     userBreaks[b.userId].total += dur;
     userBreaks[b.userId].breaks.push({ ...b, calculatedDuration: dur });
     
-    if (userBreaks[b.userId].total > 1800) {
+    // Flag if any single break exceeds 10 minutes
+    if (dur > 600) {
       flaggedUsersSet.add(b.userId);
     }
   }
@@ -217,13 +218,13 @@ function BreakTimeline({ breaks, showUser }) {
               {b.endedAt ? (
                 <div className="flex flex-col items-end gap-1">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    b.duration > 1800 
+                    b.duration > 600 
                       ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50' 
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
                   }`}>
                     {formatDuration(b.duration)}
                   </span>
-                  {b.duration > 1800 && showUser && (
+                  {b.duration > 600 && showUser && (
                     <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider">
                       Flagged (Overage)
                     </span>
@@ -236,7 +237,7 @@ function BreakTimeline({ breaks, showUser }) {
                   </span>
                   {(() => {
                     const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
-                    if (activeSeconds > 1800 && showUser) {
+                    if (activeSeconds > 600 && showUser) {
                       return (
                          <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider animate-pulse">
                            Flagged (Overage)
@@ -541,7 +542,7 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                 }
                 return active.sort((a,b) => new Date(a.startedAt) - new Date(b.startedAt)).map(b => {
                   const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
-                  const isFlagged = activeSeconds > 1200;
+                  const isFlagged = activeSeconds > 600;
                   return (
                     <div key={b.id} className="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
                       <div>
@@ -596,16 +597,17 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                   if (teamFilter && b.userTeam !== teamFilter) continue;
                   
                   if (!flaggedUsersMap.has(b.userId)) {
-                    flaggedUsersMap.set(b.userId, { total: 0, userName: b.userName, userTeam: b.userTeam, isActive: false });
+                    flaggedUsersMap.set(b.userId, { total: 0, userName: b.userName, userTeam: b.userTeam, isActive: false, hasOverage: false });
                   }
                   
                   const dur = b.endedAt ? b.duration : Math.floor((new Date() - new Date(b.startedAt)) / 1000);
                   const data = flaggedUsersMap.get(b.userId);
                   data.total += dur;
                   if (!b.endedAt) data.isActive = true;
+                  if (dur > 600) data.hasOverage = true;
                 }
                 
-                const flagged = Array.from(flaggedUsersMap.values()).filter(u => u.total > 1800);
+                const flagged = Array.from(flaggedUsersMap.values()).filter(u => u.hasOverage);
 
                 if (flagged.length === 0) {
                   return <div className="text-center py-8 text-gray-500">No flagged employees for this date.</div>;

@@ -44,7 +44,7 @@ export async function POST(req) {
           user.pushSubscription,
           JSON.stringify({
             title: "Break Time Over!",
-            body: "You have exceeded your 30-minute daily break allowance. Please return to work immediately.",
+            body: "Your 10-minute break is over! Please return to work immediately.",
             url: "/breaks",
           })
         );

@@ -47,7 +47,7 @@ export function EodHubClient({ userName }) {
                 : status === "submitted"
                   ? "Great job! Your end-of-day report has been successfully submitted."
                   : canSubmit
-                    ? "Your report is pending. Please submit before 6:30 PM IST."
+                    ? "Your report is pending. Please submit before 7:30 PM IST."
                     : "The submission window for today has closed."}
             </p>
           </div>

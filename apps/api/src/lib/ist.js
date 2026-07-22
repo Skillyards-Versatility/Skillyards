@@ -35,7 +35,7 @@ export function isIstBeforeCutoff(now = new Date()) {
   const hour = parseInt(hourPart ? hourPart.value : "0", 10);
   const minute = parseInt(minutePart ? minutePart.value : "0", 10);
   
-  if (hour < 18) return true;
-  if (hour === 18 && minute < 30) return true;
+  if (hour < 19) return true;
+  if (hour === 19 && minute < 30) return true;
   return false;
 }

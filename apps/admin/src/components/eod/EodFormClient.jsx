@@ -136,9 +136,13 @@ export function EodFormClient({ team, role, existingReport }) {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const fields = role === "MANAGER" ? MANAGER_FIELDS : role === "EDITOR" ? EDITOR_FIELDS : (TEAM_FIELDS[team] || []);
   const today = getIstDate();
-  const canSubmit = !isIstSunday() && isIstBeforeCutoff();
+  const [reportDate, setReportDate] = useState(existingReport?.date || today);
+  const fields = role === "MANAGER" ? MANAGER_FIELDS : role === "EDITOR" ? EDITOR_FIELDS : (TEAM_FIELDS[team] || []);
+  
+  // Cutoff still applies to current time. Sunday check applies to the selected report date.
+  const isSelectedSunday = new Date(reportDate).getDay() === 0;
+  const canSubmit = !isSelectedSunday && isIstBeforeCutoff();
 
   const handleFileChange = (e) => {
     const file = e.target.files?.[0];
@@ -158,7 +162,7 @@ export function EodFormClient({ team, role, existingReport }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!canSubmit) {
-      toast.error("Submission cutoff (6:30 PM IST) has passed");
+      toast.error("Submission cutoff (7:30 PM IST) has passed");
       return;
     }
 
@@ -177,7 +181,7 @@ export function EodFormClient({ team, role, existingReport }) {
       }
 
       const res = await submitEodReport({
-        date: today,
+        date: reportDate,
         data: formData,
         screenshotKey,
       });
@@ -215,10 +219,10 @@ export function EodFormClient({ team, role, existingReport }) {
       <div className="card p-6 sm:p-12 text-center">
         <AlertCircle className="h-12 sm:h-16 w-12 sm:w-16 text-amber-500 mx-auto mb-4" />
         <h2 className="text-xl font-semibold mb-2">
-          {isIstSunday() ? "Submissions Closed on Sundays" : "Cutoff Time Passed"}
+          {isSelectedSunday ? "Submissions Closed on Sundays" : "Cutoff Time Passed"}
         </h2>
         <p className="text-muted-foreground">
-          EOD reports must be submitted before 6:30 PM IST.
+          EOD reports must be submitted before 7:30 PM IST.
         </p>
       </div>
     );
@@ -227,8 +231,20 @@ export function EodFormClient({ team, role, existingReport }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
       <div className="card p-4 sm:p-6">
-        <h2 className="text-lg font-semibold mb-1">{role === "MANAGER" ? "Manager" : role === "EDITOR" ? "Video Editor" : (TEAM_LABELS[team] || team)} Report</h2>
-        <p className="text-sm text-muted-foreground mb-4 sm:mb-6">{today}</p>
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
+          <div>
+            <h2 className="text-lg font-semibold mb-1">{role === "MANAGER" ? "Manager" : role === "EDITOR" ? "Video Editor" : (TEAM_LABELS[team] || team)} Report</h2>
+            <p className="text-sm text-muted-foreground">Select the date for this report.</p>
+          </div>
+          <input
+            type="date"
+            className="input text-sm"
+            value={reportDate}
+            max={today}
+            onChange={(e) => setReportDate(e.target.value)}
+            disabled={!!existingReport}
+          />
+        </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {fields
