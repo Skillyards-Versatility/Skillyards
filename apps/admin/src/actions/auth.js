@@ -107,11 +107,7 @@ export async function forgotPassword(prevState, formData) {
         .set({ resetToken: token, resetTokenExpiry: expiry })
         .where(eq(users.id, user.id));
 
-      const headersList = await headers();
-      const host = headersList.get("x-forwarded-host") || headersList.get("host");
-      const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
-      const adminUrl = host ? `${protocol}://${host}` : (process.env.NEXT_PUBLIC_ADMIN_URL || "http://localhost:3002");
-      
+      const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || process.env.ADMIN_URL || "https://admin.skillyards.in";
       const resetLink = `${adminUrl}/reset-password?token=${token}`;
 
       try {
