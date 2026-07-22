@@ -80,11 +80,11 @@ export async function getMyEodSubmissions() {
   return result;
 }
 
-export async function triggerEodEmails({ date }) {
+export async function triggerEodEmails({ date, userId }) {
   const res = await fetch(`${API}/api/admin/eod/trigger`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...(await authHeaders()) },
-    body: JSON.stringify({ date }),
+    body: JSON.stringify({ date, userId: userId || undefined }),
   });
 
   const result = await res.json();

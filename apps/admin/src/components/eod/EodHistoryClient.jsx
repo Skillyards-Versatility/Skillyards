@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Calendar, Users, FileText, Clock, CheckCircle2, Filter, Send } from "lucide-react";
+import { Calendar, Users, FileText, Clock, CheckCircle2, Filter, Send, Mail, Loader2 } from "lucide-react";
 import { getEodHistory, triggerEodEmails } from "@/actions/eod";
 import { formatIstDate, getIstDate } from "@/lib/ist";
 
@@ -39,6 +39,7 @@ export function EodHistoryClient({ isAdmin = false }) {
   });
   const [endDate, setEndDate] = useState(getIstDate());
   const [triggering, setTriggering] = useState(false);
+  const [sendingUserId, setSendingUserId] = useState(null);
 
   const handleTriggerEmails = async () => {
     if (!window.confirm(`Send EOD emails for ${endDate}?`)) return;
@@ -55,6 +56,30 @@ export function EodHistoryClient({ isAdmin = false }) {
       toast.error("An unexpected error occurred");
     } finally {
       setTriggering(false);
+    }
+  };
+
+  const handleSendWarning = async (userId, userName, date) => {
+    if (!window.confirm(`Send missing EOD warning to ${userName} for ${formatIstDate(date)}?`)) return;
+    setSendingUserId(userId);
+    try {
+      const res = await triggerEodEmails({ date, userId });
+      if (res.success) {
+        if (res.warningsSent > 0) {
+          toast.success(`Warning email sent to ${userName}.`);
+        } else if (res.warningsSkipped > 0) {
+          toast.info(`Warning already sent to ${userName} for this date.`);
+        } else {
+          toast.info(`No action needed for ${userName}.`);
+        }
+        fetchHistory();
+      } else {
+        toast.error(res.error || res.message || "Failed to send email");
+      }
+    } catch (err) {
+      toast.error("An unexpected error occurred");
+    } finally {
+      setSendingUserId(null);
     }
   };
 
@@ -146,7 +171,7 @@ export function EodHistoryClient({ isAdmin = false }) {
               className="btn btn-primary text-sm py-1.5 px-3 ml-auto flex items-center gap-1.5"
             >
               <Send className="h-4 w-4" />
-              {triggering ? "Sending..." : "Send EOD Emails"}
+              {triggering ? "Sending..." : "Send All Emails"}
             </button>
           )}
         </div>
@@ -177,11 +202,28 @@ export function EodHistoryClient({ isAdmin = false }) {
                       <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
                       Missing Submissions ({missingUsers.length})
                     </h4>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-col gap-1.5">
                       {missingUsers.map(u => (
-                        <span key={u.id} className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-md font-medium dark:bg-red-900/40 dark:text-red-300">
-                          {u.name}
-                        </span>
+                        <div key={u.id} className="flex items-center justify-between bg-red-100/80 dark:bg-red-900/30 rounded-lg px-3 py-1.5">
+                          <span className="text-xs text-red-700 dark:text-red-300 font-medium">
+                            {u.name}
+                            <span className="text-red-400 dark:text-red-500 font-normal ml-1.5">({u.team})</span>
+                          </span>
+                          {isAdmin && (
+                            <button
+                              onClick={() => handleSendWarning(u.id, u.name, date)}
+                              disabled={sendingUserId === u.id}
+                              className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                              title={`Send warning to ${u.name}`}
+                            >
+                              {sendingUserId === u.id ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              ) : (
+                                <Mail className="h-3.5 w-3.5" />
+                              )}
+                            </button>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>

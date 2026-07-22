@@ -17,9 +17,17 @@ const ADMIN_URL = process.env.ADMIN_URL || (process.env.NODE_ENV === "production
 
 const delay = (ms) => new Promise(r => setTimeout(r, ms));
 
-export async function processEodEmails(date) {
+export async function processEodEmails(date, targetUserId = null) {
   // Fetch all users who belong to a team
-  const allUsers = await db.select().from(users).where(isNotNull(users.team));
+  let allUsers = await db.select().from(users).where(isNotNull(users.team));
+
+  // If targeting a specific user, filter to only that user
+  if (targetUserId) {
+    allUsers = allUsers.filter(u => u.id === targetUserId);
+    if (allUsers.length === 0) {
+      return { success: true, message: "User not found or has no team", date, reportsSent: 0, warningsSent: 0, warningsSkipped: 0, failed: [] };
+    }
+  }
   
   // Fetch all reports submitted for the date
   const reports = await db
@@ -119,7 +127,9 @@ export async function processEodEmails(date) {
       });
     }
 
-    // Team summary email logic
+    // Team summary email logic — skip when targeting a specific user (individual action)
+    if (targetUserId) continue;
+
     const lead = TEAM_LEADS[team];
     const to = lead?.email || adminEmails[0];
     const bcc = lead?.email ? adminEmails : adminEmails.slice(1);
