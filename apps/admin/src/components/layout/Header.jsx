@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { Menu } from "lucide-react";
+import { UserStatus } from "@/components/layout/UserStatus";
 
 const ROLE_LABEL = {
   ADMIN: "Full Access",
@@ -38,6 +39,7 @@ export function Header({ user }) {
       </button>
 
       <div className="flex items-center gap-3 ml-auto">
+        <UserStatus initialEmoji={user?.statusEmoji} initialText={user?.statusText} />
         <ThemeToggle />
         <Link
           href="/profile"

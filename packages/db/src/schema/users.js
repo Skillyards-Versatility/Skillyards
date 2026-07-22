@@ -13,5 +13,8 @@ export const users = pgTable("users", {
   resetTokenExpiry: timestamp("reset_token_expiry"),
   isTraining: boolean("is_training").default(false).notNull(),
   pushSubscription: jsonb("push_subscription"),
+  statusEmoji: text("status_emoji"),
+  statusText: text("status_text"),
+  statusClearAt: timestamp("status_clear_at"),
   createdAt: timestamp("created_at").defaultNow()
 });

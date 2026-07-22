@@ -12,12 +12,18 @@ export default async function AuthenticatedLayout({ children }) {
   if (session) {
     try {
       const [dbUser] = await db
-        .select({ profileImageKey: users.profileImageKey })
+        .select({ 
+          profileImageKey: users.profileImageKey,
+          statusEmoji: users.statusEmoji,
+          statusText: users.statusText
+        })
         .from(users)
         .where(eq(users.id, session.userId))
         .limit(1);
       if (dbUser) {
         user.profileImageKey = dbUser.profileImageKey;
+        user.statusEmoji = dbUser.statusEmoji;
+        user.statusText = dbUser.statusText;
       }
     } catch {
       // ignore

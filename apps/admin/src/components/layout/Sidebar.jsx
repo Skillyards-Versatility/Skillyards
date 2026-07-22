@@ -12,6 +12,7 @@ const navItems = [
   { name: "Students", href: "/students", icon: Users, minRole: "MANAGER" },
   { name: "Enquiries", href: "/enquiries", icon: Inbox, minRole: "MANAGER" },
   { name: "Calls", href: "/calls", icon: PhoneCall, minRole: "MANAGER" },
+  { name: "Team Directory", href: "/team", icon: Users },
   { name: "EOD Reports", href: "/eod", icon: ClipboardList },
   { name: "Leaves", href: "/leaves", icon: CalendarRange },
   { name: "Breaks", href: "/breaks", icon: Coffee },
