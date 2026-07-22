@@ -3,7 +3,7 @@
 import { db, breaks, users } from "@repo/db";
 import { eq, and, sql, desc } from "drizzle-orm";
 import { getSession } from "@/lib/auth";
-import { getIstDate } from "@/lib/ist";
+import { getIstDate, isIstWithinBreakHours } from "@/lib/ist";
 
 const MAX_BREAK_SECONDS = 600; // 10 minutes per break
 const MAX_BREAKS_PER_DAY = 3;
@@ -44,6 +44,10 @@ export async function startBreak() {
 
   const userId = session.userId;
   const date = getIstDate();
+
+  if (!isIstWithinBreakHours()) {
+    return { success: false, error: "Breaks can only be taken between 11:00 AM and 6:30 PM." };
+  }
 
   try {
     const [existing] = await db

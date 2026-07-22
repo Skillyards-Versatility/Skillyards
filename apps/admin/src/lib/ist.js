@@ -45,6 +45,14 @@ export function isIstBeforeCutoff(now = new Date()) {
 }
 
 /**
+ * Check if current IST time is within allowed break hours (11:00 AM to 6:30 PM).
+ */
+export function isIstWithinBreakHours(now = new Date()) {
+  const { totalMinutes } = getIstTime(now);
+  return totalMinutes >= 660 && totalMinutes < 1110; // 11:00 AM = 660, 6:30 PM = 1110
+}
+
+/**
  * Check if today is a Sunday in IST.
  */
 export function isIstSunday(now = new Date()) {
