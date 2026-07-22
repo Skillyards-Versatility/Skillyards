@@ -27,7 +27,7 @@ const TEAM_OPTIONS = [
   { value: "outside_sales", label: "Outside Sales" },
 ];
 
-export function EodHistoryClient({ isAdmin = false }) {
+export function EodHistoryClient({ isAdmin = false, isManager = false }) {
   const [reports, setReports] = useState([]);
   const [activeUsers, setActiveUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -129,7 +129,7 @@ export function EodHistoryClient({ isAdmin = false }) {
 
   // Helper to compute missing users for a specific date
   const getMissingUsers = (date, submittedReports = []) => {
-    if (!isAdmin) return [];
+    if (!isAdmin && !isManager) return [];
     const d = new Date(date);
     if (d.getDay() === 0) return []; // No EOD on Sundays
 
@@ -204,7 +204,7 @@ export function EodHistoryClient({ isAdmin = false }) {
             </div>
           )}
 
-          {isAdmin && (
+          {(isAdmin || isManager) && (
             <button 
               onClick={() => handleTriggerEmails(endDate)} 
               disabled={!!triggering}
@@ -240,7 +240,7 @@ export function EodHistoryClient({ isAdmin = false }) {
                   <h3 className="text-lg font-medium tracking-tight whitespace-nowrap">
                     {formatIstDate(date)}
                   </h3>
-                  {isAdmin && (
+                  {(isAdmin || isManager) && (
                     <button 
                       onClick={() => handleTriggerEmails(date)}
                       disabled={triggering === date}
@@ -269,7 +269,7 @@ export function EodHistoryClient({ isAdmin = false }) {
                             <span className="text-sm font-medium truncate">{u.name}</span>
                             <span className="text-xs text-muted-foreground">{TEAM_LABELS[u.team] || u.team}</span>
                           </div>
-                          {isAdmin && (
+                          {(isAdmin || isManager) && (
                             <button
                               onClick={() => handleSendIndividual(u.id, u.name, date, "warning")}
                               disabled={sendingUserId === u.id}
@@ -355,7 +355,7 @@ export function EodHistoryClient({ isAdmin = false }) {
                           )}
                         </div>
 
-                        {isAdmin && (
+                        {(isAdmin || isManager) && (
                           <div className="bg-slate-50 dark:bg-slate-900/50 px-4 py-3 border-t border-border/60 flex justify-end">
                             <button
                               onClick={() => handleSendIndividual(report.userId, report.userName, date, "report")}

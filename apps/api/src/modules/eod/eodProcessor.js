@@ -127,8 +127,10 @@ export async function processEodEmails(date, targetUserId = null) {
       });
     }
 
-    // Team summary email logic — skip when targeting a specific user (individual action)
-    if (targetUserId) continue;
+    // Team summary email logic
+    // If targeting a specific user who is MISSING, skip team report (just send warning).
+    // If they are not missing (they submitted), proceed to send the team report.
+    if (targetUserId && missingUsers.length > 0) continue;
 
     const lead = TEAM_LEADS[team];
     const to = lead?.email || adminEmails[0];

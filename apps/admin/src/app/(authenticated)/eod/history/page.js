@@ -5,7 +5,8 @@ export const dynamic = "force-dynamic";
 
 export default async function EodHistoryPage() {
   const session = await getSession();
-  const isAdmin = session?.role === "ADMIN" || session?.role === "MANAGER";
+  const isAdmin = session?.role === "ADMIN";
+  const isManager = session?.role === "MANAGER";
 
   return (
     <div className="space-y-6">
@@ -13,7 +14,7 @@ export default async function EodHistoryPage() {
         <h1 className="text-2xl font-bold tracking-tight">EOD History</h1>
         <p className="text-muted-foreground mt-1">Browse past EOD report submissions.</p>
       </div>
-      <EodHistoryClient isAdmin={isAdmin} />
+      <EodHistoryClient isAdmin={isAdmin} isManager={isManager} />
     </div>
   );
 }
