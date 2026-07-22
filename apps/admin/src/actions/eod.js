@@ -9,10 +9,10 @@ async function authHeaders() {
   return token ? { Cookie: `session=${token}` } : {};
 }
 
-export async function submitEodReport({ data, screenshotKey }) {
-  const date = getIstDate();
+export async function submitEodReport({ date, data, screenshotKey }) {
+  const targetDate = date || getIstDate();
 
-  if (isIstSunday()) {
+  if (isIstSunday() || new Date(targetDate).getDay() === 0) {
     return { success: false, message: "Submissions are not allowed on Sundays." };
   }
 
@@ -23,7 +23,7 @@ export async function submitEodReport({ data, screenshotKey }) {
   const res = await fetch(`${API}/api/eod`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...(await authHeaders()) },
-    body: JSON.stringify({ date, data, screenshotKey }),
+    body: JSON.stringify({ date: targetDate, data, screenshotKey }),
   });
 
   const result = await res.json();

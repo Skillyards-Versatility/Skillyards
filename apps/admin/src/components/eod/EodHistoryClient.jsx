@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Calendar, Users, FileText, Clock, CheckCircle2, Filter, Send, Mail, Loader2 } from "lucide-react";
+import { Calendar, Users, FileText, Clock, CheckCircle2, Filter, Send, Mail, Loader2, AlertCircle } from "lucide-react";
 import { getEodHistory, triggerEodEmails } from "@/actions/eod";
 import { formatIstDate, getIstDate } from "@/lib/ist";
 
@@ -38,14 +38,14 @@ export function EodHistoryClient({ isAdmin = false }) {
     return d.toISOString().split("T")[0];
   });
   const [endDate, setEndDate] = useState(getIstDate());
-  const [triggering, setTriggering] = useState(false);
+  const [triggering, setTriggering] = useState(null);
   const [sendingUserId, setSendingUserId] = useState(null);
 
-  const handleTriggerEmails = async () => {
-    if (!window.confirm(`Send EOD emails for ${endDate}?`)) return;
-    setTriggering(true);
+  const handleTriggerEmails = async (targetDate) => {
+    if (!window.confirm(`Send bulk EOD emails for ${targetDate}?`)) return;
+    setTriggering(targetDate);
     try {
-      const res = await triggerEodEmails({ date: endDate });
+      const res = await triggerEodEmails({ date: targetDate });
       if (res.success) {
         toast.success(`Sent ${res.reportsSent} team reports and ${res.warningsSent} warnings. ${res.failed?.length ? `(${res.failed.length} failed)` : ""}`);
         fetchHistory();
@@ -55,22 +55,26 @@ export function EodHistoryClient({ isAdmin = false }) {
     } catch (err) {
       toast.error("An unexpected error occurred");
     } finally {
-      setTriggering(false);
+      setTriggering(null);
     }
   };
 
-  const handleSendWarning = async (userId, userName, date) => {
-    if (!window.confirm(`Send missing EOD warning to ${userName} for ${formatIstDate(date)}?`)) return;
+  const handleSendIndividual = async (userId, userName, date, type = "warning") => {
+    const actionName = type === "warning" ? "missing EOD warning" : "EOD team report";
+    if (!window.confirm(`Send ${actionName} for ${userName} on ${formatIstDate(date)}?`)) return;
+    
     setSendingUserId(userId);
     try {
       const res = await triggerEodEmails({ date, userId });
       if (res.success) {
-        if (res.warningsSent > 0) {
+        if (type === "warning" && res.warningsSent > 0) {
           toast.success(`Warning email sent to ${userName}.`);
-        } else if (res.warningsSkipped > 0) {
+        } else if (type === "warning" && res.warningsSkipped > 0) {
           toast.info(`Warning already sent to ${userName} for this date.`);
+        } else if (type === "report" && res.reportsSent > 0) {
+          toast.success(`Team report re-triggered for ${userName}'s team.`);
         } else {
-          toast.info(`No action needed for ${userName}.`);
+          toast.info(`Action successful for ${userName}.`);
         }
         fetchHistory();
       } else {
@@ -104,24 +108,31 @@ export function EodHistoryClient({ isAdmin = false }) {
     fetchHistory();
   }, [teamFilter, startDate, endDate]);
 
-  // Group by date
+  // Group reports by date
   const grouped = {};
   for (const r of reports) {
     if (!grouped[r.date]) grouped[r.date] = [];
     grouped[r.date].push(r);
   }
 
-  const dates = Object.keys(grouped).sort().reverse();
+  // Generate all dates between startDate and endDate
+  const dates = [];
+  if (startDate && endDate) {
+    let curr = new Date(startDate);
+    const end = new Date(endDate);
+    while (curr <= end) {
+      dates.push(curr.toISOString().split("T")[0]);
+      curr.setDate(curr.getDate() + 1);
+    }
+    dates.reverse();
+  }
 
   // Helper to compute missing users for a specific date
-  const getMissingUsers = (date, submittedReports) => {
+  const getMissingUsers = (date, submittedReports = []) => {
     if (!isAdmin) return [];
-    
-    // Check if date is a Sunday
     const d = new Date(date);
     if (d.getDay() === 0) return []; // No EOD on Sundays
 
-    // Only consider users in the currently filtered team (or all valid teams if no filter)
     let relevantUsers = activeUsers.filter(u => u.team);
     if (teamFilter) {
       relevantUsers = relevantUsers.filter(u => u.team === teamFilter);
@@ -131,95 +142,144 @@ export function EodHistoryClient({ isAdmin = false }) {
     return relevantUsers.filter(u => !submittedUserIds.has(u.id));
   };
 
+  const teamColor = (team) => {
+    const colors = {
+      sales: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 border-blue-200 dark:border-blue-800/50",
+      tech: "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200 dark:border-purple-800/50",
+      hr: "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400 border-pink-200 dark:border-pink-800/50",
+      ceo_office: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800/50",
+      admin_head: "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700",
+      marketing: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800/50",
+      outside_sales: "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 border-orange-200 dark:border-orange-800/50",
+    };
+    return colors[team] || "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border-slate-200 dark:border-slate-700";
+  };
+
+  // Filter dates to only those that have either reports or missing users
+  const activeDates = dates.filter(date => {
+    const dateReports = grouped[date] || [];
+    const missing = getMissingUsers(date, dateReports);
+    return dateReports.length > 0 || missing.length > 0;
+  });
+
   return (
-    <div className="space-y-6">
-      {/* Filters */}
-      <div className="card p-3 sm:p-4">
-        <div className="flex items-center gap-2 mb-2 sm:mb-0">
-          <Filter className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">Filters</span>
+    <div className="space-y-10 pb-12 max-w-6xl mx-auto">
+      {/* Sleek Filters Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border/50">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight">EOD History</h2>
+          <p className="text-sm text-muted-foreground mt-1">Review past submissions and trigger reminder emails.</p>
         </div>
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mt-2 sm:mt-0">
-          <input
-            type="date"
-            className="input text-sm py-1.5"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          />
-          <span className="text-muted-foreground text-sm hidden sm:inline">to</span>
-          <input
-            type="date"
-            className="input text-sm py-1.5"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          />
+        
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <div className="flex items-center gap-2 bg-background border border-border/60 rounded-md px-3 py-1.5 shadow-sm">
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <input
+              type="date"
+              className="bg-transparent border-none text-sm focus:ring-0 p-0 w-[110px]"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            <span className="text-muted-foreground text-sm px-1">to</span>
+            <input
+              type="date"
+              className="bg-transparent border-none text-sm focus:ring-0 p-0 w-[110px]"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+          </div>
+          
           {isAdmin && (
-            <select
-              className="input text-sm py-1.5"
-              value={teamFilter}
-              onChange={(e) => setTeamFilter(e.target.value)}
-            >
-              {TEAM_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
+            <div className="relative">
+              <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <select
+                className="bg-background border border-border/60 text-sm rounded-md focus:ring-1 focus:ring-primary pl-9 pr-8 py-2 appearance-none shadow-sm cursor-pointer min-w-[140px]"
+                value={teamFilter}
+                onChange={(e) => setTeamFilter(e.target.value)}
+              >
+                {TEAM_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+            </div>
           )}
+
           {isAdmin && (
             <button 
-              onClick={handleTriggerEmails} 
-              disabled={triggering}
-              className="btn btn-primary text-sm py-1.5 px-3 ml-auto flex items-center gap-1.5"
+              onClick={() => handleTriggerEmails(endDate)} 
+              disabled={!!triggering}
+              className="bg-primary text-primary-foreground text-sm font-medium py-2 px-4 rounded-md flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <Send className="h-4 w-4" />
-              {triggering ? "Sending..." : "Send All Emails"}
+              {triggering === endDate ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              Send Bulk Emails
             </button>
           )}
         </div>
       </div>
 
       {loading ? (
-        <div className="card p-6 sm:p-12 text-center text-muted-foreground">Loading...</div>
-      ) : dates.length === 0 ? (
-        <div className="card p-6 sm:p-12 text-center text-muted-foreground">
-          <FileText className="h-10 sm:h-12 w-10 sm:w-12 mx-auto mb-3 opacity-30" />
-          <p>No reports found for this period.</p>
+        <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
+          <Loader2 className="h-8 w-8 animate-spin mb-4" />
+          <p className="text-sm">Loading history...</p>
+        </div>
+      ) : activeDates.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-24 text-muted-foreground border border-dashed rounded-lg bg-slate-50/50 dark:bg-slate-900/20">
+          <FileText className="h-12 w-12 mb-4 text-slate-300 dark:text-slate-700" />
+          <p className="text-base font-medium">No reports or pending submissions found.</p>
+          <p className="text-sm mt-1">Try adjusting your date range filters.</p>
         </div>
       ) : (
-        <div className="space-y-6">
-          {dates.map((date) => {
-            const missingUsers = getMissingUsers(date, grouped[date]);
+        <div className="space-y-12">
+          {activeDates.map((date) => {
+            const dateReports = grouped[date] || [];
+            const missingUsers = getMissingUsers(date, dateReports);
             
             return (
-              <div key={date}>
-                <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  {formatIstDate(date)}
-                </h3>
+              <div key={date} className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                <div className="flex items-center gap-3 mb-6">
+                  <h3 className="text-lg font-medium tracking-tight whitespace-nowrap">
+                    {formatIstDate(date)}
+                  </h3>
+                  {isAdmin && (
+                    <button 
+                      onClick={() => handleTriggerEmails(date)}
+                      disabled={triggering === date}
+                      className="bg-primary/10 text-primary hover:bg-primary/20 text-xs font-medium py-1 px-2.5 rounded flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                    >
+                      {triggering === date ? <Loader2 className="h-3 w-3 animate-spin" /> : <Send className="h-3 w-3" />}
+                      Trigger Mails
+                    </button>
+                  )}
+                  <div className="h-px bg-border/60 flex-1"></div>
+                </div>
                 
                 {missingUsers.length > 0 && (
-                  <div className="mb-4 bg-red-50/50 border border-red-100 rounded-xl p-4 dark:bg-red-950/20 dark:border-red-900/30">
-                    <h4 className="text-sm font-semibold text-red-800 dark:text-red-400 mb-2 flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-red-500 animate-pulse"></span>
-                      Missing Submissions ({missingUsers.length})
-                    </h4>
-                    <div className="flex flex-col gap-1.5">
+                  <div className="mb-8">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        Pending Submissions <span className="text-muted-foreground">({missingUsers.length})</span>
+                      </h4>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                       {missingUsers.map(u => (
-                        <div key={u.id} className="flex items-center justify-between bg-red-100/80 dark:bg-red-900/30 rounded-lg px-3 py-1.5">
-                          <span className="text-xs text-red-700 dark:text-red-300 font-medium">
-                            {u.name}
-                            <span className="text-red-400 dark:text-red-500 font-normal ml-1.5">({u.team})</span>
-                          </span>
+                        <div key={u.id} className="group flex items-center justify-between bg-background border border-border/60 hover:border-border rounded-md px-4 py-3 shadow-sm transition-colors">
+                          <div className="flex flex-col overflow-hidden">
+                            <span className="text-sm font-medium truncate">{u.name}</span>
+                            <span className="text-xs text-muted-foreground">{TEAM_LABELS[u.team] || u.team}</span>
+                          </div>
                           {isAdmin && (
                             <button
-                              onClick={() => handleSendWarning(u.id, u.name, date)}
+                              onClick={() => handleSendIndividual(u.id, u.name, date, "warning")}
                               disabled={sendingUserId === u.id}
-                              className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                              title={`Send warning to ${u.name}`}
+                              className="text-muted-foreground hover:text-foreground disabled:opacity-50 transition-colors p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800"
+                              title={`Send reminder to ${u.name}`}
                             >
                               {sendingUserId === u.id ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                <Loader2 className="h-4 w-4 animate-spin" />
                               ) : (
-                                <Mail className="h-3.5 w-3.5" />
+                                <Mail className="h-4 w-4" />
                               )}
                             </button>
                           )}
@@ -229,59 +289,91 @@ export function EodHistoryClient({ isAdmin = false }) {
                   </div>
                 )}
 
-                <div className="space-y-2">
-                  {grouped[date].map((report) => (
-                    <div key={report.id} className="card p-3 sm:p-4">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0">
-                            {(report.userName || "U").charAt(0)}
-                          </div>
-                          <div>
-                            <div className="font-medium text-sm">{report.userName}</div>
-                            <div className="text-xs text-muted-foreground">
-                              <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
-                                report.team === "sales" ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400" :
-                                report.team === "tech" ? "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400" :
-                                report.team === "hr" ? "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-400" :
-                                report.team === "ceo_office" ? "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400" :
-                                report.team === "admin_head" ? "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400" :
-                                report.team === "marketing" ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400" :
-                                report.team === "outside_sales" ? "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400" :
-                                "bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400"
-                              }`}>
-                                {TEAM_LABELS[report.team] || report.team}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                    Submitted Reports <span className="text-muted-foreground">({dateReports.length})</span>
+                  </h4>
+                  
+                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                    {dateReports.map((report) => (
+                      <div key={report.id} className="flex flex-col bg-background border border-border/60 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                        <div className="p-4 sm:p-5 flex-1">
+                          <div className="flex items-start justify-between gap-4 mb-4">
+                            <div className="flex items-center gap-3">
+                              <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-medium text-sm border border-border/50">
+                                {(report.userName || "U").charAt(0)}
+                              </div>
+                              <div>
+                                <div className="font-medium text-sm">{report.userName}</div>
+                                <div className="text-xs text-muted-foreground mt-0.5">{TEAM_LABELS[report.team] || report.team}</div>
+                              </div>
+                            </div>
+                            
+                            <div className="flex flex-col items-end gap-2 shrink-0">
+                              {new Date(report.submittedAt).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }) > report.date && (
+                                <span className="inline-flex items-center bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
+                                  Late
+                                </span>
+                              )}
+                              <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                                <Clock className="h-3 w-3" />
+                                {new Date(report.submittedAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })}
                               </span>
+                              
+                              {report.emailedAt ? (
+                                <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 text-xs font-medium">
+                                  <CheckCircle2 className="h-3.5 w-3.5" />
+                                  Emailed
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400 text-xs font-medium">
+                                  <Clock className="h-3.5 w-3.5" />
+                                  Pending Email
+                                </span>
+                              )}
                             </div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground pl-12 sm:pl-0">
-                          {report.emailedAt && (
-                            <span className="flex items-center gap-1">
-                              <CheckCircle2 className="h-3 w-3 text-emerald-500" />
-                              Emailed
-                            </span>
+
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-4 gap-x-2 bg-slate-50/50 dark:bg-slate-900/30 rounded-md p-3 border border-border/40">
+                            {Object.entries(report.data || {}).filter(([k, v]) => v && k !== "notes").slice(0, 6).map(([k, v]) => (
+                              <div key={k} className="flex flex-col">
+                                <span className="text-[11px] text-muted-foreground uppercase tracking-wider mb-1 truncate">
+                                  {k.replace(/([A-Z])/g, " $1")}
+                                </span>
+                                <span className="text-sm font-medium truncate" title={String(v)}>
+                                  {v}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                          
+                          {report.data?.notes && (
+                            <div className="mt-4 text-sm text-slate-600 dark:text-slate-300 leading-relaxed bg-background border-l-2 border-border pl-3 italic">
+                              {report.data.notes}
+                            </div>
                           )}
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {new Date(report.submittedAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", timeZone: "Asia/Kolkata" })}
-                          </span>
                         </div>
+
+                        {isAdmin && (
+                          <div className="bg-slate-50 dark:bg-slate-900/50 px-4 py-3 border-t border-border/60 flex justify-end">
+                            <button
+                              onClick={() => handleSendIndividual(report.userId, report.userName, date, "report")}
+                              disabled={sendingUserId === report.userId}
+                              className="text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-foreground flex items-center gap-1.5 transition-colors disabled:opacity-50"
+                            >
+                              {sendingUserId === report.userId ? (
+                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                              ) : (
+                                <Send className="h-3.5 w-3.5" />
+                              )}
+                              Send Team Report
+                            </button>
+                          </div>
+                        )}
                       </div>
-                      {/* Show key data fields */}
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {Object.entries(report.data || {}).filter(([k, v]) => v && k !== "notes").slice(0, 5).map(([k, v]) => (
-                          <span key={k} className="text-xs bg-muted px-2 py-1 rounded-md">
-                            <span className="text-muted-foreground">{k.replace(/([A-Z])/g, " $1").replace(/^./, s => s.toUpperCase())}:</span>{" "}
-                            <span className="font-medium">{v}</span>
-                          </span>
-                        ))}
-                      </div>
-                      {report.data?.notes && (
-                        <p className="mt-2 text-xs text-muted-foreground italic line-clamp-2">{report.data.notes}</p>
-                      )}
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             );

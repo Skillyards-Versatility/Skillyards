@@ -17,7 +17,7 @@ async function postHandler(req, { ctx }) {
     }
 
     // Sunday check
-    if (isIstSunday()) {
+    if (isIstSunday() || new Date(date).getDay() === 0) {
       return Response.json(
         { success: false, message: "Submissions are closed on Sundays" },
         { status: 400 }
