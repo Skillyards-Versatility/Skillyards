@@ -14,40 +14,77 @@ async function postHandler(req, { ctx }) {
     }
 
     const start = new Date(startDate);
-    const firstDay = new Date(start.getFullYear(), start.getMonth(), 1);
-    const lastDay = new Date(start.getFullYear(), start.getMonth() + 1, 0, 23, 59, 59, 999);
+    const end = new Date(endDate);
 
-    const [existingLeave] = await db
-      .select({ id: leaves.id })
-      .from(leaves)
-      .where(
-        and(
-          eq(leaves.userId, ctx.session.userId),
-          gte(leaves.startDate, firstDay),
-          lte(leaves.startDate, lastDay),
-          ne(leaves.status, "REJECTED")
+    if (type !== "UNPAID") {
+      const firstDay = new Date(start.getFullYear(), start.getMonth(), 1);
+      const lastDay = new Date(start.getFullYear(), start.getMonth() + 1, 0, 23, 59, 59, 999);
+
+      const [existingLeave] = await db
+        .select({ id: leaves.id })
+        .from(leaves)
+        .where(
+          and(
+            eq(leaves.userId, ctx.session.userId),
+            gte(leaves.startDate, firstDay),
+            lte(leaves.startDate, lastDay),
+            ne(leaves.status, "REJECTED"),
+            ne(leaves.type, "UNPAID")
+          )
         )
-      )
-      .limit(1);
+        .limit(1);
 
-    if (existingLeave) {
-      return Response.json(
-        { success: false, message: "You have already applied for a leave this month." },
-        { status: 400 }
-      );
+      if (existingLeave) {
+        return Response.json(
+          { success: false, message: "You have already used your paid leave allowance for this month." },
+          { status: 400 }
+        );
+      }
     }
 
-    const [result] = await db
-      .insert(leaves)
-      .values({
+    const timeDiff = end.getTime() - start.getTime();
+    const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+
+    let result;
+
+    if (type !== "UNPAID" && dayDiff > 1) {
+      // Split into 1 day paid, rest unpaid
+      const [paidLeave] = await db.insert(leaves).values({
         userId: ctx.session.userId,
-        startDate: new Date(startDate),
-        endDate: new Date(endDate),
+        startDate: start,
+        endDate: start,
         type,
         reason,
         status: "PENDING"
-      })
-      .returning();
+      }).returning();
+      
+      const unpaidStart = new Date(start);
+      unpaidStart.setDate(unpaidStart.getDate() + 1);
+
+      await db.insert(leaves).values({
+        userId: ctx.session.userId,
+        startDate: unpaidStart,
+        endDate: end,
+        type: "UNPAID",
+        reason: `${reason} (Auto-split unpaid portion)`,
+        status: "PENDING"
+      });
+
+      result = paidLeave;
+    } else {
+      const [inserted] = await db
+        .insert(leaves)
+        .values({
+          userId: ctx.session.userId,
+          startDate: start,
+          endDate: end,
+          type,
+          reason,
+          status: "PENDING"
+        })
+        .returning();
+      result = inserted;
+    }
 
     ctx.log("LEAVE_APPLIED", { userId: ctx.session.userId, leaveId: result.id });
 
