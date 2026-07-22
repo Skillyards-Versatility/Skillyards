@@ -5,8 +5,8 @@ import { eq, and, sql, desc } from "drizzle-orm";
 import { getSession } from "@/lib/auth";
 import { getIstDate } from "@/lib/ist";
 
-const MAX_BREAK_SECONDS = 900; // 15 minutes per break
-const DAILY_BREAK_LIMIT = 1800; // 30 minutes per day
+const MAX_BREAK_SECONDS = 600; // 10 minutes per break
+const MAX_BREAKS_PER_DAY = 3;
 const PRIVILEGED_ROLES = ["ADMIN", "HR", "MANAGER"];
 
 function isPrivilegedRole(role) {
@@ -56,17 +56,14 @@ export async function startBreak() {
       return { success: false, error: "You already have an active break. End it before starting a new one." };
     }
 
-    const [totalRow] = await db
-      .select({ total: sql`coalesce(sum(${breaks.duration}), 0)::int` })
+    const [countRow] = await db
+      .select({ count: sql`count(*)::int` })
       .from(breaks)
-      .where(and(eq(breaks.userId, userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NOT NULL`));
+      .where(and(eq(breaks.userId, userId), eq(breaks.date, date)));
 
-    if (totalRow.total >= DAILY_BREAK_LIMIT) {
-      const over = totalRow.total - DAILY_BREAK_LIMIT;
-      return { success: false, error: `Daily break limit of 30 minutes used up. You have exceeded by ${Math.floor(over / 60)}m ${over % 60}s.` };
+    if (countRow.count >= MAX_BREAKS_PER_DAY) {
+      return { success: false, error: `You have already taken your maximum of ${MAX_BREAKS_PER_DAY} breaks for today.` };
     }
-
-    const remainingSeconds = DAILY_BREAK_LIMIT - totalRow.total;
 
     const [record] = await db
       .insert(breaks)
@@ -80,7 +77,7 @@ export async function startBreak() {
         const res = await qstashClient.publishJSON({
           url: `${API_BASE}/api/breaks/check-limit`,
           body: { breakId: record.id, userId },
-          delay: `${remainingSeconds}s`,
+          delay: `${MAX_BREAK_SECONDS}s`,
         });
         scheduleId = res.messageId;
         
@@ -97,7 +94,7 @@ export async function startBreak() {
       }
     }
 
-    return { success: true, break: record, dailyRemaining: remainingSeconds };
+    return { success: true, break: record, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS };
   } catch (err) {
     console.error("Start break error:", err);
     return { success: false, error: "Failed to start break" };
@@ -166,23 +163,39 @@ export async function getActiveBreak() {
 
 export async function getDailyBreakTotal() {
   const session = await getSession();
-  if (!session) return { total: 0, remaining: DAILY_BREAK_LIMIT, overage: 0 };
+  if (!session) return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0 };
 
   const date = getIstDate();
 
   try {
-    const [row] = await db
-      .select({ total: sql`coalesce(sum(${breaks.duration}), 0)::int` })
+    const [statsRow] = await db
+      .select({
+        count: sql`count(*)::int`,
+        totalDur: sql`coalesce(sum(${breaks.duration}), 0)::int`,
+        // Calculate overage: for each ended break, if duration > 600, sum the difference.
+        overage: sql`coalesce(sum(case when ${breaks.duration} > ${MAX_BREAK_SECONDS} then ${breaks.duration} - ${MAX_BREAK_SECONDS} else 0 end), 0)::int`
+      })
       .from(breaks)
       .where(and(eq(breaks.userId, session.userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NOT NULL`));
 
-    const total = row?.total || 0;
-    const overage = Math.max(0, total - DAILY_BREAK_LIMIT);
-    const remaining = Math.max(0, DAILY_BREAK_LIMIT - total);
-    return { total, remaining, overage };
+    // Also need to count active breaks to get the correct breakCount
+    const [activeRow] = await db
+      .select({ count: sql`count(*)::int` })
+      .from(breaks)
+      .where(and(eq(breaks.userId, session.userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NULL`));
+
+    const totalCount = (statsRow?.count || 0) + (activeRow?.count || 0);
+
+    return { 
+      breakCount: totalCount, 
+      maxBreaks: MAX_BREAKS_PER_DAY, 
+      maxSeconds: MAX_BREAK_SECONDS,
+      totalDuration: statsRow?.totalDur || 0,
+      totalOverage: statsRow?.overage || 0
+    };
   } catch (err) {
     console.error("Get daily break total error:", err);
-    return { total: 0, remaining: DAILY_BREAK_LIMIT, overage: 0 };
+    return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0 };
   }
 }
 

@@ -425,8 +425,9 @@ export function eodAllTeamsTemplate({ date, teamSummaries, adminUrl }) {
   `;
 }
 
-export function eodWarningTemplate({ userName, date }) {
+export function eodWarningTemplate({ userName, date, adminUrl }) {
   const year = new Date().getFullYear();
+  const portalUrl = adminUrl ? `${adminUrl}/eod/submit?date=${date}` : "https://admin.skillyards.in/eod/submit";
 
   return `
   <div style="background:#f1f5f9;padding:2rem;font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
@@ -449,6 +450,12 @@ export function eodWarningTemplate({ userName, date }) {
           <p style="font-size:14px;color:#991b1b;line-height:1.6;margin:0;">
             Your Team Lead and the Admin team have been notified of this missing submission. Please ensure you submit your daily reports on time in the future.
           </p>
+        </div>
+
+        <div style="margin:24px 0;">
+          <a href="${portalUrl}" style="display:block;text-align:center;padding:14px 0;background:linear-gradient(to right, #0ea5e9, #0284c7);color:#ffffff;font-size:15px;font-weight:600;border-radius:12px;text-decoration:none;box-shadow:0 4px 6px -1px rgba(14, 165, 233, 0.3);">
+            Submit EOD Report Now
+          </a>
         </div>
       </div>
 

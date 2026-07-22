@@ -109,7 +109,8 @@ export async function processEodEmails(date, targetUserId = null) {
           await sendEodWarningEmail({
             to: missingUser.email,
             userName: missingUser.name,
-            date: date
+            date: date,
+            adminUrl: adminUrl
           });
           // Track it in DB immediately to prevent future runs from picking it up
           await db.insert(eodWarnings).values({

@@ -138,14 +138,14 @@ export const sendEodReportEmail = withResend((resend, { to, bcc, team, date, rep
 /**
  * Send EOD missing warning email to user
  */
-export const sendEodWarningEmail = withResend((resend, { to, userName, date }) => {
+export const sendEodWarningEmail = withResend((resend, { to, userName, date, adminUrl }) => {
   const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
   
   return resend.emails.send({
     from,
     to: [to],
     subject: `Action Required: Missing EOD Report — ${date}`,
-    html: eodWarningTemplate({ userName, date }),
+    html: eodWarningTemplate({ userName, date, adminUrl }),
   });
 });
 
