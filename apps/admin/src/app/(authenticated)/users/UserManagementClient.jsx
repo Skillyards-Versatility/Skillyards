@@ -353,8 +353,16 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0 shadow-sm">
-                          {user.name.charAt(0)}
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0 shadow-sm overflow-hidden">
+                          {user.profileImageKey ? (
+                            <img
+                              src={`/api/files/${user.profileImageKey}`}
+                              alt={user.name}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            user.name.charAt(0)
+                          )}
                         </div>
                         <div className="min-w-0">
                           <div className="font-semibold text-foreground truncate">{user.name}</div>
@@ -462,8 +470,16 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-4 min-w-0">
-                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center text-primary font-bold text-lg shrink-0 shadow-sm">
-                        {user.name.charAt(0)}
+                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center text-primary font-bold text-lg shrink-0 shadow-sm overflow-hidden">
+                        {user.profileImageKey ? (
+                          <img
+                            src={`/api/files/${user.profileImageKey}`}
+                            alt={user.name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          user.name.charAt(0)
+                        )}
                       </div>
                       <div className="min-w-0 space-y-0.5">
                         <div className="font-semibold text-base text-foreground truncate">{user.name}</div>

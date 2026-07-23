@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, text, timestamp, boolean } from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 import { relations } from "drizzle-orm";
 
@@ -10,6 +10,8 @@ export const leaves = pgTable("leaves", {
   type: text("type").notNull(), // CASUAL, SICK, UNPAID
   reason: text("reason").notNull(),
   status: text("status").default("PENDING").notNull(), // PENDING, APPROVED, REJECTED
+  isHalfDay: boolean("is_half_day").default(false).notNull(),
+  halfDayPeriod: text("half_day_period"), // MORNING or EVENING
   approvedById: uuid("approved_by_id").references(() => users.id),
   rejectionReason: text("rejection_reason"),
   createdAt: timestamp("created_at").defaultNow(),

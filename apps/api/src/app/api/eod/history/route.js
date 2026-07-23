@@ -31,6 +31,7 @@ async function getHandler(req, { ctx }) {
         emailedAt: eodReports.emailedAt,
         userName: users.name,
         userEmail: users.email,
+        profileImageKey: users.profileImageKey,
       })
       .from(eodReports)
       .leftJoin(users, eq(eodReports.userId, users.id))
@@ -39,7 +40,7 @@ async function getHandler(req, { ctx }) {
 
     let activeUsers = [];
     if (ctx.session.role === "ADMIN" || ctx.session.role === "MANAGER") {
-      activeUsers = await db.select({ id: users.id, name: users.name, team: users.team, email: users.email }).from(users);
+      activeUsers = await db.select({ id: users.id, name: users.name, team: users.team, email: users.email, profileImageKey: users.profileImageKey }).from(users);
     }
 
     return Response.json({ success: true, reports, activeUsers });

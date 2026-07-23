@@ -40,6 +40,12 @@ export async function getUsers() {
             await db.execute(
                 sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS reset_token_expiry TIMESTAMP;`
             );
+            await db.execute(
+                sql`ALTER TABLE leaves ADD COLUMN IF NOT EXISTS is_half_day BOOLEAN DEFAULT FALSE NOT NULL;`
+            );
+            await db.execute(
+                sql`ALTER TABLE leaves ADD COLUMN IF NOT EXISTS half_day_period TEXT;`
+            );
             await db.execute(sql`
                 CREATE TABLE IF NOT EXISTS eod_reports (
                     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -82,7 +88,8 @@ export async function getUsers() {
         role: users.role,
         team: users.team,
         isTraining: users.isTraining,
-        createdAt: users.createdAt
+        createdAt: users.createdAt,
+        profileImageKey: users.profileImageKey
     }).from(users).orderBy(desc(users.createdAt));
 }
 
