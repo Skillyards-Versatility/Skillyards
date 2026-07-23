@@ -62,13 +62,12 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
 
   useEffect(() => {
     fetchData();
-    setSelectedUser(null);
+    // Only clear selected user on date change if they are a manager/admin looking at the roster
+    if (isAdmin || isManager) {
+      setSelectedUser(null);
+    }
     setSelectedUserMetric("");
   }, [teamFilter, startDate, endDate]);
-
-  if (!isAdmin && !isManager) {
-    return <div className="p-8 text-center text-muted-foreground">Unauthorized to view analytics.</div>;
-  }
 
   // Calculate Personal Time Series if a user is selected
   const userTimeSeries = useMemo(() => {
@@ -360,12 +359,12 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
                 )}
               </div>
               
-              <div className="mt-8 text-center">
+              <div className="mt-8 text-center px-4">
                 <p className="font-bold text-foreground">
                   {currentStreak > 0 ? `Active Hot Streak!` : "Streak Lost"}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Hit 80+ calls to {currentStreak > 0 ? "keep it alive." : "reignite the fire."}
+                  Hit 120 dialed, 50 connected, & 90m talk time to {currentStreak > 0 ? "keep it alive." : "reignite the fire."}
                 </p>
                 <p className="text-xs text-orange-500/70 font-semibold mt-2">
                   All-time best: {maxStreak} days
