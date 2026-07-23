@@ -127,7 +127,10 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false }) {
             "counsellingDone", 
             "counsellingBooked",
             "sessionBooked",
+            "meetingsConducted",
+            "reviewsCompleted",
             "classesTaken",
+            "projectsWorkedOn",
             "bugsFixed",
             "deploymentsDone",
             "reelsEdited"
@@ -144,7 +147,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false }) {
               if (idxB !== -1) return 1;
               return b[1] - a[1]; // fallback to value-based if unknown
             })
-            .slice(0, 4);
+            .slice(0, 6);
 
           return (
             <div 

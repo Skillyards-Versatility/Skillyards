@@ -18,8 +18,11 @@ export const POST = createProtectedRoute(async (req) => {
     return Response.json({ error: "Failed to trigger EOD emails", details: error.message }, { status: 500 });
   }
 }, {
-  policy: (session) => ({
-    authorized: session?.role === "ADMIN",
-    reason: session?.role === "ADMIN" ? "ADMIN_OVERRIDE" : "ADMIN_ONLY",
-  }),
+  policy: (session) => {
+    const isAuthorized = session?.role === "ADMIN" || session?.role === "MANAGER";
+    return {
+      authorized: isAuthorized,
+      reason: isAuthorized ? "AUTHORIZED_ROLE" : "ADMIN_OR_MANAGER_ONLY",
+    };
+  },
 });

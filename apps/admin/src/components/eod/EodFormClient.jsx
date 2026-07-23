@@ -138,7 +138,24 @@ export function EodFormClient({ team, role, existingReport }) {
 
   const today = getIstDate();
   const [reportDate, setReportDate] = useState(existingReport?.date || today);
-  const fields = role === "MANAGER" ? MANAGER_FIELDS : role === "EDITOR" ? EDITOR_FIELDS : (TEAM_FIELDS[team] || []);
+  let fields = [];
+  if (role === "EDITOR") {
+    fields = EDITOR_FIELDS;
+  } else if (role === "MANAGER") {
+    const teamFields = TEAM_FIELDS[team] || [];
+    const managerFields = MANAGER_FIELDS;
+    
+    // Combine team fields and manager fields, keeping team fields first and removing duplicates like 'notes'
+    const combined = [...teamFields];
+    managerFields.forEach(mf => {
+      if (!combined.some(tf => tf.key === mf.key)) {
+        combined.push(mf);
+      }
+    });
+    fields = combined;
+  } else {
+    fields = TEAM_FIELDS[team] || [];
+  }
   
   // Cutoff still applies to current time. Sunday check applies to the selected report date.
   const isSelectedSunday = new Date(reportDate).getDay() === 0;
