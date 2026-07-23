@@ -11,8 +11,8 @@ const TEAM_FIELDS = {
   sales: [
     { key: "dialedCalls", label: "Dialed Calls", type: "number", placeholder: "0" },
     { key: "connectedCalls", label: "Connected Calls", type: "number", placeholder: "0" },
-    { key: "counsellingVirtual", label: "Counselling (Virtual)", type: "number", placeholder: "0" },
-    { key: "counsellingWalkin", label: "Counselling (Walk-in)", type: "number", placeholder: "0" },
+    { key: "counsellingDone", label: "Counselling Done", type: "number", placeholder: "0" },
+    { key: "counsellingBooked", label: "Counselling Booked", type: "number", placeholder: "0" },
     { key: "sessionBooked", label: "Sessions Booked", type: "number", placeholder: "0" },
     { key: "admissionRegistration", label: "Admissions / Registrations", type: "number", placeholder: "0" },
     { key: "admissionProjection", label: "Admission Projection", type: "number", placeholder: "0" },

@@ -29,6 +29,7 @@ async function getHandler(req, { ctx }) {
         team: eodReports.team,
         data: eodReports.data,
         userName: users.name,
+        profileImageKey: users.profileImageKey,
       })
       .from(eodReports)
       .leftJoin(users, eq(eodReports.userId, users.id))
@@ -43,11 +44,24 @@ async function getHandler(req, { ctx }) {
       const date = report.date;
       const teamName = report.team;
       const userName = report.userName;
+      const profileImageKey = report.profileImageKey;
+      
+      // Mutate data to map old keys for backward compatibility in both aggregates and drill-downs
       const data = report.data || {};
+      if (data.counsellingVirtual !== undefined) {
+        data.counsellingBooked = data.counsellingVirtual;
+        delete data.counsellingVirtual;
+      }
+      if (data.counsellingWalkin !== undefined) {
+        data.counsellingDone = data.counsellingWalkin;
+        delete data.counsellingWalkin;
+      }
 
       if (!timeSeriesData[date]) timeSeriesData[date] = { date };
       if (!teamAggregates[teamName]) teamAggregates[teamName] = {};
-      if (!userAggregates[userName]) userAggregates[userName] = {};
+      if (!userAggregates[userName]) {
+        userAggregates[userName] = { image: profileImageKey };
+      }
 
       Object.entries(data).forEach(([key, value]) => {
         // Only aggregate numeric fields
@@ -67,7 +81,8 @@ async function getHandler(req, { ctx }) {
       success: true,
       timeSeries: Object.values(timeSeriesData).sort((a, b) => a.date.localeCompare(b.date)),
       teamAggregates: Object.entries(teamAggregates).map(([team, metrics]) => ({ team, ...metrics })),
-      userAggregates: Object.entries(userAggregates).map(([user, metrics]) => ({ user, ...metrics }))
+      userAggregates: Object.entries(userAggregates).map(([user, metrics]) => ({ user, ...metrics })),
+      reports: reports, // Send raw reports to allow frontend drill-down
     });
   } catch (error) {
     ctx.error("EOD_ANALYTICS_FETCH_FAILED", { error: error.message });
