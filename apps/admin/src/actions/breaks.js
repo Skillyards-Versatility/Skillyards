@@ -60,6 +60,25 @@ export async function startBreak() {
       return { success: false, error: "You already have an active break. End it before starting a new one." };
     }
 
+    const [lastBreak] = await db
+      .select()
+      .from(breaks)
+      .where(and(eq(breaks.userId, userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NOT NULL`))
+      .orderBy(desc(breaks.endedAt))
+      .limit(1);
+
+    if (lastBreak && lastBreak.duration > 60) {
+      const nowMs = new Date().getTime();
+      const endedMs = new Date(lastBreak.endedAt).getTime();
+      const diffMs = nowMs - endedMs;
+      const cooldownMs = 30 * 60 * 1000;
+
+      if (diffMs < cooldownMs) {
+        const remainingMin = Math.ceil((cooldownMs - diffMs) / 60000);
+        return { success: false, error: `Cooldown active: Please wait ${remainingMin}m before taking another break.` };
+      }
+    }
+
     const [countRow] = await db
       .select({ count: sql`count(*)::int` })
       .from(breaks)
@@ -167,7 +186,7 @@ export async function getActiveBreak() {
 
 export async function getDailyBreakTotal() {
   const session = await getSession();
-  if (!session) return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0 };
+  if (!session) return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, lastEndedAt: null, lastDuration: 0 };
 
   const date = getIstDate();
 
@@ -176,13 +195,19 @@ export async function getDailyBreakTotal() {
       .select({
         count: sql`count(*)::int`,
         totalDur: sql`coalesce(sum(${breaks.duration}), 0)::int`,
-        // Calculate overage: for each ended break, if duration > 600, sum the difference.
-        overage: sql`coalesce(sum(case when ${breaks.duration} > ${MAX_BREAK_SECONDS} then ${breaks.duration} - ${MAX_BREAK_SECONDS} else 0 end), 0)::int`
+        overage: sql`coalesce(sum(case when ${breaks.duration} > ${MAX_BREAK_SECONDS} then ${breaks.duration} - ${MAX_BREAK_SECONDS} else 0 end), 0)::int`,
+        lastEndedAt: sql`max(${breaks.endedAt})`,
       })
       .from(breaks)
       .where(and(eq(breaks.userId, session.userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NOT NULL`));
 
-    // Also need to count active breaks to get the correct breakCount
+    // To prevent lockout from accidental breaks, we also need the duration of that last break.
+    let lastDuration = 0;
+    if (statsRow?.lastEndedAt) {
+      const [lastB] = await db.select({ duration: breaks.duration }).from(breaks).where(and(eq(breaks.userId, session.userId), eq(breaks.endedAt, statsRow.lastEndedAt))).limit(1);
+      if (lastB) lastDuration = lastB.duration;
+    }
+
     const [activeRow] = await db
       .select({ count: sql`count(*)::int` })
       .from(breaks)
@@ -195,11 +220,13 @@ export async function getDailyBreakTotal() {
       maxBreaks: MAX_BREAKS_PER_DAY, 
       maxSeconds: MAX_BREAK_SECONDS,
       totalDuration: statsRow?.totalDur || 0,
-      totalOverage: statsRow?.overage || 0
+      totalOverage: statsRow?.overage || 0,
+      lastEndedAt: statsRow?.lastEndedAt || null,
+      lastDuration: lastDuration
     };
   } catch (err) {
     console.error("Get daily break total error:", err);
-    return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0 };
+    return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, lastEndedAt: null, lastDuration: 0 };
   }
 }
 

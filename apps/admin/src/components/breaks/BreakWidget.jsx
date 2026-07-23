@@ -202,16 +202,33 @@ export function BreakWidget() {
                 )}
               </div>
               
-              {!isLimitDone && (
-                <button
-                  onClick={handleStart}
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white text-sm font-bold shadow-md hover:shadow-lg transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
-                >
-                  <Coffee className="w-4 h-4" />
-                  {loading ? "Starting..." : "Start Break"}
-                </button>
-              )}
+              {!isLimitDone && (() => {
+                let cooldownActive = false;
+                let cooldownRemaining = 0;
+                if (dailyInfo.lastEndedAt && dailyInfo.lastDuration > 60) {
+                  const diff = Date.now() - new Date(dailyInfo.lastEndedAt).getTime();
+                  const cooldownMs = 30 * 60 * 1000;
+                  if (diff < cooldownMs) {
+                    cooldownActive = true;
+                    cooldownRemaining = Math.ceil((cooldownMs - diff) / 60000);
+                  }
+                }
+                
+                return (
+                  <button
+                    onClick={handleStart}
+                    disabled={loading || cooldownActive}
+                    className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-bold shadow-md transition-all active:scale-[0.98] cursor-pointer ${
+                      cooldownActive
+                        ? "bg-slate-400 cursor-not-allowed opacity-70"
+                        : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-lg"
+                    }`}
+                  >
+                    <Coffee className="w-4 h-4" />
+                    {loading ? "Starting..." : cooldownActive ? `Cooldown: Wait ${cooldownRemaining}m` : "Start Break"}
+                  </button>
+                );
+              })()}
             </div>
           )}
         </div>
