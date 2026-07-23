@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Calendar, Users, FileText, Clock, CheckCircle2, Filter, Send, Mail, Loader2, AlertCircle } from "lucide-react";
+import { Calendar, Users, FileText, Clock, CheckCircle2, Filter, Send, Mail, Loader2, AlertCircle, X } from "lucide-react";
 import { getEodHistory, triggerEodEmails } from "@/actions/eod";
 import { formatIstDate, getIstDate } from "@/lib/ist";
 
@@ -40,6 +40,7 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
   const [endDate, setEndDate] = useState(getIstDate());
   const [triggering, setTriggering] = useState(null);
   const [sendingUserId, setSendingUserId] = useState(null);
+  const [selectedReport, setSelectedReport] = useState(null);
 
   const handleTriggerEmails = async (targetDate) => {
     if (!window.confirm(`Send bulk EOD emails for ${targetDate}?`)) return;
@@ -306,8 +307,11 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
                   
                   <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                     {dateReports.map((report) => (
-                      <div key={report.id} className="flex flex-col bg-background border border-border/60 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                        <div className="p-4 sm:p-5 flex-1">
+                      <div key={report.id} className="flex flex-col bg-background border border-border/60 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all group">
+                        <div 
+                          className="p-4 sm:p-5 flex-1 cursor-pointer"
+                          onClick={() => setSelectedReport(report)}
+                        >
                           <div className="flex items-start justify-between gap-4 mb-4">
                             <div className="flex items-center gap-3">
                               <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-medium text-sm border border-border/50 overflow-hidden shrink-0">
@@ -391,6 +395,85 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Detailed Report Modal */}
+      {selectedReport && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-200">
+          <div 
+            className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+            onClick={() => setSelectedReport(null)}
+          />
+          <div className="relative bg-card border border-border rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col animate-in zoom-in-95 duration-200">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-5 border-b border-border bg-muted/30">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-medium text-sm border border-border/50 overflow-hidden shrink-0">
+                  {selectedReport.profileImageKey ? (
+                    <img src={`/api/files/${selectedReport.profileImageKey}`} alt={selectedReport.userName} className="h-full w-full object-cover" />
+                  ) : (
+                    (selectedReport.userName || "U").charAt(0)
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground leading-tight">{selectedReport.userName}</h3>
+                  <div className="text-sm text-muted-foreground mt-0.5 flex items-center gap-2">
+                    <span>{TEAM_LABELS[selectedReport.team] || selectedReport.team}</span>
+                    <span>•</span>
+                    <span>{formatIstDate(selectedReport.date)}</span>
+                  </div>
+                </div>
+              </div>
+              <button 
+                onClick={() => setSelectedReport(null)}
+                className="p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
+              {/* Metrics Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {Object.entries(selectedReport.data || {}).filter(([k]) => k !== "notes").map(([k, v]) => (
+                  <div key={k} className="bg-slate-50 dark:bg-slate-900/40 p-4 rounded-xl border border-border/50 flex flex-col">
+                    <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1.5">
+                      {k.replace(/([A-Z])/g, " $1").trim()}
+                    </span>
+                    <span className="text-base font-semibold text-foreground whitespace-pre-wrap break-words">
+                      {v || "-"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Notes */}
+              {selectedReport.data?.notes && (
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium text-foreground">Additional Notes</h4>
+                  <div className="bg-muted/30 p-4 rounded-xl border border-border/50 text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
+                    {selectedReport.data.notes}
+                  </div>
+                </div>
+              )}
+
+              {/* Screenshot */}
+              {selectedReport.screenshotKey && (
+                <div className="space-y-2">
+                  <h4 className="text-sm font-medium text-foreground">Attached Screenshot</h4>
+                  <div className="rounded-xl border border-border/50 overflow-hidden bg-muted/20">
+                    <img 
+                      src={`/api/files/${selectedReport.screenshotKey}`} 
+                      alt="EOD Screenshot"
+                      className="w-full h-auto object-contain max-h-[500px]"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
