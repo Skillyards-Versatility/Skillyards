@@ -71,6 +71,20 @@ export async function getEodHistory({ startDate, endDate, team } = {}) {
   return result;
 }
 
+export async function getEodAnalytics({ startDate, endDate, team } = {}) {
+  const params = new URLSearchParams();
+  if (startDate) params.set("startDate", startDate);
+  if (endDate) params.set("endDate", endDate);
+  if (team) params.set("team", team);
+
+  const res = await fetch(`${API}/api/eod/analytics?${params.toString()}`, {
+    headers: await authHeaders(),
+  });
+
+  const result = await res.json();
+  return result;
+}
+
 export async function getMyEodSubmissions() {
   const res = await fetch(`${API}/api/eod/mine`, {
     headers: await authHeaders(),

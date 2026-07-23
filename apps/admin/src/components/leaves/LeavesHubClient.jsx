@@ -2,14 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
-import { CalendarRange, Check, X, Clock, Calendar as CalendarIcon, Info } from "lucide-react";
+import { CalendarRange, Check, X, Clock, Calendar as CalendarIcon, Info, LayoutList, CalendarDays } from "lucide-react";
 import { toast } from "sonner";
 import { applyLeave, getLeaves, updateLeaveStatus } from "@/actions/leaves";
+import { LeaveCalendar } from "./LeaveCalendar";
 
 export function LeavesHubClient({ userRole }) {
   const [leaves, setLeaves] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isApplying, setIsApplying] = useState(false);
+  const [availableBalance, setAvailableBalance] = useState(1.0);
+  const [viewMode, setViewMode] = useState("list"); // list or calendar
 
   // Form State
   const [startDate, setStartDate] = useState("");
@@ -31,6 +34,12 @@ export function LeavesHubClient({ userRole }) {
       const res = await getLeaves();
       if (res.success) {
         setLeaves(res.leaves || []);
+        if (res.availableBalance !== undefined) {
+          setAvailableBalance(res.availableBalance);
+          if (res.availableBalance <= 0) {
+            setType("UNPAID");
+          }
+        }
       }
     } catch (err) {
       toast.error("Failed to load leaves");
@@ -89,7 +98,15 @@ export function LeavesHubClient({ userRole }) {
 
   const handleStatusUpdate = async (id, status) => {
     try {
-      const res = await updateLeaveStatus(id, status);
+      let rejectionReason = undefined;
+      
+      if (status === "REJECTED") {
+        const reason = window.prompt("Please provide a reason for rejection (optional):");
+        if (reason === null) return; // User clicked Cancel
+        rejectionReason = reason;
+      }
+      
+      const res = await updateLeaveStatus(id, status, rejectionReason);
       if (res.success) {
         toast.success(`Leave ${status.toLowerCase()}`);
         setLeaves((prev) =>
@@ -185,8 +202,12 @@ export function LeavesHubClient({ userRole }) {
                   onChange={(e) => setType(e.target.value)}
                   className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 >
-                  <option value="CASUAL">Casual Leave</option>
-                  <option value="SICK">Sick Leave</option>
+                  {availableBalance > 0 && (
+                    <>
+                      <option value="CASUAL">Casual Leave</option>
+                      <option value="SICK">Sick Leave</option>
+                    </>
+                  )}
                   <option value="UNPAID">Unpaid Leave</option>
                 </select>
               </div>
@@ -213,8 +234,39 @@ export function LeavesHubClient({ userRole }) {
           </div>
         </div>
 
-        {/* Leaves List */}
+        {/* Leaves List or Calendar */}
         <div className="lg:col-span-2 space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="font-medium flex items-center gap-2">
+              <CalendarRange className="w-4 h-4 text-primary" /> 
+              {viewMode === "list" ? "Leave History" : "Leave Calendar"}
+            </h2>
+            <div className="flex bg-muted/50 p-1 rounded-lg border border-border/50">
+              <button
+                onClick={() => setViewMode("list")}
+                className={`p-1.5 rounded-md flex items-center justify-center transition-all ${
+                  viewMode === "list" 
+                    ? "bg-background text-foreground shadow-sm" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                title="List View"
+              >
+                <LayoutList className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setViewMode("calendar")}
+                className={`p-1.5 rounded-md flex items-center justify-center transition-all ${
+                  viewMode === "calendar" 
+                    ? "bg-background text-foreground shadow-sm" 
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                title="Calendar View"
+              >
+                <CalendarDays className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
           {loading ? (
             <div className="flex items-center justify-center py-12 text-muted-foreground">
               Loading...
@@ -224,6 +276,8 @@ export function LeavesHubClient({ userRole }) {
               <CalendarRange className="w-8 h-8 opacity-50" />
               <p>No leaves found</p>
             </div>
+          ) : viewMode === "calendar" ? (
+            <LeaveCalendar leaves={leaves} isManagerOrAdmin={isManagerOrAdmin} />
           ) : (
             leaves.map((leave) => (
               <div
