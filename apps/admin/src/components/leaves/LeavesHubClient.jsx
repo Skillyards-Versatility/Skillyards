@@ -275,13 +275,13 @@ export function LeavesHubClient({ userRole }) {
             <div className="flex items-center justify-center py-12 text-muted-foreground">
               Loading...
             </div>
+          ) : viewMode === "calendar" ? (
+            <LeaveCalendar leaves={[...leaves, ...calendarLeaves]} isManagerOrAdmin={isManagerOrAdmin} />
           ) : leaves.length === 0 ? (
             <div className="bg-card/50 rounded-xl border border-border border-dashed p-8 text-center text-muted-foreground flex flex-col items-center gap-2">
               <CalendarRange className="w-8 h-8 opacity-50" />
               <p>No leaves found</p>
             </div>
-          ) : viewMode === "calendar" ? (
-            <LeaveCalendar leaves={[...leaves, ...calendarLeaves]} isManagerOrAdmin={isManagerOrAdmin} />
           ) : (
             leaves.map((leave) => (
               <div
