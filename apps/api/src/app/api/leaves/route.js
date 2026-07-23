@@ -258,6 +258,29 @@ async function getHandler(req, { ctx }) {
     }
 
     const data = await query;
+    
+    let calendarLeaves = [];
+    if (user.role !== "ADMIN" && user.role !== "MANAGER") {
+      calendarLeaves = await db
+        .select({
+          id: leaves.id,
+          startDate: leaves.startDate,
+          endDate: leaves.endDate,
+          type: leaves.type,
+          status: leaves.status,
+          isHalfDay: leaves.isHalfDay,
+          halfDayPeriod: leaves.halfDayPeriod,
+          userName: users.name,
+        })
+        .from(leaves)
+        .leftJoin(users, eq(leaves.userId, users.id))
+        .where(
+          and(
+            eq(leaves.status, "APPROVED"),
+            ne(leaves.userId, ctx.session.userId)
+          )
+        );
+    }
 
     // Calculate current month's paid leave balance for the logged-in user
     const now = new Date();
@@ -289,7 +312,7 @@ async function getHandler(req, { ctx }) {
 
     const availableBalance = 1.0 - totalPaidTaken;
 
-    return Response.json({ success: true, leaves: data, availableBalance });
+    return Response.json({ success: true, leaves: data, calendarLeaves, availableBalance });
   } catch (error) {
     ctx.error("LEAVES_FETCH_FAILED", { error: error.message });
     return Response.json(

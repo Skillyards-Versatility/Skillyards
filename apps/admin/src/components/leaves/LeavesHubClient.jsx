@@ -9,6 +9,7 @@ import { LeaveCalendar } from "./LeaveCalendar";
 
 export function LeavesHubClient({ userRole }) {
   const [leaves, setLeaves] = useState([]);
+  const [calendarLeaves, setCalendarLeaves] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isApplying, setIsApplying] = useState(false);
   const [availableBalance, setAvailableBalance] = useState(1.0);
@@ -34,6 +35,9 @@ export function LeavesHubClient({ userRole }) {
       const res = await getLeaves();
       if (res.success) {
         setLeaves(res.leaves || []);
+        if (res.calendarLeaves) {
+          setCalendarLeaves(res.calendarLeaves);
+        }
         if (res.availableBalance !== undefined) {
           setAvailableBalance(res.availableBalance);
           if (res.availableBalance <= 0) {
@@ -277,7 +281,7 @@ export function LeavesHubClient({ userRole }) {
               <p>No leaves found</p>
             </div>
           ) : viewMode === "calendar" ? (
-            <LeaveCalendar leaves={leaves} isManagerOrAdmin={isManagerOrAdmin} />
+            <LeaveCalendar leaves={[...leaves, ...calendarLeaves]} isManagerOrAdmin={isManagerOrAdmin} />
           ) : (
             leaves.map((leave) => (
               <div
