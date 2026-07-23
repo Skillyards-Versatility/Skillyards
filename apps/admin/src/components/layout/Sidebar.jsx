@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, LogOut, ChevronsLeft, ChevronsRight, X, ShieldCheck, Inbox, PhoneCall, ClipboardList, UserCircle, Coffee, CalendarRange } from "lucide-react";
+import { LayoutDashboard, Users, LogOut, ChevronsLeft, ChevronsRight, X, ShieldCheck, Inbox, PhoneCall, ClipboardList, UserCircle, Coffee, CalendarRange, BarChart3 } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { logout } from "@/actions/auth";
@@ -14,6 +14,7 @@ const navItems = [
   { name: "Calls", href: "/calls", icon: PhoneCall, minRole: "MANAGER" },
   { name: "Team Directory", href: "/team", icon: Users },
   { name: "EOD Reports", href: "/eod", icon: ClipboardList },
+  { name: "EOD Analytics", href: "/eod/analytics", icon: BarChart3, minRole: "MANAGER" },
   { name: "Leaves", href: "/leaves", icon: CalendarRange },
   { name: "Breaks", href: "/breaks", icon: Coffee },
   { name: "Profile", href: "/profile", icon: UserCircle },
@@ -83,7 +84,9 @@ function SidebarContent({ variant, user }) {
         {navItems
           .filter((item) => canSee(item.minRole, user?.role))
           .map((item) => {
-            const isActive = pathname.startsWith(item.href);
+            const isActive = item.href === "/eod" 
+              ? pathname === "/eod" || pathname.startsWith("/eod/history") || pathname.startsWith("/eod/submit")
+              : pathname.startsWith(item.href);
             const Icon = item.icon;
             return (
               <Link
