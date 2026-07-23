@@ -98,7 +98,15 @@ export function LeavesHubClient({ userRole }) {
 
   const handleStatusUpdate = async (id, status) => {
     try {
-      const res = await updateLeaveStatus(id, status);
+      let rejectionReason = undefined;
+      
+      if (status === "REJECTED") {
+        const reason = window.prompt("Please provide a reason for rejection (optional):");
+        if (reason === null) return; // User clicked Cancel
+        rejectionReason = reason;
+      }
+      
+      const res = await updateLeaveStatus(id, status, rejectionReason);
       if (res.success) {
         toast.success(`Leave ${status.toLowerCase()}`);
         setLeaves((prev) =>

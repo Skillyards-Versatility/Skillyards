@@ -2,9 +2,9 @@ import { db, leaves, users } from "@repo/db";
 import { eq } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
 
-async function patchHandler(req, { ctx, params }) {
+async function patchHandler(req, { context, ctx, resource }) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
     const { status, rejectionReason } = await req.json();
 
     if (!status || !["APPROVED", "REJECTED"].includes(status)) {
@@ -44,13 +44,6 @@ async function patchHandler(req, { ctx, params }) {
       .where(eq(leaves.id, id))
       .returning();
 
-    if (!result) {
-      return Response.json(
-        { success: false, message: "Leave not found" },
-        { status: 404 }
-      );
-    }
-
     ctx.log("LEAVE_STATUS_UPDATED", { userId: ctx.session.userId, leaveId: id, status });
 
     return Response.json({ success: true, leave: result });
@@ -65,7 +58,11 @@ async function patchHandler(req, { ctx, params }) {
 
 export const PATCH = createProtectedRoute(patchHandler, {
   isPublic: false,
-  policy: (session) => ({
+  resourceLoader: async (id) => {
+    const [leave] = await db.select().from(leaves).where(eq(leaves.id, id)).limit(1);
+    return leave || null;
+  },
+  policy: (session, resource) => ({
     authorized: !!session?.userId,
     reason: session?.userId ? "Authenticated" : "Login required",
   }),

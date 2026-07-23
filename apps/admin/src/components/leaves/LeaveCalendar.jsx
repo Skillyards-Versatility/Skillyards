@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, isWithinInterval, startOfDay, getDay } from "date-fns";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 export function LeaveCalendar({ leaves, isManagerOrAdmin }) {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [selectedDateInfo, setSelectedDateInfo] = useState(null);
 
   const monthStart = startOfMonth(currentMonth);
   const monthEnd = endOfMonth(monthStart);
@@ -80,7 +81,14 @@ export function LeaveCalendar({ leaves, isManagerOrAdmin }) {
             return (
               <div
                 key={day.toString()}
+                onClick={() => {
+                  if (dayLeaves.length > 0) {
+                    setSelectedDateInfo({ date: day, leaves: dayLeaves });
+                  }
+                }}
                 className={`min-h-[80px] sm:min-h-[100px] p-1 sm:p-2 rounded-lg border flex flex-col gap-1 transition-colors ${
+                  dayLeaves.length > 0 ? "cursor-pointer" : ""
+                } ${
                   isToday ? "border-primary/50 bg-primary/5" : "border-border/50 bg-card hover:bg-muted/10"
                 }`}
               >
@@ -115,6 +123,48 @@ export function LeaveCalendar({ leaves, isManagerOrAdmin }) {
           })}
         </div>
       </div>
+
+      {selectedDateInfo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setSelectedDateInfo(null)}>
+          <div className="bg-card w-full max-w-md rounded-2xl shadow-xl border border-border overflow-hidden animate-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-5 border-b border-border">
+              <div>
+                <h3 className="font-semibold text-lg text-foreground">Absentees</h3>
+                <p className="text-sm text-muted-foreground">{format(selectedDateInfo.date, "EEEE, MMMM d, yyyy")}</p>
+              </div>
+              <button onClick={() => setSelectedDateInfo(null)} className="p-2 rounded-full hover:bg-muted text-muted-foreground transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="p-5 max-h-[60vh] overflow-y-auto space-y-3">
+              {selectedDateInfo.leaves.map((leave, idx) => (
+                <div key={idx} className="flex flex-col p-3 rounded-lg bg-muted/30 border border-border/50">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-foreground">{leave.userName || "You"}</span>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                      leave.status === "APPROVED" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"
+                    }`}>
+                      {leave.status}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 mt-1 text-sm text-muted-foreground">
+                    <span>{leave.type}</span>
+                    {leave.isHalfDay && (
+                      <>
+                        <span>•</span>
+                        <span>{leave.halfDayPeriod === "MORNING" ? "Morning Half-Day" : "Evening Half-Day"}</span>
+                      </>
+                    )}
+                  </div>
+                  {leave.reason && (
+                    <p className="text-xs text-muted-foreground mt-2 bg-background p-2 rounded border border-border/50">{leave.reason}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
