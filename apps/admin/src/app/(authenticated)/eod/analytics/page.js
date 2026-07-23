@@ -10,7 +10,7 @@ export default async function EodAnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <EodAnalyticsClient isAdmin={isAdmin} isManager={isManager} />
+      <EodAnalyticsClient isAdmin={isAdmin} isManager={isManager} userName={session?.name} />
     </div>
   );
 }

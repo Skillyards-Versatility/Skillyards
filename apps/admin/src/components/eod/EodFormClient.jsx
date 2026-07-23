@@ -11,8 +11,9 @@ const TEAM_FIELDS = {
   sales: [
     { key: "dialedCalls", label: "Dialed Calls", type: "number", placeholder: "0" },
     { key: "connectedCalls", label: "Connected Calls", type: "number", placeholder: "0" },
-    { key: "counsellingVirtual", label: "Counselling (Virtual)", type: "number", placeholder: "0" },
-    { key: "counsellingWalkin", label: "Counselling (Walk-in)", type: "number", placeholder: "0" },
+    { key: "talkTime", label: "Total Talk Time (mins)", type: "number", placeholder: "0" },
+    { key: "counsellingDone", label: "Counselling Done", type: "number", placeholder: "0" },
+    { key: "counsellingBooked", label: "Counselling Booked", type: "number", placeholder: "0" },
     { key: "sessionBooked", label: "Sessions Booked", type: "number", placeholder: "0" },
     { key: "admissionRegistration", label: "Admissions / Registrations", type: "number", placeholder: "0" },
     { key: "admissionProjection", label: "Admission Projection", type: "number", placeholder: "0" },
@@ -138,7 +139,24 @@ export function EodFormClient({ team, role, existingReport }) {
 
   const today = getIstDate();
   const [reportDate, setReportDate] = useState(existingReport?.date || today);
-  const fields = role === "MANAGER" ? MANAGER_FIELDS : role === "EDITOR" ? EDITOR_FIELDS : (TEAM_FIELDS[team] || []);
+  let fields = [];
+  if (role === "EDITOR") {
+    fields = EDITOR_FIELDS;
+  } else if (role === "MANAGER") {
+    const teamFields = TEAM_FIELDS[team] || [];
+    const managerFields = MANAGER_FIELDS;
+    
+    // Combine team fields and manager fields, keeping team fields first and removing duplicates like 'notes'
+    const combined = [...teamFields];
+    managerFields.forEach(mf => {
+      if (!combined.some(tf => tf.key === mf.key)) {
+        combined.push(mf);
+      }
+    });
+    fields = combined;
+  } else {
+    fields = TEAM_FIELDS[team] || [];
+  }
   
   // Cutoff still applies to current time. Sunday check applies to the selected report date.
   const isSelectedSunday = new Date(reportDate).getDay() === 0;

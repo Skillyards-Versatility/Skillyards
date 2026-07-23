@@ -111,8 +111,8 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
   const topUser = stats.length > 0 ? stats[0] : null;
 
   const cards = [
-    { label: "Active Agents", value: totalUsers - activeBreakCount, color: "text-green-600" },
-    { label: "On Break (Inactive)", value: activeBreakCount, color: "text-orange-600", clickable: true },
+    { label: "Active Employees", value: totalUsers - activeBreakCount, color: "text-green-600" },
+    { label: "Inactive Employees", value: activeBreakCount, color: "text-orange-600", clickable: true },
     { label: "Avg Duration", value: formatDuration(avgDuration), color: "text-blue-600" },
     { label: "Most Breaks", value: topUser ? topUser.userName : "—", sub: topUser ? `${topUser.breakCount} breaks` : "", color: "text-purple-600" },
     { label: "Flagged (Overage)", value: flaggedCount, color: "text-red-600", clickable: true },
@@ -123,7 +123,7 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
       {cards.map((card) => (
         <div 
           key={card.label} 
-          onClick={card.label === "On Break (Inactive)" ? onBreakClick : card.label === "Flagged (Overage)" ? onFlaggedClick : undefined}
+          onClick={card.label === "Inactive Employees" ? onBreakClick : card.label === "Flagged (Overage)" ? onFlaggedClick : undefined}
           className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 ${
             card.clickable 
               ? `cursor-pointer hover:shadow-md hover:ring-1 hover:ring-${card.color.split('-')[1]}-500/50 transition-all active:scale-[0.98]` 
@@ -597,14 +597,17 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                   if (teamFilter && b.userTeam !== teamFilter) continue;
                   
                   if (!flaggedUsersMap.has(b.userId)) {
-                    flaggedUsersMap.set(b.userId, { total: 0, userName: b.userName, userTeam: b.userTeam, isActive: false, hasOverage: false });
+                    flaggedUsersMap.set(b.userId, { total: 0, userName: b.userName, userTeam: b.userTeam, isActive: false, hasOverage: false, overageSeconds: 0 });
                   }
                   
                   const dur = b.endedAt ? b.duration : Math.floor((new Date() - new Date(b.startedAt)) / 1000);
                   const data = flaggedUsersMap.get(b.userId);
                   data.total += dur;
                   if (!b.endedAt) data.isActive = true;
-                  if (dur > 600) data.hasOverage = true;
+                  if (dur > 600) {
+                    data.hasOverage = true;
+                    data.overageSeconds += (dur - 600);
+                  }
                 }
                 
                 const flagged = Array.from(flaggedUsersMap.values()).filter(u => u.hasOverage);
@@ -621,11 +624,8 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                         <p className="text-xs text-red-700/70 dark:text-red-400/70 capitalize">{u.userTeam?.replace("_", " ") || "No Team"}</p>
                       </div>
                       <div className="text-right flex flex-col items-end gap-1">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50">
-                          {formatDuration(u.total)}
-                        </span>
-                        <span className="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">
-                          {u.isActive ? "Active Break" : "Exceeded"}
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50">
+                          {u.isActive ? "Active Break" : `+ ${formatDuration(u.overageSeconds)}`}
                         </span>
                       </div>
                     </div>

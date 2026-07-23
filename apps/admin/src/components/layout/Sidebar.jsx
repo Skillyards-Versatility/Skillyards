@@ -14,7 +14,7 @@ const navItems = [
   { name: "Calls", href: "/calls", icon: PhoneCall, minRole: "MANAGER" },
   { name: "Team Directory", href: "/team", icon: Users },
   { name: "EOD Reports", href: "/eod", icon: ClipboardList },
-  { name: "EOD Analytics", href: "/eod/analytics", icon: BarChart3, minRole: "MANAGER" },
+  { name: "EOD Analytics", href: "/eod/analytics", icon: BarChart3 },
   { name: "Leaves", href: "/leaves", icon: CalendarRange },
   { name: "Breaks", href: "/breaks", icon: Coffee },
   { name: "Profile", href: "/profile", icon: UserCircle },
