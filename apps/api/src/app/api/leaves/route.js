@@ -27,9 +27,11 @@ async function postHandler(req, { ctx }) {
     // Time cutoff validation for Half Days
     if (isHalfDay) {
       if (halfDayPeriod === "MORNING") {
-        if (nowIST >= leaveDayStart) {
+        const morningCutoff = new Date(leaveDayStart);
+        morningCutoff.setHours(9, 30, 0, 0); // 9:30 AM
+        if (nowIST >= morningCutoff) {
           return Response.json(
-            { success: false, message: "Morning half-days must be applied before the day begins." },
+            { success: false, message: "Morning half-days must be applied before 9:30 AM on the same day." },
             { status: 400 }
           );
         }
@@ -195,7 +197,37 @@ async function getHandler(req, { ctx }) {
 
     const data = await query;
 
-    return Response.json({ success: true, leaves: data });
+    // Calculate current month's paid leave balance for the logged-in user
+    const now = new Date();
+    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+
+    const existingLeaves = await db
+      .select({ id: leaves.id, isHalfDay: leaves.isHalfDay, startDate: leaves.startDate, endDate: leaves.endDate })
+      .from(leaves)
+      .where(
+        and(
+          eq(leaves.userId, ctx.session.userId),
+          gte(leaves.startDate, firstDay),
+          lte(leaves.startDate, lastDay),
+          ne(leaves.status, "REJECTED"),
+          ne(leaves.type, "UNPAID")
+        )
+      );
+
+    let totalPaidTaken = 0;
+    for (const l of existingLeaves) {
+      if (l.isHalfDay) {
+        totalPaidTaken += 0.5;
+      } else {
+        const tDiff = l.endDate.getTime() - l.startDate.getTime();
+        totalPaidTaken += Math.ceil(tDiff / (1000 * 3600 * 24)) + 1;
+      }
+    }
+
+    const availableBalance = 1.0 - totalPaidTaken;
+
+    return Response.json({ success: true, leaves: data, availableBalance });
   } catch (error) {
     ctx.error("LEAVES_FETCH_FAILED", { error: error.message });
     return Response.json(

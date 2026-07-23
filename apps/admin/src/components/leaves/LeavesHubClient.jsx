@@ -10,6 +10,7 @@ export function LeavesHubClient({ userRole }) {
   const [leaves, setLeaves] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isApplying, setIsApplying] = useState(false);
+  const [availableBalance, setAvailableBalance] = useState(1.0);
 
   // Form State
   const [startDate, setStartDate] = useState("");
@@ -31,6 +32,12 @@ export function LeavesHubClient({ userRole }) {
       const res = await getLeaves();
       if (res.success) {
         setLeaves(res.leaves || []);
+        if (res.availableBalance !== undefined) {
+          setAvailableBalance(res.availableBalance);
+          if (res.availableBalance <= 0) {
+            setType("UNPAID");
+          }
+        }
       }
     } catch (err) {
       toast.error("Failed to load leaves");
@@ -185,8 +192,12 @@ export function LeavesHubClient({ userRole }) {
                   onChange={(e) => setType(e.target.value)}
                   className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 >
-                  <option value="CASUAL">Casual Leave</option>
-                  <option value="SICK">Sick Leave</option>
+                  {availableBalance > 0 && (
+                    <>
+                      <option value="CASUAL">Casual Leave</option>
+                      <option value="SICK">Sick Leave</option>
+                    </>
+                  )}
                   <option value="UNPAID">Unpaid Leave</option>
                 </select>
               </div>
