@@ -4,9 +4,9 @@ import { createProtectedRoute } from "@/lib/middleware";
 
 async function postHandler(req, { ctx }) {
   try {
-    const { startDate, endDate, type, reason } = await req.json();
+    const { startDate, endDate, type, reason, isHalfDay, halfDayPeriod } = await req.json();
 
-    if (!startDate || !endDate || !type || !reason) {
+    if (!startDate || (!isHalfDay && !endDate) || !type || !reason) {
       return Response.json(
         { success: false, message: "Missing required fields" },
         { status: 400 }
@@ -14,14 +14,53 @@ async function postHandler(req, { ctx }) {
     }
 
     const start = new Date(startDate);
-    const end = new Date(endDate);
+    const end = isHalfDay ? new Date(startDate) : new Date(endDate);
+    
+    // Convert current time to IST (UTC+5:30) for cutoff evaluations
+    const nowUtc = new Date();
+    const nowIST = new Date(nowUtc.getTime() + (5.5 * 60 * 60 * 1000));
+    
+    // Convert to local date boundaries for comparison
+    const leaveDayStart = new Date(start);
+    leaveDayStart.setHours(0, 0, 0, 0);
+
+    // Time cutoff validation for Half Days
+    if (isHalfDay) {
+      if (halfDayPeriod === "MORNING") {
+        if (nowIST >= leaveDayStart) {
+          return Response.json(
+            { success: false, message: "Morning half-days must be applied before the day begins." },
+            { status: 400 }
+          );
+        }
+      } else if (halfDayPeriod === "EVENING") {
+        const noonCutoff = new Date(leaveDayStart);
+        noonCutoff.setHours(12, 0, 0, 0);
+        if (nowIST >= noonCutoff) {
+          return Response.json(
+            { success: false, message: "Evening half-days must be applied before 12:00 PM on the same day." },
+            { status: 400 }
+          );
+        }
+      } else {
+        return Response.json(
+          { success: false, message: "Invalid half day period" },
+          { status: 400 }
+        );
+      }
+    }
+
+    const timeDiff = end.getTime() - start.getTime();
+    const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+    const requestedDays = isHalfDay ? 0.5 : dayDiff;
 
     if (type !== "UNPAID") {
       const firstDay = new Date(start.getFullYear(), start.getMonth(), 1);
       const lastDay = new Date(start.getFullYear(), start.getMonth() + 1, 0, 23, 59, 59, 999);
 
-      const [existingLeave] = await db
-        .select({ id: leaves.id })
+      // Fetch all paid leaves for the month
+      const existingLeaves = await db
+        .select({ id: leaves.id, isHalfDay: leaves.isHalfDay, startDate: leaves.startDate, endDate: leaves.endDate })
         .from(leaves)
         .where(
           and(
@@ -31,23 +70,43 @@ async function postHandler(req, { ctx }) {
             ne(leaves.status, "REJECTED"),
             ne(leaves.type, "UNPAID")
           )
-        )
-        .limit(1);
+        );
 
-      if (existingLeave) {
+      let totalPaidTaken = 0;
+      for (const l of existingLeaves) {
+        if (l.isHalfDay) {
+          totalPaidTaken += 0.5;
+        } else {
+          const tDiff = l.endDate.getTime() - l.startDate.getTime();
+          totalPaidTaken += Math.ceil(tDiff / (1000 * 3600 * 24)) + 1;
+        }
+      }
+      
+      const maxAllowedDays = 1.0 - totalPaidTaken;
+
+      if (maxAllowedDays <= 0) {
         return Response.json(
           { success: false, message: "You have already used your paid leave allowance for this month." },
           { status: 400 }
         );
       }
-    }
 
-    const timeDiff = end.getTime() - start.getTime();
-    const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+      if (requestedDays > maxAllowedDays) {
+        // We only auto-split if they have a full 1.0 day available and request multi-days
+        if (maxAllowedDays === 1.0 && !isHalfDay && requestedDays > 1) {
+          // Allowed to proceed, it will be split by the logic below
+        } else {
+          return Response.json(
+            { success: false, message: `Leave limit exceeded. You have ${maxAllowedDays} paid leaves remaining this month.` },
+            { status: 400 }
+          );
+        }
+      }
+    }
 
     let result;
 
-    if (type !== "UNPAID" && dayDiff > 1) {
+    if (type !== "UNPAID" && !isHalfDay && dayDiff > 1) {
       // Split into 1 day paid, rest unpaid
       const [paidLeave] = await db.insert(leaves).values({
         userId: ctx.session.userId,
@@ -55,7 +114,8 @@ async function postHandler(req, { ctx }) {
         endDate: start,
         type,
         reason,
-        status: "PENDING"
+        status: "PENDING",
+        isHalfDay: false
       }).returning();
       
       const unpaidStart = new Date(start);
@@ -67,7 +127,8 @@ async function postHandler(req, { ctx }) {
         endDate: end,
         type: "UNPAID",
         reason: `${reason} (Auto-split unpaid portion)`,
-        status: "PENDING"
+        status: "PENDING",
+        isHalfDay: false
       });
 
       result = paidLeave;
@@ -80,13 +141,15 @@ async function postHandler(req, { ctx }) {
           endDate: end,
           type,
           reason,
-          status: "PENDING"
+          status: "PENDING",
+          isHalfDay: isHalfDay || false,
+          halfDayPeriod: isHalfDay ? halfDayPeriod : null
         })
         .returning();
       result = inserted;
     }
 
-    ctx.log("LEAVE_APPLIED", { userId: ctx.session.userId, leaveId: result.id });
+    ctx.log("LEAVE_APPLIED", { userId: ctx.session.userId, leaveId: result.id, isHalfDay });
 
     return Response.json({ success: true, leave: result });
   } catch (error) {
@@ -116,6 +179,8 @@ async function getHandler(req, { ctx }) {
         status: leaves.status,
         rejectionReason: leaves.rejectionReason,
         createdAt: leaves.createdAt,
+        isHalfDay: leaves.isHalfDay,
+        halfDayPeriod: leaves.halfDayPeriod,
         userName: users.name,
         userEmail: users.email
       })

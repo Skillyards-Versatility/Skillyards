@@ -8,11 +8,11 @@ async function authHeaders() {
   return token ? { Cookie: `session=${token}` } : {};
 }
 
-export async function applyLeave({ startDate, endDate, type, reason }) {
+export async function applyLeave({ startDate, endDate, type, reason, isHalfDay, halfDayPeriod }) {
   const res = await fetch(`${API}/api/leaves`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...(await authHeaders()) },
-    body: JSON.stringify({ startDate, endDate, type, reason }),
+    body: JSON.stringify({ startDate, endDate, type, reason, isHalfDay, halfDayPeriod }),
   });
   return res.json();
 }

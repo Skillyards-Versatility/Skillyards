@@ -16,6 +16,8 @@ export function LeavesHubClient({ userRole }) {
   const [endDate, setEndDate] = useState("");
   const [type, setType] = useState("CASUAL");
   const [reason, setReason] = useState("");
+  const [isHalfDay, setIsHalfDay] = useState(false);
+  const [halfDayPeriod, setHalfDayPeriod] = useState("MORNING");
 
   const isManagerOrAdmin = userRole === "ADMIN" || userRole === "MANAGER";
 
@@ -39,19 +41,28 @@ export function LeavesHubClient({ userRole }) {
 
   const handleApply = async (e) => {
     e.preventDefault();
-    if (!startDate || !endDate || !reason) {
+    if (!startDate || (!isHalfDay && !endDate) || !reason) {
       toast.error("Please fill all fields");
       return;
     }
     
     try {
       setIsApplying(true);
-      const res = await applyLeave({ startDate, endDate, type, reason });
+      const res = await applyLeave({ 
+        startDate, 
+        endDate: isHalfDay ? startDate : endDate, 
+        type, 
+        reason, 
+        isHalfDay, 
+        halfDayPeriod: isHalfDay ? halfDayPeriod : null 
+      });
       if (res.success) {
         toast.success("Leave applied successfully");
         setStartDate("");
         setEndDate("");
         setReason("");
+        setIsHalfDay(false);
+        setHalfDayPeriod("MORNING");
         fetchLeaves();
       } else {
         toast.error(res.message || "Failed to apply");
@@ -102,9 +113,22 @@ export function LeavesHubClient({ userRole }) {
               <CalendarIcon className="w-4 h-4 text-primary" /> Apply for Leave
             </h2>
             <form onSubmit={handleApply} className="space-y-4 relative z-10">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-center gap-2 mb-2">
+                <input
+                  id="isHalfDay"
+                  type="checkbox"
+                  checked={isHalfDay}
+                  onChange={(e) => setIsHalfDay(e.target.checked)}
+                  className="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer"
+                />
+                <label htmlFor="isHalfDay" className="text-sm font-medium text-foreground cursor-pointer select-none">
+                  Request Half-Day
+                </label>
+              </div>
+
+              <div className={`grid ${isHalfDay ? 'grid-cols-1' : 'grid-cols-1 sm:grid-cols-2'} gap-3`}>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">Start Date</label>
+                  <label className="text-xs font-medium text-muted-foreground">{isHalfDay ? "Date" : "Start Date"}</label>
                   <input
                     type="date"
                     value={startDate}
@@ -113,17 +137,33 @@ export function LeavesHubClient({ userRole }) {
                     required
                   />
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium text-muted-foreground">End Date</label>
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                    required
-                  />
-                </div>
+                {!isHalfDay && (
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-muted-foreground">End Date</label>
+                    <input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                      required={!isHalfDay}
+                    />
+                  </div>
+                )}
               </div>
+
+              {isHalfDay && (
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground">Half-Day Period</label>
+                  <select
+                    value={halfDayPeriod}
+                    onChange={(e) => setHalfDayPeriod(e.target.value)}
+                    className="w-full h-9 rounded-md border border-input bg-transparent px-3 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                  >
+                    <option value="MORNING">Morning</option>
+                    <option value="EVENING">Evening</option>
+                  </select>
+                </div>
+              )}
 
               <div className="space-y-1.5">
                 <label className="text-xs font-medium text-muted-foreground">Type</label>
@@ -184,12 +224,23 @@ export function LeavesHubClient({ userRole }) {
                       {leave.userName}
                     </p>
                   )}
-                  <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium text-foreground">{leave.type}</span>
+                  <div className="flex items-center gap-2 text-sm flex-wrap">
+                    <span className="font-medium text-foreground">
+                      {leave.type}
+                      {leave.isHalfDay && (
+                        <span className="ml-1 text-xs px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground">
+                          {leave.halfDayPeriod === "MORNING" ? "Morning Half-Day" : "Evening Half-Day"}
+                        </span>
+                      )}
+                    </span>
                     <span className="text-muted-foreground">•</span>
                     <span className="text-muted-foreground flex items-center gap-1">
                       <Clock className="w-3.5 h-3.5" />
-                      {format(new Date(leave.startDate), "MMM d, yyyy")} - {format(new Date(leave.endDate), "MMM d, yyyy")}
+                      {leave.isHalfDay ? (
+                        format(new Date(leave.startDate), "MMM d, yyyy")
+                      ) : (
+                        `${format(new Date(leave.startDate), "MMM d, yyyy")} - ${format(new Date(leave.endDate), "MMM d, yyyy")}`
+                      )}
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{leave.reason}</p>
