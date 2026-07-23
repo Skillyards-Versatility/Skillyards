@@ -265,9 +265,18 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
                       {missingUsers.map(u => (
                         <div key={u.id} className="group flex items-center justify-between bg-background border border-border/60 hover:border-border rounded-md px-4 py-3 shadow-sm transition-colors">
-                          <div className="flex flex-col overflow-hidden">
-                            <span className="text-sm font-medium truncate">{u.name}</span>
-                            <span className="text-xs text-muted-foreground">{TEAM_LABELS[u.team] || u.team}</span>
+                          <div className="flex items-center gap-3 overflow-hidden">
+                            <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-medium text-xs border border-border/50 shrink-0 overflow-hidden">
+                              {u.profileImageKey ? (
+                                <img src={`/api/files/${u.profileImageKey}`} alt={u.name} className="h-full w-full object-cover" />
+                              ) : (
+                                (u.name || "U").charAt(0)
+                              )}
+                            </div>
+                            <div className="flex flex-col overflow-hidden">
+                              <span className="text-sm font-medium truncate">{u.name}</span>
+                              <span className="text-xs text-muted-foreground">{TEAM_LABELS[u.team] || u.team}</span>
+                            </div>
                           </div>
                           {(isAdmin || isManager) && (
                             <button
@@ -301,8 +310,12 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
                         <div className="p-4 sm:p-5 flex-1">
                           <div className="flex items-start justify-between gap-4 mb-4">
                             <div className="flex items-center gap-3">
-                              <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-medium text-sm border border-border/50">
-                                {(report.userName || "U").charAt(0)}
+                              <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-medium text-sm border border-border/50 overflow-hidden shrink-0">
+                                {report.profileImageKey ? (
+                                  <img src={`/api/files/${report.profileImageKey}`} alt={report.userName} className="h-full w-full object-cover" />
+                                ) : (
+                                  (report.userName || "U").charAt(0)
+                                )}
                               </div>
                               <div>
                                 <div className="font-medium text-sm">{report.userName}</div>
