@@ -9,17 +9,21 @@ async function getHandler(req, { ctx }) {
     const endDate = url.searchParams.get("endDate");
     const team = url.searchParams.get("team");
 
-    if (ctx.session.role !== "ADMIN" && ctx.session.role !== "MANAGER") {
-      return Response.json(
-        { success: false, message: "Unauthorized access" },
-        { status: 403 }
-      );
+    if (!ctx.session || !ctx.session.userId) {
+      return Response.json({ success: false, message: "Unauthorized access" }, { status: 403 });
     }
 
     const conditions = [];
-    if (team) {
-      conditions.push(eq(eodReports.team, team));
+    
+    // Security: If not Admin or Manager, force filtering to their own userId
+    if (ctx.session.role !== "ADMIN" && ctx.session.role !== "MANAGER") {
+      conditions.push(eq(eodReports.userId, ctx.session.userId));
+    } else {
+      if (team) {
+        conditions.push(eq(eodReports.team, team));
+      }
     }
+
     if (startDate) conditions.push(gte(eodReports.date, startDate));
     if (endDate) conditions.push(lte(eodReports.date, endDate));
 

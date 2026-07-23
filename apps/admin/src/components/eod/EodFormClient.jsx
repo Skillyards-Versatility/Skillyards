@@ -11,6 +11,7 @@ const TEAM_FIELDS = {
   sales: [
     { key: "dialedCalls", label: "Dialed Calls", type: "number", placeholder: "0" },
     { key: "connectedCalls", label: "Connected Calls", type: "number", placeholder: "0" },
+    { key: "talkTime", label: "Total Talk Time (mins)", type: "number", placeholder: "0" },
     { key: "counsellingDone", label: "Counselling Done", type: "number", placeholder: "0" },
     { key: "counsellingBooked", label: "Counselling Booked", type: "number", placeholder: "0" },
     { key: "sessionBooked", label: "Sessions Booked", type: "number", placeholder: "0" },

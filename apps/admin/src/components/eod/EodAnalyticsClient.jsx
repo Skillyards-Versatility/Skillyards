@@ -18,7 +18,7 @@ const TEAM_OPTIONS = [
   { value: "outside_sales", label: "Outside Sales" },
 ];
 
-export function EodAnalyticsClient({ isAdmin = false, isManager = false }) {
+export function EodAnalyticsClient({ isAdmin = false, isManager = false, userName = null }) {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({ timeSeries: [], teamAggregates: [], userAggregates: [], reports: [] });
   
@@ -45,6 +45,11 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false }) {
           userAggregates: res.userAggregates || [],
           reports: res.reports || []
         });
+        
+        // Auto-select logged-in user if they are a regular employee
+        if (!isAdmin && !isManager && userName && !selectedUser) {
+          setSelectedUser(userName);
+        }
       } else {
         toast.error("Failed to load analytics");
       }
@@ -124,6 +129,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false }) {
           const PRIORITY_KEYS = [
             "dialedCalls", 
             "connectedCalls", 
+            "talkTime",
             "counsellingDone", 
             "counsellingBooked",
             "sessionBooked",
@@ -172,20 +178,13 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false }) {
                   <p className="text-xs text-muted-foreground">Click to view details</p>
                 </div>
               </div>
-              
-              <div className="space-y-3">
-                {metrics.length > 0 ? metrics.map(([mKey, mVal]) => (
-                  <div key={mKey} className="flex items-center justify-between bg-muted/30 p-2.5 rounded-lg border border-border/50">
-                    <span className="text-xs font-semibold text-muted-foreground tracking-wider uppercase">
-                      {mKey.replace(/([A-Z])/g, " $1")}
-                    </span>
-                    <span className="text-sm font-bold text-foreground">
-                      {mVal.toLocaleString()}
-                    </span>
+              <div className="grid grid-cols-2 gap-y-4 gap-x-2">
+                {metrics.map(([key, value]) => (
+                  <div key={key} className="flex flex-col">
+                    <span className="text-xs text-muted-foreground uppercase tracking-wider">{key.replace(/([A-Z])/g, " $1").trim()}</span>
+                    <span className="font-semibold text-lg">{value.toLocaleString()}</span>
                   </div>
-                )) : (
-                  <p className="text-sm text-muted-foreground text-center py-2">No numeric data reported</p>
-                )}
+                ))}
               </div>
             </div>
           );
@@ -207,6 +206,50 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false }) {
     const totalValue = userTimeSeries.reduce((sum, item) => sum + (item[selectedUserMetric] || 0), 0);
     const dailyAverage = (totalValue / dateDiff).toFixed(1);
 
+    // Calculate Sales Funnel and Streaks if they have dialed calls
+    const isSalesRole = userAvailableMetrics.includes("dialedCalls");
+    let currentStreak = 0;
+    let maxStreak = 0;
+    
+    // Targets
+    const TARGET_CALLS = 120;
+    const TARGET_CONNECTED = 50;
+    const TARGET_TALK_TIME = 90;
+
+    if (isSalesRole) {
+      // Streak Calculation (consecutive days hitting all 3 targets)
+      let tempStreak = 0;
+      for (let i = userTimeSeries.length - 1; i >= 0; i--) {
+        const d = userTimeSeries[i];
+        if ((d.dialedCalls || 0) >= TARGET_CALLS && (d.connectedCalls || 0) >= TARGET_CONNECTED && (d.talkTime || 0) >= TARGET_TALK_TIME) {
+          tempStreak++;
+        } else {
+          break;
+        }
+      }
+      currentStreak = tempStreak;
+
+      let highestTemp = 0;
+      userTimeSeries.forEach(day => {
+        if ((day.dialedCalls || 0) >= TARGET_CALLS && (day.connectedCalls || 0) >= TARGET_CONNECTED && (day.talkTime || 0) >= TARGET_TALK_TIME) {
+          highestTemp++;
+          if (highestTemp > maxStreak) maxStreak = highestTemp;
+        } else {
+          highestTemp = 0;
+        }
+      });
+    }
+
+    // Today's battery charges
+    const latestDay = userTimeSeries.length > 0 ? userTimeSeries[userTimeSeries.length - 1] : null;
+    const latestDialed = latestDay?.dialedCalls || 0;
+    const latestConnected = latestDay?.connectedCalls || 0;
+    const latestTalkTime = latestDay?.talkTime || 0;
+
+    const batCalls = Math.min(100, Math.round((latestDialed / TARGET_CALLS) * 100));
+    const batConn = Math.min(100, Math.round((latestConnected / TARGET_CONNECTED) * 100));
+    const batTalk = Math.min(100, Math.round((latestTalkTime / TARGET_TALK_TIME) * 100));
+
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
         
@@ -226,6 +269,111 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false }) {
             </button>
           ))}
         </div>
+
+        {/* Gamified Sales Dash */}
+        {isSalesRole && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in zoom-in-95 duration-500">
+            {/* Battery Gauge */}
+            <div className="bg-card border border-border/60 rounded-2xl p-5 shadow-sm relative overflow-hidden flex flex-col items-center justify-center min-h-[220px]">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent pointer-events-none" />
+              <h3 className="font-semibold text-sm text-muted-foreground mb-4 uppercase tracking-wider w-full text-left">Daily Targets</h3>
+              
+              <div className="w-full space-y-4">
+                {/* Dialed */}
+                <div>
+                  <div className="flex justify-between text-xs font-medium mb-1">
+                    <span>Dialed ({TARGET_CALLS})</span>
+                    <span className={batCalls >= 100 ? "text-emerald-500" : ""}>{latestDialed}</span>
+                  </div>
+                  <div className="w-full h-3 bg-muted/30 rounded-full overflow-hidden border border-border/50">
+                    <div 
+                      className={`h-full rounded-full transition-all duration-1000 ${batCalls >= 100 ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" : batCalls >= 50 ? "bg-amber-500" : "bg-red-500"}`}
+                      style={{ width: `${Math.max(2, batCalls)}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Connected */}
+                <div>
+                  <div className="flex justify-between text-xs font-medium mb-1">
+                    <span>Connected ({TARGET_CONNECTED})</span>
+                    <span className={batConn >= 100 ? "text-emerald-500" : ""}>{latestConnected}</span>
+                  </div>
+                  <div className="w-full h-3 bg-muted/30 rounded-full overflow-hidden border border-border/50">
+                    <div 
+                      className={`h-full rounded-full transition-all duration-1000 ${batConn >= 100 ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" : batConn >= 50 ? "bg-amber-500" : "bg-red-500"}`}
+                      style={{ width: `${Math.max(2, batConn)}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Talk Time */}
+                <div>
+                  <div className="flex justify-between text-xs font-medium mb-1">
+                    <span>Talk Time ({TARGET_TALK_TIME}m)</span>
+                    <span className={batTalk >= 100 ? "text-emerald-500" : ""}>{latestTalkTime}m</span>
+                  </div>
+                  <div className="w-full h-3 bg-muted/30 rounded-full overflow-hidden border border-border/50">
+                    <div 
+                      className={`h-full rounded-full transition-all duration-1000 ${batTalk >= 100 ? "bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" : batTalk >= 50 ? "bg-amber-500" : "bg-red-500"}`}
+                      style={{ width: `${Math.max(2, batTalk)}%` }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Funnel */}
+            <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-sm relative overflow-hidden lg:col-span-1 min-h-[220px]">
+              <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none" />
+              <h3 className="font-semibold text-sm text-muted-foreground mb-4 uppercase tracking-wider text-center">Conversion Funnel</h3>
+              
+              <div className="flex flex-col items-center justify-center h-full space-y-1.5 w-full max-w-[200px] mx-auto pb-4">
+                <div className="bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 w-full rounded-md py-1.5 text-center text-xs font-bold border border-indigo-500/30">
+                  Dialed: {userTimeSeries.reduce((s, i) => s + (i.dialedCalls || 0), 0).toLocaleString()}
+                </div>
+                <div className="bg-blue-500/20 text-blue-700 dark:text-blue-300 w-4/5 rounded-md py-1.5 text-center text-xs font-bold border border-blue-500/30">
+                  Connected: {userTimeSeries.reduce((s, i) => s + (i.connectedCalls || 0), 0).toLocaleString()}
+                </div>
+                <div className="bg-amber-500/20 text-amber-700 dark:text-amber-300 w-3/5 rounded-md py-1.5 text-center text-xs font-bold border border-amber-500/30">
+                  Counselled: {userTimeSeries.reduce((s, i) => s + (i.counsellingDone || 0), 0).toLocaleString()}
+                </div>
+                <div className="bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 w-2/5 rounded-md py-1.5 text-center text-xs font-bold border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+                  Sessions: {userTimeSeries.reduce((s, i) => s + (i.sessionBooked || 0), 0).toLocaleString()}
+                </div>
+              </div>
+            </div>
+
+            {/* Fire Streak */}
+            <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-sm relative overflow-hidden min-h-[220px] flex flex-col items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-t from-orange-500/10 to-transparent pointer-events-none" />
+              
+              <div className={`relative flex items-center justify-center transition-all duration-700 ${currentStreak > 0 ? "scale-110" : "grayscale opacity-50"}`}>
+                <div className="absolute inset-0 bg-orange-500 blur-2xl opacity-20 rounded-full animate-pulse" />
+                <span className="text-7xl drop-shadow-xl" style={{ filter: currentStreak > 0 ? 'drop-shadow(0 0 20px rgba(249, 115, 22, 0.6))' : 'none' }}>
+                  🔥
+                </span>
+                {currentStreak > 0 && (
+                  <span className="absolute -bottom-2 bg-background border border-orange-500/50 text-orange-500 font-bold px-3 py-1 rounded-full text-sm shadow-md whitespace-nowrap">
+                    {currentStreak} Days
+                  </span>
+                )}
+              </div>
+              
+              <div className="mt-8 text-center">
+                <p className="font-bold text-foreground">
+                  {currentStreak > 0 ? `Active Hot Streak!` : "Streak Lost"}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Hit 80+ calls to {currentStreak > 0 ? "keep it alive." : "reignite the fire."}
+                </p>
+                <p className="text-xs text-orange-500/70 font-semibold mt-2">
+                  All-time best: {maxStreak} days
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* User KPIs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -309,7 +457,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false }) {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border/50">
         <div>
           <div className="flex items-center gap-3">
-            {selectedUser && (
+            {selectedUser && (isAdmin || isManager) && (
               <button 
                 onClick={() => setSelectedUser(null)}
                 className="p-1.5 bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg transition-colors"
