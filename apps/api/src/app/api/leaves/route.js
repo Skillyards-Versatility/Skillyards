@@ -52,9 +52,48 @@ async function postHandler(req, { ctx }) {
       }
     }
 
-    const timeDiff = end.getTime() - start.getTime();
-    const dayDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
-    const requestedDays = isHalfDay ? 0.5 : dayDiff;
+    // Calculate contiguous blocks excluding Sundays
+    const blocks = [];
+    let currentBlock = null;
+    let curr = new Date(start);
+    
+    // For half days, start === end, so this loops exactly once
+    while (curr <= end) {
+      if (curr.getDay() !== 0) { // 0 is Sunday
+        if (!currentBlock) {
+          currentBlock = { start: new Date(curr), end: new Date(curr) };
+        } else {
+          currentBlock.end = new Date(curr);
+        }
+      } else {
+        if (currentBlock) {
+          blocks.push(currentBlock);
+          currentBlock = null;
+        }
+      }
+      curr.setDate(curr.getDate() + 1);
+    }
+    if (currentBlock) {
+      blocks.push(currentBlock);
+    }
+
+    if (blocks.length === 0) {
+      return Response.json(
+        { success: false, message: "Selected leave period only contains Sundays (off days)." },
+        { status: 400 }
+      );
+    }
+
+    // Calculate total requested working days
+    let requestedDays = 0;
+    if (isHalfDay) {
+      requestedDays = 0.5;
+    } else {
+      blocks.forEach(b => {
+        const tDiff = b.end.getTime() - b.start.getTime();
+        requestedDays += Math.ceil(tDiff / (1000 * 3600 * 24)) + 1;
+      });
+    }
 
     if (type !== "UNPAID") {
       const firstDay = new Date(start.getFullYear(), start.getMonth(), 1);
@@ -79,6 +118,8 @@ async function postHandler(req, { ctx }) {
         if (l.isHalfDay) {
           totalPaidTaken += 0.5;
         } else {
+          // Compute working days in existing leaves to be safe, though existing leaves already exclude Sundays
+          // We will just do standard diff here since they were inserted as valid blocks
           const tDiff = l.endDate.getTime() - l.startDate.getTime();
           totalPaidTaken += Math.ceil(tDiff / (1000 * 3600 * 24)) + 1;
         }
@@ -94,9 +135,8 @@ async function postHandler(req, { ctx }) {
       }
 
       if (requestedDays > maxAllowedDays) {
-        // We only auto-split if they have a full 1.0 day available and request multi-days
         if (maxAllowedDays === 1.0 && !isHalfDay && requestedDays > 1) {
-          // Allowed to proceed, it will be split by the logic below
+          // Allow split
         } else {
           return Response.json(
             { success: false, message: `Leave limit exceeded. You have ${maxAllowedDays} paid leaves remaining this month.` },
@@ -108,47 +148,69 @@ async function postHandler(req, { ctx }) {
 
     let result;
 
-    if (type !== "UNPAID" && !isHalfDay && dayDiff > 1) {
-      // Split into 1 day paid, rest unpaid
-      const [paidLeave] = await db.insert(leaves).values({
+    if (isHalfDay) {
+      // Half days are exactly one block of 1 day
+      const [inserted] = await db.insert(leaves).values({
         userId: ctx.session.userId,
-        startDate: start,
-        endDate: start,
+        startDate: blocks[0].start,
+        endDate: blocks[0].end,
         type,
         reason,
         status: "PENDING",
-        isHalfDay: false
+        isHalfDay: true,
+        halfDayPeriod
       }).returning();
-      
-      const unpaidStart = new Date(start);
-      unpaidStart.setDate(unpaidStart.getDate() + 1);
-
-      await db.insert(leaves).values({
-        userId: ctx.session.userId,
-        startDate: unpaidStart,
-        endDate: end,
-        type: "UNPAID",
-        reason: `${reason} (Auto-split unpaid portion)`,
-        status: "PENDING",
-        isHalfDay: false
-      });
-
-      result = paidLeave;
+      result = inserted;
+    } else if (type !== "UNPAID" && requestedDays > 1) {
+      // Split logic: first day of first block is PAID, everything else is UNPAID
+      let isFirstDay = true;
+      for (const b of blocks) {
+        let currentDay = new Date(b.start);
+        while (currentDay <= b.end) {
+          if (isFirstDay) {
+            const [paidLeave] = await db.insert(leaves).values({
+              userId: ctx.session.userId,
+              startDate: currentDay,
+              endDate: currentDay,
+              type,
+              reason,
+              status: "PENDING",
+              isHalfDay: false
+            }).returning();
+            result = paidLeave; // Return the paid leave record as result
+            isFirstDay = false;
+          } else {
+            // Group the remaining contiguous days in this block? 
+            // For simplicity, we can insert the rest of the block as a single UNPAID leave
+            await db.insert(leaves).values({
+              userId: ctx.session.userId,
+              startDate: currentDay,
+              endDate: b.end,
+              type: "UNPAID",
+              reason: `${reason} (Auto-split unpaid portion)`,
+              status: "PENDING",
+              isHalfDay: false
+            });
+            break; // Break the while loop since we inserted the rest of the block
+          }
+          currentDay.setDate(currentDay.getDate() + 1);
+        }
+      }
     } else {
-      const [inserted] = await db
-        .insert(leaves)
-        .values({
+      // Insert all blocks directly (either UNPAID or a 1-day PAID leave)
+      for (let i = 0; i < blocks.length; i++) {
+        const [inserted] = await db.insert(leaves).values({
           userId: ctx.session.userId,
-          startDate: start,
-          endDate: end,
+          startDate: blocks[i].start,
+          endDate: blocks[i].end,
           type,
           reason,
           status: "PENDING",
-          isHalfDay: isHalfDay || false,
-          halfDayPeriod: isHalfDay ? halfDayPeriod : null
-        })
-        .returning();
-      result = inserted;
+          isHalfDay: false
+        }).returning();
+        
+        if (i === 0) result = inserted;
+      }
     }
 
     ctx.log("LEAVE_APPLIED", { userId: ctx.session.userId, leaveId: result.id, isHalfDay });

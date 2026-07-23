@@ -29,6 +29,8 @@ export function LeaveCalendar({ leaves, isManagerOrAdmin }) {
 
   // Helper to get leaves for a specific day
   const getLeavesForDay = (day) => {
+    if (getDay(day) === 0) return []; // Ignore Sundays completely
+    
     return leaves.filter((leave) => {
       if (leave.status === "REJECTED") return false;
       const lStart = startOfDay(new Date(leave.startDate));
