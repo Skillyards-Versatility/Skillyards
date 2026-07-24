@@ -26,6 +26,9 @@ export const createStudentSchema = z
             .max(100, "Course name must be at most 100 characters")
             .optional(),
 
+        batchId: z.string().uuid("Invalid batch ID").optional().nullable(),
+        batchName: z.string().trim().optional().nullable(),
+
         totalFee: z
             .number()
             .int()

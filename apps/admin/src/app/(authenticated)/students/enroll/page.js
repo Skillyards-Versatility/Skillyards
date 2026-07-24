@@ -18,6 +18,8 @@ export default function EnrollStudentPage() {
     phone: "",
     email: "",
     course: "",
+    batchId: "",
+    batchName: "",
     baseAmount: "",
   });
 
@@ -43,6 +45,8 @@ export default function EnrollStudentPage() {
         phone: formData.phone.trim() || undefined,
         email: formData.email.trim() || undefined,
         courseName: formData.course.trim() || undefined,
+        batchId: formData.batchId || undefined,
+        batchName: formData.batchName || undefined,
         totalFee: base,
         finalFee: base,
       });
@@ -64,7 +68,7 @@ export default function EnrollStudentPage() {
         </Link>
         <div>
           <h1 className="text-2xl font-bold text-foreground">Enroll New Student</h1>
-          <p className="text-muted-foreground text-sm font-medium mt-0.5">Register a student and define their fee structure.</p>
+          <p className="text-muted-foreground text-sm font-medium mt-0.5">Register a student, assign a batch, and define their fee structure.</p>
         </div>
       </div>
 

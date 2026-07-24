@@ -40,6 +40,8 @@ export async function getStudentsWithPayments(db, limit = 100, offset = 0, filte
       email: students.email,
       phone: students.phone,
       courseName: students.courseName,
+      batchId: students.batchId,
+      batchName: students.batchName,
       finalFee: students.finalFee,
       createdAt: students.createdAt,
       totalPaid: sql`COALESCE(SUM(${payments.amount}), 0)`,
@@ -48,6 +50,18 @@ export async function getStudentsWithPayments(db, limit = 100, offset = 0, filte
     .leftJoin(payments, sql`${payments.studentId} = ${students.id}`);
 
   const conditions = [];
+
+  if (filters.courseName) {
+    conditions.push(eq(students.courseName, filters.courseName));
+  }
+
+  if (filters.batchId) {
+    if (filters.batchId === "unassigned") {
+      conditions.push(sql`${students.batchId} IS NULL`);
+    } else {
+      conditions.push(eq(students.batchId, filters.batchId));
+    }
+  }
 
   if (filters.enrolledIn) {
     const range = getMonthRange(filters.enrolledIn, filters.startDate, filters.endDate);
@@ -66,6 +80,20 @@ export async function getStudentsWithPayments(db, limit = 100, offset = 0, filte
     .orderBy(desc(students.createdAt))
     .limit(limit)
     .offset(offset);
+}
+
+export async function updateStudentBatch(db, studentId, batchId, batchName) {
+  const updated = await db
+    .update(students)
+    .set({
+      batchId: batchId || null,
+      batchName: batchName || null,
+      updatedAt: new Date(),
+    })
+    .where(eq(students.id, studentId))
+    .returning();
+
+  return updated[0] || null;
 }
 
 export async function getStudentStats(db) {
