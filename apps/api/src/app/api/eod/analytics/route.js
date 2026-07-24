@@ -43,6 +43,7 @@ async function getHandler(req, { ctx }) {
     const timeSeriesData = {};
     const teamAggregates = {};
     const userAggregates = {};
+    const teamTimeSeries = {};
 
     reports.forEach((report) => {
       const date = report.date;
@@ -62,7 +63,18 @@ async function getHandler(req, { ctx }) {
       }
 
       if (!timeSeriesData[date]) timeSeriesData[date] = { date };
-      if (!teamAggregates[teamName]) teamAggregates[teamName] = {};
+      if (!teamTimeSeries[date]) teamTimeSeries[date] = { date };
+      if (!teamTimeSeries[date][teamName]) teamTimeSeries[date][teamName] = {};
+
+      if (!teamAggregates[teamName]) {
+        teamAggregates[teamName] = {
+          _members: new Set(),
+          _reportCount: 0,
+        };
+      }
+      if (userName) teamAggregates[teamName]._members.add(userName);
+      teamAggregates[teamName]._reportCount += 1;
+
       if (!userAggregates[userName]) {
         userAggregates[userName] = { image: profileImageKey };
       }
@@ -71,8 +83,12 @@ async function getHandler(req, { ctx }) {
         // Only aggregate numeric fields
         const numValue = Number(value);
         if (!isNaN(numValue) && typeof value !== 'boolean' && key !== "notes") {
-          // Time series
+          // Overall Time series
           timeSeriesData[date][key] = (timeSeriesData[date][key] || 0) + numValue;
+          
+          // Team Time series
+          teamTimeSeries[date][teamName][key] = (teamTimeSeries[date][teamName][key] || 0) + numValue;
+
           // Team agg
           teamAggregates[teamName][key] = (teamAggregates[teamName][key] || 0) + numValue;
           // User agg
@@ -81,10 +97,21 @@ async function getHandler(req, { ctx }) {
       });
     });
 
+    const formattedTeamAggregates = Object.entries(teamAggregates).map(([team, metrics]) => {
+      const { _members, _reportCount, ...restMetrics } = metrics;
+      return {
+        team,
+        memberCount: _members ? _members.size : 0,
+        reportCount: _reportCount || 0,
+        ...restMetrics,
+      };
+    });
+
     return Response.json({
       success: true,
       timeSeries: Object.values(timeSeriesData).sort((a, b) => a.date.localeCompare(b.date)),
-      teamAggregates: Object.entries(teamAggregates).map(([team, metrics]) => ({ team, ...metrics })),
+      teamTimeSeries: Object.values(teamTimeSeries).sort((a, b) => a.date.localeCompare(b.date)),
+      teamAggregates: formattedTeamAggregates,
       userAggregates: Object.entries(userAggregates).map(([user, metrics]) => ({ user, ...metrics })),
       reports: reports, // Send raw reports to allow frontend drill-down
     });

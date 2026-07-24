@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Calendar, Users, FileText, Clock, CheckCircle2, Filter, Send, Mail, Loader2, AlertCircle, X } from "lucide-react";
 import { getEodHistory, triggerEodEmails } from "@/actions/eod";
 import { formatIstDate, getIstDate } from "@/lib/ist";
+import { DatePresetSelector } from "./DatePresetSelector";
 
 const TEAM_LABELS = {
   sales: "Sales",
@@ -32,11 +33,7 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
   const [activeUsers, setActiveUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [teamFilter, setTeamFilter] = useState("");
-  const [startDate, setStartDate] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 14);
-    return d.toISOString().split("T")[0];
-  });
+  const [startDate, setStartDate] = useState(getIstDate());
   const [endDate, setEndDate] = useState(getIstDate());
   const [triggering, setTriggering] = useState(null);
   const [sendingUserId, setSendingUserId] = useState(null);
@@ -172,29 +169,19 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
           <p className="text-sm text-muted-foreground mt-1">Review past submissions and trigger reminder emails.</p>
         </div>
         
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <div className="flex items-center gap-2 bg-background border border-border/60 rounded-md px-3 py-1.5 shadow-sm">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <input
-              type="date"
-              className="bg-transparent border-none text-sm focus:ring-0 p-0 w-[110px]"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-            <span className="text-muted-foreground text-sm px-1">to</span>
-            <input
-              type="date"
-              className="bg-transparent border-none text-sm focus:ring-0 p-0 w-[110px]"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </div>
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 w-full lg:w-auto">
+          <DatePresetSelector
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
+          />
           
           {isAdmin && (
-            <div className="relative">
+            <div className="relative shrink-0">
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <select
-                className="bg-background border border-border/60 text-sm rounded-md focus:ring-1 focus:ring-primary pl-9 pr-8 py-2 appearance-none shadow-sm cursor-pointer min-w-[140px]"
+                className="w-full sm:w-auto bg-background border border-border/60 text-xs font-semibold rounded-2xl focus:ring-1 focus:ring-primary pl-9 pr-8 py-2 appearance-none shadow-2xs cursor-pointer min-w-[130px]"
                 value={teamFilter}
                 onChange={(e) => setTeamFilter(e.target.value)}
               >
@@ -209,7 +196,7 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
             <button 
               onClick={() => handleTriggerEmails(endDate)} 
               disabled={!!triggering}
-              className="bg-primary text-primary-foreground text-sm font-medium py-2 px-4 rounded-md flex items-center gap-2 hover:bg-primary/90 transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
+              className="bg-primary text-primary-foreground text-xs font-bold py-2.5 px-4 rounded-2xl flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors shadow-xs disabled:opacity-70 disabled:cursor-not-allowed shrink-0 cursor-pointer"
             >
               {triggering === endDate ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
               Send Bulk Emails

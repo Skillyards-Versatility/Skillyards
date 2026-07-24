@@ -2,10 +2,12 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { toast } from "sonner";
-import { Loader2, Calendar, Filter, BarChart3, TrendingUp, Activity, UserCircle, ArrowLeft } from "lucide-react";
+import { Loader2, Calendar, Filter, BarChart3, TrendingUp, Activity, UserCircle, ArrowLeft, Building2, User } from "lucide-react";
 import { getEodAnalytics } from "@/actions/eod";
 import { getIstDate } from "@/lib/ist";
-import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LabelList } from "recharts";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { TeamAnalyticsView } from "./TeamAnalyticsView";
+import { DatePresetSelector } from "./DatePresetSelector";
 
 const TEAM_OPTIONS = [
   { value: "", label: "All Teams" },
@@ -22,15 +24,12 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({ timeSeries: [], teamAggregates: [], userAggregates: [], reports: [] });
   
+  const [activeTab, setActiveTab] = useState("team"); // "team" | "user"
   const [teamFilter, setTeamFilter] = useState("");
-  const [startDate, setStartDate] = useState(() => {
-    const d = new Date();
-    d.setDate(d.getDate() - 30);
-    return d.toISOString().split("T")[0];
-  });
+  const [startDate, setStartDate] = useState(getIstDate());
   const [endDate, setEndDate] = useState(getIstDate());
   
-  // New drill-down states
+  // Drill-down states
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedUserMetric, setSelectedUserMetric] = useState("");
 
@@ -49,6 +48,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
         // Auto-select logged-in user if they are a regular employee
         if (!isAdmin && !isManager && userName && !selectedUser) {
           setSelectedUser(userName);
+          setActiveTab("user");
         }
       } else {
         toast.error("Failed to load analytics");
@@ -62,7 +62,6 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
 
   useEffect(() => {
     fetchData();
-    // Only clear selected user on date change if they are a manager/admin looking at the roster
     if (isAdmin || isManager) {
       setSelectedUser(null);
     }
@@ -123,8 +122,6 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {data.userAggregates.map(userObj => {
-          
-          // Define a strict priority order for which metrics to display on the Roster Cards
           const PRIORITY_KEYS = [
             "dialedCalls", 
             "connectedCalls", 
@@ -141,7 +138,6 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
             "reelsEdited"
           ];
 
-          // Sort the user's metrics based on the PRIORITY_KEYS index, fallback to alphabetical
           const metrics = Object.entries(userObj)
             .filter(([k]) => k !== "user" && k !== "image")
             .sort((a, b) => {
@@ -150,15 +146,18 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
               if (idxA !== -1 && idxB !== -1) return idxA - idxB;
               if (idxA !== -1) return -1;
               if (idxB !== -1) return 1;
-              return b[1] - a[1]; // fallback to value-based if unknown
+              return b[1] - a[1];
             })
             .slice(0, 6);
 
           return (
             <div 
               key={userObj.user} 
-              onClick={() => setSelectedUser(userObj.user)}
-              className="bg-card border border-border/60 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-primary/50 transition-all cursor-pointer group flex flex-col justify-between"
+              onClick={() => {
+                setSelectedUser(userObj.user);
+                setActiveTab("user");
+              }}
+              className="bg-card border border-border/60 rounded-2xl p-6 shadow-xs hover:shadow-md hover:border-primary/50 transition-all cursor-pointer group flex flex-col justify-between"
             >
               <div className="flex items-center gap-4 mb-6">
                 {userObj.image ? (
@@ -205,18 +204,15 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
     const totalValue = userTimeSeries.reduce((sum, item) => sum + (item[selectedUserMetric] || 0), 0);
     const dailyAverage = (totalValue / dateDiff).toFixed(1);
 
-    // Calculate Sales Funnel and Streaks if they have dialed calls
     const isSalesRole = userAvailableMetrics.includes("dialedCalls");
     let currentStreak = 0;
     let maxStreak = 0;
     
-    // Targets
     const TARGET_CALLS = 120;
     const TARGET_CONNECTED = 50;
     const TARGET_TALK_TIME = 90;
 
     if (isSalesRole) {
-      // Streak Calculation (consecutive days hitting all 3 targets)
       let tempStreak = 0;
       for (let i = userTimeSeries.length - 1; i >= 0; i--) {
         const d = userTimeSeries[i];
@@ -239,7 +235,6 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
       });
     }
 
-    // Today's battery charges
     const latestDay = userTimeSeries.length > 0 ? userTimeSeries[userTimeSeries.length - 1] : null;
     const latestDialed = latestDay?.dialedCalls || 0;
     const latestConnected = latestDay?.connectedCalls || 0;
@@ -251,8 +246,6 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
 
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-300">
-        
-        {/* Metric Selector Pills */}
         <div className="flex flex-wrap gap-2 bg-muted/30 p-1.5 rounded-2xl border border-border/50 shadow-inner">
           {userAvailableMetrics.map((metric) => (
             <button
@@ -269,16 +262,13 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
           ))}
         </div>
 
-        {/* Gamified Sales Dash */}
         {isSalesRole && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-in fade-in zoom-in-95 duration-500">
-            {/* Battery Gauge */}
-            <div className="bg-card border border-border/60 rounded-2xl p-5 shadow-sm relative overflow-hidden flex flex-col items-center justify-center min-h-[220px]">
+            <div className="bg-card border border-border/60 rounded-2xl p-5 shadow-xs relative overflow-hidden flex flex-col items-center justify-center min-h-[220px]">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent pointer-events-none" />
               <h3 className="font-semibold text-sm text-muted-foreground mb-4 uppercase tracking-wider w-full text-left">Daily Targets</h3>
               
               <div className="w-full space-y-4">
-                {/* Dialed */}
                 <div>
                   <div className="flex justify-between text-xs font-medium mb-1">
                     <span>Dialed ({TARGET_CALLS})</span>
@@ -292,7 +282,6 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
                   </div>
                 </div>
 
-                {/* Connected */}
                 <div>
                   <div className="flex justify-between text-xs font-medium mb-1">
                     <span>Connected ({TARGET_CONNECTED})</span>
@@ -306,7 +295,6 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
                   </div>
                 </div>
 
-                {/* Talk Time */}
                 <div>
                   <div className="flex justify-between text-xs font-medium mb-1">
                     <span>Talk Time ({TARGET_TALK_TIME}m)</span>
@@ -322,8 +310,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
               </div>
             </div>
 
-            {/* Funnel */}
-            <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-sm relative overflow-hidden lg:col-span-1 min-h-[220px]">
+            <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-xs relative overflow-hidden lg:col-span-1 min-h-[220px]">
               <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 to-transparent pointer-events-none" />
               <h3 className="font-semibold text-sm text-muted-foreground mb-4 uppercase tracking-wider text-center">Conversion Funnel</h3>
               
@@ -343,8 +330,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
               </div>
             </div>
 
-            {/* Fire Streak */}
-            <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-sm relative overflow-hidden min-h-[220px] flex flex-col items-center justify-center">
+            <div className="bg-card border border-border/60 rounded-2xl p-6 shadow-xs relative overflow-hidden min-h-[220px] flex flex-col items-center justify-center">
               <div className="absolute inset-0 bg-gradient-to-t from-orange-500/10 to-transparent pointer-events-none" />
               
               <div className={`relative flex items-center justify-center transition-all duration-700 ${currentStreak > 0 ? "scale-110" : "grayscale opacity-50"}`}>
@@ -374,9 +360,8 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
           </div>
         )}
 
-        {/* User KPIs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-200/50 dark:border-blue-900/30 rounded-2xl p-5 shadow-sm">
+          <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-200/50 dark:border-blue-900/30 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-blue-500/10 rounded-lg text-blue-600 dark:text-blue-400">
                 <Activity className="w-5 h-5" />
@@ -388,7 +373,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
             </p>
           </div>
           
-          <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-200/50 dark:border-emerald-900/30 rounded-2xl p-5 shadow-sm">
+          <div className="bg-gradient-to-br from-emerald-500/10 to-transparent border border-emerald-200/50 dark:border-emerald-900/30 rounded-2xl p-5 shadow-xs">
             <div className="flex items-center gap-3 mb-2">
               <div className="p-2 bg-emerald-500/10 rounded-lg text-emerald-600 dark:text-emerald-400">
                 <TrendingUp className="w-5 h-5" />
@@ -401,8 +386,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
           </div>
         </div>
 
-        {/* Personal Time Series Area Chart */}
-        <div className="bg-card border border-border/60 rounded-2xl shadow-sm p-6 relative overflow-hidden group">
+        <div className="bg-card border border-border/60 rounded-2xl shadow-xs p-6 relative overflow-hidden group">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
           <h3 className="font-semibold text-sm text-foreground mb-6 uppercase tracking-wider flex items-center gap-2">
             <Activity className="w-4 h-4 text-primary" />
@@ -453,50 +437,41 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
 
   return (
     <div className="space-y-8 pb-12 max-w-6xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* Header & Main Controls */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border/50">
         <div>
           <div className="flex items-center gap-3">
             {selectedUser && (isAdmin || isManager) && (
               <button 
                 onClick={() => setSelectedUser(null)}
-                className="p-1.5 bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg transition-colors"
+                className="p-1.5 bg-muted/50 hover:bg-muted text-muted-foreground hover:text-foreground rounded-lg transition-colors cursor-pointer"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
             )}
             <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-primary" /> 
-              {selectedUser ? `${selectedUser}'s Analytics` : "Team Analytics"}
+              {selectedUser ? `${selectedUser}'s Analytics` : "EOD Analytics Dashboard"}
             </h2>
           </div>
           <p className="text-sm text-muted-foreground mt-1">
-            {selectedUser ? `Detailed performance metrics for ${selectedUser}.` : "Select an employee to view their detailed performance metrics."}
+            {selectedUser ? `Detailed performance metrics for ${selectedUser}.` : "Track team output and employee EOD submissions."}
           </p>
         </div>
         
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <div className="flex items-center gap-2 bg-background border border-border/60 rounded-md px-3 py-1.5 shadow-sm">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <input
-              type="date"
-              className="bg-transparent border-none text-sm focus:ring-0 p-0 w-[110px]"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-            />
-            <span className="text-muted-foreground text-sm px-1">to</span>
-            <input
-              type="date"
-              className="bg-transparent border-none text-sm focus:ring-0 p-0 w-[110px]"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-            />
-          </div>
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 w-full lg:w-auto">
+          <DatePresetSelector
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
+          />
           
           {isAdmin && !selectedUser && (
-            <div className="relative">
+            <div className="relative shrink-0">
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <select
-                className="bg-background border border-border/60 text-sm rounded-md focus:ring-1 focus:ring-primary pl-9 pr-8 py-2 appearance-none shadow-sm cursor-pointer min-w-[140px]"
+                className="w-full sm:w-auto bg-background border border-border/60 text-xs font-semibold rounded-2xl focus:ring-1 focus:ring-primary pl-9 pr-8 py-2 appearance-none shadow-2xs cursor-pointer min-w-[130px]"
                 value={teamFilter}
                 onChange={(e) => setTeamFilter(e.target.value)}
               >
@@ -509,13 +484,52 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
         </div>
       </div>
 
+      {/* Main Tab Navigation Header (Only if no specific user drill-down is open) */}
+      {!selectedUser && (
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 border-b border-border pb-1.5">
+          <button
+            onClick={() => setActiveTab("team")}
+            className={`inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer text-center ${
+              activeTab === "team"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            }`}
+          >
+            <Building2 className="w-4 h-4 shrink-0" />
+            <span className="truncate">Team Analytics</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("user")}
+            className={`inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer text-center ${
+              activeTab === "user"
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            }`}
+          >
+            <User className="w-4 h-4 shrink-0" />
+            <span className="truncate">Individual Roster</span>
+          </button>
+        </div>
+      )}
+
+      {/* Main Content Area */}
       {loading ? (
         <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
-          <Loader2 className="h-8 w-8 animate-spin mb-4" />
-          <p className="text-sm">Crunching numbers...</p>
+          <Loader2 className="h-8 w-8 animate-spin mb-4 text-primary" />
+          <p className="text-sm font-medium">Crunching analytics numbers...</p>
         </div>
       ) : selectedUser ? (
         renderDrillDownView()
+      ) : activeTab === "team" ? (
+        <TeamAnalyticsView
+          teamAggregates={data.teamAggregates}
+          reports={data.reports}
+          onSelectUser={(userName) => {
+            setSelectedUser(userName);
+            setActiveTab("user");
+          }}
+        />
       ) : (
         renderRosterView()
       )}
