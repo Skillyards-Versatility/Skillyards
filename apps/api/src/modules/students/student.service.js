@@ -47,6 +47,10 @@ export async function getStudentList(db, limit = 100, offset = 0, filters = {}) 
   });
 }
 
+export async function assignBatchToStudent(db, studentId, batchId, batchName) {
+  return studentRepo.updateStudentBatch(db, studentId, batchId, batchName);
+}
+
 export async function getDashboardStats(db) {
   return studentRepo.getStudentStats(db);
 }
