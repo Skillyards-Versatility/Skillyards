@@ -87,7 +87,7 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
   const totalBreaks = stats.reduce((sum, s) => sum + s.breakCount, 0);
   const totalDuration = stats.reduce((sum, s) => sum + s.totalDuration, 0);
   const avgDuration = totalBreaks > 0 ? Math.round(totalDuration / totalBreaks) : 0;
-  // Calculate flagged users based on 10-minute (600s) PER BREAK limit
+  // Calculate flagged users based on 10-minute (600s) PER BREAK limit OR 30-minute (1800s) DAILY limit
   const flaggedUsersSet = new Set();
   
   // Group breaks by user
@@ -103,6 +103,13 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
     // Flag if any single break exceeds 10 minutes
     if (dur > 600) {
       flaggedUsersSet.add(b.userId);
+    }
+  }
+
+  // Flag if total daily breaks exceed 30 minutes
+  for (const userId of Object.keys(userBreaks)) {
+    if (userBreaks[userId].total > 1800) {
+      flaggedUsersSet.add(userId);
     }
   }
 
@@ -307,6 +314,8 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
   const completedBreaks = breaks.filter((b) => b.endedAt);
   const totalDuration = completedBreaks.reduce((sum, b) => sum + (b.duration || 0), 0);
   const activeBreak = breaks.find((b) => !b.endedAt);
+  const completedBreaksCount = completedBreaks.reduce((sum, b) => sum + Math.ceil((b.duration || 0) / 600), 0);
+  const remainingTime = Math.max(0, 1800 - totalDuration);
 
   return (
     <div className="space-y-6">
@@ -326,7 +335,7 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
             </div>
             <div>
               <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-300">Enable Notifications</h3>
-              <p className="text-xs text-blue-700/80 dark:text-blue-400/80 mt-1">Get an alert when your daily 30-minute break limit is reached.</p>
+              <p className="text-xs text-blue-700/80 dark:text-blue-400/80 mt-1">Get an alert 1 minute before your break time runs out.</p>
             </div>
           </div>
           <button 
@@ -346,14 +355,18 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
         isToday={isToday}
       />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
           <p className="text-xs text-gray-500">Breaks Taken</p>
-          <p className="text-2xl font-bold">{completedBreaks.length}{activeBreak ? " + 1 active" : ""}</p>
+          <p className="text-2xl font-bold">{completedBreaksCount}{activeBreak ? " + 1 active" : ""}</p>
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
           <p className="text-xs text-gray-500">Total Time</p>
           <p className="text-2xl font-bold">{formatDuration(totalDuration)}</p>
+        </div>
+        <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
+          <p className="text-xs text-gray-500">Daily Remaining Time</p>
+          <p className="text-2xl font-bold">{formatDuration(remainingTime)} / 30m</p>
         </div>
       </div>
 
@@ -607,6 +620,14 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                   if (dur > 600) {
                     data.hasOverage = true;
                     data.overageSeconds += (dur - 600);
+                  }
+                }
+                
+                for (const data of flaggedUsersMap.values()) {
+                  if (data.total > 1800) {
+                    data.hasOverage = true;
+                    const dailyOverage = data.total - 1800;
+                    data.overageSeconds = Math.max(data.overageSeconds, dailyOverage);
                   }
                 }
                 

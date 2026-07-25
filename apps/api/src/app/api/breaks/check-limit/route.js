@@ -15,7 +15,7 @@ export async function POST(req) {
   try {
     // Basic verification of QStash (You could add Upstash receiver verification here for prod security)
     const body = await req.json();
-    const { breakId, userId } = body;
+    const { breakId, userId, maxSeconds } = body;
 
     if (!breakId || !userId) {
       return Response.json({ success: false, message: "Missing required fields" }, { status: 400 });
@@ -33,24 +33,26 @@ export async function POST(req) {
       return Response.json({ success: true, message: "Break ended early, no alert sent" });
     }
 
-    // The break is still active, and this endpoint is only hit if the delay expired.
-    // That means the user has EXCEEDED their 30-minute daily allowance.
+    // The break is still active, and this endpoint is hit when the warning delay expires.
     // Fetch the user's push subscription
     const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
 
     if (user && user.pushSubscription) {
+      let bodyText = "Your break ends in 1 minute! Please stop your break and return to work ASAP.";
+      if (maxSeconds && maxSeconds <= 60) {
+        bodyText = `Your break limit of ${maxSeconds}s has been reached! Please stop your break and return to work ASAP.`;
+      }
       try {
         await webPush.sendNotification(
           user.pushSubscription,
           JSON.stringify({
-            title: "Break Time Over!",
-            body: "Your 10-minute break is over! Please return to work immediately.",
+            title: "Stop Break ASAP!",
+            body: bodyText,
             url: "/breaks",
           })
         );
       } catch (pushErr) {
         console.error("Failed to send push notification:", pushErr);
-        // If subscription is invalid (e.g. 410 Gone), we should probably delete it, but we'll ignore for now
       }
     }
 
