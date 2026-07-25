@@ -7,6 +7,7 @@ import { getIstDate, isIstWithinBreakHours } from "@/lib/ist";
 
 const MAX_BREAK_SECONDS = 600; // 10 minutes per break
 const MAX_BREAKS_PER_DAY = 3;
+const MAX_DAILY_BREAK_SECONDS = 1800; // 30 minutes total daily
 const PRIVILEGED_ROLES = ["ADMIN", "HR", "MANAGER"];
 
 function isPrivilegedRole(role) {
@@ -79,12 +80,23 @@ export async function startBreak() {
       }
     }
 
-    const [countRow] = await db
-      .select({ count: sql`count(*)::int` })
+    const [statsRow] = await db
+      .select({
+        totalDuration: sql`coalesce(sum(${breaks.duration}), 0)::int`,
+        effectiveCount: sql`coalesce(sum(ceil(${breaks.duration}::float / 600.0)), 0)::int`,
+      })
       .from(breaks)
-      .where(and(eq(breaks.userId, userId), eq(breaks.date, date)));
+      .where(and(eq(breaks.userId, userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NOT NULL`));
 
-    if (countRow.count >= MAX_BREAKS_PER_DAY) {
+    const totalDur = statsRow?.totalDuration || 0;
+    const effectiveCount = statsRow?.effectiveCount || 0;
+
+    const remainingDailySeconds = Math.max(0, MAX_DAILY_BREAK_SECONDS - totalDur);
+    if (remainingDailySeconds <= 0) {
+      return { success: false, error: "You have exhausted your daily 30-minute break limit." };
+    }
+
+    if (effectiveCount >= MAX_BREAKS_PER_DAY) {
       return { success: false, error: `You have already taken your maximum of ${MAX_BREAKS_PER_DAY} breaks for today.` };
     }
 
@@ -93,31 +105,25 @@ export async function startBreak() {
       .values({ userId, date })
       .returning();
 
-    // Schedule QStash Notification for exactly remainingSeconds in the future
+    const maxSecondsForThisBreak = Math.min(MAX_BREAK_SECONDS, remainingDailySeconds);
+    const delaySeconds = maxSecondsForThisBreak > 60 ? maxSecondsForThisBreak - 60 : maxSecondsForThisBreak;
+
+    // Schedule QStash Notification for delaySeconds in the future
     let scheduleId = null;
     if (process.env.QSTASH_TOKEN) {
       try {
         const res = await qstashClient.publishJSON({
           url: `${API_BASE}/api/breaks/check-limit`,
-          body: { breakId: record.id, userId },
-          delay: `${MAX_BREAK_SECONDS}s`,
+          body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak },
+          delay: `${delaySeconds}s`,
         });
         scheduleId = res.messageId;
-        
-        // Save the scheduleId so we can cancel it if they end break early
-        // We'll just add it to a metadata column or duration for now. 
-        // Wait, we don't have a scheduleId column in `breaks`. 
-        // We can just query Upstash to cancel it using the messageId, but we need to store it somewhere.
-        // For zero-downtime, I will use `duration` to temporarily store it as a negative number? No.
-        // Let's just create a new column `qstashMsgId` in `breaks` schema quickly or just not cancel it and check status in `/check-limit`.
-        // Actually, if we don't cancel it, the `/check-limit` endpoint can just check if the break is still active!
-        // If it's no longer active, the `/check-limit` route just does nothing! That is brilliant and requires zero DB changes for cancellation.
       } catch (err) {
         console.error("QStash schedule failed:", err);
       }
     }
 
-    return { success: true, break: record, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS };
+    return { success: true, break: record, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: maxSecondsForThisBreak };
   } catch (err) {
     console.error("Start break error:", err);
     return { success: false, error: "Failed to start break" };
@@ -186,7 +192,7 @@ export async function getActiveBreak() {
 
 export async function getDailyBreakTotal() {
   const session = await getSession();
-  if (!session) return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, lastEndedAt: null, lastDuration: 0 };
+  if (!session) return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, lastEndedAt: null, lastDuration: 0, remainingDailySeconds: MAX_DAILY_BREAK_SECONDS };
 
   const date = getIstDate();
 
@@ -194,6 +200,7 @@ export async function getDailyBreakTotal() {
     const [statsRow] = await db
       .select({
         count: sql`count(*)::int`,
+        effectiveCount: sql`coalesce(sum(ceil(${breaks.duration}::float / 600.0)), 0)::int`,
         totalDur: sql`coalesce(sum(${breaks.duration}), 0)::int`,
         overage: sql`coalesce(sum(case when ${breaks.duration} > ${MAX_BREAK_SECONDS} then ${breaks.duration} - ${MAX_BREAK_SECONDS} else 0 end), 0)::int`,
         lastEndedAt: sql`max(${breaks.endedAt})`,
@@ -213,20 +220,24 @@ export async function getDailyBreakTotal() {
       .from(breaks)
       .where(and(eq(breaks.userId, session.userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NULL`));
 
-    const totalCount = (statsRow?.count || 0) + (activeRow?.count || 0);
+    const totalCount = (statsRow?.effectiveCount || 0) + (activeRow?.count || 0);
+    const totalDuration = statsRow?.totalDur || 0;
+    const remainingDailySeconds = Math.max(0, MAX_DAILY_BREAK_SECONDS - totalDuration);
+    const maxSeconds = Math.min(MAX_BREAK_SECONDS, remainingDailySeconds);
 
     return { 
       breakCount: totalCount, 
       maxBreaks: MAX_BREAKS_PER_DAY, 
-      maxSeconds: MAX_BREAK_SECONDS,
-      totalDuration: statsRow?.totalDur || 0,
+      maxSeconds: maxSeconds,
+      totalDuration: totalDuration,
       totalOverage: statsRow?.overage || 0,
       lastEndedAt: statsRow?.lastEndedAt || null,
-      lastDuration: lastDuration
+      lastDuration: lastDuration,
+      remainingDailySeconds: remainingDailySeconds
     };
   } catch (err) {
     console.error("Get daily break total error:", err);
-    return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, lastEndedAt: null, lastDuration: 0 };
+    return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, lastEndedAt: null, lastDuration: 0, remainingDailySeconds: MAX_DAILY_BREAK_SECONDS };
   }
 }
 
@@ -309,7 +320,7 @@ export async function getBreakStats(date) {
         userId: breaks.userId,
         userName: users.name,
         userTeam: users.team,
-        breakCount: sql`count(*)::int`,
+        breakCount: sql`coalesce(sum(ceil(${breaks.duration}::float / 600.0)), 0)::int`,
         totalDuration: sql`coalesce(sum(${breaks.duration}), 0)::int`,
         avgDuration: sql`coalesce(avg(${breaks.duration}), 0)::int`,
       })

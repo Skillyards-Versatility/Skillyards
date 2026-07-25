@@ -25,10 +25,49 @@ export function BreakWidget() {
   const [activeBreak, setActiveBreak] = useState(null);
   const [elapsed, setElapsed] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [dailyInfo, setDailyInfo] = useState({ breakCount: 0, maxBreaks: MAX_BREAKS, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0 });
+  const [dailyInfo, setDailyInfo] = useState({ breakCount: 0, maxBreaks: MAX_BREAKS, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, remainingDailySeconds: 1800 });
   const [panelOpen, setPanelOpen] = useState(false);
+  const [cooldown, setCooldown] = useState({ active: false, remaining: 0 });
   const intervalRef = useRef(null);
   const panelRef = useRef(null);
+
+  useEffect(() => {
+    let active = false;
+    let remaining = 0;
+    if (dailyInfo.lastEndedAt && dailyInfo.lastDuration > 60) {
+      const diff = Date.now() - new Date(dailyInfo.lastEndedAt).getTime();
+      const cooldownMs = 30 * 60 * 1000;
+      if (diff < cooldownMs) {
+        active = true;
+        remaining = Math.ceil((cooldownMs - diff) / 60000);
+      }
+    }
+
+    const t = setTimeout(() => {
+      setCooldown(prev => {
+        if (prev.active === active && prev.remaining === remaining) return prev;
+        return { active, remaining };
+      });
+    }, 0);
+
+    if (active) {
+      const interval = setInterval(() => {
+        const diff = Date.now() - new Date(dailyInfo.lastEndedAt).getTime();
+        const cooldownMs = 30 * 60 * 1000;
+        if (diff < cooldownMs) {
+          setCooldown({ active: true, remaining: Math.ceil((cooldownMs - diff) / 60000) });
+        } else {
+          setCooldown({ active: false, remaining: 0 });
+        }
+      }, 30000);
+      return () => {
+        clearTimeout(t);
+        clearInterval(interval);
+      };
+    }
+
+    return () => clearTimeout(t);
+  }, [dailyInfo.lastEndedAt, dailyInfo.lastDuration]);
 
   const clearTimer = useCallback(() => {
     if (intervalRef.current) {
@@ -99,7 +138,11 @@ export function BreakWidget() {
       setElapsed(0);
       setPanelOpen(false);
       refreshDailyInfo();
-      toast.success(`Break started! 10:00 remaining for this break.`);
+      const allowedSecs = res.maxSeconds || MAX_BREAK_SECONDS;
+      const allowedMins = Math.floor(allowedSecs / 60);
+      const remainingSecondsPart = allowedSecs % 60;
+      const remainingStr = remainingSecondsPart > 0 ? `${allowedMins}m ${remainingSecondsPart}s` : `${allowedMins}m`;
+      toast.success(`Break started! ${remainingStr} remaining for this break.`);
     } else {
       toast.error(res.error);
       refreshDailyInfo();
@@ -123,7 +166,7 @@ export function BreakWidget() {
       
       const breakOverage = Math.max(0, dur - (info.maxSeconds || MAX_BREAK_SECONDS));
       if (breakOverage > 0) {
-        toast.warning(`Break ended. You went ${formatMinutes(breakOverage)} over the 10m limit!`);
+        toast.warning(`Break ended. You went ${formatMinutes(breakOverage)} over the limit!`);
       } else {
         toast.success(`Break ended successfully (${formatTime(dur)}).`);
       }
@@ -136,7 +179,7 @@ export function BreakWidget() {
   const isOngoing = !!activeBreak;
   const maxSec = dailyInfo.maxSeconds || MAX_BREAK_SECONDS;
   const currentOverage = isOngoing ? Math.max(0, elapsed - maxSec) : 0;
-  const isLimitDone = dailyInfo.breakCount >= (dailyInfo.maxBreaks || MAX_BREAKS);
+  const isLimitDone = dailyInfo.breakCount >= (dailyInfo.maxBreaks || MAX_BREAKS) || (dailyInfo.remainingDailySeconds !== undefined && dailyInfo.remainingDailySeconds <= 0);
   
   const displayRemaining = Math.max(0, maxSec - elapsed);
 
@@ -165,7 +208,7 @@ export function BreakWidget() {
               </div>
               <div className="bg-muted/30 p-2.5 rounded-xl border border-border/50">
                 {currentOverage > 0 ? (
-                  <p className="text-xs font-medium text-red-500 text-center">Exceeded 10-minute limit!</p>
+                  <p className="text-xs font-medium text-red-500 text-center">Exceeded limit of {formatMinutes(maxSec)}!</p>
                 ) : (
                   <p className="text-xs font-medium text-muted-foreground text-center">{formatTime(displayRemaining)} remaining for this break</p>
                 )}
@@ -193,42 +236,35 @@ export function BreakWidget() {
               
               <div className="bg-muted/30 p-3 rounded-xl border border-border/50 space-y-1 text-center">
                 {isLimitDone ? (
-                  <p className="text-xs font-bold text-muted-foreground">Daily limit of 3 breaks used up.</p>
+                  <p className="text-xs font-bold text-muted-foreground">Daily limit of 3 breaks or 30m reached.</p>
                 ) : (
-                  <>
-                    <p className="text-xs font-bold text-foreground">{dailyInfo.breakCount} / {dailyInfo.maxBreaks || 3}</p>
-                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Breaks Taken Today</p>
-                  </>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs font-semibold px-2">
+                      <span className="text-muted-foreground">Breaks Taken:</span>
+                      <span className="text-foreground">{dailyInfo.breakCount} / {dailyInfo.maxBreaks || 3}</span>
+                    </div>
+                    <div className="flex justify-between text-xs font-semibold px-2">
+                      <span className="text-muted-foreground">Remaining:</span>
+                      <span className="text-foreground">{formatMinutes(dailyInfo.remainingDailySeconds !== undefined ? dailyInfo.remainingDailySeconds : 1800)} / 30m</span>
+                    </div>
+                  </div>
                 )}
               </div>
               
-              {!isLimitDone && (() => {
-                let cooldownActive = false;
-                let cooldownRemaining = 0;
-                if (dailyInfo.lastEndedAt && dailyInfo.lastDuration > 60) {
-                  const diff = Date.now() - new Date(dailyInfo.lastEndedAt).getTime();
-                  const cooldownMs = 30 * 60 * 1000;
-                  if (diff < cooldownMs) {
-                    cooldownActive = true;
-                    cooldownRemaining = Math.ceil((cooldownMs - diff) / 60000);
-                  }
-                }
-                
-                return (
-                  <button
-                    onClick={handleStart}
-                    disabled={loading || cooldownActive}
-                    className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-bold shadow-md transition-all active:scale-[0.98] cursor-pointer ${
-                      cooldownActive
-                        ? "bg-slate-400 cursor-not-allowed opacity-70"
-                        : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-lg"
-                    }`}
-                  >
-                    <Coffee className="w-4 h-4" />
-                    {loading ? "Starting..." : cooldownActive ? `Cooldown: Wait ${cooldownRemaining}m` : "Start Break"}
-                  </button>
-                );
-              })()}
+              {!isLimitDone && (
+                <button
+                  onClick={handleStart}
+                  disabled={loading || cooldown.active}
+                  className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-white text-sm font-bold shadow-md transition-all active:scale-[0.98] cursor-pointer ${
+                    cooldown.active
+                      ? "bg-slate-400 cursor-not-allowed opacity-70"
+                      : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-lg"
+                  }`}
+                >
+                  <Coffee className="w-4 h-4" />
+                  {loading ? "Starting..." : cooldown.active ? `Cooldown: Wait ${cooldown.remaining}m` : "Start Break"}
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -237,7 +273,7 @@ export function BreakWidget() {
       <button
         onClick={() => {
           if (!panelOpen && !isOngoing && isLimitDone) {
-            toast.info("Daily break limit of 3 breaks reached.");
+            toast.info("Daily break limit reached (3 breaks or 30m total).");
             return;
           }
           setPanelOpen(!panelOpen);

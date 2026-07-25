@@ -115,7 +115,7 @@ export function TeamAnalyticsView({ teamAggregates = [], reports = [], onSelectU
     processedTeams.forEach((t) => {
       totalMembers += t.memberCount || 0;
       totalSalesCalls += Number(t.dialedCalls || 0);
-      totalTalkTime += Number(t.talkTimeMinutes || 0);
+      totalTalkTime += Number(t.talkTime || 0);
     });
 
     return {
