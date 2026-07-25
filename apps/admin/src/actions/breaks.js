@@ -211,7 +211,8 @@ export async function getDailyBreakTotal() {
     // To prevent lockout from accidental breaks, we also need the duration of that last break.
     let lastDuration = 0;
     if (statsRow?.lastEndedAt) {
-      const [lastB] = await db.select({ duration: breaks.duration }).from(breaks).where(and(eq(breaks.userId, session.userId), eq(breaks.endedAt, statsRow.lastEndedAt))).limit(1);
+      const lastEndedDate = new Date(statsRow.lastEndedAt);
+      const [lastB] = await db.select({ duration: breaks.duration }).from(breaks).where(and(eq(breaks.userId, session.userId), eq(breaks.endedAt, lastEndedDate))).limit(1);
       if (lastB) lastDuration = lastB.duration;
     }
 
