@@ -191,3 +191,15 @@ export const TEAM_MEMBERS_SLUGS_QUERY = `
   "slug": slug.current
 }
 `;
+
+export const GALLERY_IMAGES_QUERY = `
+*[_type == "galleryImage"] | order(order asc){
+  _id,
+  title,
+  image,
+  category,
+  showInDome,
+  noindex,
+  order
+}
+`;

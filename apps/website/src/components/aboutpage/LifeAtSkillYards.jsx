@@ -20,7 +20,7 @@ const allImages = [
   { src: "/images/life/life-13.webp", alt: "Life at SkillYards" },
 ];
 
-export default function LifeAtSkillYards() {
+export default function LifeAtSkillYards({ images }) {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -28,6 +28,10 @@ export default function LifeAtSkillYards() {
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+
+  const displayImages = images && images.length > 0
+    ? images.map(img => ({ src: img.src, alt: img.title || "Life at SkillYards" }))
+    : allImages;
 
   return (
     <section className="bg-background py-8 transition-colors">
@@ -77,7 +81,7 @@ export default function LifeAtSkillYards() {
         }}
       >
         <DomeGallery
-          images={allImages}
+          images={displayImages}
           fit={isMobile ? 0.9 : 0.8}
           minRadius={isMobile ? 200 : 240}
           maxVerticalRotationDeg={6}

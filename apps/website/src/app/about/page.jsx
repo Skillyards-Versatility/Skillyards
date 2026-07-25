@@ -27,6 +27,7 @@ import { getBreadcrumbSchema } from "@/lib/seo/schema/breadcrumbSchema";
 import { getPageFaqs } from "@/lib/seo/getFaqs";
 import { absoluteUrl } from "@/lib/seo/core/url";
 import { getTeamMembersByGroup } from "@/lib/sanity/getTeamMembers";
+import { getGalleryImages } from "@/lib/sanity/getGalleryImages";
 
 export const metadata = buildSEO({
   title: "About SkillYards | AI-Integrated Career-Building Institute in Agra",
@@ -66,6 +67,8 @@ export default async function AboutPage() {
   const faqSchema = getFAQSchema(faqs, absoluteUrl("/about"));
   const combinedSchema = [aboutPageSchema, breadcrumbSchema, faqSchema].filter(Boolean);
   const carouselTeam = await getTeamMembersByGroup("carousel");
+  const galleryImages = await getGalleryImages();
+  const domeImages = galleryImages.filter((img) => img.showInDome);
 
   return (
     <>
@@ -78,7 +81,7 @@ export default async function AboutPage() {
         <PartnersSlider />
 
         <CTASection />
-        <LifeAtSkillYards />
+        <LifeAtSkillYards images={domeImages} />
         <AboutLocalSEO />
         <StudentWorkAbout />
         <PlacementStats />
