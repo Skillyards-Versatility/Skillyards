@@ -1,10 +1,11 @@
-import ComingSoon from "@/components/ComingSoon";
-
-export const revalidate = 86400;
 import { buildSEO } from "@/lib/seo/buildSEO";
 import JsonLd from "@/components/JsonLd";
 import { getImageGallerySchema } from "@/lib/seo/schema/webPageSchema";
 import { getBreadcrumbSchema } from "@/lib/seo/schema/breadcrumbSchema";
+import { getGalleryImages } from "@/lib/sanity/getGalleryImages";
+import GalleryImagesContent from "./GalleryImagesContent";
+
+export const revalidate = 3600; // Revalidate every hour
 
 const galleryImageKeywords = [
     "SkillYards image gallery",
@@ -16,7 +17,7 @@ const galleryImageKeywords = [
 ];
 
 export const metadata = buildSEO({
-    title: "SkillYards Image Gallery",
+    title: "SkillYards Image Gallery | Campus Life & Classroom Photos",
     description:
         "Explore the SkillYards image gallery featuring campus life, training sessions, workshops, events, and memorable moments from our learning community.",
     path: "/gallery/images",
@@ -24,7 +25,9 @@ export const metadata = buildSEO({
     ogImage: "/images/opengraph/gallery-og.jpg",
 });
 
-export default function GalleryImagesPage() {
+export default async function GalleryImagesPage() {
+    const images = await getGalleryImages();
+
     const gallerySchema = getImageGallerySchema({
         url: "/gallery/images",
         name: "SkillYards Image Gallery",
@@ -43,10 +46,7 @@ export default function GalleryImagesPage() {
     return (
         <>
             <JsonLd data={combinedSchema} id="gallery-images-schema" />
-            <ComingSoon
-                title="Image Gallery — Coming Soon"
-                description="We're organizing images from SkillYards classrooms, workshops, events, and student activities. Check back soon!"
-            />
+            <GalleryImagesContent initialImages={images} />
         </>
     );
 }

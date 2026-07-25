@@ -6,6 +6,7 @@ import faqCategory from './faqCategory'
 import faq from './faq'
 import teamMember from './teamMember'
 import testQuestion from './testQuestion'
+import galleryImage from './galleryImage'
 
 
-export const schemaTypes = [post, author, tag, batch, faqCategory, faq, teamMember, testQuestion]
+export const schemaTypes = [post, author, tag, batch, faqCategory, faq, teamMember, testQuestion, galleryImage]
