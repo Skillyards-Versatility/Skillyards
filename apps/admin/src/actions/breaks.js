@@ -5,7 +5,7 @@ import { eq, and, sql, desc } from "drizzle-orm";
 import { getSession } from "@/lib/auth";
 import { getIstDate, isIstWithinBreakHours } from "@/lib/ist";
 
-const MAX_BREAK_SECONDS = 600; // 10 minutes per break
+const MAX_BREAK_SECONDS = 900; // 15 minutes per break slot
 const MAX_BREAKS_PER_DAY = 3;
 const MAX_DAILY_BREAK_SECONDS = 1800; // 30 minutes total daily
 const PRIVILEGED_ROLES = ["ADMIN", "HR", "MANAGER"];
@@ -83,7 +83,7 @@ export async function startBreak() {
     const [statsRow] = await db
       .select({
         totalDuration: sql`coalesce(sum(${breaks.duration}), 0)::int`,
-        effectiveCount: sql`coalesce(sum(ceil(${breaks.duration}::float / 600.0)), 0)::int`,
+        effectiveCount: sql`coalesce(sum(case when ${breaks.duration} >= 900 then 2 else 1 end), 0)::int`,
       })
       .from(breaks)
       .where(and(eq(breaks.userId, userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NOT NULL`));
@@ -105,19 +105,49 @@ export async function startBreak() {
       .values({ userId, date })
       .returning();
 
-    const maxSecondsForThisBreak = Math.min(MAX_BREAK_SECONDS, remainingDailySeconds);
-    const delaySeconds = maxSecondsForThisBreak > 60 ? maxSecondsForThisBreak - 60 : maxSecondsForThisBreak;
+    let maxSecondsForThisBreak = remainingDailySeconds;
+    if (effectiveCount >= 2) {
+      maxSecondsForThisBreak = Math.min(899, remainingDailySeconds);
+    } else {
+      maxSecondsForThisBreak = Math.min(MAX_BREAK_SECONDS, remainingDailySeconds);
+    }
 
-    // Schedule QStash Notification for delaySeconds in the future
-    let scheduleId = null;
+    // Schedule QStash Notifications
     if (process.env.QSTASH_TOKEN) {
       try {
-        const res = await qstashClient.publishJSON({
-          url: `${API_BASE}/api/breaks/check-limit`,
-          body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak },
-          delay: `${delaySeconds}s`,
-        });
-        scheduleId = res.messageId;
+        // 9-minute Warning (if allowed duration is at least 9 minutes)
+        if (maxSecondsForThisBreak > 540) {
+          await qstashClient.publishJSON({
+            url: `${API_BASE}/api/breaks/check-limit`,
+            body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak, triggerType: "9min" },
+            delay: "540s",
+          });
+        }
+
+        // 14-minute Warning (if allowed duration is at least 14 minutes)
+        if (maxSecondsForThisBreak > 840) {
+          await qstashClient.publishJSON({
+            url: `${API_BASE}/api/breaks/check-limit`,
+            body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak, triggerType: "14min" },
+            delay: "840s",
+          });
+        }
+
+        // Final warning 1 minute before the actual limit if it doesn't overlap with 9m (540s) or 14m (840s)
+        const finalWarningDelay = maxSecondsForThisBreak - 60;
+        if (finalWarningDelay > 0 && finalWarningDelay !== 540 && finalWarningDelay !== 840) {
+          await qstashClient.publishJSON({
+            url: `${API_BASE}/api/breaks/check-limit`,
+            body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak, triggerType: "final" },
+            delay: `${finalWarningDelay}s`,
+          });
+        } else if (maxSecondsForThisBreak <= 60) {
+          await qstashClient.publishJSON({
+            url: `${API_BASE}/api/breaks/check-limit`,
+            body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak, triggerType: "final" },
+            delay: `${maxSecondsForThisBreak}s`,
+          });
+        }
       } catch (err) {
         console.error("QStash schedule failed:", err);
       }
@@ -200,7 +230,7 @@ export async function getDailyBreakTotal() {
     const [statsRow] = await db
       .select({
         count: sql`count(*)::int`,
-        effectiveCount: sql`coalesce(sum(ceil(${breaks.duration}::float / 600.0)), 0)::int`,
+        effectiveCount: sql`coalesce(sum(case when ${breaks.duration} >= 900 then 2 else 1 end), 0)::int`,
         totalDur: sql`coalesce(sum(${breaks.duration}), 0)::int`,
         overage: sql`coalesce(sum(case when ${breaks.duration} > ${MAX_BREAK_SECONDS} then ${breaks.duration} - ${MAX_BREAK_SECONDS} else 0 end), 0)::int`,
         lastEndedAt: sql`max(${breaks.endedAt})`,
@@ -224,7 +254,10 @@ export async function getDailyBreakTotal() {
     const totalCount = (statsRow?.effectiveCount || 0) + (activeRow?.count || 0);
     const totalDuration = statsRow?.totalDur || 0;
     const remainingDailySeconds = Math.max(0, MAX_DAILY_BREAK_SECONDS - totalDuration);
-    const maxSeconds = Math.min(MAX_BREAK_SECONDS, remainingDailySeconds);
+    let maxSeconds = Math.min(MAX_BREAK_SECONDS, remainingDailySeconds);
+    if ((statsRow?.effectiveCount || 0) >= 2) {
+      maxSeconds = Math.min(899, remainingDailySeconds);
+    }
 
     return { 
       breakCount: totalCount, 
@@ -321,7 +354,7 @@ export async function getBreakStats(date) {
         userId: breaks.userId,
         userName: users.name,
         userTeam: users.team,
-        breakCount: sql`coalesce(sum(ceil(${breaks.duration}::float / 600.0)), 0)::int`,
+        breakCount: sql`coalesce(sum(case when ${breaks.duration} >= 900 then 2 else 1 end), 0)::int`,
         totalDuration: sql`coalesce(sum(${breaks.duration}), 0)::int`,
         avgDuration: sql`coalesce(avg(${breaks.duration}), 0)::int`,
       })

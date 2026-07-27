@@ -5,7 +5,7 @@ import { Coffee, Square, Clock } from "lucide-react";
 import { startBreak, endBreak, getActiveBreak, getDailyBreakTotal } from "@/actions/breaks";
 import { toast } from "sonner";
 
-const MAX_BREAK_SECONDS = 600;
+const MAX_BREAK_SECONDS = 900;
 const MAX_BREAKS = 3;
 
 function formatTime(seconds) {
@@ -185,6 +185,31 @@ export function BreakWidget() {
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50" ref={panelRef}>
+      {/* Strict Lockout Overlay Modal when Break Limit Exceeded */}
+      {isOngoing && currentOverage > 0 && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl border border-red-200 dark:border-red-900/50 p-6 space-y-6 text-center animate-in zoom-in-95 duration-200">
+            <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-500 animate-bounce">
+              <Coffee className="w-8 h-8" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-black text-red-600 dark:text-red-500">Break Limit Exceeded!</h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                You have exceeded your break limit by <span className="font-bold text-red-500">{formatTime(currentOverage)}</span>. Please return to work immediately.
+              </p>
+            </div>
+            <button
+              onClick={handleEnd}
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-base font-bold shadow-lg hover:shadow-red-500/20 hover:shadow-xl transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+            >
+              <Square className="w-5 h-5 fill-current" />
+              {loading ? "Ending..." : "Resume Work"}
+            </button>
+          </div>
+        </div>
+      )}
+
       {panelOpen && (
         <div className="absolute bottom-full right-0 mb-4 rounded-2xl shadow-2xl border border-border/50 bg-background/90 backdrop-blur-xl p-5 w-72 animate-in slide-in-from-bottom-2 fade-in duration-200">
           {isOngoing ? (

@@ -15,7 +15,7 @@ export async function POST(req) {
   try {
     // Basic verification of QStash (You could add Upstash receiver verification here for prod security)
     const body = await req.json();
-    const { breakId, userId, maxSeconds } = body;
+    const { breakId, userId, maxSeconds, triggerType } = body;
 
     if (!breakId || !userId) {
       return Response.json({ success: false, message: "Missing required fields" }, { status: 400 });
@@ -38,15 +38,31 @@ export async function POST(req) {
     const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
 
     if (user && user.pushSubscription) {
+      let titleText = "Stop Break ASAP!";
       let bodyText = "Your break ends in 1 minute! Please stop your break and return to work ASAP.";
-      if (maxSeconds && maxSeconds <= 60) {
-        bodyText = `Your break limit of ${maxSeconds}s has been reached! Please stop your break and return to work ASAP.`;
+
+      if (triggerType === "9min") {
+        titleText = "9-Minute Break Warning";
+        bodyText = "You have been on break for 9 minutes. Reaching 15 minutes will count as 2 breaks! Please return soon.";
+      } else if (triggerType === "14min") {
+        titleText = "14-Minute Break Warning";
+        bodyText = "You have been on break for 14 minutes. If you exceed 15 minutes, it will count as 2 breaks! Return to work now.";
+      } else if (triggerType === "final") {
+        titleText = "Break Limit Reached!";
+        bodyText = maxSeconds && maxSeconds <= 60
+          ? `Your break limit of ${maxSeconds}s has been reached! Please stop your break and return to work ASAP.`
+          : "Your break time limit has run out! Please return to work immediately.";
+      } else {
+        if (maxSeconds && maxSeconds <= 60) {
+          bodyText = `Your break limit of ${maxSeconds}s has been reached! Please stop your break and return to work ASAP.`;
+        }
       }
+
       try {
         await webPush.sendNotification(
           user.pushSubscription,
           JSON.stringify({
-            title: "Stop Break ASAP!",
+            title: titleText,
             body: bodyText,
             url: "/breaks",
           })

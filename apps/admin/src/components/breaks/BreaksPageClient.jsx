@@ -87,7 +87,7 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
   const totalBreaks = stats.reduce((sum, s) => sum + s.breakCount, 0);
   const totalDuration = stats.reduce((sum, s) => sum + s.totalDuration, 0);
   const avgDuration = totalBreaks > 0 ? Math.round(totalDuration / totalBreaks) : 0;
-  // Calculate flagged users based on 10-minute (600s) PER BREAK limit OR 30-minute (1800s) DAILY limit
+  // Calculate flagged users based on 15-minute (900s) PER BREAK limit OR 30-minute (1800s) DAILY limit
   const flaggedUsersSet = new Set();
   
   // Group breaks by user
@@ -100,8 +100,8 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
     userBreaks[b.userId].total += dur;
     userBreaks[b.userId].breaks.push({ ...b, calculatedDuration: dur });
     
-    // Flag if any single break exceeds 10 minutes
-    if (dur > 600) {
+    // Flag if any single break exceeds 15 minutes
+    if (dur > 900) {
       flaggedUsersSet.add(b.userId);
     }
   }
@@ -153,7 +153,130 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
   );
 }
 
-function UserBreakCards({ stats, onUserClick }) {
+function UserCard({ s, myBreaks, onUserClick }) {
+  const activeBreak = myBreaks.find(b => !b.endedAt);
+  const [elapsed, setElapsed] = useState(0);
+
+  useEffect(() => {
+    if (activeBreak) {
+      setElapsed(Math.floor((Date.now() - new Date(activeBreak.startedAt).getTime()) / 1000));
+      const interval = setInterval(() => {
+        setElapsed(Math.floor((Date.now() - new Date(activeBreak.startedAt).getTime()) / 1000));
+      }, 1000);
+      return () => clearInterval(interval);
+    } else {
+      setElapsed(0);
+    }
+  }, [activeBreak]);
+
+  const currentTotalDuration = s.totalDuration + (activeBreak ? elapsed : 0);
+  
+  // Calculate visual slots
+  const visualSlots = [];
+  const sortedBreaks = [...myBreaks].sort((a, b) => new Date(a.startedAt) - new Date(b.startedAt));
+  for (const b of sortedBreaks) {
+    const dur = b.endedAt ? b.duration : (b.id === activeBreak?.id ? elapsed : 0);
+    const isOverage = dur >= 900;
+    if (isOverage) {
+      visualSlots.push({ label: formatDuration(dur), type: "overage", isActive: !b.endedAt });
+      visualSlots.push({ label: "2nd Slot", type: "overage-linked", isActive: !b.endedAt });
+    } else {
+      visualSlots.push({ label: b.endedAt ? formatDuration(dur) : formatDuration(elapsed), type: b.endedAt ? "normal" : "active", isActive: !b.endedAt });
+    }
+  }
+  while (visualSlots.length < 3) {
+    visualSlots.push({ label: "—", type: "unused" });
+  }
+  const displaySlots = visualSlots.slice(0, 3);
+
+  const percent = Math.min(100, (currentTotalDuration / 1800) * 100);
+  const isDailyOverage = currentTotalDuration > 1800;
+  const overageTime = currentTotalDuration - 1800;
+
+  return (
+    <div
+      onClick={() => onUserClick && onUserClick(s)}
+      className={`bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-5 space-y-4 hover:shadow-lg hover:border-primary/50 transition-all active:scale-[0.99] cursor-pointer relative overflow-hidden group ${
+        activeBreak ? "ring-1 ring-orange-500/30 shadow-md" : ""
+      }`}
+    >
+      {activeBreak && (
+        <div className="absolute top-0 right-0 w-24 h-24 bg-orange-500/5 rounded-full blur-2xl pointer-events-none" />
+      )}
+
+      <div className="flex items-center justify-between">
+        <div>
+          <h4 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors flex items-center gap-1.5 flex-wrap">
+            {s.userName}
+            {activeBreak && (
+              <span className="flex h-2 w-2 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+              </span>
+            )}
+          </h4>
+          {s.userTeam && (
+            <p className="text-xs text-muted-foreground capitalize mt-0.5">{s.userTeam.replace("_", " ")}</p>
+          )}
+        </div>
+        <div className="text-right">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Breaks</span>
+          <p className="text-base font-black text-foreground">{s.breakCount}{activeBreak ? " (active)" : ""}</p>
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Break Slots (Max 3)</span>
+        <div className="flex gap-1.5">
+          {displaySlots.map((slot, idx) => {
+            let badgeClass = "text-[10px] font-semibold px-2 py-1 rounded-lg border text-center flex-1 truncate ";
+            if (slot.type === "unused") {
+              badgeClass += "bg-gray-50/50 dark:bg-gray-800/30 text-gray-400/80 border-dashed border-gray-200 dark:border-gray-700/80";
+            } else if (slot.type === "normal") {
+              badgeClass += "bg-green-50/60 dark:bg-green-950/20 text-green-700 dark:text-green-400 border-green-100 dark:border-green-900/30";
+            } else if (slot.type === "active") {
+              badgeClass += "bg-orange-50/80 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-100 dark:border-orange-900/30 animate-pulse";
+            } else if (slot.type === "overage") {
+              badgeClass += "bg-red-50/80 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-100 dark:border-red-900/30 font-bold";
+            } else if (slot.type === "overage-linked") {
+              badgeClass += "bg-red-50/40 dark:bg-red-950/10 text-red-500/80 border-dotted border-red-100/50 dark:border-red-900/20 text-[9px]";
+            }
+            return (
+              <div key={idx} className={badgeClass} title={slot.label}>
+                {slot.label}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <div className="flex justify-between text-xs">
+          <span className="text-muted-foreground">Daily Allowance:</span>
+          <span className={`font-semibold ${isDailyOverage ? "text-red-500 animate-pulse" : "text-foreground"}`}>
+            {isDailyOverage 
+              ? `+${formatDuration(overageTime)} over limit` 
+              : `${formatDuration(currentTotalDuration)} / 30m`}
+          </span>
+        </div>
+        <div className="w-full bg-muted/60 dark:bg-gray-800/60 rounded-full h-2 overflow-hidden shadow-inner">
+          <div
+            className={`h-full rounded-full transition-all duration-300 ${
+              isDailyOverage 
+                ? "bg-red-500 animate-pulse" 
+                : percent > 70 
+                ? "bg-amber-500" 
+                : "bg-green-500"
+            }`}
+            style={{ width: `${percent}%` }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function UserBreakCards({ stats, allBreaks, onUserClick }) {
   if (stats.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -165,29 +288,17 @@ function UserBreakCards({ stats, onUserClick }) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-      {stats.map((s) => (
-        <div
-          key={s.userId}
-          onClick={() => onUserClick && onUserClick(s)}
-          className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 ${
-            onUserClick ? "cursor-pointer hover:shadow-md hover:ring-1 hover:ring-blue-500/50 transition-all active:scale-[0.98]" : ""
-          }`}
-        >
-          <div className="flex items-center justify-between mb-2">
-            <div>
-              <p className="font-medium text-sm">{s.userName}</p>
-              {s.userTeam && (
-                <p className="text-xs text-gray-500 capitalize">{s.userTeam.replace("_", " ")}</p>
-              )}
-            </div>
-            <span className="text-lg font-bold text-orange-600">{s.breakCount}</span>
-          </div>
-          <div className="flex items-center gap-4 text-xs text-gray-500">
-            <span>Total: {formatDuration(s.totalDuration)}</span>
-            <span>Avg: {formatDuration(s.avgDuration)}</span>
-          </div>
-        </div>
-      ))}
+      {stats.map((s) => {
+        const myBreaks = allBreaks.filter(b => b.userId === s.userId);
+        return (
+          <UserCard
+            key={s.userId}
+            s={s}
+            myBreaks={myBreaks}
+            onUserClick={onUserClick}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -225,13 +336,13 @@ function BreakTimeline({ breaks, showUser }) {
               {b.endedAt ? (
                 <div className="flex flex-col items-end gap-1">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    b.duration > 600 
+                    b.duration > 900 
                       ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50' 
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
                   }`}>
                     {formatDuration(b.duration)}
                   </span>
-                  {b.duration > 600 && showUser && (
+                  {b.duration > 900 && showUser && (
                     <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider">
                       Flagged (Overage)
                     </span>
@@ -244,7 +355,7 @@ function BreakTimeline({ breaks, showUser }) {
                   </span>
                   {(() => {
                     const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
-                    if (activeSeconds > 600 && showUser) {
+                    if (activeSeconds > 900 && showUser) {
                       return (
                          <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider animate-pulse">
                            Flagged (Overage)
@@ -314,7 +425,7 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
   const completedBreaks = breaks.filter((b) => b.endedAt);
   const totalDuration = completedBreaks.reduce((sum, b) => sum + (b.duration || 0), 0);
   const activeBreak = breaks.find((b) => !b.endedAt);
-  const completedBreaksCount = completedBreaks.reduce((sum, b) => sum + Math.ceil((b.duration || 0) / 600), 0);
+  const completedBreaksCount = completedBreaks.reduce((sum, b) => sum + ((b.duration || 0) >= 900 ? 2 : 1), 0);
   const remainingTime = Math.max(0, 1800 - totalDuration);
 
   return (
@@ -405,6 +516,7 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("overview");
   const [teamFilter, setTeamFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [showActiveModal, setShowActiveModal] = useState(false);
   const [showFlaggedModal, setShowFlaggedModal] = useState(false);
   const [selectedUserTimeline, setSelectedUserTimeline] = useState(null);
@@ -459,6 +571,20 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
           ))}
         </select>
 
+        {/* Name Search Input */}
+        <div className="relative flex-1 max-w-[200px]">
+          <input
+            type="text"
+            placeholder="Search employee..."
+            className="w-full p-1.5 pl-8 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 outline-none focus:ring-1 focus:ring-primary placeholder-gray-400"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <svg className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+
         <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
           <button
             onClick={() => setActiveTab("overview")}
@@ -494,8 +620,16 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
         </div>
       ) : (
         (() => {
-          const filteredStats = teamFilter ? stats.filter(s => s.userTeam === teamFilter) : stats;
-          const filteredBreaks = teamFilter ? allBreaks.filter(b => b.userTeam === teamFilter) : allBreaks;
+          const filteredStats = stats.filter(s => {
+            const matchesTeam = !teamFilter || s.userTeam === teamFilter;
+            const matchesSearch = !searchQuery || s.userName.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesTeam && matchesSearch;
+          });
+          const filteredBreaks = allBreaks.filter(b => {
+            const matchesTeam = !teamFilter || b.userTeam === teamFilter;
+            const matchesSearch = !searchQuery || b.userName.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesTeam && matchesSearch;
+          });
           const filteredUsersCount = teamFilter ? users.filter(u => u.team === teamFilter).length : users.length;
           
           return (
@@ -515,6 +649,7 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                   </h2>
                   <UserBreakCards 
                     stats={filteredStats} 
+                    allBreaks={allBreaks}
                     onUserClick={(userStats) => setSelectedUserTimeline(userStats)}
                   />
                 </div>
@@ -549,13 +684,13 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
             
             <div className="overflow-y-auto p-5 space-y-3 flex-1">
               {(() => {
-                const active = allBreaks.filter(b => !b.endedAt && (!teamFilter || b.userTeam === teamFilter));
+                const active = allBreaks.filter(b => !b.endedAt && (!teamFilter || b.userTeam === teamFilter) && (!searchQuery || b.userName.toLowerCase().includes(searchQuery.toLowerCase())));
                 if (active.length === 0) {
                   return <div className="text-center py-8 text-gray-500">No one is currently on break.</div>;
                 }
                 return active.sort((a,b) => new Date(a.startedAt) - new Date(b.startedAt)).map(b => {
                   const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
-                  const isFlagged = activeSeconds > 600;
+                  const isFlagged = activeSeconds > 900;
                   return (
                     <div key={b.id} className="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
                       <div>
@@ -608,6 +743,7 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                 const flaggedUsersMap = new Map();
                 for (const b of allBreaks) {
                   if (teamFilter && b.userTeam !== teamFilter) continue;
+                  if (searchQuery && !b.userName.toLowerCase().includes(searchQuery.toLowerCase())) continue;
                   
                   if (!flaggedUsersMap.has(b.userId)) {
                     flaggedUsersMap.set(b.userId, { total: 0, userName: b.userName, userTeam: b.userTeam, isActive: false, hasOverage: false, overageSeconds: 0 });
@@ -617,9 +753,9 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                   const data = flaggedUsersMap.get(b.userId);
                   data.total += dur;
                   if (!b.endedAt) data.isActive = true;
-                  if (dur > 600) {
+                  if (dur > 900) {
                     data.hasOverage = true;
-                    data.overageSeconds += (dur - 600);
+                    data.overageSeconds += (dur - 900);
                   }
                 }
                 
