@@ -30,7 +30,17 @@ export async function login(prevState, formData) {
   const { email, password } = validatedFields.data;
 
   try {
-    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    const [user] = await db
+      .select({
+        id: users.id,
+        name: users.name,
+        email: users.email,
+        password: users.password,
+        role: users.role,
+      })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
 
     if (!user) {
       return {

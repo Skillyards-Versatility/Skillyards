@@ -19,7 +19,10 @@ const delay = (ms) => new Promise(r => setTimeout(r, ms));
 
 export async function processEodEmails(date, targetUserId = null) {
   // Fetch all users who belong to a team
-  let allUsers = await db.select().from(users).where(isNotNull(users.team));
+  let allUsers = await db
+    .select({ id: users.id, name: users.name, email: users.email, team: users.team })
+    .from(users)
+    .where(isNotNull(users.team));
 
   // If targeting a specific user, filter to only that user
   if (targetUserId) {

@@ -35,7 +35,11 @@ export async function POST(req) {
 
     // The break is still active, and this endpoint is hit when the warning delay expires.
     // Fetch the user's push subscription
-    const [user] = await db.select().from(users).where(eq(users.id, userId)).limit(1);
+    const [user] = await db
+      .select({ id: users.id, name: users.name, pushSubscription: users.pushSubscription })
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
 
     if (user && user.pushSubscription) {
       let titleText = "Stop Break ASAP!";
