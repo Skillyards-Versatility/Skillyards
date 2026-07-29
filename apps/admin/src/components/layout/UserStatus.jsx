@@ -7,6 +7,7 @@ import { SmilePlus, X } from "lucide-react";
 import EmojiPicker from 'emoji-picker-react';
 
 const PRESETS = [
+  { emoji: "__available__", text: "Available" },
   { emoji: "💻", text: "Deep Work" },
   { emoji: "📞", text: "In a meeting" },
   { emoji: "🍔", text: "Lunch break" },
@@ -44,13 +45,20 @@ export function UserStatus({ initialEmoji, initialText }) {
     };
   }, [isOpen]);
 
+  const getEndOfDay = () => {
+    const end = new Date();
+    end.setHours(19, 0, 0, 0);
+    return end.toISOString();
+  };
+
   const handleSave = async (selectedEmoji = emoji, selectedText = text) => {
     setIsSaving(true);
     setCurrentEmoji(selectedEmoji);
     setCurrentText(selectedText);
     
     try {
-      const res = await updateStatus({ statusEmoji: selectedEmoji, statusText: selectedText });
+      const statusClearAt = selectedEmoji ? getEndOfDay() : null;
+      const res = await updateStatus({ statusEmoji: selectedEmoji, statusText: selectedText, statusClearAt });
       if (res.success) {
         setIsOpen(false);
         toast.success("Status updated");
@@ -82,7 +90,14 @@ export function UserStatus({ initialEmoji, initialText }) {
         className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full hover:bg-muted/50 transition-colors text-sm font-medium border border-transparent hover:border-border"
         title="Update Status"
       >
-        {currentEmoji ? (
+        {currentEmoji === "__available__" ? (
+          <>
+            <span className="w-3 h-3 rounded-full bg-emerald-500" />
+            <span className="max-w-[100px] truncate text-xs text-muted-foreground hidden sm:inline-block">
+              {currentText}
+            </span>
+          </>
+        ) : currentEmoji ? (
           <>
             <span>{currentEmoji}</span>
             <span className="max-w-[100px] truncate text-xs text-muted-foreground hidden sm:inline-block">
@@ -117,7 +132,11 @@ export function UserStatus({ initialEmoji, initialText }) {
                   onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                   className="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-background/80 hover:shadow-sm text-xl transition-all shrink-0 bg-background/50 border border-border/50"
                 >
-                  {emoji || "😊"}
+                  {emoji === "__available__" ? (
+                    <span className="w-5 h-5 rounded-full bg-emerald-500" />
+                  ) : (
+                    emoji || "😊"
+                  )}
                 </button>
                 
                 <input
@@ -147,18 +166,22 @@ export function UserStatus({ initialEmoji, initialText }) {
 
             <div className="space-y-1 mb-5">
               {PRESETS.map((preset) => (
-                <button
-                  key={preset.text}
-                  onClick={() => {
-                    setEmoji(preset.emoji);
-                    setText(preset.text);
-                    handleSave(preset.emoji, preset.text);
-                  }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/50 text-sm text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
-                >
-                  <span className="text-lg">{preset.emoji}</span>
-                  <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors">{preset.text}</span>
-                </button>
+                  <button
+                    key={preset.text}
+                    onClick={() => {
+                      setEmoji(preset.emoji);
+                      setText(preset.text);
+                      handleSave(preset.emoji, preset.text);
+                    }}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/50 text-sm text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    {preset.emoji === "__available__" ? (
+                      <span className="w-4 h-4 rounded-full bg-emerald-500" />
+                    ) : (
+                      <span className="text-lg">{preset.emoji}</span>
+                    )}
+                    <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors">{preset.text}</span>
+                  </button>
               ))}
             </div>
 

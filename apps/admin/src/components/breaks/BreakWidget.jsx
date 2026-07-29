@@ -28,6 +28,8 @@ export function BreakWidget() {
   const [dailyInfo, setDailyInfo] = useState({ breakCount: 0, maxBreaks: MAX_BREAKS, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, remainingDailySeconds: 1800 });
   const [panelOpen, setPanelOpen] = useState(false);
   const [cooldown, setCooldown] = useState({ active: false, remaining: 0 });
+  const [pushAvailable, setPushAvailable] = useState(true);
+  const warnedAt = useRef(new Set());
   const intervalRef = useRef(null);
   const panelRef = useRef(null);
 
@@ -86,9 +88,27 @@ export function BreakWidget() {
       if (!prev) return prev;
       const currentElapsed = Math.floor((Date.now() - new Date(prev.startedAt).getTime()) / 1000);
       setElapsed(currentElapsed);
+
+      // In-app fallback warnings for users without push notifications
+      if (!pushAvailable) {
+        const maxSec = dailyInfo.maxSeconds || MAX_BREAK_SECONDS;
+        if (currentElapsed >= 540 && !warnedAt.current.has("9min")) {
+          warnedAt.current.add("9min");
+          toast.warning("9-minute break warning — you're halfway through your break time!", { duration: 5000 });
+        }
+        if (currentElapsed >= 840 && !warnedAt.current.has("14min")) {
+          warnedAt.current.add("14min");
+          toast.warning("14-minute break warning — 1 minute remaining! Please wrap up.", { duration: 5000 });
+        }
+        if (currentElapsed >= maxSec - 60 && !warnedAt.current.has("final")) {
+          warnedAt.current.add("final");
+          toast.warning("Break time is almost up! Please return to work.", { duration: 5000 });
+        }
+      }
+
       return prev;
     });
-  }, []);
+  }, [pushAvailable, dailyInfo.maxSeconds]);
 
   useEffect(() => {
     let cancelled = false;
@@ -97,11 +117,18 @@ export function BreakWidget() {
       if (!cancelled) {
         setDailyInfo(info);
         if (b) {
+          warnedAt.current.clear();
           setActiveBreak(b);
           setElapsed(Math.floor((Date.now() - new Date(b.startedAt).getTime()) / 1000));
         }
       }
     })();
+
+    // Check if push notifications are available
+    if (typeof window !== "undefined" && "Notification" in window) {
+      setPushAvailable(Notification.permission === "granted");
+    }
+
     return () => {
       cancelled = true;
       clearTimer();
@@ -134,6 +161,7 @@ export function BreakWidget() {
     setLoading(false);
 
     if (res.success) {
+      warnedAt.current.clear();
       setActiveBreak(res.break);
       setElapsed(0);
       setPanelOpen(false);
@@ -143,6 +171,9 @@ export function BreakWidget() {
       const remainingSecondsPart = allowedSecs % 60;
       const remainingStr = remainingSecondsPart > 0 ? `${allowedMins}m ${remainingSecondsPart}s` : `${allowedMins}m`;
       toast.success(`Break started! ${remainingStr} remaining for this break.`);
+      if (res.qstashFailed) {
+        toast.warning("Break reminders unavailable — QStash scheduling failed. Keep an eye on the timer!", { duration: 6000 });
+      }
     } else {
       toast.error(res.error);
       refreshDailyInfo();

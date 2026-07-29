@@ -1,6 +1,7 @@
 import { db, leaves, users } from "@repo/db";
-import { eq, desc, and, gte, lte, ne } from "drizzle-orm";
+import { eq, desc, and, or, gte, lte, ne } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
+import { sendLeaveNotification } from "@/modules/notifications/email.service";
 
 async function postHandler(req, { ctx }) {
   try {
@@ -16,6 +17,49 @@ async function postHandler(req, { ctx }) {
     const start = new Date(startDate);
     const end = isHalfDay ? new Date(startDate) : new Date(endDate);
     
+    // Validate: no past dates
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const startNormalized = new Date(start);
+    startNormalized.setHours(0, 0, 0, 0);
+
+    if (startNormalized < today) {
+      return Response.json(
+        { success: false, message: "Leave cannot be applied for past dates." },
+        { status: 400 }
+      );
+    }
+
+    // Validate: at least 2 days notice
+    const diffDays = Math.ceil((startNormalized.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays < 2) {
+      return Response.json(
+        { success: false, message: "Leave must be applied at least 2 days in advance." },
+        { status: 400 }
+      );
+    }
+
+    // Check for overlapping leaves
+    const [overlap] = await db
+      .select({ id: leaves.id })
+      .from(leaves)
+      .where(
+        and(
+          eq(leaves.userId, ctx.session.userId),
+          ne(leaves.status, "REJECTED"),
+          lte(leaves.startDate, end),
+          gte(leaves.endDate, start)
+        )
+      )
+      .limit(1);
+
+    if (overlap) {
+      return Response.json(
+        { success: false, message: "You already have a leave application that overlaps with these dates." },
+        { status: 400 }
+      );
+    }
+
     // Convert current time to IST (UTC+5:30) for cutoff evaluations
     const nowUtc = new Date();
     const nowIST = new Date(nowUtc.getTime() + (5.5 * 60 * 60 * 1000));
@@ -214,6 +258,37 @@ async function postHandler(req, { ctx }) {
     }
 
     ctx.log("LEAVE_APPLIED", { userId: ctx.session.userId, leaveId: result.id, isHalfDay });
+
+    try {
+      const [applicant] = await db
+        .select({ name: users.name })
+        .from(users)
+        .where(eq(users.id, ctx.session.userId))
+        .limit(1);
+
+      const notifiers = await db
+        .select({ name: users.name, email: users.email })
+        .from(users)
+        .where(or(eq(users.role, "HR"), eq(users.role, "ADMIN")));
+
+      const leave = {
+        applicantName: applicant?.name || "Unknown",
+        type: result.type,
+        reason: result.reason,
+        startDate: result.startDate,
+        endDate: result.endDate,
+        isHalfDay: result.isHalfDay,
+        halfDayPeriod: result.halfDayPeriod,
+      };
+
+      for (const n of notifiers) {
+        sendLeaveNotification({ to: n.email, recipientName: n.name, leave }).catch((err) =>
+          ctx.error("LEAVE_NOTIFICATION_FAILED", { userId: n.name, error: err.message })
+        );
+      }
+    } catch (notifErr) {
+      ctx.error("LEAVE_NOTIFICATION_ERROR", { error: notifErr.message });
+    }
 
     return Response.json({ success: true, leave: result });
   } catch (error) {

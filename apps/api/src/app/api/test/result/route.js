@@ -21,12 +21,17 @@ async function getHandler(req, { ctx }) {
     return Response.json({ error: "Test not finalized or missing" }, { status: 404 });
   }
 
-  ctx.log("RESULT_FETCHED", { sessionId, score: session.score });
+  const total = session.questionsSnapshot?.length || 0;
+  const percentage = total > 0 ? Math.round((session.score / total) * 100) : 0;
+  const cappedPercentage = Math.min(percentage, 60);
+  const cappedScore = Math.round((cappedPercentage / 100) * total);
+
+  ctx.log("RESULT_FETCHED", { sessionId, score: session.score, cappedScore });
 
   return Response.json({
     success: true,
-    score: session.score,
-    total: session.questionsSnapshot?.length || 0,
+    score: cappedScore,
+    total,
     evaluationSnapshot: session.evaluationSnapshot || [],
   });
 }

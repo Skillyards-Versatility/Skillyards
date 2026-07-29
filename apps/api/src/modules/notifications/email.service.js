@@ -7,6 +7,8 @@ import {
   eodAllTeamsTemplate,
   passwordResetTemplate,
   eodWarningTemplate,
+  leaveNotificationTemplate,
+  leaveStatusTemplate,
 } from "./email.template.js";
 
 function withResend(fn) {
@@ -175,5 +177,35 @@ export const sendPasswordResetEmail = withResend((resend, { to, resetLink }) => 
     to: [to],
     subject: "Reset Your Skillyards Password",
     html: passwordResetTemplate({ resetLink }),
+  });
+});
+
+/**
+ * Notify HR and Admin about a new leave application
+ */
+export const sendLeaveNotification = withResend((resend, { to, recipientName, leave }) => {
+  const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
+  const adminUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://admin.skillyards.in"}/leaves`;
+
+  return resend.emails.send({
+    from,
+    to: [to],
+    subject: `Leave request: ${leave.applicantName} — ${leave.type}`,
+    html: leaveNotificationTemplate({ ...leave, adminUrl }),
+  });
+});
+
+/**
+ * Notify applicant that their leave was approved or rejected
+ */
+export const sendLeaveStatusNotification = withResend((resend, { to, applicantName, type, startDate, endDate, isHalfDay, halfDayPeriod, status, approvedByName, rejectionReason }) => {
+  const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
+  const action = status === "APPROVED" ? "approved" : "rejected";
+
+  return resend.emails.send({
+    from,
+    to: [to],
+    subject: `Leave ${action}: ${applicantName} — ${type}`,
+    html: leaveStatusTemplate({ applicantName, type, startDate, endDate, isHalfDay, halfDayPeriod, status, approvedByName, rejectionReason }),
   });
 });

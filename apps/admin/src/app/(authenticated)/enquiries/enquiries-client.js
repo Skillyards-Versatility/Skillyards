@@ -14,6 +14,20 @@ import {
 import { StatusBadge, StatusSelect, STATUS_OPTIONS } from "@/components/ui/Select";
 import { toast } from "sonner";
 
+const SOURCE_OPTIONS = [
+  { value: "website", label: "Website", color: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800" },
+  { value: "10_min_test", label: "10-min Test", color: "border-sky-200 bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-800" },
+];
+
+function SourceBadge({ source }) {
+  const option = SOURCE_OPTIONS.find((o) => o.value === source) || SOURCE_OPTIONS[0];
+  return (
+    <span className={cn("inline-flex items-center rounded-md border px-2 py-1 text-[10px] font-bold uppercase tracking-wider", option.color)}>
+      {option.label}
+    </span>
+  );
+}
+
 const PAGE_SIZE = 10;
 
 function useDebounce(value, delay) {
@@ -34,6 +48,7 @@ export function EnquiriesClient({
   sort: initialSort,
   order: initialOrder,
   statusFilter: initialStatusFilter,
+  sourceFilter: initialSourceFilter = "",
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -237,7 +252,7 @@ export function EnquiriesClient({
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Enquiries</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Latest website enquiries submitted by prospective students.
+            Website enquiries and 10-minute test registrations from prospective students.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -312,7 +327,27 @@ export function EnquiriesClient({
               <option key={opt.value} value={opt.value}>{opt.label}</option>
             ))}
           </select>
-          {(initialSearch || initialStatusFilter) && (
+          <div className="flex items-center rounded-lg border border-border bg-card p-0.5">
+            {[{ value: "", label: "All" }, ...SOURCE_OPTIONS].map((opt) => {
+              const isActive = (initialSourceFilter || "") === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => updateURL({ source: opt.value || null, page: "1" })}
+                  className={cn(
+                    "rounded-md px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer",
+                    isActive
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
+          {(initialSearch || initialStatusFilter || initialSourceFilter) && (
             <button
               type="button"
               onClick={() => {
@@ -412,12 +447,12 @@ export function EnquiriesClient({
               <p className="mt-1 max-w-sm text-sm text-muted-foreground">
                 {initialSearch || initialStatusFilter
                   ? "No enquiries match your current filters. Try adjusting your search."
-                  : "New website enquiries will appear here as soon as they are submitted."}
+                  : "New enquiries and test registrations will appear here as soon as they are submitted."}
               </p>
             </div>
           ) : (
             <div className="overflow-x-auto" ref={tableRef}>
-              <table className="w-full min-w-[950px] text-left text-sm">
+              <table className="w-full min-w-[1050px] text-left text-sm">
                 <thead className="border-b border-border bg-muted/50 text-xs uppercase tracking-wider text-muted-foreground">
                   <tr>
                     <th className="w-10 px-4 py-3">
@@ -431,6 +466,7 @@ export function EnquiriesClient({
                     <SortHeader column="firstName" label="Name" />
                     <SortHeader column="email" label="Contact" />
                     <th className="px-5 py-3 font-semibold">Message</th>
+                    <SortHeader column="source" label="Source" className="text-center" />
                     <SortHeader column="status" label="Status" className="text-center" />
                     <SortHeader column="createdAt" label="Submitted" />
                   </tr>
@@ -497,6 +533,11 @@ export function EnquiriesClient({
                           <p className="whitespace-pre-wrap break-words leading-relaxed line-clamp-2">
                             {enquiry.message}
                           </p>
+                        </td>
+
+                        {/* Source */}
+                        <td className="px-5 py-4 text-center">
+                          <SourceBadge source={enquiry.source || "website"} />
                         </td>
 
                         {/* Status */}
@@ -640,7 +681,10 @@ export function EnquiriesClient({
               <div className="space-y-5">
                 {/* Status & Date */}
                 <div className="flex items-center justify-between">
-                  <StatusBadge status={detailEnquiry.status || "new"} />
+                  <div className="flex items-center gap-2">
+                    <StatusBadge status={detailEnquiry.status || "new"} />
+                    <SourceBadge source={detailEnquiry.source || "website"} />
+                  </div>
                   <span className="text-xs text-muted-foreground">
                     {formatDate(detailEnquiry.createdAt)}
                     {" • "}

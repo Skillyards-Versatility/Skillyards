@@ -113,6 +113,7 @@ export async function startBreak() {
     }
 
     // Schedule QStash Notifications
+    let qstashFailed = false;
     if (process.env.QSTASH_TOKEN) {
       try {
         // 9-minute Warning (if allowed duration is at least 9 minutes)
@@ -133,9 +134,9 @@ export async function startBreak() {
           });
         }
 
-        // Final warning 1 minute before the actual limit if it doesn't overlap with 9m (540s) or 14m (840s)
+        // Final warning 1 minute before the actual limit
         const finalWarningDelay = maxSecondsForThisBreak - 60;
-        if (finalWarningDelay > 0 && finalWarningDelay !== 540 && finalWarningDelay !== 840) {
+        if (finalWarningDelay > 0) {
           await qstashClient.publishJSON({
             url: `${API_BASE}/api/breaks/check-limit`,
             body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak, triggerType: "final" },
@@ -150,10 +151,11 @@ export async function startBreak() {
         }
       } catch (err) {
         console.error("QStash schedule failed:", err);
+        qstashFailed = true;
       }
     }
 
-    return { success: true, break: record, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: maxSecondsForThisBreak };
+    return { success: true, break: record, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: maxSecondsForThisBreak, qstashFailed };
   } catch (err) {
     console.error("Start break error:", err);
     return { success: false, error: "Failed to start break" };

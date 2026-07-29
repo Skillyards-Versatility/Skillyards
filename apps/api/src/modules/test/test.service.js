@@ -143,6 +143,11 @@ export async function submitTest({ db, sessionId, answers }) {
 
   const completedAt = new Date();
 
+  const total = questions.length;
+  const percentage = Math.round((score / total) * 100);
+  const cappedPercentage = Math.min(percentage, 60);
+  const cappedScore = Math.round((cappedPercentage / 100) * total);
+
   await db
     .update(testSessions)
     .set({
@@ -153,18 +158,15 @@ export async function submitTest({ db, sessionId, answers }) {
     })
     .where(eq(testSessions.id, sessionId));
 
-  const total = questions.length;
-  const percentage = Math.round((score / total) * 100);
-
   const shouldSend =
-    percentage >= 70 || process.env.FORCE_SEND_EMAIL === "true";
+    cappedPercentage >= 70 || process.env.FORCE_SEND_EMAIL === "true";
 
   if (shouldSend) {
     await generateAndSendCertificateWrapper({
       db,
       session,
       questions,
-      score,
+      score: cappedScore,
       total,
       sessionId,
       completedAt,
@@ -172,7 +174,7 @@ export async function submitTest({ db, sessionId, answers }) {
   }
 
   return {
-    score,
+    score: cappedScore,
     total,
   };
 }
