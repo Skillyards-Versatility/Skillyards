@@ -1,6 +1,7 @@
 import { db, leaves, users } from "@repo/db";
-import { eq, desc, and, gte, lte, ne } from "drizzle-orm";
+import { eq, desc, and, or, gte, lte, ne } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
+import { sendLeaveNotification } from "@/modules/notifications/email.service";
 
 async function postHandler(req, { ctx }) {
   try {
@@ -214,6 +215,37 @@ async function postHandler(req, { ctx }) {
     }
 
     ctx.log("LEAVE_APPLIED", { userId: ctx.session.userId, leaveId: result.id, isHalfDay });
+
+    try {
+      const [applicant] = await db
+        .select({ name: users.name })
+        .from(users)
+        .where(eq(users.id, ctx.session.userId))
+        .limit(1);
+
+      const notifiers = await db
+        .select({ name: users.name, email: users.email })
+        .from(users)
+        .where(or(eq(users.role, "HR"), eq(users.role, "ADMIN")));
+
+      const leave = {
+        applicantName: applicant?.name || "Unknown",
+        type: result.type,
+        reason: result.reason,
+        startDate: result.startDate,
+        endDate: result.endDate,
+        isHalfDay: result.isHalfDay,
+        halfDayPeriod: result.halfDayPeriod,
+      };
+
+      for (const n of notifiers) {
+        sendLeaveNotification({ to: n.email, recipientName: n.name, leave }).catch((err) =>
+          ctx.error("LEAVE_NOTIFICATION_FAILED", { userId: n.name, error: err.message })
+        );
+      }
+    } catch (notifErr) {
+      ctx.error("LEAVE_NOTIFICATION_ERROR", { error: notifErr.message });
+    }
 
     return Response.json({ success: true, leave: result });
   } catch (error) {

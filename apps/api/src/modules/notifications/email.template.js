@@ -466,3 +466,56 @@ export function eodWarningTemplate({ userName, date, adminUrl }) {
   </div>
   `;
 }
+
+const TYPE_LABELS = { CASUAL: "Casual", SICK: "Sick", UNPAID: "Unpaid" };
+
+export function leaveNotificationTemplate({ applicantName, type, reason, startDate, endDate, isHalfDay, halfDayPeriod, adminUrl }) {
+  const year = new Date().getFullYear();
+  const dateStr = isHalfDay
+    ? `${new Date(startDate).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })} (${halfDayPeriod === "MORNING" ? "Morning" : "Afternoon"} half-day)`
+    : `${new Date(startDate).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })} – ${new Date(endDate).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })}`;
+
+  return `
+  <div style="background:#f1f5f9;padding:2rem;font-family:Arial,sans-serif;">
+    <div style="max-width:560px;margin:auto;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e2e8f0;">
+
+      <div style="background:#0f172a;padding:24px;text-align:center;">
+        <img src="${LOGO_URL}" style="max-width:180px; height:auto; display:block; margin:auto;" alt="Skillyards" />
+      </div>
+
+      <div style="padding:24px 28px 0;">
+        <p style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#94a3b8;margin:0 0 4px;font-weight:600;">Leave Application</p>
+        <p style="font-size:20px;font-weight:700;color:#1e293b;margin:0 0 20px;">${applicantName} requested ${TYPE_LABELS[type] || type} leave</p>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;">
+          <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;border:1px solid #e2e8f0;">
+            <p style="font-size:11px;color:#94a3b8;margin:0 0 3px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Employee</p>
+            <p style="font-size:14px;font-weight:600;color:#1e293b;margin:0;">${applicantName}</p>
+          </div>
+          <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;border:1px solid #e2e8f0;">
+            <p style="font-size:11px;color:#94a3b8;margin:0 0 3px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Type</p>
+            <p style="font-size:14px;font-weight:600;color:#1e293b;margin:0;">${TYPE_LABELS[type] || type}</p>
+          </div>
+          <div style="background:#f8fafc;border-radius:10px;padding:14px 16px;border:1px solid #e2e8f0;grid-column:1/-1;">
+            <p style="font-size:11px;color:#94a3b8;margin:0 0 3px;text-transform:uppercase;letter-spacing:1px;font-weight:600;">Dates</p>
+            <p style="font-size:14px;font-weight:600;color:#1e293b;margin:0;">${dateStr}</p>
+          </div>
+        </div>
+
+        <p style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#94a3b8;margin:0 0 10px;font-weight:600;">Reason</p>
+        <div style="background:#f8fafc;border-radius:10px;padding:16px 18px;border-left:3px solid #f59e0b;margin-bottom:24px;">
+          <p style="font-size:14px;color:#1e293b;line-height:1.7;margin:0;">${reason}</p>
+        </div>
+
+        <div style="margin-bottom:28px;">
+          <a href="${adminUrl}" style="display:block;text-align:center;padding:12px 0;background:#635ee7;color:#ffffff;font-size:14px;font-weight:600;border-radius:10px;text-decoration:none;">Review &amp; respond in admin panel</a>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #e2e8f0;padding:16px 28px;background:#f8fafc;">
+        <p style="text-align:center;font-size:11px;color:#94a3b8;margin:0;">Automated alert from Skillyards · © ${year}</p>
+      </div>
+    </div>
+  </div>
+  `;
+}

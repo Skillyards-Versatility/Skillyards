@@ -1,5 +1,5 @@
 import { db, breaks, users } from "@repo/db";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import webPush from "web-push";
 
 // Ensure web-push is configured with VAPID keys
@@ -69,6 +69,33 @@ export async function POST(req) {
         );
       } catch (pushErr) {
         console.error("Failed to send push notification:", pushErr);
+      }
+    }
+
+    if (triggerType === "final") {
+      try {
+        const notifiers = await db
+          .select({ name: users.name, pushSubscription: users.pushSubscription })
+          .from(users)
+          .where(or(eq(users.role, "HR"), eq(users.role, "ADMIN")));
+
+        for (const n of notifiers) {
+          if (!n.pushSubscription) continue; 
+          try {
+            await webPush.sendNotification(
+              n.pushSubscription,
+              JSON.stringify({
+                title: "Break limit exceeded",
+                body: `${user.name} has exceeded their break time slot. Check the Breaks page.`,
+                url: "/breaks",
+              })
+            );
+          } catch (pushErr) {
+            console.error("Failed to notify HR/Admin about break limit:", pushErr);
+          }
+        }
+      } catch (dbErr) {
+        console.error("Failed to fetch HR/Admin for break notification:", dbErr);
       }
     }
 
