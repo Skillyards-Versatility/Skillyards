@@ -128,6 +128,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
             "talkTime",
             "counsellingDone", 
             "counsellingBooked",
+            "walkinCounselling",
             "sessionBooked",
             "meetingsConducted",
             "reviewsCompleted",
@@ -208,15 +209,22 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
     let currentStreak = 0;
     let maxStreak = 0;
     
-    const TARGET_CALLS = 120;
-    const TARGET_CONNECTED = 50;
     const TARGET_TALK_TIME = 90;
 
     if (isSalesRole) {
+      const getDayTargetDialed = (day) => {
+        const totalCouns = (day.counsellingDone || 0) + (day.walkinCounselling || 0);
+        return Math.max(0, 120 - totalCouns * 20);
+      };
+      const getDayTargetConnected = (day) => {
+        const totalCouns = (day.counsellingDone || 0) + (day.walkinCounselling || 0);
+        return Math.max(30, 50 - totalCouns * 10);
+      };
+
       let tempStreak = 0;
       for (let i = userTimeSeries.length - 1; i >= 0; i--) {
         const d = userTimeSeries[i];
-        if ((d.dialedCalls || 0) >= TARGET_CALLS && (d.connectedCalls || 0) >= TARGET_CONNECTED && (d.talkTime || 0) >= TARGET_TALK_TIME) {
+        if ((d.dialedCalls || 0) >= getDayTargetDialed(d) && (d.connectedCalls || 0) >= getDayTargetConnected(d) && (d.talkTime || 0) >= TARGET_TALK_TIME) {
           tempStreak++;
         } else {
           break;
@@ -226,7 +234,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
 
       let highestTemp = 0;
       userTimeSeries.forEach(day => {
-        if ((day.dialedCalls || 0) >= TARGET_CALLS && (day.connectedCalls || 0) >= TARGET_CONNECTED && (day.talkTime || 0) >= TARGET_TALK_TIME) {
+        if ((day.dialedCalls || 0) >= getDayTargetDialed(day) && (day.connectedCalls || 0) >= getDayTargetConnected(day) && (day.talkTime || 0) >= TARGET_TALK_TIME) {
           highestTemp++;
           if (highestTemp > maxStreak) maxStreak = highestTemp;
         } else {
@@ -239,9 +247,12 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
     const latestDialed = latestDay?.dialedCalls || 0;
     const latestConnected = latestDay?.connectedCalls || 0;
     const latestTalkTime = latestDay?.talkTime || 0;
+    const latestTotalCouns = (latestDay?.counsellingDone || 0) + (latestDay?.walkinCounselling || 0);
+    const dayTargetDialed = Math.max(0, 120 - latestTotalCouns * 20);
+    const dayTargetConnected = Math.max(30, 50 - latestTotalCouns * 10);
 
-    const batCalls = Math.min(100, Math.round((latestDialed / TARGET_CALLS) * 100));
-    const batConn = Math.min(100, Math.round((latestConnected / TARGET_CONNECTED) * 100));
+    const batCalls = Math.min(100, Math.round((latestDialed / dayTargetDialed) * 100));
+    const batConn = Math.min(100, Math.round((latestConnected / dayTargetConnected) * 100));
     const batTalk = Math.min(100, Math.round((latestTalkTime / TARGET_TALK_TIME) * 100));
 
     return (
@@ -271,7 +282,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
               <div className="w-full space-y-4">
                 <div>
                   <div className="flex justify-between text-xs font-medium mb-1">
-                    <span>Dialed ({TARGET_CALLS})</span>
+                    <span>Dialed ({dayTargetDialed})</span>
                     <span className={batCalls >= 100 ? "text-emerald-500" : ""}>{latestDialed}</span>
                   </div>
                   <div className="w-full h-3 bg-muted/30 rounded-full overflow-hidden border border-border/50">
@@ -284,7 +295,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
 
                 <div>
                   <div className="flex justify-between text-xs font-medium mb-1">
-                    <span>Connected ({TARGET_CONNECTED})</span>
+                    <span>Connected ({dayTargetConnected})</span>
                     <span className={batConn >= 100 ? "text-emerald-500" : ""}>{latestConnected}</span>
                   </div>
                   <div className="w-full h-3 bg-muted/30 rounded-full overflow-hidden border border-border/50">
@@ -322,7 +333,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
                   Connected: {userTimeSeries.reduce((s, i) => s + (i.connectedCalls || 0), 0).toLocaleString()}
                 </div>
                 <div className="bg-amber-500/20 text-amber-700 dark:text-amber-300 w-3/5 rounded-md py-1.5 text-center text-xs font-bold border border-amber-500/30">
-                  Counselled: {userTimeSeries.reduce((s, i) => s + (i.counsellingDone || 0), 0).toLocaleString()}
+                  Counselled: {userTimeSeries.reduce((s, i) => s + (i.counsellingDone || 0) + (i.walkinCounselling || 0), 0).toLocaleString()}
                 </div>
                 <div className="bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 w-2/5 rounded-md py-1.5 text-center text-xs font-bold border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
                   Sessions: {userTimeSeries.reduce((s, i) => s + (i.sessionBooked || 0), 0).toLocaleString()}
@@ -350,7 +361,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
                   {currentStreak > 0 ? `Active Hot Streak!` : "Streak Lost"}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Hit 120 dialed, 50 connected, & 90m talk time to {currentStreak > 0 ? "keep it alive." : "reignite the fire."}
+                  Hit dial, connect & talk time targets to {currentStreak > 0 ? "keep it alive." : "reignite the fire."}
                 </p>
                 <p className="text-xs text-orange-500/70 font-semibold mt-2">
                   All-time best: {maxStreak} days

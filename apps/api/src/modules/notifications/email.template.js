@@ -13,8 +13,9 @@ const TEAM_LABELS = {
 const SALES_FIELDS = [
   { key: "dialedCalls", label: "Dialed Calls" },
   { key: "connectedCalls", label: "Connected Calls" },
-  { key: "counsellingVirtual", label: "Counselling (Virtual)" },
-  { key: "counsellingWalkin", label: "Counselling (Walk-in)" },
+  { key: "counsellingDone", label: "Counselling Done" },
+  { key: "counsellingBooked", label: "Counselling Booked" },
+  { key: "walkinCounselling", label: "Walk-in Counselling" },
   { key: "sessionBooked", label: "Sessions Booked" },
   { key: "admissionRegistration", label: "Admissions / Registrations" },
   { key: "admissionProjection", label: "Admission Projection" },

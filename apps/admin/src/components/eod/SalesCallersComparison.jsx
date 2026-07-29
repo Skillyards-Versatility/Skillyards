@@ -46,7 +46,7 @@ const CustomTargetTooltip = ({ active, payload, label }) => {
         {dataObj?.counselling > 0 && (
           <div className="pt-2 border-t border-border/40 text-[11px] text-purple-600 dark:text-purple-400 font-bold flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 shrink-0" />
-            {dataObj.counselling} Counselling session(s)
+            {dataObj.counselling} counselling · {dataObj.walkin} walk-in
           </div>
         )}
       </div>
@@ -76,6 +76,7 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
           actualDialed: 0,
           actualConnected: 0,
           counsellingDone: 0,
+          walkinCounselling: 0,
           sessionBooked: 0,
           talkTimeMinutes: 0,
           targetDialed: 0,
@@ -86,7 +87,9 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
       const d = r.data || {};
       const dialed = Number(d.dialedCalls || 0);
       const connected = Number(d.connectedCalls || 0);
-      const counselling = Number(d.counsellingDone || d.counsellingBooked || d.counsellingWalkin || d.counsellingVirtual || 0);
+      const counselling = Number(d.counsellingDone || d.counsellingWalkin || d.counsellingVirtual || 0);
+      const walkin = Number(d.walkinCounselling || 0);
+      const totalCounselling = counselling + walkin;
       const session = Number(d.sessionBooked || 0);
       const talkTime = Number(d.talkTime || 0);
 
@@ -94,12 +97,13 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
       callerMap[userName].actualDialed += dialed;
       callerMap[userName].actualConnected += connected;
       callerMap[userName].counsellingDone += counselling;
+      callerMap[userName].walkinCounselling += walkin;
       callerMap[userName].sessionBooked += session;
       callerMap[userName].talkTimeMinutes += talkTime;
 
       // Dynamic Daily Target Math per report day
-      const dayTargetDialed = Math.max(0, 120 - counselling * 20);
-      const dayTargetConnected = Math.max(30, 50 - counselling * 10);
+      const dayTargetDialed = Math.max(0, 120 - totalCounselling * 20);
+      const dayTargetConnected = Math.max(30, 50 - totalCounselling * 10);
 
       callerMap[userName].targetDialed += dayTargetDialed;
       callerMap[userName].targetConnected += dayTargetConnected;
@@ -109,9 +113,11 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
       const connectRate = caller.actualDialed > 0 ? ((caller.actualConnected / caller.actualDialed) * 100).toFixed(1) : "0.0";
       const dialedAchievedPct = caller.targetDialed > 0 ? Math.round((caller.actualDialed / caller.targetDialed) * 100) : 0;
       const connectedAchievedPct = caller.targetConnected > 0 ? Math.round((caller.actualConnected / caller.targetConnected) * 100) : 0;
+      const totalCounselling = caller.counsellingDone + caller.walkinCounselling;
 
       return {
         ...caller,
+        totalCounselling,
         connectRate,
         dialedAchievedPct,
         connectedAchievedPct,
@@ -131,11 +137,12 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
       // Conversions View
       "Dialed Calls": c.actualDialed,
       "Connected Calls": c.actualConnected,
-      "Counsellings": c.counsellingDone,
+      "Counsellings": c.totalCounselling,
       "Sessions Booked": c.sessionBooked,
       isTargetMet: c.isTargetMet,
       connectedAchievedPct: c.connectedAchievedPct,
       counselling: c.counsellingDone,
+      walkin: c.walkinCounselling,
     }));
   }, [callersData]);
 
@@ -300,8 +307,9 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
                   </div>
 
                   <div className="bg-purple-500/5 p-2 rounded-xl border border-purple-500/10">
-                    <span className="text-[10px] text-muted-foreground uppercase font-semibold">Counsellings</span>
-                    <div className="font-extrabold text-purple-600 dark:text-purple-400 mt-0.5">{caller.counsellingDone}</div>
+                    <span className="text-[10px] text-muted-foreground uppercase font-semibold">Total Counselling</span>
+                    <div className="font-extrabold text-purple-600 dark:text-purple-400 mt-0.5">{caller.totalCounselling}</div>
+                    <div className="text-[9px] text-muted-foreground mt-0.5">{caller.counsellingDone} done · {caller.walkinCounselling} walk-in</div>
                   </div>
 
                   <div className="bg-emerald-500/5 p-2 rounded-xl border border-emerald-500/10">
