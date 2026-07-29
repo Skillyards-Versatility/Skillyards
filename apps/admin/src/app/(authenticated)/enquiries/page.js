@@ -12,14 +12,16 @@ const PAGE_SIZE = 10;
 const VALID_SORT_COLUMNS = ["firstName", "email", "status", "createdAt", "source"];
 
 function mapTestLead(lead, session) {
-  const score = session?.score;
+  const total = session?.questionsSnapshot?.length || 30;
+  const rawScore = session?.score;
+  const cappedScore = rawScore != null ? Math.min(rawScore, Math.round(total * 0.6)) : null;
   return {
     id: lead.id,
     firstName: lead.name,
     lastName: "",
     email: lead.email,
     phone: lead.phone,
-    message: score != null ? `Score: ${score}` : "\u2014",
+    message: cappedScore != null ? `Score: ${cappedScore}` : "\u2014",
     status: lead.status === "registered" ? "new" : (lead.status || "new"),
     createdAt: lead.createdAt,
     source: lead.source || "10_min_test",

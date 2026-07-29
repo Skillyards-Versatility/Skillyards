@@ -1,6 +1,7 @@
 import { testLeads, testSessions } from "@repo/db"; 
 import { eq, desc } from "drizzle-orm";
 import { sanityClient } from "@/lib/sanity/client";
+import questionVariants from "./question-variants.json" with { type: "json" };
 export async function findLeadByEmail(db, email) {
   console.log("Finding lead by email:", email);
 
@@ -81,7 +82,40 @@ export async function getRandomActiveQuestions(topics, maxCount = 30) {
     selected.push(...picked);
   }
 
-  return selected.map((q) => ({
+  const allShuffled = shuffleArray(selected);
+
+  const easyCount = Math.round(maxCount * 0.5);
+  const mediumCount = Math.round(maxCount * 0.3);
+
+  const result = allShuffled.map((q, i) => {
+    const variant = questionVariants[q.id];
+
+    if (i < easyCount) {
+      return { ...q, difficulty: "easy" };
+    }
+
+    if (i < easyCount + mediumCount && variant?.medium) {
+      return {
+        ...variant.medium,
+        id: q.id,
+        topic: q.topic,
+        difficulty: "medium",
+      };
+    }
+
+    if (variant?.hard) {
+      return {
+        ...variant.hard,
+        id: q.id,
+        topic: q.topic,
+        difficulty: "hard",
+      };
+    }
+
+    return { ...q, difficulty: "easy" };
+  });
+
+  return result.map((q) => ({
     ...q,
     options: shuffleArray(q.options || []),
   }));

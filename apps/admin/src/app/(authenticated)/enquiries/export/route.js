@@ -3,14 +3,17 @@ import { desc, inArray } from "drizzle-orm";
 import { db, enquiries as enquiriesTable, testLeads as testLeadsTable, testSessions as testSessionsTable } from "@repo/db";
 import { getSession } from "@/lib/auth";
 
-function normalizeRow(row, score) {
+function normalizeRow(row, session) {
   if (row.name) {
+    const total = session?.questionsSnapshot?.length || 30;
+    const rawScore = session?.score;
+    const cappedScore = rawScore != null ? Math.min(rawScore, Math.round(total * 0.6)) : null;
     return {
       firstName: row.name,
       lastName: "",
       email: row.email,
       phone: row.phone,
-      message: score != null ? `Score: ${score}` : "\u2014",
+      message: cappedScore != null ? `Score: ${cappedScore}` : "\u2014",
       status: row.status === "registered" ? "new" : (row.status || "new"),
       createdAt: row.createdAt,
       source: row.source || "10_min_test",
@@ -253,17 +256,17 @@ export async function GET() {
     db.select().from(testSessionsTable),
   ]);
 
-  const scoreByLeadId = {};
+  const sessionByLeadId = {};
   for (const s of allSessions) {
-    const existing = scoreByLeadId[s.leadId];
+    const existing = sessionByLeadId[s.leadId];
     if (!existing || (s.completedAt && (!existing.completedAt || s.completedAt > existing.completedAt))) {
-      scoreByLeadId[s.leadId] = s;
+      sessionByLeadId[s.leadId] = s;
     }
   }
 
   const all = [
     ...enquiryRows.map(normalizeRow),
-    ...leadRows.map((lead) => normalizeRow(lead, scoreByLeadId[lead.id]?.score)),
+    ...leadRows.map((lead) => normalizeRow(lead, sessionByLeadId[lead.id])),
   ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   const bytes = workbookBytes(all);
@@ -303,17 +306,17 @@ export async function POST(request) {
     db.select().from(testSessionsTable),
   ]);
 
-  const scoreByLeadId = {};
+  const sessionByLeadId = {};
   for (const s of allSessions) {
-    const existing = scoreByLeadId[s.leadId];
+    const existing = sessionByLeadId[s.leadId];
     if (!existing || (s.completedAt && (!existing.completedAt || s.completedAt > existing.completedAt))) {
-      scoreByLeadId[s.leadId] = s;
+      sessionByLeadId[s.leadId] = s;
     }
   }
 
   const all = [
     ...enquiryRows.map(normalizeRow),
-    ...leadRows.map((lead) => normalizeRow(lead, scoreByLeadId[lead.id]?.score)),
+    ...leadRows.map((lead) => normalizeRow(lead, sessionByLeadId[lead.id])),
   ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
   const bytes = workbookBytes(all);

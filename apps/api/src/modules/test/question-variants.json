@@ -1,0 +1,2762 @@
+{
+  "biology11": {
+    "medium": {
+      "question": "Which cellular component of blood is primarily responsible for mediating immune responses and defending the body against pathogens?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Leukocytes"
+        },
+        {
+          "id": "b",
+          "text": "Erythrocytes"
+        },
+        {
+          "id": "c",
+          "text": "Thrombocytes"
+        },
+        {
+          "id": "d",
+          "text": "Plasma proteins"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A patient presents with symptoms indicative of a severe bacterial infection, characterized by fever, inflammation, and pus formation at the infection site. Which of the following blood cell types would exhibit a significantly elevated count and play a crucial role in phagocytosing bacterial pathogens and initiating inflammatory responses?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Neutrophils"
+        },
+        {
+          "id": "b",
+          "text": "Lymphocytes"
+        },
+        {
+          "id": "c",
+          "text": "Eosinophils"
+        },
+        {
+          "id": "d",
+          "text": "Basophils"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "biology13": {
+    "medium": {
+      "question": "Which pancreatic hormone is primarily responsible for lowering blood glucose levels by facilitating glucose uptake into cells and promoting its conversion into glycogen?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Insulin"
+        },
+        {
+          "id": "b",
+          "text": "Glucagon"
+        },
+        {
+          "id": "c",
+          "text": "Cortisol"
+        },
+        {
+          "id": "d",
+          "text": "Growth hormone"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "In a patient diagnosed with Type 1 Diabetes Mellitus, the autoimmune destruction of pancreatic beta cells leads to a profound deficiency of a specific hormone. This deficiency results in hyperglycemia due to impaired glucose utilization by peripheral tissues and reduced glycogen synthesis. Which hormone is critically lacking in this condition, and what is its primary mechanism of action?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Insulin; promotes cellular glucose uptake by increasing GLUT4 transporters and enhances glycogenesis in the liver and muscles."
+        },
+        {
+          "id": "b",
+          "text": "Glucagon; inhibits hepatic glucose output and increases peripheral glucose utilization."
+        },
+        {
+          "id": "c",
+          "text": "Insulin; promotes cellular glucose uptake via GLUT4 translocation and glycogenolysis in the liver."
+        },
+        {
+          "id": "d",
+          "text": "Somatostatin; reduces nutrient absorption from the gut and inhibits both insulin and glucagon secretion."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "biology14": {
+    "medium": {
+      "question": "Among the following internal organs, which is the largest and plays a crucial role in detoxification, metabolism of carbohydrates, fats, and proteins, and bile production?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Liver"
+        },
+        {
+          "id": "b",
+          "text": "Brain"
+        },
+        {
+          "id": "c",
+          "text": "Kidney"
+        },
+        {
+          "id": "d",
+          "text": "Spleen"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A patient presents with jaundice, ascites, and elevated liver enzymes, indicative of severe hepatic dysfunction. This critical organ, responsible for synthesizing plasma proteins, detoxifying metabolic waste products, and regulating blood glucose levels, is also the largest internal organ by mass. Which organ is being described?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Liver"
+        },
+        {
+          "id": "b",
+          "text": "Pancreas"
+        },
+        {
+          "id": "c",
+          "text": "Kidney"
+        },
+        {
+          "id": "d",
+          "text": "Spleen"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "biology15": {
+    "medium": {
+      "question": "The human heart is a four-chambered muscular organ. How many atria and ventricles does it possess, respectively, to ensure efficient separation of oxygenated and deoxygenated blood?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Two atria and two ventricles"
+        },
+        {
+          "id": "b",
+          "text": "One atrium and three ventricles"
+        },
+        {
+          "id": "c",
+          "text": "Two atria and one ventricle"
+        },
+        {
+          "id": "d",
+          "text": "Three atria and one ventricle"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "The evolutionary advantage of a four-chambered heart in mammals and birds, compared to the three-chambered heart of amphibians or the two-chambered heart of fish, is primarily attributed to which physiological enhancement?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Complete separation of oxygenated and deoxygenated blood, leading to higher metabolic efficiency."
+        },
+        {
+          "id": "b",
+          "text": "Increased blood pressure in the systemic circulation, allowing for faster nutrient delivery."
+        },
+        {
+          "id": "c",
+          "text": "Reduced workload on the ventricles due to specialized atrial pumping."
+        },
+        {
+          "id": "d",
+          "text": "Enhanced ability to regulate body temperature independently of the environment."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "biology20": {
+    "medium": {
+      "question": "Erythrocytes, produced in the bone marrow, have a finite lifespan before they are removed from circulation, primarily by the spleen. What is the approximate duration of their functional existence in the bloodstream?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Approximately 120 days"
+        },
+        {
+          "id": "b",
+          "text": "Approximately 60 days"
+        },
+        {
+          "id": "c",
+          "text": "Approximately 30 days"
+        },
+        {
+          "id": "d",
+          "text": "Approximately 1 year"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A patient diagnosed with hemolytic anemia exhibits a significantly shortened erythrocyte lifespan, leading to reduced oxygen-carrying capacity and symptoms like fatigue and pallor. Considering the normal physiological turnover, if the average lifespan of a healthy erythrocyte is approximately 'X' days, and a common diagnostic marker like HbA1c reflects average blood glucose over a period proportional to erythrocyte lifespan, what is the approximate value of 'X'?",
+      "options": [
+        {
+          "id": "a",
+          "text": "120 days, allowing HbA1c to reflect glucose levels over 2-3 months."
+        },
+        {
+          "id": "b",
+          "text": "90 days, allowing HbA1c to reflect glucose levels over 1-2 months."
+        },
+        {
+          "id": "c",
+          "text": "60 days, reflecting a shorter-term glucose average."
+        },
+        {
+          "id": "d",
+          "text": "180 days, suggesting a longer-term glucose average."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "biology23": {
+    "medium": {
+      "question": "According to the system of binomial nomenclature, what is the correct scientific name for modern humans, representing their genus and species?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Homo sapiens"
+        },
+        {
+          "id": "b",
+          "text": "Homo Erectus"
+        },
+        {
+          "id": "c",
+          "text": "Homo habilis"
+        },
+        {
+          "id": "d",
+          "text": "Sapiens sapiens"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "The scientific classification *Homo sapiens* places modern humans within the genus *Homo*, which is characterized by bipedalism and increasing brain size. The species epithet 'sapiens' specifically refers to what distinguishing cognitive ability that sets them apart from earlier hominids like *Homo erectus* or *Homo neanderthalensis*?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The capacity for complex symbolic thought, language, and self-awareness."
+        },
+        {
+          "id": "b",
+          "text": "The ability to use sophisticated tools and control fire."
+        },
+        {
+          "id": "c",
+          "text": "The development of fully upright posture and efficient long-distance running."
+        },
+        {
+          "id": "d",
+          "text": "The adaptation to diverse environments globally through migration."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "biology26": {
+    "medium": {
+      "question": "Which pair of organs is primarily responsible for filtering metabolic waste products, regulating electrolyte balance, and maintaining fluid homeostasis by forming urine from the blood plasma?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kidneys"
+        },
+        {
+          "id": "b",
+          "text": "Liver"
+        },
+        {
+          "id": "c",
+          "text": "Spleen"
+        },
+        {
+          "id": "d",
+          "text": "Pancreas"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A patient presents with acute renal failure, leading to a buildup of nitrogenous waste products like urea and creatinine in the blood. This condition impairs the function of millions of microscopic units within a specific organ, which are responsible for glomerular filtration and selective reabsorption. Identify the organ and its functional unit involved in this critical process.",
+      "options": [
+        {
+          "id": "a",
+          "text": "Kidney; Nephron"
+        },
+        {
+          "id": "b",
+          "text": "Liver; Hepatocyte"
+        },
+        {
+          "id": "c",
+          "text": "Spleen; Splenic sinusoids"
+        },
+        {
+          "id": "d",
+          "text": "Pancreas; Islets of Langerhans"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "biology30": {
+    "medium": {
+      "question": "The smallest bone in the human body, known as the stapes (or stirrup), is located in which part of the body and plays a vital role in which physiological process?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Middle ear; transmission of sound vibrations"
+        },
+        {
+          "id": "b",
+          "text": "Inner ear; balance and equilibrium"
+        },
+        {
+          "id": "c",
+          "text": "Nose; olfaction"
+        },
+        {
+          "id": "d",
+          "text": "Throat; vocalization"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Otosclerosis is a condition characterized by abnormal bone growth in the middle ear, often leading to fixation of the stapes to the oval window. This pathological process directly impedes the efficient transfer of sound energy from the tympanic membrane to the cochlea. What type of hearing loss would typically result from this condition, and why is the stapes' mobility crucial for normal hearing?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Conductive hearing loss; its vibration amplifies sound pressure waves into the fluid-filled inner ear."
+        },
+        {
+          "id": "b",
+          "text": "Sensorineural hearing loss; it directly stimulates auditory nerve endings."
+        },
+        {
+          "id": "c",
+          "text": "Mixed hearing loss; it filters out low-frequency sounds."
+        },
+        {
+          "id": "d",
+          "text": "Central hearing loss; it processes sound signals before reaching the brain."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "biology38": {
+    "medium": {
+      "question": "Which major artery originates from the left ventricle of the heart and is responsible for distributing oxygenated blood to the systemic circulation of the entire body?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aorta"
+        },
+        {
+          "id": "b",
+          "text": "Pulmonary artery"
+        },
+        {
+          "id": "c",
+          "text": "Superior vena cava"
+        },
+        {
+          "id": "d",
+          "text": "Femoral artery"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A dissecting aneurysm, a life-threatening condition, occurs when the inner layer of the wall of the largest artery in the body tears, allowing blood to flow between the layers. This vessel, which withstands the highest blood pressure in the circulatory system, originates directly from which heart chamber?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Aorta; Left ventricle"
+        },
+        {
+          "id": "b",
+          "text": "Superior vena cava; Right atrium"
+        },
+        {
+          "id": "c",
+          "text": "Pulmonary artery; Right ventricle"
+        },
+        {
+          "id": "d",
+          "text": "Inferior vena cava; Left atrium"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "biology49": {
+    "medium": {
+      "question": "Which branch of biology focuses on the microscopic study of the structure, organization, and function of biological tissues?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Histology"
+        },
+        {
+          "id": "b",
+          "text": "Cytology"
+        },
+        {
+          "id": "c",
+          "text": "Pathology"
+        },
+        {
+          "id": "d",
+          "text": "Embryology"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A medical pathologist receives a biopsy sample from a patient's organ. To diagnose potential disease, the pathologist prepares thin sections, stains them with specific dyes (e.g., H&E), and examines them under a microscope to identify cellular morphology, tissue architecture, and any abnormalities. This entire investigative discipline, crucial for understanding disease progression at the tissue level, is known as:",
+      "options": [
+        {
+          "id": "a",
+          "text": "Histopathology"
+        },
+        {
+          "id": "b",
+          "text": "Molecular biology"
+        },
+        {
+          "id": "c",
+          "text": "Gross anatomy"
+        },
+        {
+          "id": "d",
+          "text": "Immunohistochemistry"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "accountancy8": {
+    "medium": {
+      "question": "In the context of the traditional classification of accounts, the Capital Account, which reflects the owner's equity or claim on the business assets, is primarily categorized as a:",
+      "options": [
+        {
+          "id": "a",
+          "text": "Personal Account"
+        },
+        {
+          "id": "b",
+          "text": "Real Account"
+        },
+        {
+          "id": "c",
+          "text": "Nominal Account"
+        },
+        {
+          "id": "d",
+          "text": "Fictitious Asset Account"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Under the dual aspect concept and the traditional classification system, the owner's Capital Account is designated as a Personal Account. This classification is most accurately justified by its role in:",
+      "options": [
+        {
+          "id": "a",
+          "text": "Representing the financial obligation of the business to its proprietor, who is considered a separate legal or economic entity."
+        },
+        {
+          "id": "b",
+          "text": "Recording tangible and intangible assets held by the business for long-term use and wealth generation."
+        },
+        {
+          "id": "c",
+          "text": "Summarizing all revenues and expenses to determine the net profit or loss for a specific accounting period."
+        },
+        {
+          "id": "d",
+          "text": "Tracking the flow of cash and cash equivalents for operational, investing, and financing activities."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "accountancy14": {
+    "medium": {
+      "question": "For a trading or manufacturing concern, the aggregate value of sales of goods or services rendered during an accounting period, directly resulting from its principal business activities, is termed Revenue from Operations or more concisely as:",
+      "options": [
+        {
+          "id": "a",
+          "text": "Sales Turnover"
+        },
+        {
+          "id": "b",
+          "text": "Gross Profit"
+        },
+        {
+          "id": "c",
+          "text": "Operating Income"
+        },
+        {
+          "id": "d",
+          "text": "Total Revenue"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "In the preparation of financial statements, particularly for a company engaged in manufacturing, 'Revenue from Operations' is a critical line item. Which of the following statements most accurately describes this component and its common alternative nomenclature, especially when considering its role in performance analysis?",
+      "options": [
+        {
+          "id": "a",
+          "text": "It represents the aggregate value of goods sold and services rendered from primary business activities, often synonymous with 'Sales Turnover', and is foundational for calculating operating profitability ratios."
+        },
+        {
+          "id": "b",
+          "text": "It includes all income generated by the enterprise, comprising both core business sales and non-operating gains, referred to as 'Total Revenue'."
+        },
+        {
+          "id": "c",
+          "text": "It signifies the profit remaining after deducting the cost of goods sold from net sales, commonly known as 'Gross Profit', and is a measure of production efficiency."
+        },
+        {
+          "id": "d",
+          "text": "It refers to the income derived solely from the disposal of non-current assets and investments, often termed 'Other Income', reflecting non-core financial activities."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "accountancy24": {
+    "medium": {
+      "question": "When a partnership agreement stipulates a fixed salary to be paid to a partner for their services, how is this transaction typically recorded in the firm's final accounts?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Debited to Profit and Loss Appropriation Account, as it is an allocation of profit."
+        },
+        {
+          "id": "b",
+          "text": "Debited to Profit and Loss Account, similar to an employee's salary."
+        },
+        {
+          "id": "c",
+          "text": "Credited directly to the Partners' Capital Account, without affecting the P&L."
+        },
+        {
+          "id": "d",
+          "text": "Treated as an expense in the Trading Account to determine Gross Profit."
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A partnership firm, with fixed capital accounts, provides for a partner's salary of ₹50,000 per annum as per the partnership deed. The net profit for the year, before any appropriations, is ₹2,00,000. Which of the following accurately describes the accounting treatment of this partner's salary and its immediate impact?",
+      "options": [
+        {
+          "id": "a",
+          "text": "It is debited to the Profit and Loss Appropriation Account, reducing the divisible profit, and then credited to the Partner's Current Account."
+        },
+        {
+          "id": "b",
+          "text": "It is debited to the Profit and Loss Account as an operating expense, thereby reducing the net profit before appropriation."
+        },
+        {
+          "id": "c",
+          "text": "It is directly credited to the Partner's Capital Account, increasing the fixed capital base, and does not pass through the P&L Appropriation Account."
+        },
+        {
+          "id": "d",
+          "text": "It is treated as an adjustment to the Cost of Goods Sold in the Trading Account, influencing the Gross Profit calculation."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "accountancy40": {
+    "medium": {
+      "question": "In consignment accounting, when goods are sent by the consignor to the consignee at an invoice price higher than the cost price, any profit included in the unsold stock at the year-end is considered 'unrealized'. How is this unrealized profit treated?",
+      "options": [
+        {
+          "id": "a",
+          "text": "It is deducted from the value of the closing stock to adhere to the prudence principle."
+        },
+        {
+          "id": "b",
+          "text": "It is added to the value of the closing stock to reflect the market price."
+        },
+        {
+          "id": "c",
+          "text": "It is ignored, as profit recognition occurs only upon sale by the consignee."
+        },
+        {
+          "id": "d",
+          "text": "It is shown as a contingent liability in the balance sheet."
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A consignor sends 1,000 units of goods to a consignee at an invoice price of ₹120 per unit, while the cost price is ₹100 per unit. At the end of the accounting period, 200 units remain unsold with the consignee. What is the correct accounting treatment for the unrealized profit embedded in this unsold stock, and what is its underlying accounting principle?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The unrealized profit of ₹4,000 (200 units × ₹20) is deducted from the closing stock valuation, aligning with the principle of conservatism."
+        },
+        {
+          "id": "b",
+          "text": "The unrealized profit of ₹24,000 (200 units × ₹120) is credited to the Consignment Account, enhancing the profit for the period."
+        },
+        {
+          "id": "c",
+          "text": "The entire closing stock is valued at invoice price, as the profit is inherent in the transaction and will be realized upon sale."
+        },
+        {
+          "id": "d",
+          "text": "The unrealized profit is transferred to a 'Reserve for Unrealized Profit' account, presented as an appropriation of profit."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "accountancy42": {
+    "medium": {
+      "question": "In the context of consolidated financial statements, the term 'Minority Interest' (or Non-Controlling Interest) specifically refers to the portion of a subsidiary's:",
+      "options": [
+        {
+          "id": "a",
+          "text": "Net assets and profit/loss attributable to shareholders other than the parent company."
+        },
+        {
+          "id": "b",
+          "text": "Total equity that is owned by the parent company."
+        },
+        {
+          "id": "c",
+          "text": "Goodwill arising from the acquisition of the subsidiary."
+        },
+        {
+          "id": "d",
+          "text": "Liabilities that are owed to external parties not related to the parent."
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Under Ind AS 110 (Consolidated Financial Statements), 'Non-Controlling Interest' (NCI) is presented as a separate component within the equity section of the consolidated balance sheet. This treatment signifies that NCI primarily represents:",
+      "options": [
+        {
+          "id": "a",
+          "text": "The equity in a subsidiary not attributable, directly or indirectly, to a parent, and its share of the subsidiary's profit or loss is also separately identified in the consolidated statement of profit and loss."
+        },
+        {
+          "id": "b",
+          "text": "The portion of the subsidiary's total assets that is not funded by the parent company's investment, acting as a liability to external shareholders."
+        },
+        {
+          "id": "c",
+          "text": "The excess of the cost of acquisition over the fair value of the subsidiary's identifiable net assets acquired, which is then allocated to non-controlling shareholders."
+        },
+        {
+          "id": "d",
+          "text": "A contractual obligation of the group to deliver cash or another financial asset to minority shareholders, reflecting a debt instrument."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "accountancy43": {
+    "medium": {
+      "question": "A Sinking Fund is established by a company with the specific objective of systematically accumulating financial resources over a period. What is the primary purpose behind creating such a fund?",
+      "options": [
+        {
+          "id": "a",
+          "text": "To provide for the redemption of a specific long-term liability or the replacement of a significant asset at a future date."
+        },
+        {
+          "id": "b",
+          "text": "To meet unforeseen contingencies or general business expansion requirements."
+        },
+        {
+          "id": "c",
+          "text": "To stabilize dividend payments by appropriating profits during prosperous years."
+        },
+        {
+          "id": "d",
+          "text": "To enhance the liquidity for day-to-day operational expenses and working capital needs."
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A company decides to create a Sinking Fund for the redemption of its debentures maturing in 5 years. Annually, an equal amount is transferred from the Profit and Loss Appropriation Account to the Sinking Fund, and these funds are then invested in external securities. Which of the following statements most accurately describes the nature and implications of this Sinking Fund?",
+      "options": [
+        {
+          "id": "a",
+          "text": "It is a specific appropriation of profit, whose accumulated balance, along with investment earnings, is used to repay the debentures, thereby ensuring financial solvency for the obligation."
+        },
+        {
+          "id": "b",
+          "text": "It is a provision against the debenture liability, where funds are held internally to cover the repayment, without the need for external investment."
+        },
+        {
+          "id": "c",
+          "text": "It serves as a general reserve to absorb future losses, enhancing the company's overall financial strength rather than targeting a specific liability."
+        },
+        {
+          "id": "d",
+          "text": "It is a statutory reserve required by law for all debenture issues, and its creation directly reduces the company's taxable profit."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "accountancy47": {
+    "medium": {
+      "question": "When a company re-issues shares that were previously forfeited, a discount may be allowed on their re-issue. According to company law and accounting principles, the maximum permissible discount on the re-issue of such forfeited shares is limited to:",
+      "options": [
+        {
+          "id": "a",
+          "text": "The amount originally received (paid-up) on the forfeited shares at the time of forfeiture."
+        },
+        {
+          "id": "b",
+          "text": "The face value of the forfeited shares."
+        },
+        {
+          "id": "c",
+          "text": "The total premium received on the original issue of the forfeited shares."
+        },
+        {
+          "id": "d",
+          "text": "10% of the nominal (face) value of the shares being re-issued."
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A company forfeited 1,000 equity shares of ₹100 each, issued at a premium of ₹20, for non-payment of the first and final call of ₹30. The application money of ₹40 and allotment money of ₹50 (including premium) were duly received. Subsequently, 600 of these forfeited shares were re-issued at ₹85 per share as fully paid-up. Which statement accurately reflects the maximum permissible discount on re-issue and the final accounting treatment of the forfeiture?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The maximum discount allowed on re-issue is ₹70 per share (the amount received on the forfeited shares, excluding premium). Any net balance remaining in the Forfeited Shares Account after re-issue is transferred to Capital Reserve."
+        },
+        {
+          "id": "b",
+          "text": "The maximum discount on re-issue is ₹100 per share (the face value). The entire balance in the Forfeited Shares Account, including premium, is transferred to the Profit & Loss Account."
+        },
+        {
+          "id": "c",
+          "text": "The re-issue discount can be up to ₹120 per share (face value + premium). The discount on re-issue is debited to the Securities Premium Account."
+        },
+        {
+          "id": "d",
+          "text": "The actual discount of ₹15 per share (₹100 - ₹85) is debited to the general reserve, and the remaining forfeited amount is carried forward to the next period."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "accountancy48": {
+    "medium": {
+      "question": "To assess the efficiency with which a company collects its receivables, the average collection period (also known as Days Sales Outstanding) is calculated. The correct formula for this ratio is:",
+      "options": [
+        {
+          "id": "a",
+          "text": "(Average Trade Receivables / Net Credit Sales) × 365 (or 12 for months)"
+        },
+        {
+          "id": "b",
+          "text": "(Net Credit Sales / Average Trade Receivables) × 365"
+        },
+        {
+          "id": "c",
+          "text": "(Trade Receivables / Total Revenue) × 365"
+        },
+        {
+          "id": "d",
+          "text": "(Cash Sales / Average Debtors) × 365"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A manufacturing company provides the following financial data for the fiscal year ended March 31, 2023:\n- Total Sales: ₹12,00,000\n- Cash Sales: ₹3,00,000\n- Sales Returns: ₹1,00,000\n- Opening Balance of Trade Receivables: ₹1,50,000\n- Closing Balance of Trade Receivables: ₹2,50,000\nAssume 365 days in a year.\nBased on this information, calculate the company's average collection period and identify its primary implication.",
+      "options": [
+        {
+          "id": "a",
+          "text": "91.25 days; it signifies the average duration, in days, the company takes to realize cash from its credit sales, reflecting the effectiveness of its credit and collection policies."
+        },
+        {
+          "id": "b",
+          "text": "45.63 days; it indicates the number of times the company converts its debtors into cash during the year, highlighting its liquidity."
+        },
+        {
+          "id": "c",
+          "text": "121.67 days; it represents the company's capacity to finance its operations through internal cash generation from sales."
+        },
+        {
+          "id": "d",
+          "text": "73.00 days; it measures the proportion of current assets tied up in trade receivables, indicating working capital efficiency."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "accountancy49": {
+    "medium": {
+      "question": "In India, prior to the convergence with Ind AS, which specific Indian Accounting Standard (AS) provided the comprehensive framework and guidelines for the accounting treatment of depreciation?",
+      "options": [
+        {
+          "id": "a",
+          "text": "AS-6 (Depreciation Accounting)"
+        },
+        {
+          "id": "b",
+          "text": "AS-1 (Disclosure of Accounting Policies)"
+        },
+        {
+          "id": "c",
+          "text": "AS-10 (Accounting for Fixed Assets)"
+        },
+        {
+          "id": "d",
+          "text": "AS-2 (Valuation of Inventories)"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Prior to the mandatory adoption of Ind AS for certain classes of companies in India, AS-6 exclusively governed the accounting treatment of depreciation. Post-convergence, which Ind AS standard effectively supersedes the principles of AS-6 and what is its corresponding global equivalent?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Ind AS 16 (Property, Plant and Equipment), which is converged with IAS 16."
+        },
+        {
+          "id": "b",
+          "text": "Ind AS 10 (Events after the Reporting Period), which is converged with IAS 10."
+        },
+        {
+          "id": "c",
+          "text": "Ind AS 2 (Inventories), which is converged with IAS 2."
+        },
+        {
+          "id": "d",
+          "text": "Ind AS 8 (Accounting Policies, Changes in Accounting Estimates and Errors), which is converged with IAS 8."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "business1": {
+    "medium": {
+      "question": "Henri Fayol is widely recognized for his pioneering contributions to management theory. He is particularly credited with developing a systematic framework that includes 14 principles of management, which laid the foundation for:",
+      "options": [
+        {
+          "id": "a",
+          "text": "Classical Management Theory, focusing on administrative principles and organizational structure."
+        },
+        {
+          "id": "b",
+          "text": "Scientific Management, emphasizing efficiency through work study and task specialization."
+        },
+        {
+          "id": "c",
+          "text": "Human Relations Movement, highlighting the importance of social and psychological factors in the workplace."
+        },
+        {
+          "id": "d",
+          "text": "Modern Systems Approach, viewing organizations as complex systems interacting with their environment."
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "While both F.W. Taylor and Henri Fayol are seminal figures in the development of management thought, their primary focus areas differed significantly. Which of the following statements accurately distinguishes Henri Fayol's primary contribution from that of F.W. Taylor?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Fayol focused on developing general administrative principles applicable to top management and overall organizational structure, whereas Taylor concentrated on improving efficiency at the shop floor level through scientific work methods."
+        },
+        {
+          "id": "b",
+          "text": "Fayol advocated for a human relations approach, emphasizing employee motivation and group dynamics, while Taylor proposed a bureaucratic structure for large organizations."
+        },
+        {
+          "id": "c",
+          "text": "Fayol championed participative management and decentralization, contrasting with Taylor's emphasis on centralized authority and strict control."
+        },
+        {
+          "id": "d",
+          "text": "Fayol's work primarily concerned the strategic planning and external environmental analysis, while Taylor's focused on internal financial controls and budgeting."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "business5": {
+    "medium": {
+      "question": "From an economic perspective, which of the following represents the foundational objective that drives a commercial enterprise's long-term viability and growth?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Maximizing shareholder wealth."
+        },
+        {
+          "id": "b",
+          "text": "Ensuring sustainable market share."
+        },
+        {
+          "id": "c",
+          "text": "Achieving operational efficiency."
+        },
+        {
+          "id": "d",
+          "text": "Fulfilling corporate social responsibility."
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "In the context of modern corporate governance and strategic management, which objective most accurately reflects the ultimate financial goal that underpins sustainable growth and long-term value creation for a publicly traded entity?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Optimization of stakeholder welfare across all groups."
+        },
+        {
+          "id": "b",
+          "text": "Attainment of dominant market share in core segments."
+        },
+        {
+          "id": "c",
+          "text": "Enhancement of enterprise value and shareholder returns."
+        },
+        {
+          "id": "d",
+          "text": "Consistent achievement of short-term quarterly profit targets."
+        }
+      ],
+      "correctAnswer": "c"
+    }
+  },
+  "business6": {
+    "medium": {
+      "question": "Henri Fayol's principle of management that advocates for specialization of tasks among employees and departments to enhance efficiency and productivity is known as:",
+      "options": [
+        {
+          "id": "a",
+          "text": "Division of Work."
+        },
+        {
+          "id": "b",
+          "text": "Unity of Command."
+        },
+        {
+          "id": "c",
+          "text": "Centralization."
+        },
+        {
+          "id": "d",
+          "text": "Esprit de Corps."
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "An organization implementing a new operational model focuses on assigning specific, repetitive tasks to individual workers based on their expertise, leading to increased output and reduced training time. This strategic approach most closely aligns with which foundational principle of scientific management and classical organizational theory?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Unity of Direction, ensuring all efforts are aligned towards a common goal."
+        },
+        {
+          "id": "b",
+          "text": "Division of Work, promoting specialization and efficiency."
+        },
+        {
+          "id": "c",
+          "text": "Scalar Chain, establishing a clear hierarchy of authority."
+        },
+        {
+          "id": "d",
+          "text": "Subordination of Individual Interest to General Interest, prioritizing organizational goals over personal ones."
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "html4": {
+    "medium": {
+      "question": "In HTML5, which tag is semantically designated to encapsulate a block of text, typically rendered with a line break before and after, thereby defining a distinct paragraph of content?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`<p>`"
+        },
+        {
+          "id": "b",
+          "text": "`<text>`"
+        },
+        {
+          "id": "c",
+          "text": "`<para>`"
+        },
+        {
+          "id": "d",
+          "text": "`<blocktext>`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Consider the following HTML snippet:\nhtml\n<div>\n  <span>This is a line of text.</span>\n  <p>This is a paragraph.</p>\n  <span>Another line.</span>\n</div>\n\nWhich of the following statements accurately describes the default rendering behavior of the `<p>` tag in this context, particularly regarding its display property and interaction with sibling elements?",
+      "options": [
+        {
+          "id": "a",
+          "text": "It is an inline element, causing \"Another line.\" to appear immediately after \"This is a paragraph.\" on the same line."
+        },
+        {
+          "id": "b",
+          "text": "It is a block-level element, which by default will force \"Another line.\" to start on a new line after \"This is a paragraph.\""
+        },
+        {
+          "id": "c",
+          "text": "It applies a default `font-weight: bold;` style to its content, distinguishing it from the `<span>` elements."
+        },
+        {
+          "id": "d",
+          "text": "It automatically indents its content from both the left and right margins, similar to a blockquote."
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "html7": {
+    "medium": {
+      "question": "To structure and display tabular data, such as rows and columns of information, which primary HTML tag serves as the container element for the entire table?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`<table>`"
+        },
+        {
+          "id": "b",
+          "text": "`<grid>`"
+        },
+        {
+          "id": "c",
+          "text": "`<tabdata>`"
+        },
+        {
+          "id": "d",
+          "text": "`<rowsandcols>`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "When designing a web page to present complex statistical data in a structured, accessible format, using the `<table>` element is crucial. Which of the following statements accurately describes a key characteristic or requirement of the `<table>` tag in achieving semantic data presentation and accessibility?",
+      "options": [
+        {
+          "id": "a",
+          "text": "It is primarily used for page layout design, offering precise control over element positioning."
+        },
+        {
+          "id": "b",
+          "text": "It must contain at least one `<tr>` (table row) element directly as a child, which then contains `<td>` or `<th>` elements."
+        },
+        {
+          "id": "c",
+          "text": "Its semantic purpose is fully realized even without `<thead>`, `<tbody>`, or `<tfoot>` elements, as long as `<tr>` and `<td>` are present."
+        },
+        {
+          "id": "d",
+          "text": "It automatically applies responsive design principles, ensuring optimal display on all device sizes without additional CSS."
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "html8": {
+    "medium": {
+      "question": "Within an HTML `<table>` structure, which specific tag is responsible for defining a horizontal grouping of cells, thereby constituting a single row of data or headers?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`<tr>`"
+        },
+        {
+          "id": "b",
+          "text": "`<td>`"
+        },
+        {
+          "id": "c",
+          "text": "`<th>`"
+        },
+        {
+          "id": "d",
+          "text": "`<row>`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "In a well-structured HTML table, the `<tr>` tag plays a critical role. Which of the following statements accurately describes the primary function and valid content model of the `<tr>` element?",
+      "options": [
+        {
+          "id": "a",
+          "text": "It directly contains the entire content of a single data cell, whether header or regular data."
+        },
+        {
+          "id": "b",
+          "text": "It acts as a container for `<th>` (table header) and/or `<td>` (table data) elements, effectively defining a row within the table body, header, or footer."
+        },
+        {
+          "id": "c",
+          "text": "It is an optional tag; rows can be implicitly defined by consecutive `<td>` or `<th>` elements within a `<table>`."
+        },
+        {
+          "id": "d",
+          "text": "It is exclusively used within the `<thead>` and `<tfoot>` sections to define header and footer rows, respectively."
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "html11": {
+    "medium": {
+      "question": "To enable user interaction and data submission on a webpage, which fundamental HTML tag serves as the container for various input controls, labels, and buttons?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`<form>`"
+        },
+        {
+          "id": "b",
+          "text": "`<inputgroup>`"
+        },
+        {
+          "id": "c",
+          "text": "`<fieldset>`"
+        },
+        {
+          "id": "d",
+          "text": "`<submitarea>`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "When designing an HTML form for user data submission, the `<form>` tag is central. Which combination of attributes applied to the `<form>` tag is essential for securely sending data to a server-side script for processing, specifically when handling sensitive information like login credentials?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`action=\"/process\" method=\"GET\"`"
+        },
+        {
+          "id": "b",
+          "text": "`action=\"/process\" method=\"POST\"`"
+        },
+        {
+          "id": "c",
+          "text": "`action=\"/process\" enctype=\"text/plain\"`"
+        },
+        {
+          "id": "d",
+          "text": "`target=\"_blank\" autocomplete=\"off\"`"
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "html12": {
+    "medium": {
+      "question": "When creating an HTML form field designed to collect sensitive user credentials, such as a password, which specific `type` attribute value should be assigned to the `<input>` tag to visually obscure the entered characters?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`type=\"password\"`"
+        },
+        {
+          "id": "b",
+          "text": "`type=\"secret\"`"
+        },
+        {
+          "id": "c",
+          "text": "`type=\"hidden\"`"
+        },
+        {
+          "id": "d",
+          "text": "`type=\"credential\"`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "The `<input type=\"password\">` field in HTML provides visual masking for security. Beyond visual obfuscation, which of the following is an inherent characteristic or recommended practice associated with its use, contributing to both security and user experience?",
+      "options": [
+        {
+          "id": "a",
+          "text": "It automatically encrypts the entered data before transmission to the server."
+        },
+        {
+          "id": "b",
+          "text": "It prevents browser autofill functionality by default, enhancing security."
+        },
+        {
+          "id": "c",
+          "text": "It should ideally be accompanied by a `<label>` tag for accessibility and user guidance."
+        },
+        {
+          "id": "d",
+          "text": "It enforces specific complexity requirements (e.g., minimum length, special characters) client-side without additional JavaScript."
+        }
+      ],
+      "correctAnswer": "c"
+    }
+  },
+  "html14": {
+    "medium": {
+      "question": "To present a sequence of items where the order is significant and typically displayed with numerical or alphabetical markers, which HTML tag should be used as the container for these list items?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`<ol>`"
+        },
+        {
+          "id": "b",
+          "text": "`<ul>`"
+        },
+        {
+          "id": "c",
+          "text": "`<dl>`"
+        },
+        {
+          "id": "d",
+          "text": "`<list>`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "An HTML document needs to display a list of instructions where each step is explicitly numbered, starting from a specific value other than 1, and the numbering style should be Roman numerals. Which combination of HTML tags and attributes would correctly achieve this semantic and presentation requirement?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`<ul type=\"I\" start=\"5\"><li>...</li></ul>`"
+        },
+        {
+          "id": "b",
+          "text": "`<ol type=\"I\" value=\"5\"><li>...</li></ol>`"
+        },
+        {
+          "id": "c",
+          "text": "`<ol type=\"I\" start=\"5\"><li>...</li></ol>`"
+        },
+        {
+          "id": "d",
+          "text": "`<ol style=\"list-style-type: upper-roman;\" start=\"V\"><li>...</li></ol>`"
+        }
+      ],
+      "correctAnswer": "c"
+    }
+  },
+  "html17": {
+    "medium": {
+      "question": "In HTML, which tag is primarily used for applying an italic font style to text for purely presentational purposes, without conveying any additional semantic emphasis?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`<i>`"
+        },
+        {
+          "id": "b",
+          "text": "`<em>`"
+        },
+        {
+          "id": "c",
+          "text": "`<italic>`"
+        },
+        {
+          "id": "d",
+          "text": "`<style-italic>`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Consider the HTML tags `<i>` and `<em>`. While both typically render text in an italic style by default, their semantic meanings and recommended usage differ significantly in modern web development. Which of the following statements accurately differentiates their primary purpose according to HTML5 standards?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The `<i>` tag should be used for strong importance, while `<em>` is for general emphasis."
+        },
+        {
+          "id": "b",
+          "text": "The `<i>` tag is purely presentational, used for text that is offset from the normal prose (e.g., technical terms, foreign words), whereas `<em>` indicates textual emphasis."
+        },
+        {
+          "id": "c",
+          "text": "The `<em>` tag is deprecated in HTML5, and `<i>` is the only recommended tag for italic text."
+        },
+        {
+          "id": "d",
+          "text": "Both `<i>` and `<em>` are entirely interchangeable, and their choice depends solely on developer preference."
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "html21": {
+    "medium": {
+      "question": "In an HTML document, which fundamental tag acts as the primary container for all the visible content of a web page, including text, images, links, and other elements that a user can see and interact with in the browser window?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`<body>`"
+        },
+        {
+          "id": "b",
+          "text": "`<head>`"
+        },
+        {
+          "id": "c",
+          "text": "`<main>`"
+        },
+        {
+          "id": "d",
+          "text": "`<html>`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "The `<body>` tag is crucial for rendering web content. Which of the following statements accurately describes the content and operational scope of the `<body>` element within a valid HTML5 document, specifically distinguishing it from other structural elements?",
+      "options": [
+        {
+          "id": "a",
+          "text": "It contains all metadata, scripts, and stylesheets that are processed before the page content is rendered."
+        },
+        {
+          "id": "b",
+          "text": "It is the root element of an HTML page, encapsulating both metadata and visible content."
+        },
+        {
+          "id": "c",
+          "text": "It holds all the content that is displayed to the user in the browser's viewport, excluding document metadata like title, character set, and external CSS/JS links."
+        },
+        {
+          "id": "d",
+          "text": "It is an optional tag in HTML5, as browsers can infer the body content directly from the `<html>` tag."
+        }
+      ],
+      "correctAnswer": "c"
+    }
+  },
+  "html24": {
+    "medium": {
+      "question": "What is the primary HTML5 element for embedding self-hosted video content with native playback controls?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<video>"
+        },
+        {
+          "id": "b",
+          "text": "<embed>"
+        },
+        {
+          "id": "c",
+          "text": "<object>"
+        },
+        {
+          "id": "d",
+          "text": "<iframe>"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Consider a scenario where you need to embed a self-hosted video, ensure it loads efficiently, provides fallback content for older browsers, and has basic accessibility features. Which combination of HTML5 elements and attributes would be most appropriate for this task, focusing on native browser support?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<video src=\"movie.mp4\" controls preload=\"metadata\"><source src=\"movie.webm\" type=\"video/webm\">Your browser does not support the video tag.</video>"
+        },
+        {
+          "id": "b",
+          "text": "<embed src=\"movie.mp4\" type=\"video/mp4\" autoplay=\"false\">Your browser does not support the embed tag.</embed>"
+        },
+        {
+          "id": "c",
+          "text": "<object data=\"movie.mp4\" type=\"video/mp4\"><param name=\"controls\" value=\"true\">Your browser does not support the object tag.</object>"
+        },
+        {
+          "id": "d",
+          "text": "<iframe src=\"movie.mp4\" allowfullscreen></iframe>"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "html28": {
+    "medium": {
+      "question": "In HTML5, which semantic element is specifically designed to contain introductory content or a set of navigational links, typically found at the beginning of a document or a section?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<header>"
+        },
+        {
+          "id": "b",
+          "text": "<head>"
+        },
+        {
+          "id": "c",
+          "text": "<section>"
+        },
+        {
+          "id": "d",
+          "text": "<div>"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A web page needs a prominent banner at the top containing the site logo, a main navigation menu, and a search bar. Additionally, each `article` within the page requires its own introductory section with a title and author information. Which HTML5 elements are most semantically appropriate for structuring both the main site banner and the article introductions, respectively?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<header> for the main site banner and <header> for each article's introduction."
+        },
+        {
+          "id": "b",
+          "text": "<head> for the main site banner and <h1> for each article's introduction."
+        },
+        {
+          "id": "c",
+          "text": "<section> for the main site banner and <div> for each article's introduction."
+        },
+        {
+          "id": "d",
+          "text": "<nav> for the main site banner and <article> for each article's introduction."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "html32": {
+    "medium": {
+      "question": "To render a standard interactive checkbox control within an HTML form, which specific tag and attribute combination is required?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<input type=\"checkbox\">"
+        },
+        {
+          "id": "b",
+          "text": "<checkbox>"
+        },
+        {
+          "id": "c",
+          "text": "<input checked=\"true\">"
+        },
+        {
+          "id": "d",
+          "text": "<form type=\"checkbox\">"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "You are building a form where users can select multiple options for a preference. Each option should be represented by a checkbox, and you need to pre-select one option, ensure it's accessible with a label, and retrieve its value upon form submission. Which HTML structure correctly implements these requirements for a single checkbox, assuming its value is 'newsletter'?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<input type=\"checkbox\" id=\"newsletter_opt\" name=\"preferences\" value=\"newsletter\" checked><label for=\"newsletter_opt\">Subscribe to newsletter</label>"
+        },
+        {
+          "id": "b",
+          "text": "<label><input type=\"checkbox\" name=\"preferences\" value=\"newsletter\" defaultChecked>Subscribe to newsletter</label>"
+        },
+        {
+          "id": "c",
+          "text": "<input type=\"check\" name=\"preferences\" value=\"newsletter\" selected><label for=\"preferences\">Subscribe to newsletter</label>"
+        },
+        {
+          "id": "d",
+          "text": "<checkbox id=\"newsletter_opt\" value=\"newsletter\" checked>Subscribe to newsletter</checkbox>"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "html35": {
+    "medium": {
+      "question": "Which HTML element is used to embed another HTML document within the current HTML document, creating an inline frame for displaying external content?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<iframe>"
+        },
+        {
+          "id": "b",
+          "text": "<frame>"
+        },
+        {
+          "id": "c",
+          "text": "<embed>"
+        },
+        {
+          "id": "d",
+          "text": "<object>"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A webpage needs to embed a third-party widget in an `<iframe>`. To mitigate potential security risks such as script injection, form submission, or pop-ups from the embedded content, which attribute should be used, and what specific value would allow scripts but prevent pop-ups and form submissions?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The `sandbox` attribute with value `allow-scripts`."
+        },
+        {
+          "id": "b",
+          "text": "The `security` attribute with value `restricted`."
+        },
+        {
+          "id": "c",
+          "text": "The `permissions` attribute with value `no-forms no-popups`."
+        },
+        {
+          "id": "d",
+          "text": "The `allow` attribute with value `modals; forms`."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "html36": {
+    "medium": {
+      "question": "Which HTML element is used to associate a descriptive text with a form control, improving usability and accessibility, especially for screen readers?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<label>"
+        },
+        {
+          "id": "b",
+          "text": "<span>"
+        },
+        {
+          "id": "c",
+          "text": "<figcaption>"
+        },
+        {
+          "id": "d",
+          "text": "<legend>"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "You are creating a form with a radio button group for selecting a preferred contact method. Each radio button needs a descriptive label, and the entire group needs a common heading. Which combination of HTML elements correctly implements this structure for accessibility and semantic meaning?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<fieldset><legend>Contact Method:</legend><input type=\"radio\" id=\"email\" name=\"contact\" value=\"email\"><label for=\"email\">Email</label><input type=\"radio\" id=\"phone\" name=\"contact\" value=\"phone\"><label for=\"phone\">Phone</label></fieldset>"
+        },
+        {
+          "id": "b",
+          "text": "<div><h2>Contact Method:</h2><input type=\"radio\" name=\"contact\" value=\"email\"><span>Email</span><input type=\"radio\" name=\"contact\" value=\"phone\"><span>Phone</span></div>"
+        },
+        {
+          "id": "c",
+          "text": "<form-group><label>Contact Method:</label><input type=\"radio\" name=\"contact\" value=\"email\">Email<input type=\"radio\" name=\"contact\" value=\"phone\">Phone</form-group>"
+        },
+        {
+          "id": "d",
+          "text": "<section><header>Contact Method:</header><label for=\"email\">Email<input type=\"radio\" id=\"email\" name=\"contact\" value=\"email\"></label><label for=\"phone\">Phone<input type=\"radio\" id=\"phone\" name=\"contact\" value=\"phone\"></label></section>"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "html37": {
+    "medium": {
+      "question": "Which HTML element is used to embed or reference executable code, typically JavaScript, within an HTML document, and what attribute is commonly used to defer its execution until the document is parsed?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<script> with the `defer` attribute."
+        },
+        {
+          "id": "b",
+          "text": "<javascript> with the `async` attribute."
+        },
+        {
+          "id": "c",
+          "text": "<link> with the `rel=\"script\"` attribute."
+        },
+        {
+          "id": "d",
+          "text": "<execute> with the `onload` attribute."
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A web page includes multiple external JavaScript files. One script (`analytics.js`) must execute as soon as possible without blocking HTML parsing, while another (`main.js`) depends on the HTML document being fully parsed and rendered before it runs. A third script (`polyfill.js`) should be loaded and executed before any other script. Which combination of <script> tag placements and attributes ensures these requirements are met for optimal performance and correct functionality?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<head><script src=\"polyfill.js\"></script><script src=\"analytics.js\" async></script></head><body><script src=\"main.js\" defer></script></body>"
+        },
+        {
+          "id": "b",
+          "text": "<head><script src=\"polyfill.js\" async></script><script src=\"analytics.js\" defer></script></head><body><script src=\"main.js\"></script></body>"
+        },
+        {
+          "id": "c",
+          "text": "<head><script src=\"polyfill.js\" defer></script><script src=\"analytics.js\"></script></head><body><script src=\"main.js\" async></script></body>"
+        },
+        {
+          "id": "d",
+          "text": "<body><script src=\"polyfill.js\"></script><script src=\"analytics.js\" async></script><script src=\"main.js\" defer></script></body>"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "html38": {
+    "medium": {
+      "question": "To import an external stylesheet into an HTML document, which tag is used, and what are its two essential attributes for this purpose?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<link> with `rel=\"stylesheet\"` and `href`."
+        },
+        {
+          "id": "b",
+          "text": "<style> with `src` and `type=\"text/css\"`."
+        },
+        {
+          "id": "c",
+          "text": "<css> with `file` and `media`."
+        },
+        {
+          "id": "d",
+          "text": "<import> with `url` and `format`."
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "You need to link a critical stylesheet (`main.css`) that applies to all devices, and a separate stylesheet (`print.css`) specifically for printing, ensuring `main.css` is fetched as a high-priority resource. Which combination of HTML `<link>` elements and attributes achieves this while optimizing loading performance?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<link rel=\"preload\" href=\"main.css\" as=\"style\"><link rel=\"stylesheet\" href=\"main.css\" media=\"all\"><link rel=\"stylesheet\" href=\"print.css\" media=\"print\">"
+        },
+        {
+          "id": "b",
+          "text": "<link rel=\"stylesheet\" href=\"main.css\" async><link rel=\"stylesheet\" href=\"print.css\" media=\"print\">"
+        },
+        {
+          "id": "c",
+          "text": "<link rel=\"stylesheet\" href=\"main.css\" type=\"text/css\"><link rel=\"stylesheet\" href=\"print.css\" media=\"screen and print\">"
+        },
+        {
+          "id": "d",
+          "text": "<style src=\"main.css\"></style><link rel=\"stylesheet\" href=\"print.css\" media=\"print\">"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "html41": {
+    "medium": {
+      "question": "Among the following HTML5 elements, which one conveys structural meaning about its content, indicating that it represents self-contained content that could be distributed independently, such as a blog post or news story?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<article>"
+        },
+        {
+          "id": "b",
+          "text": "<div>"
+        },
+        {
+          "id": "c",
+          "text": "<span>"
+        },
+        {
+          "id": "d",
+          "text": "<i>"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A web page displays a list of blog posts. Each post includes a title, author, publication date, and the main content. The entire list of posts is part of a larger content area. Which HTML5 structure best represents this hierarchy semantically, ensuring proper document outlining and accessibility?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<main><section><h2>Recent Posts</h2><article><h3>Post Title 1</h3><p>By Author, Date</p><p>Content...</p></article><article><h3>Post Title 2</h3><p>By Author, Date</p><p>Content...</p></article></section></main>"
+        },
+        {
+          "id": "b",
+          "text": "<div><h1>Recent Posts</h1><section><header>Post Title 1</header><div>By Author, Date</div><div>Content...</div></section><section><header>Post Title 2</header><div>By Author, Date</div><div>Content...</div></section></div>"
+        },
+        {
+          "id": "c",
+          "text": "<main><h2>Recent Posts</h2><article><header><h1>Post Title 1</h1></header><p>By Author, Date</p><p>Content...</p></article><article><header><h1>Post Title 2</h1></header><p>By Author, Date</p><p>Content...</p></article></main>"
+        },
+        {
+          "id": "d",
+          "text": "<body><p>Recent Posts</p><div class=\"post\"><h3>Post Title 1</h3><p>By Author, Date</p><p>Content...</p></div><div class=\"post\"><h3>Post Title 2</h3><p>By Author, Date</p><p>Content...</p></div></body>"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "html43": {
+    "medium": {
+      "question": "In HTML5, which semantic element is specifically designated to encapsulate the dominant content of the `<body>` of a document, intended to be unique to that document and not include boilerplate like navigation or footers?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<main>"
+        },
+        {
+          "id": "b",
+          "text": "<body>"
+        },
+        {
+          "id": "c",
+          "text": "<section>"
+        },
+        {
+          "id": "d",
+          "text": "<div>"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A single-page application (SPA) needs to clearly delineate its primary, unique content from common elements like headers, footers, and sidebars. Additionally, for accessibility, this main content area should be easily identifiable by assistive technologies. Which HTML5 element should be used for this purpose, and what is a key constraint regarding its usage within a document?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The `<main>` element, which must only appear once as a direct child of `<body>` and not be a descendant of `<article>`, `<aside>`, `<footer>`, `<header>`, or `<nav>`."
+        },
+        {
+          "id": "b",
+          "text": "The `<section>` element, which can appear multiple times, and its content should be given an `aria-label=\"main content\"`."
+        },
+        {
+          "id": "c",
+          "text": "The `<body>` element, with an `id=\"main-content\"` for identification and styling."
+        },
+        {
+          "id": "d",
+          "text": "A `<div>` element with `role=\"main\"`, which can be used multiple times if each instance has a unique `id`."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "html44": {
+    "medium": {
+      "question": "Which HTML5 element is used to group self-contained content, such as images, diagrams, code listings, or quotes, and optionally provides a caption for it using a nested element?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<figure>"
+        },
+        {
+          "id": "b",
+          "text": "<img>"
+        },
+        {
+          "id": "c",
+          "text": "<div>"
+        },
+        {
+          "id": "d",
+          "text": "<picture>"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A blog post includes an image that needs a descriptive caption, and this image-caption pair should be treated as a single, self-contained unit referenced from the main text. For accessibility, the caption must be explicitly associated with the image. Which HTML5 structure correctly implements this, ensuring semantic meaning and proper screen reader interpretation?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<figure><img src=\"image.jpg\" alt=\"Description of image\"><figcaption>This is a descriptive caption for the image.</figcaption></figure>"
+        },
+        {
+          "id": "b",
+          "text": "<div><img src=\"image.jpg\" alt=\"Description of image\"><p>This is a descriptive caption for the image.</p></div>"
+        },
+        {
+          "id": "c",
+          "text": "<img src=\"image.jpg\" alt=\"This is a descriptive caption for the image.\">"
+        },
+        {
+          "id": "d",
+          "text": "<section><img src=\"image.jpg\" title=\"This is a descriptive caption for the image.\"></section>"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "html45": {
+    "medium": {
+      "question": "In HTML5, which element is specifically designed to provide a caption or legend for the content of a `<figure>` element, such as an image, diagram, or code snippet?",
+      "options": [
+        {
+          "id": "a",
+          "text": "<figcaption>"
+        },
+        {
+          "id": "b",
+          "text": "<caption>"
+        },
+        {
+          "id": "c",
+          "text": "<legend>"
+        },
+        {
+          "id": "d",
+          "text": "<label>"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A web developer is building a page with a responsive image gallery and a data table. To semantically associate descriptive text with an individual image within a `<figure>` element, and separately, to provide a title for the `<table>`, which two HTML5 elements should be used respectively?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`<figcaption>` for the image, `<caption>` for the table."
+        },
+        {
+          "id": "b",
+          "text": "`<caption>` for the image, `<figcaption>` for the table."
+        },
+        {
+          "id": "c",
+          "text": "`<legend>` for the image, `<title>` for the table."
+        },
+        {
+          "id": "d",
+          "text": "`<header>` for the image, `<label>` for the table."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "css2": {
+    "medium": {
+      "question": "When applying `color: blue;` to a parent `div` element, which of the following child properties or elements would *not* inherit or directly be styled by this declaration?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The text inside a `<p>` tag within the `div`."
+        },
+        {
+          "id": "b",
+          "text": "The border color of an `<input type=\"text\">` inside the `div`."
+        },
+        {
+          "id": "c",
+          "text": "The color of a `<em>` tag's text within the `div`."
+        },
+        {
+          "id": "d",
+          "text": "The default fill color of an SVG icon (without explicit `fill` attribute) inside the `div`."
+        }
+      ],
+      "correctAnswer": "b"
+    },
+    "hard": {
+      "question": "Consider the following CSS and HTML structure:\nhtml\n<div class=\"container\">\n  <p>This is some <span>important</span> text.</p>\n  <a href=\"#\">Click me</a>\n</div>\n\ncss\n.container {\n  color: red;\n}\np {\n  color: blue;\n  background-color: lightgray;\n}\nspan {\n  color: green;\n}\na {\n  color: purple;\n  text-decoration: none;\n}\n\nWhat will be the final computed color of the word \"important\" and the hyperlink text \"Click me\", respectively?",
+      "options": [
+        {
+          "id": "a",
+          "text": "\"important\": green; \"Click me\": purple"
+        },
+        {
+          "id": "b",
+          "text": "\"important\": blue; \"Click me\": red"
+        },
+        {
+          "id": "c",
+          "text": "\"important\": red; \"Click me\": purple"
+        },
+        {
+          "id": "d",
+          "text": "\"important\": green; \"Click me\": red"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "css7": {
+    "medium": {
+      "question": "An element has a visible border. If you want to increase the space between this border and adjacent elements, effectively pushing other elements further away, which CSS property should be adjusted?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`margin`"
+        },
+        {
+          "id": "b",
+          "text": "`padding`"
+        },
+        {
+          "id": "c",
+          "text": "`outline`"
+        },
+        {
+          "id": "d",
+          "text": "`gap`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Two `div` elements, `divA` and `divB`, are stacked vertically in a normal document flow. `divA` has `margin-bottom: 20px;` and `divB` has `margin-top: 30px;`. If both are block-level elements without any floats, absolute positioning, or `overflow` property set to create new block formatting contexts, what will be the effective vertical space between `divA`'s bottom border and `divB`'s top border?",
+      "options": [
+        {
+          "id": "a",
+          "text": "50px"
+        },
+        {
+          "id": "b",
+          "text": "30px"
+        },
+        {
+          "id": "c",
+          "text": "20px"
+        },
+        {
+          "id": "d",
+          "text": "0px"
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "css13": {
+    "medium": {
+      "question": "Which CSS property allows you to define the width, style, and color of an element's border using a single shorthand declaration?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`border`"
+        },
+        {
+          "id": "b",
+          "text": "`outline`"
+        },
+        {
+          "id": "c",
+          "text": "`border-style`"
+        },
+        {
+          "id": "d",
+          "text": "`box-shadow`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A developer needs to add a visual boundary around a `div` element. This boundary should be visible but *crucially* must not contribute to the element's total width or height, nor should it cause any displacement of surrounding elements. Which CSS property, when applied to the `div`, would achieve this specific visual effect without altering the box model dimensions?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`border: 2px solid #ccc;`"
+        },
+        {
+          "id": "b",
+          "text": "`outline: 2px solid #ccc;`"
+        },
+        {
+          "id": "c",
+          "text": "`box-shadow: 0px 0px 5px #ccc;`"
+        },
+        {
+          "id": "d",
+          "text": "`border-image: url(border.png) 20 round;`"
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "css14": {
+    "medium": {
+      "question": "Which CSS property is used to specify an element's intrinsic horizontal dimension, but can be constrained or overridden by `max-width` or `min-width` properties if conflicts arise?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`width`"
+        },
+        {
+          "id": "b",
+          "text": "`max-width`"
+        },
+        {
+          "id": "c",
+          "text": "`flex-basis`"
+        },
+        {
+          "id": "d",
+          "text": "`inline-size`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A `div` element has the following styles: `width: 100%; padding: 20px; border: 1px solid black;`. It is placed inside a parent container that is 500px wide. Assuming the default `box-sizing: content-box;` is in effect, what will be the actual rendered width of the *content area* inside this `div`?",
+      "options": [
+        {
+          "id": "a",
+          "text": "500px"
+        },
+        {
+          "id": "b",
+          "text": "458px"
+        },
+        {
+          "id": "c",
+          "text": "460px"
+        },
+        {
+          "id": "d",
+          "text": "542px"
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "css16": {
+    "medium": {
+      "question": "Which CSS unit is typically interpreted as being relative to the computed `font-size` of the *parent* element, making it highly adaptable for creating scalable layouts based on contextual typography?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`em`"
+        },
+        {
+          "id": "b",
+          "text": "`rem`"
+        },
+        {
+          "id": "c",
+          "text": "`vw`"
+        },
+        {
+          "id": "d",
+          "text": "`pt`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Consider a `div` element with `font-size: 16px;`. Inside this `div`, there's a paragraph `<p>` with `font-size: 1.2em;` and a `span` inside the paragraph with `font-size: 0.8rem;`. If the root HTML element (`<html>`) has a default `font-size` of `16px`, what will be the final computed font-size of the text within the `span`?",
+      "options": [
+        {
+          "id": "a",
+          "text": "19.2px"
+        },
+        {
+          "id": "b",
+          "text": "16px"
+        },
+        {
+          "id": "c",
+          "text": "12.8px"
+        },
+        {
+          "id": "d",
+          "text": "13.6px"
+        }
+      ],
+      "correctAnswer": "c"
+    }
+  },
+  "css20": {
+    "medium": {
+      "question": "When an element is given `position: absolute;`, its position (using `top`, `bottom`, `left`, `right`) is calculated relative to which of the following reference points?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The viewport."
+        },
+        {
+          "id": "b",
+          "text": "Its normal position in the document flow."
+        },
+        {
+          "id": "c",
+          "text": "The nearest *positioned* ancestor."
+        },
+        {
+          "id": "d",
+          "text": "The `<body>` element, regardless of other ancestors."
+        }
+      ],
+      "correctAnswer": "c"
+    },
+    "hard": {
+      "question": "Consider a `div` element with `position: absolute; top: 10px; left: 10px;`. This `div` is nested inside another `div.parent` which has `position: static;`. The `div.parent` is itself inside a `section` element which has `position: relative;`. If the `section` element is positioned 50px from the top and left of the viewport, where will the absolutely positioned `div` ultimately render?",
+      "options": [
+        {
+          "id": "a",
+          "text": "10px from the top and left of the `div.parent`."
+        },
+        {
+          "id": "b",
+          "text": "60px from the top and left of the viewport."
+        },
+        {
+          "id": "c",
+          "text": "10px from the top and left of the viewport."
+        },
+        {
+          "id": "d",
+          "text": "50px from the top and left of the `section` element."
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "css23": {
+    "medium": {
+      "question": "For the `z-index` property to effectively control the stacking order of an element, which CSS `position` property value must generally be applied to that element, or one of its ancestors?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`static`"
+        },
+        {
+          "id": "b",
+          "text": "`relative`"
+        },
+        {
+          "id": "c",
+          "text": "`inherit`"
+        },
+        {
+          "id": "d",
+          "text": "`block`"
+        }
+      ],
+      "correctAnswer": "b"
+    },
+    "hard": {
+      "question": "Consider three absolutely positioned elements overlap:\nhtml\n<div id=\"container\">\n  <div id=\"divA\" style=\"position: absolute; z-index: 5;\">Div A</div>\n  <div id=\"divB\" style=\"position: absolute; z-index: 10;\">Div B</div>\n  <div id=\"divC_parent\" style=\"position: absolute; z-index: 8;\">\n    <div id=\"divC\" style=\"position: absolute; z-index: 1;\">Div C</div>\n  </div>\n</div>\n\nWhat is the visible stacking order of `Div A`, `Div B`, and `Div C` from bottom to top? (Assume `divC_parent` creates a new stacking context due to its `z-index` value being explicitly set.)",
+      "options": [
+        {
+          "id": "a",
+          "text": "Div A, Div C, Div B"
+        },
+        {
+          "id": "b",
+          "text": "Div A, Div B, Div C"
+        },
+        {
+          "id": "c",
+          "text": "Div C, Div A, Div B"
+        },
+        {
+          "id": "d",
+          "text": "Div B, Div C, Div A"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "css26": {
+    "medium": {
+      "question": "To apply a specific set of styles to multiple HTML elements that share a common characteristic, but not necessarily all elements of a particular tag name, which CSS selector type is most appropriate?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Class selector"
+        },
+        {
+          "id": "b",
+          "text": "ID selector"
+        },
+        {
+          "id": "c",
+          "d": "Type selector"
+        },
+        {
+          "id": "d",
+          "text": "Attribute selector"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Consider the following HTML and CSS:\nhtml\n<div id=\"main-content\" class=\"container\">\n  <p class=\"text-primary\">Hello <span>world</span>!</p>\n</div>\n\ncss\n#main-content p {\n  color: red; /* Rule 1 */\n}\n.container .text-primary {\n  color: blue; /* Rule 2 */\n}\np.text-primary {\n  color: green; /* Rule 3 */\n}\n\nWhat will be the final computed color of the text \"Hello world!\"?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Red"
+        },
+        {
+          "id": "b",
+          "text": "Blue"
+        },
+        {
+          "id": "c",
+          "text": "Green"
+        },
+        {
+          "id": "d",
+          "text": "Black (default)"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "css31": {
+    "medium": {
+      "question": "To increase or decrease the visual space between individual characters within a block of text, enhancing readability or creating a specific typographic effect, which CSS property should be used?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`letter-spacing`"
+        },
+        {
+          "id": "b",
+          "text": "`word-spacing`"
+        },
+        {
+          "id": "c",
+          "text": "`line-height`"
+        },
+        {
+          "id": "d",
+          "text": "`text-align`"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A paragraph has `font-size: 16px;` and `letter-spacing: 0.1em;`. If the paragraph contains the word \"TEST\" (comprising 4 individual characters), what is the *total additional* horizontal width contributed to the word \"TEST\" by the `letter-spacing` property, beyond its natural character widths?",
+      "options": [
+        {
+          "id": "a",
+          "text": "0.4em"
+        },
+        {
+          "id": "b",
+          "text": "0.3em"
+        },
+        {
+          "id": "c",
+          "text": "0.1em"
+        },
+        {
+          "id": "d",
+          "text": "0.4px"
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "css32": {
+    "medium": {
+      "question": "Which `text-transform` property value is used to convert all characters in a text string to uppercase for stylistic presentation?",
+      "options": [
+        {
+          "id": "a",
+          "text": "uppercase"
+        },
+        {
+          "id": "b",
+          "text": "capitalize"
+        },
+        {
+          "id": "c",
+          "text": "text-uppercase"
+        },
+        {
+          "id": "d",
+          "text": "all-caps"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Consider a scenario where a CSS rule `text-transform: uppercase;` is applied to a paragraph. If a user copies the text from this paragraph, and the page is indexed by a search engine, what will be the case of the copied text and how will the search engine typically interpret the text content?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The copied text will be uppercase, and the search engine will consider the text as uppercase."
+        },
+        {
+          "id": "b",
+          "text": "The copied text will retain its original case, and the search engine will consider the text in its original case."
+        },
+        {
+          "id": "c",
+          "text": "The copied text will be uppercase, but the search engine will consider the text in its original case."
+        },
+        {
+          "id": "d",
+          "text": "The copied text will retain its original case, but the search engine will consider the text as uppercase."
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "css34": {
+    "medium": {
+      "question": "Which of the following represents a valid and minimal declaration for the `box-shadow` property, demonstrating a basic offset shadow without blur or spread?",
+      "options": [
+        {
+          "id": "a",
+          "text": "box-shadow: 2px 2px #ccc;"
+        },
+        {
+          "id": "b",
+          "text": "box-shadow: shadow 2px 2px #ccc;"
+        },
+        {
+          "id": "c",
+          "text": "box-shadow: horizontal 2px, vertical 2px, color #ccc;"
+        },
+        {
+          "id": "d",
+          "text": "box-shadow: 2px 2px blur 0px #ccc;"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A developer wants to apply two distinct shadows to a single `div` element: a subtle outer drop shadow and a distinct inner glow effect. Which CSS declaration correctly implements this using the `box-shadow` property?",
+      "options": [
+        {
+          "id": "a",
+          "text": "box-shadow: 0 4px 8px rgba(0,0,0,0.2), inset 0 0 10px #fff;"
+        },
+        {
+          "id": "b",
+          "text": "box-shadow: drop 0 4px 8px rgba(0,0,0,0.2); box-shadow: inner 0 0 10px #fff;"
+        },
+        {
+          "id": "c",
+          "text": "box-shadow: 0 4px 8px rgba(0,0,0,0.2); \nbox-shadow: inset 0 0 10px #fff;"
+        },
+        {
+          "id": "d",
+          "text": "box-shadow: multiple(0 4px 8px rgba(0,0,0,0.2), inset 0 0 10px #fff);"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "css35": {
+    "medium": {
+      "question": "To transform a square `div` element into a perfect circular shape using CSS, what `border-radius` value should be applied?",
+      "options": [
+        {
+          "id": "a",
+          "text": "border-radius: 50%;"
+        },
+        {
+          "id": "b",
+          "text": "border-radius: 100%;"
+        },
+        {
+          "id": "c",
+          "text": "border-radius: circle;"
+        },
+        {
+          "id": "d",
+          "text": "border-radius: 50px;"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "An image element is styled with `width: 200px; height: 200px; border-radius: 50%; overflow: hidden;`. If the actual image content has dimensions of `400px x 400px` and is placed inside this container, what will be the visual outcome?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The image will be scaled down to fit the 200px x 200px dimensions and then clipped into a circular shape."
+        },
+        {
+          "id": "b",
+          "text": "Only the central 200px x 200px portion of the image will be visible, displayed as a perfect circle, with the overflowing parts clipped."
+        },
+        {
+          "id": "c",
+          "text": "The image will be visible as a 200px x 200px square, as `overflow: hidden;` overrides `border-radius` for content clipping."
+        },
+        {
+          "id": "d",
+          "text": "The image will stretch to fit the circular shape, potentially distorting its aspect ratio, with overflowing parts clipped."
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "css44": {
+    "medium": {
+      "question": "In a CSS Grid layout, which property correctly sets both the row and column gaps to 15px respectively using a single shorthand declaration?",
+      "options": [
+        {
+          "id": "a",
+          "text": "gap: 15px;"
+        },
+        {
+          "id": "b",
+          "text": "grid-gap: 15px;"
+        },
+        {
+          "id": "c",
+          "text": "row-gap: 15px; column-gap: 15px;"
+        },
+        {
+          "id": "d",
+          "text": "grid-spacing: 15px;"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "Consider a `display: flex;` container with multiple child items. A developer wants to create consistent spacing *between* the items without adding extra space *around* the entire container or dealing with margin collapsing issues. Which CSS property is the most semantically appropriate and robust for this requirement?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Applying `margin-right` to all child items except the last one."
+        },
+        {
+          "id": "b",
+          "text": "Using the `gap` property on the flex container."
+        },
+        {
+          "id": "c",
+          "text": "Applying `padding` to the flex container."
+        },
+        {
+          "id": "d",
+          "text": "Setting `justify-content: space-between;` on the flex container."
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  },
+  "css45": {
+    "medium": {
+      "question": "Which `grid-template-columns` declaration creates a grid with three columns, where the first column takes up one fraction of the available space, the second takes two fractions, and the third takes one fraction?",
+      "options": [
+        {
+          "id": "a",
+          "text": "grid-template-columns: 1fr 2fr 1fr;"
+        },
+        {
+          "id": "b",
+          "text": "grid-template-columns: repeat(3, 1fr 2fr 1fr);"
+        },
+        {
+          "id": "c",
+          "text": "grid-template-columns: auto auto auto;"
+        },
+        {
+          "id": "d",
+          "text": "grid-template-columns: 25% 50% 25%;"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "A CSS Grid container is defined with `grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));` and `grid-auto-rows: 100px;`. If there are 7 grid items, and the container's width allows for 3 columns, what will be the layout of the grid items?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The grid will have 3 columns, each at least 200px wide, with items filling 3 rows (3 items in row 1, 3 in row 2, 1 in row 3, column 1)."
+        },
+        {
+          "id": "b",
+          "text": "The grid will have 3 columns, each taking 1fr of space, with all 7 items arranged in 2 full rows and 1 item in the third row, spanning all 3 columns."
+        },
+        {
+          "id": "c",
+          "text": "The columns will dynamically adjust their width, with items arranged in 2 full rows and the 7th item forming a new row spanning the full width."
+        },
+        {
+          "id": "d",
+          "text": "The grid will have 4 columns, as `auto-fit` will try to fit as many as possible, distributing the 7 items across two rows."
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "js3": {
+    "medium": {
+      "question": "While `//` is used for single-line comments in JavaScript, which symbol pair is used to enclose multi-line comments, often employed for block-level explanations or temporarily disabling code blocks?",
+      "options": [
+        {
+          "id": "a",
+          "text": "/* */"
+        },
+        {
+          "id": "b",
+          "text": "<!-- -->"
+        },
+        {
+          "id": "c",
+          "text": "# #"
+        },
+        {
+          "id": "d",
+          "text": "/// ///"
+        }
+      ],
+      "correctAnswer": "a"
+    },
+    "hard": {
+      "question": "In a typical JavaScript development workflow involving a bundler and minifier (e.g., Webpack with Terser), how do comments generally impact the final production bundle, and what specific type of comment might be intentionally preserved?",
+      "options": [
+        {
+          "id": "a",
+          "text": "All comments are always removed during minification to achieve the smallest file size, with no exceptions."
+        },
+        {
+          "id": "b",
+          "text": "Comments are preserved in the final bundle to aid debugging, slightly increasing the file size but improving maintainability."
+        },
+        {
+          "id": "c",
+          "text": "Most comments are stripped during minification, but specific comment formats (e.g., JSDoc or license comments prefixed with `/*!`) can be preserved for documentation or legal reasons."
+        },
+        {
+          "id": "d",
+          "text": "Comments are converted into whitespace characters in the minified output, which helps maintain code structure without affecting file size."
+        }
+      ],
+      "correctAnswer": "c"
+    }
+  },
+  "js4": {
+    "medium": {
+      "question": "While both `let` and `const` declare block-scoped variables, what is the primary distinction between them regarding variable assignment after declaration?",
+      "options": [
+        {
+          "id": "a",
+          "text": "`let` variables can be re-declared within the same scope, while `const` cannot."
+        },
+        {
+          "id": "b",
+          "text": "`let` variables can be re-assigned new values, while `const` variables cannot be re-assigned after initialization."
+        },
+        {
+          "id": "c",
+          "text": "`const` variables are hoisted to the top of their scope, while `let` variables are not."
+        },
+        {
+          "id": "d",
+          "text": "`let` is used for primitive types, and `const` is used exclusively for objects and arrays."
+        }
+      ],
+      "correctAnswer": "b"
+    },
+    "hard": {
+      "question": "Consider the following JavaScript code snippet: \njavascript\nconsole.log(x); \nconsole.log(y); \nconsole.log(z); \nvar x = 10; \nlet y = 20; \nconst z = 30;\n\nWhich of the following statements accurately describes the output or error behavior when this code is executed?",
+      "options": [
+        {
+          "id": "a",
+          "text": "It will print `undefined`, then `20`, then `30`."
+        },
+        {
+          "id": "b",
+          "text": "It will throw a `ReferenceError` for `x`, then `y`, then `z`."
+        },
+        {
+          "id": "c",
+          "text": "It will print `undefined`, then throw a `ReferenceError` for `y` (due to Temporal Dead Zone), and then throw a `ReferenceError` for `z` (due to Temporal Dead Zone)."
+        },
+        {
+          "id": "d",
+          "text": "It will print `undefined`, then `undefined` for `y`, and then `undefined` for `z`."
+        }
+      ],
+      "correctAnswer": "c"
+    }
+  },
+  "js10": {
+    "medium": {
+      "question": "The `pop()` method in JavaScript removes the last element from an array. What value does `pop()` return after successfully removing an element?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The new length of the array."
+        },
+        {
+          "id": "b",
+          "text": "The removed element."
+        },
+        {
+          "id": "c",
+          "text": "The original array with the last element removed."
+        },
+        {
+          "id": "d",
+          "text": "`undefined`, if the array was empty before the operation."
+        }
+      ],
+      "correctAnswer": "b"
+    },
+    "hard": {
+      "question": "A large array `arr` needs to have its last element removed without modifying the original array in place, adhering to a functional programming style that prioritizes immutability. Which of the following approaches achieves this while creating a new array and is generally considered efficient?",
+      "options": [
+        {
+          "id": "a",
+          "text": "const newArr = arr.slice(0, arr.length - 1);"
+        },
+        {
+          "id": "b",
+          "text": "const newArr = [...arr]; newArr.pop();"
+        },
+        {
+          "id": "c",
+          "text": "const newArr = arr.filter((_, index) => index < arr.length - 1);"
+        },
+        {
+          "id": "d",
+          "text": "const newArr = JSON.parse(JSON.stringify(arr)); newArr.pop();"
+        }
+      ],
+      "correctAnswer": "a"
+    }
+  },
+  "js13": {
+    "medium": {
+      "question": "The `do...while` loop is guaranteed to execute its block of code at least once. This characteristic is primarily due to the placement of its condition check. Where is the condition evaluated in a `do...while` loop?",
+      "options": [
+        {
+          "id": "a",
+          "text": "Before the first iteration of the loop."
+        },
+        {
+          "id": "b",
+          "text": "After each iteration, before deciding to proceed with the next."
+        },
+        {
+          "id": "c",
+          "text": "Only after the loop has completed all iterations."
+        },
+        {
+          "id": "d",
+          "text": "At the beginning and end of each iteration."
+        }
+      ],
+      "correctAnswer": "b"
+    },
+    "hard": {
+      "question": "A JavaScript application needs to repeatedly prompt a user for a valid numerical input until a positive integer (greater than 0) is entered. The prompt must appear at least once, even if the initial input is invalid. Which loop construct is most semantically appropriate and concise for implementing this user input validation logic?",
+      "options": [
+        {
+          "id": "a",
+          "text": "for (let input; ; ) { input = prompt('Enter a positive number:'); if (Number(input) > 0) break; }"
+        },
+        {
+          "id": "b",
+          "text": "while (true) { let input = prompt('Enter a positive number:'); if (Number(input) > 0) break; }"
+        },
+        {
+          "id": "c",
+          "text": "let input; do { input = prompt('Enter a positive number:'); } while (!(Number(input) > 0));"
+        },
+        {
+          "id": "d",
+          "text": "let isValid = false; while (!isValid) { let input = prompt('Enter a positive number:'); isValid = (Number(input) > 0); }"
+        }
+      ],
+      "correctAnswer": "c"
+    }
+  },
+  "js19": {
+    "medium": {
+      "question": "In a traditional function defined as a method within an object, what does the `this` keyword typically refer to when that method is invoked directly on the object?",
+      "options": [
+        {
+          "id": "a",
+          "text": "The global `window` object (in browsers) or `undefined` (in strict mode)."
+        },
+        {
+          "id": "b",
+          "text": "The object that the method belongs to."
+        },
+        {
+          "id": "c",
+          "text": "The function itself."
+        },
+        {
+          "id": "d",
+          "text": "A new object created by the function."
+        }
+      ],
+      "correctAnswer": "b"
+    },
+    "hard": {
+      "question": "Consider the following JavaScript code snippet in a non-strict browser environment: \njavascript\nconst user = {\n    name: \"Alice\",\n    greet: function() {\n        console.log(`Hello, my name is ${this.name}`);\n    },\n    delayGreet: function() {\n        setTimeout(function() {\n            this.greet();\n        }, 100);\n    }\n};\nuser.delayGreet();\n\nWhat will be the outcome when `user.delayGreet()` is executed, and what is the primary reason for this behavior?",
+      "options": [
+        {
+          "id": "a",
+          "text": "It will log `Hello, my name is Alice` after 100ms, because `setTimeout` implicitly binds `this` to the `user` object."
+        },
+        {
+          "id": "b",
+          "text": "It will throw a `TypeError` because `this.greet` will not be a function, as `this` inside the `setTimeout` callback refers to the global `window` object."
+        },
+        {
+          "id": "c",
+          "text": "It will log `Hello, my name is undefined` after 100ms, as `this` refers to the `user` object but `user.name` is somehow inaccessible."
+        },
+        {
+          "id": "d",
+          "text": "It will log `Hello, my name is Alice` immediately, due to JavaScript's asynchronous execution model."
+        }
+      ],
+      "correctAnswer": "b"
+    }
+  }
+}
