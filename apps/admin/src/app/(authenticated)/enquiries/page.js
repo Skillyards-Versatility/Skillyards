@@ -1,6 +1,6 @@
-import { desc } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
-import { db, enquiries as enquiriesTable } from "@repo/db";
+import { db, enquiries as enquiriesTable, testLeads as testLeadsTable, testSessions as testSessionsTable } from "@repo/db";
 import { getSession } from "@/lib/auth";
 import { shouldFetch, getCachedEnquiries, setCachedEnquiries } from "@/lib/enquiries-cache";
 import { EnquiriesClient } from "./enquiries-client";
@@ -9,9 +9,32 @@ export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 10;
 
-const VALID_SORT_COLUMNS = ["firstName", "email", "status", "createdAt"];
+const VALID_SORT_COLUMNS = ["firstName", "email", "status", "createdAt", "source"];
 
-async function getAllEnquiries() {
+function mapTestLead(lead, session) {
+  const score = session?.score;
+  return {
+    id: lead.id,
+    firstName: lead.name,
+    lastName: "",
+    email: lead.email,
+    phone: lead.phone,
+    message: score != null ? `Score: ${score}` : "\u2014",
+    status: lead.status === "registered" ? "new" : (lead.status || "new"),
+    createdAt: lead.createdAt,
+    source: lead.source || "10_min_test",
+  };
+}
+
+function mapEnquiry(enquiry) {
+  return {
+    ...enquiry,
+    lastName: enquiry.lastName || "",
+    source: "website",
+  };
+}
+
+async function getAllMerged() {
   const session = await getSession();
   if (!["ADMIN", "MANAGER"].includes(session?.role)) {
     return [];
@@ -25,7 +48,26 @@ async function getAllEnquiries() {
     setCachedEnquiries(rows);
   }
 
-  return getCachedEnquiries() || [];
+  const enquiries = (getCachedEnquiries() || []).map(mapEnquiry);
+
+  const [leads, allSessions] = await Promise.all([
+    db.select().from(testLeadsTable).orderBy(desc(testLeadsTable.createdAt)),
+    db.select().from(testSessionsTable),
+  ]);
+
+  const sessionByLeadId = {};
+  for (const s of allSessions) {
+    const existing = sessionByLeadId[s.leadId];
+    if (!existing || (s.completedAt && (!existing.completedAt || s.completedAt > existing.completedAt))) {
+      sessionByLeadId[s.leadId] = s;
+    }
+  }
+
+  const testLeads = leads.map((lead) => mapTestLead(lead, sessionByLeadId[lead.id]));
+
+  return [...enquiries, ...testLeads].sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 }
 
 function matchesSearch(enquiry, q) {
@@ -49,8 +91,9 @@ export default async function EnquiriesPage({ searchParams }) {
   const sort = typeof params?.sort === "string" ? params.sort : "createdAt";
   const order = typeof params?.order === "string" ? params.order : "desc";
   const statusFilter = typeof params?.status === "string" && params.status ? params.status : "";
+  const sourceFilter = typeof params?.source === "string" && params.source ? params.source : "";
 
-  const allEnquiries = await getAllEnquiries();
+  const allEnquiries = await getAllMerged();
 
   let filtered = allEnquiries;
 
@@ -61,6 +104,10 @@ export default async function EnquiriesPage({ searchParams }) {
 
   if (statusFilter) {
     filtered = filtered.filter((e) => (e.status || "new") === statusFilter);
+  }
+
+  if (sourceFilter) {
+    filtered = filtered.filter((e) => e.source === sourceFilter);
   }
 
   const sortColumn = VALID_SORT_COLUMNS.includes(sort) ? sort : "createdAt";
@@ -100,6 +147,7 @@ export default async function EnquiriesPage({ searchParams }) {
       sort={sort}
       order={order}
       statusFilter={statusFilter}
+      sourceFilter={sourceFilter}
     />
   );
 }

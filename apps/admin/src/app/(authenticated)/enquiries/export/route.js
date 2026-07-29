@@ -1,7 +1,32 @@
 import { desc, inArray } from "drizzle-orm";
 
-import { db, enquiries as enquiriesTable } from "@repo/db";
+import { db, enquiries as enquiriesTable, testLeads as testLeadsTable, testSessions as testSessionsTable } from "@repo/db";
 import { getSession } from "@/lib/auth";
+
+function normalizeRow(row, score) {
+  if (row.name) {
+    return {
+      firstName: row.name,
+      lastName: "",
+      email: row.email,
+      phone: row.phone,
+      message: score != null ? `Score: ${score}` : "\u2014",
+      status: row.status === "registered" ? "new" : (row.status || "new"),
+      createdAt: row.createdAt,
+      source: row.source || "10_min_test",
+    };
+  }
+  return {
+    firstName: row.firstName,
+    lastName: row.lastName || "",
+    email: row.email,
+    phone: row.phone,
+    message: row.message,
+    status: row.status || "new",
+    createdAt: row.createdAt,
+    source: "website",
+  };
+}
 
 export const dynamic = "force-dynamic";
 
@@ -164,13 +189,14 @@ function createZip(files) {
 
 function workbookBytes(enquiries) {
   const rows = [
-    ["First Name", "Last Name", "Email", "Phone", "Message", "Status", "Submitted At"],
+    ["First Name", "Last Name", "Email", "Phone", "Message", "Source", "Status", "Submitted At"],
     ...enquiries.map((enquiry) => [
       enquiry.firstName,
       enquiry.lastName,
       enquiry.email,
       enquiry.phone,
       enquiry.message,
+      enquiry.source || "website",
       enquiry.status || "new",
       enquiry.createdAt ? new Date(enquiry.createdAt).toLocaleString("en-IN") : "",
     ]),
@@ -221,12 +247,26 @@ export async function GET() {
     return new Response("Forbidden", { status: 403 });
   }
 
-  const rows = await db
-    .select()
-    .from(enquiriesTable)
-    .orderBy(desc(enquiriesTable.createdAt));
+  const [enquiryRows, leadRows, allSessions] = await Promise.all([
+    db.select().from(enquiriesTable).orderBy(desc(enquiriesTable.createdAt)),
+    db.select().from(testLeadsTable).orderBy(desc(testLeadsTable.createdAt)),
+    db.select().from(testSessionsTable),
+  ]);
 
-  const bytes = workbookBytes(rows);
+  const scoreByLeadId = {};
+  for (const s of allSessions) {
+    const existing = scoreByLeadId[s.leadId];
+    if (!existing || (s.completedAt && (!existing.completedAt || s.completedAt > existing.completedAt))) {
+      scoreByLeadId[s.leadId] = s;
+    }
+  }
+
+  const all = [
+    ...enquiryRows.map(normalizeRow),
+    ...leadRows.map((lead) => normalizeRow(lead, scoreByLeadId[lead.id]?.score)),
+  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const bytes = workbookBytes(all);
   const date = new Date().toISOString().slice(0, 10);
 
   return new Response(bytes, {
@@ -257,13 +297,26 @@ export async function POST(request) {
     return Response.json({ error: "ids must be a non-empty array" }, { status: 400 });
   }
 
-  const rows = await db
-    .select()
-    .from(enquiriesTable)
-    .where(inArray(enquiriesTable.id, ids))
-    .orderBy(desc(enquiriesTable.createdAt));
+  const [enquiryRows, leadRows, allSessions] = await Promise.all([
+    db.select().from(enquiriesTable).where(inArray(enquiriesTable.id, ids)).orderBy(desc(enquiriesTable.createdAt)),
+    db.select().from(testLeadsTable).where(inArray(testLeadsTable.id, ids)).orderBy(desc(testLeadsTable.createdAt)),
+    db.select().from(testSessionsTable),
+  ]);
 
-  const bytes = workbookBytes(rows);
+  const scoreByLeadId = {};
+  for (const s of allSessions) {
+    const existing = scoreByLeadId[s.leadId];
+    if (!existing || (s.completedAt && (!existing.completedAt || s.completedAt > existing.completedAt))) {
+      scoreByLeadId[s.leadId] = s;
+    }
+  }
+
+  const all = [
+    ...enquiryRows.map(normalizeRow),
+    ...leadRows.map((lead) => normalizeRow(lead, scoreByLeadId[lead.id]?.score)),
+  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+  const bytes = workbookBytes(all);
   const date = new Date().toISOString().slice(0, 10);
 
   return new Response(bytes, {
