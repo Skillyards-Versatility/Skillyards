@@ -133,9 +133,9 @@ export async function startBreak() {
           });
         }
 
-        // Final warning 1 minute before the actual limit if it doesn't overlap with 9m (540s) or 14m (840s)
+        // Final warning 1 minute before the actual limit
         const finalWarningDelay = maxSecondsForThisBreak - 60;
-        if (finalWarningDelay > 0 && finalWarningDelay !== 540 && finalWarningDelay !== 840) {
+        if (finalWarningDelay > 0) {
           await qstashClient.publishJSON({
             url: `${API_BASE}/api/breaks/check-limit`,
             body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak, triggerType: "final" },
