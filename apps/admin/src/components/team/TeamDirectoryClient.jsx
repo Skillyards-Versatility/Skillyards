@@ -4,6 +4,19 @@ import { useState, useEffect } from "react";
 import { Users as UsersIcon, Search } from "lucide-react";
 import { getTeamStatuses } from "@/actions/status";
 
+const SPECIAL = new Set(["CEO", "HR", "IT"]);
+
+function formatLabel(str) {
+  if (!str) return "";
+  return str
+    .split("_")
+    .map((w) => {
+      const upper = w.toUpperCase();
+      return SPECIAL.has(upper) ? upper : w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    })
+    .join(" ");
+}
+
 export function TeamDirectoryClient({ userRole }) {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,10 +40,14 @@ export function TeamDirectoryClient({ userRole }) {
     }
   };
 
-  const filteredUsers = users.filter((u) => 
-    u.name?.toLowerCase().includes(search.toLowerCase()) ||
-    u.role?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredUsers = users.filter((u) => {
+    const q = search.toLowerCase();
+    return (
+      u.name?.toLowerCase().includes(q) ||
+      formatLabel(u.role).toLowerCase().includes(q) ||
+      formatLabel(u.team).toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="p-4 sm:p-6 max-w-6xl mx-auto space-y-6 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -112,7 +129,7 @@ export function TeamDirectoryClient({ userRole }) {
                     {user.name}
                   </h3>
                   <div className="text-xs text-muted-foreground truncate">
-                    {user.role} {user.team ? `• ${user.team}` : ''}
+                    {formatLabel(user.role)}{user.team ? ` • ${formatLabel(user.team)}` : ''}
                   </div>
                   {user.statusText ? (
                     <div className="mt-1.5 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-muted text-xs font-medium text-foreground truncate max-w-full">
