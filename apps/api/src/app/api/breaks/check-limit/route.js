@@ -69,13 +69,21 @@ export async function POST(req) {
         );
       } catch (pushErr) {
         console.error("Failed to send push notification:", pushErr);
+        if (pushErr.statusCode === 410) {
+          try {
+            await db.update(users).set({ pushSubscription: null }).where(eq(users.id, userId));
+            console.log(`Cleaned up stale push subscription for user ${userId}`);
+          } catch (cleanupErr) {
+            console.error("Failed to clean up push subscription:", cleanupErr);
+          }
+        }
       }
     }
 
     if (triggerType === "final") {
       try {
         const notifiers = await db
-          .select({ name: users.name, pushSubscription: users.pushSubscription })
+          .select({ id: users.id, name: users.name, pushSubscription: users.pushSubscription })
           .from(users)
           .where(or(eq(users.role, "HR"), eq(users.role, "ADMIN")));
 
@@ -92,6 +100,13 @@ export async function POST(req) {
             );
           } catch (pushErr) {
             console.error("Failed to notify HR/Admin about break limit:", pushErr);
+            if (pushErr.statusCode === 410) {
+              try {
+                await db.update(users).set({ pushSubscription: null }).where(eq(users.id, n.id));
+              } catch (cleanupErr) {
+                console.error("Failed to clean up HR/Admin push subscription:", cleanupErr);
+              }
+            }
           }
         }
       } catch (dbErr) {

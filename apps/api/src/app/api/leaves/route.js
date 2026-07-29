@@ -17,6 +17,49 @@ async function postHandler(req, { ctx }) {
     const start = new Date(startDate);
     const end = isHalfDay ? new Date(startDate) : new Date(endDate);
     
+    // Validate: no past dates
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const startNormalized = new Date(start);
+    startNormalized.setHours(0, 0, 0, 0);
+
+    if (startNormalized < today) {
+      return Response.json(
+        { success: false, message: "Leave cannot be applied for past dates." },
+        { status: 400 }
+      );
+    }
+
+    // Validate: at least 2 days notice
+    const diffDays = Math.ceil((startNormalized.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+    if (diffDays < 2) {
+      return Response.json(
+        { success: false, message: "Leave must be applied at least 2 days in advance." },
+        { status: 400 }
+      );
+    }
+
+    // Check for overlapping leaves
+    const [overlap] = await db
+      .select({ id: leaves.id })
+      .from(leaves)
+      .where(
+        and(
+          eq(leaves.userId, ctx.session.userId),
+          ne(leaves.status, "REJECTED"),
+          lte(leaves.startDate, end),
+          gte(leaves.endDate, start)
+        )
+      )
+      .limit(1);
+
+    if (overlap) {
+      return Response.json(
+        { success: false, message: "You already have a leave application that overlaps with these dates." },
+        { status: 400 }
+      );
+    }
+
     // Convert current time to IST (UTC+5:30) for cutoff evaluations
     const nowUtc = new Date();
     const nowIST = new Date(nowUtc.getTime() + (5.5 * 60 * 60 * 1000));

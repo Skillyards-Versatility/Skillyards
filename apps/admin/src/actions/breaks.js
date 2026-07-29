@@ -113,6 +113,7 @@ export async function startBreak() {
     }
 
     // Schedule QStash Notifications
+    let qstashFailed = false;
     if (process.env.QSTASH_TOKEN) {
       try {
         // 9-minute Warning (if allowed duration is at least 9 minutes)
@@ -150,10 +151,11 @@ export async function startBreak() {
         }
       } catch (err) {
         console.error("QStash schedule failed:", err);
+        qstashFailed = true;
       }
     }
 
-    return { success: true, break: record, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: maxSecondsForThisBreak };
+    return { success: true, break: record, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: maxSecondsForThisBreak, qstashFailed };
   } catch (err) {
     console.error("Start break error:", err);
     return { success: false, error: "Failed to start break" };
