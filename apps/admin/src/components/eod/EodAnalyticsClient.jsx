@@ -214,11 +214,11 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
     if (isSalesRole) {
       const getDayTargetDialed = (day) => {
         const totalCouns = (day.counsellingDone || 0) + (day.walkinCounselling || 0);
-        return Math.max(0, 120 - totalCouns * 20);
+        return Math.max(0, 120 - totalCouns * 15);
       };
       const getDayTargetConnected = (day) => {
         const totalCouns = (day.counsellingDone || 0) + (day.walkinCounselling || 0);
-        return Math.max(30, 50 - totalCouns * 10);
+        return Math.max(30, 50 - totalCouns * 5);
       };
 
       let tempStreak = 0;
@@ -248,11 +248,11 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
     const latestConnected = latestDay?.connectedCalls || 0;
     const latestTalkTime = latestDay?.talkTime || 0;
     const latestTotalCouns = (latestDay?.counsellingDone || 0) + (latestDay?.walkinCounselling || 0);
-    const dayTargetDialed = Math.max(0, 120 - latestTotalCouns * 20);
-    const dayTargetConnected = Math.max(30, 50 - latestTotalCouns * 10);
+    const dayTargetDialed = Math.max(0, 120 - latestTotalCouns * 15);
+    const dayTargetConnected = Math.max(30, 50 - latestTotalCouns * 5);
 
-    const batCalls = Math.min(100, Math.round((latestDialed / dayTargetDialed) * 100));
-    const batConn = Math.min(100, Math.round((latestConnected / dayTargetConnected) * 100));
+    const batCalls = dayTargetDialed > 0 ? Math.min(100, Math.round((latestDialed / dayTargetDialed) * 100)) : 100;
+    const batConn = dayTargetConnected > 0 ? Math.min(100, Math.round((latestConnected / dayTargetConnected) * 100)) : 100;
     const batTalk = Math.min(100, Math.round((latestTalkTime / TARGET_TALK_TIME) * 100));
 
     return (

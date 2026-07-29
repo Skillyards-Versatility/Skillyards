@@ -15,7 +15,7 @@ const SALES_FIELDS = [
   { key: "connectedCalls", label: "Connected Calls" },
   { key: "counsellingDone", label: "Counselling Done" },
   { key: "counsellingBooked", label: "Counselling Booked" },
-  { key: "walkinCounselling", label: "Walk-in Counselling" },
+  { key: "walkinCounselling", label: "Counselling Conducted (Walk-in / Others)" },
   { key: "sessionBooked", label: "Sessions Booked" },
   { key: "admissionRegistration", label: "Admissions / Registrations" },
   { key: "admissionProjection", label: "Admission Projection" },

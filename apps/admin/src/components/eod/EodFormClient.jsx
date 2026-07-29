@@ -14,7 +14,7 @@ const TEAM_FIELDS = {
     { key: "talkTime", label: "Total Talk Time (mins)", type: "number", placeholder: "0" },
     { key: "counsellingDone", label: "Counselling Done", type: "number", placeholder: "0" },
     { key: "counsellingBooked", label: "Counselling Booked", type: "number", placeholder: "0" },
-    { key: "walkinCounselling", label: "Walk-in Counselling", type: "number", placeholder: "0" },
+    { key: "walkinCounselling", label: "Counselling Conducted (Walk-in / Others)", type: "number", placeholder: "0" },
     { key: "sessionBooked", label: "Sessions Booked", type: "number", placeholder: "0" },
     { key: "admissionRegistration", label: "Admissions / Registrations", type: "number", placeholder: "0" },
     { key: "admissionProjection", label: "Admission Projection", type: "number", placeholder: "0" },

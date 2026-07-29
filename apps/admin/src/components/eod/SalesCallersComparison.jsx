@@ -102,8 +102,8 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
       callerMap[userName].talkTimeMinutes += talkTime;
 
       // Dynamic Daily Target Math per report day
-      const dayTargetDialed = Math.max(0, 120 - totalCounselling * 20);
-      const dayTargetConnected = Math.max(30, 50 - totalCounselling * 10);
+      const dayTargetDialed = Math.max(0, 120 - totalCounselling * 15);
+      const dayTargetConnected = Math.max(30, 50 - totalCounselling * 5);
 
       callerMap[userName].targetDialed += dayTargetDialed;
       callerMap[userName].targetConnected += dayTargetConnected;
