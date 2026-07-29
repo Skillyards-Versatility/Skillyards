@@ -14,6 +14,7 @@ const TEAM_FIELDS = {
     { key: "talkTime", label: "Total Talk Time (mins)", type: "number", placeholder: "0" },
     { key: "counsellingDone", label: "Counselling Done", type: "number", placeholder: "0" },
     { key: "counsellingBooked", label: "Counselling Booked", type: "number", placeholder: "0" },
+    { key: "walkinCounselling", label: "Counselling Conducted (Walk-in / Others)", type: "number", placeholder: "0" },
     { key: "sessionBooked", label: "Sessions Booked", type: "number", placeholder: "0" },
     { key: "admissionRegistration", label: "Admissions / Registrations", type: "number", placeholder: "0" },
     { key: "admissionProjection", label: "Admission Projection", type: "number", placeholder: "0" },
@@ -129,9 +130,11 @@ const TEAM_LABELS = {
   outside_sales: "Outside Sales",
 };
 
-export function EodFormClient({ team, role, existingReport }) {
+export function EodFormClient({ team, role, existingReport, counsellingDefaults }) {
   const router = useRouter();
-  const [formData, setFormData] = useState(existingReport?.data || {});
+  const existingData = existingReport?.data || {};
+  const mergedDefaults = { ...counsellingDefaults, ...existingData };
+  const [formData, setFormData] = useState(mergedDefaults);
   const [screenshotFile, setScreenshotFile] = useState(null);
   const [screenshotPreview, setScreenshotPreview] = useState(null);
   const [submitting, setSubmitting] = useState(false);

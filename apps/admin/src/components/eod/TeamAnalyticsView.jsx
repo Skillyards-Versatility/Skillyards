@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Users, PhoneCall, Code, Megaphone, UserCheck, Briefcase, ChevronRight, Award, TrendingUp, Layers } from "lucide-react";
+import { Users, PhoneCall, Code, Megaphone, UserCheck, Briefcase, ChevronRight, Award, TrendingUp, Layers, Activity, GitBranch } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { SalesCallersComparison } from "./SalesCallersComparison";
 
@@ -143,6 +143,32 @@ export function TeamAnalyticsView({ teamAggregates = [], reports = [], onSelectU
     return processedTeams.filter((t) => t.teamKey === selectedTeamFilter);
   }, [processedTeams, selectedTeamFilter]);
 
+  // Counselling pipeline data
+  const pipelineData = useMemo(() => {
+    const salesReports = reports.filter((r) => r.team?.toLowerCase() === "sales");
+    const ts = {};
+    salesReports.forEach((r) => {
+      const date = r.date;
+      if (!ts[date]) ts[date] = { date };
+      const d = r.data || {};
+      Object.entries(d).forEach(([k, v]) => {
+        const num = Number(v);
+        if (!isNaN(num) && typeof v !== "boolean" && k !== "notes") {
+          ts[date][k] = (ts[date][k] || 0) + num;
+        }
+      });
+    });
+    const timeSeries = Object.values(ts).sort((a, b) => a.date.localeCompare(b.date));
+    const totalBooked = salesReports.reduce((s, r) => s + Number(r.data?.counsellingBooked || 0), 0);
+    const totalDone = salesReports.reduce((s, r) => s + Number(r.data?.counsellingDone || 0), 0);
+    const totalWalkin = salesReports.reduce((s, r) => s + Number(r.data?.walkinCounselling || 0), 0);
+    const totalConducted = totalDone + totalWalkin;
+    const totalSessions = salesReports.reduce((s, r) => s + Number(r.data?.sessionBooked || 0), 0);
+    const bookedToConducted = totalBooked > 0 ? Math.round((totalConducted / totalBooked) * 100) : 0;
+    const bookedToSessions = totalBooked > 0 ? Math.round((totalSessions / totalBooked) * 100) : 0;
+    return { timeSeries, totalBooked, totalDone, totalWalkin, totalConducted, totalSessions, bookedToConducted, bookedToSessions };
+  }, [reports]);
+
   return (
     <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-300">
       {/* High-Level Department Summary Bar - Mobile Optimized 1-Col to 2-Col */}
@@ -219,19 +245,42 @@ export function TeamAnalyticsView({ teamAggregates = [], reports = [], onSelectU
                 </div>
 
                 {t.dialedCalls > 0 && (
-                  <div className="grid grid-cols-3 gap-2 bg-muted/30 p-2.5 rounded-2xl text-center">
-                    <div>
-                      <div className="text-[10px] text-muted-foreground uppercase font-bold">Dialed</div>
-                      <div className="text-sm font-extrabold text-foreground">{t.dialedCalls}</div>
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-3 gap-2 bg-muted/30 p-2.5 rounded-2xl text-center">
+                      <div>
+                        <div className="text-[10px] text-muted-foreground uppercase font-bold">Dialed</div>
+                        <div className="text-sm font-extrabold text-foreground">{t.dialedCalls}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-muted-foreground uppercase font-bold">Connected</div>
+                        <div className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">{t.connectedCalls}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] text-muted-foreground uppercase font-bold">Connect Rate</div>
+                        <div className="text-sm font-extrabold text-blue-600 dark:text-blue-400">{t.connectRate}%</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-[10px] text-muted-foreground uppercase font-bold">Connected</div>
-                      <div className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">{t.connectedCalls}</div>
-                    </div>
-                    <div>
-                      <div className="text-[10px] text-muted-foreground uppercase font-bold">Connect Rate</div>
-                      <div className="text-sm font-extrabold text-blue-600 dark:text-blue-400">{t.connectRate}%</div>
-                    </div>
+
+                    {(t.counsellingDone > 0 || t.walkinCounselling > 0) && (
+                      <div className="grid grid-cols-4 gap-2 bg-purple-500/5 p-2.5 rounded-2xl text-center border border-purple-500/10">
+                        <div>
+                          <div className="text-[10px] text-muted-foreground uppercase font-bold">Counselling Done</div>
+                          <div className="text-sm font-extrabold text-purple-600 dark:text-purple-400">{t.counsellingDone || 0}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-muted-foreground uppercase font-bold">Walk-in</div>
+                          <div className="text-sm font-extrabold text-purple-600 dark:text-purple-400">{t.walkinCounselling || 0}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-muted-foreground uppercase font-bold">Total</div>
+                          <div className="text-sm font-extrabold text-foreground">{(t.counsellingDone || 0) + (t.walkinCounselling || 0)}</div>
+                        </div>
+                        <div>
+                          <div className="text-[10px] text-muted-foreground uppercase font-bold">Sessions Booked</div>
+                          <div className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">{t.sessionBooked || 0}</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -277,6 +326,80 @@ export function TeamAnalyticsView({ teamAggregates = [], reports = [], onSelectU
           })}
         </div>
       </div>
+
+      {(pipelineData.totalBooked > 0 || pipelineData.totalConducted > 0) && (
+        <div className="bg-card border border-border/60 rounded-3xl p-4 sm:p-6 shadow-xs space-y-5">
+          <div className="flex items-center gap-2.5 border-b border-border/40 pb-4">
+            <div className="p-2 bg-purple-500/10 rounded-xl text-purple-600 dark:text-purple-400">
+              <GitBranch className="w-4 h-4" />
+            </div>
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
+                Counselling Pipeline
+              </div>
+              <h3 className="text-base sm:text-lg font-extrabold text-foreground mt-0.5">
+                How Booked Counselling Converts
+              </h3>
+            </div>
+          </div>
+
+          {/* Funnel Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4 text-center">
+              <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Booked</div>
+              <div className="text-2xl font-extrabold text-amber-600 dark:text-amber-400">{pipelineData.totalBooked.toLocaleString()}</div>
+              <div className="text-xs text-muted-foreground mt-1">counselling appointments</div>
+            </div>
+
+            <div className="bg-purple-500/5 border border-purple-500/20 rounded-2xl p-4 text-center relative">
+              <div className="absolute -top-2 -left-2 bg-amber-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                {pipelineData.bookedToConducted}%
+              </div>
+              <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Conducted</div>
+              <div className="text-2xl font-extrabold text-purple-600 dark:text-purple-400">{pipelineData.totalConducted.toLocaleString()}</div>
+              <div className="text-xs text-muted-foreground mt-1">
+                {pipelineData.totalDone} done · {pipelineData.totalWalkin} walk-in
+              </div>
+            </div>
+
+            <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4 text-center relative">
+              <div className="absolute -top-2 -left-2 bg-purple-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                {pipelineData.bookedToSessions}%
+              </div>
+              <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider mb-1">Sessions Booked</div>
+              <div className="text-2xl font-extrabold text-emerald-600 dark:text-emerald-400">{pipelineData.totalSessions.toLocaleString()}</div>
+              <div className="text-xs text-muted-foreground mt-1">final conversions</div>
+            </div>
+          </div>
+
+          {/* Trend Chart */}
+          {pipelineData.timeSeries.length > 1 && (
+            <div className="pt-2">
+              <h4 className="text-[11px] text-muted-foreground uppercase font-bold tracking-wider mb-4 flex items-center gap-1.5">
+                <Activity className="w-3.5 h-3.5" />
+                Pipeline Trend
+              </h4>
+              <div className="h-[220px]">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={pipelineData.timeSeries} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.4} />
+                    <XAxis dataKey="date" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} axisLine={false} tickLine={false} />
+                    <Tooltip
+                      contentStyle={{ backgroundColor: "rgba(255,255,255,0.9)", backdropFilter: "blur(8px)", borderColor: "hsl(var(--border))", borderRadius: "12px", fontSize: "12px" }}
+                    />
+                    <Legend wrapperStyle={{ fontSize: "11px", fontWeight: "bold" }} />
+                    <Bar dataKey="counsellingBooked" name="Booked" fill="#f59e0b" radius={[4, 4, 0, 0]} stackId="a" />
+                    <Bar dataKey="counsellingDone" name="Done" fill="#9333ea" radius={[4, 4, 0, 0]} stackId="a" />
+                    <Bar dataKey="walkinCounselling" name="Walk-in" fill="#a855f7" radius={[4, 4, 0, 0]} stackId="a" />
+                    <Bar dataKey="sessionBooked" name="Sessions" fill="#059669" radius={[4, 4, 0, 0]} stackId="a" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
