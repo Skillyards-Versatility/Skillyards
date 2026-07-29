@@ -3,43 +3,7 @@ import {
   certificateTemplate,
   certificateEmailTemplate,
 } from "./certificate.template";
-
-/**
- * Generate a PDF buffer from HTML using PDFShift API.
- * Fast (~2s), works on Vercel free tier, no Puppeteer needed.
- *
- * @param {string} html – Full HTML page string
- * @returns {Promise<Buffer>} PDF buffer
- */
-async function generatePdfBuffer(html) {
-  const apiKey = process.env.PDFSHIFT_API_KEY;
-
-  if (!apiKey) {
-    throw new Error("PDFSHIFT_API_KEY is not set in environment variables");
-  }
-
-  const response = await fetch("https://api.pdfshift.io/v3/convert/pdf", {
-    method: "POST",
-    headers: {
-      Authorization: "Basic " + Buffer.from("api:" + apiKey).toString("base64"),
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      source: html,
-      landscape: true,
-      format: "A4",
-      margin: "0",
-      use_print: false,
-    }),
-  });
-
-  if (!response.ok) {
-    const errText = await response.text();
-    throw new Error(`PDFShift error (${response.status}): ${errText}`);
-  }
-
-  return Buffer.from(await response.arrayBuffer());
-}
+import { callPdfShift } from "@/integrations/pdf/pdfshift.client";
 
 /**
  * Full certificate pipeline:
@@ -64,7 +28,13 @@ export async function generateAndSendCertificate(data) {
 
     // Generate PDF via PDFShift
     console.log("Generating PDF for", data.name);
-    const pdfBuffer = await generatePdfBuffer(html);
+    const pdfBuffer = await callPdfShift({
+      source: html,
+      landscape: true,
+      format: "A4",
+      margin: "0",
+      use_print: false,
+    });
     console.log("PDF generated, size:", pdfBuffer.length, "bytes");
 
     // Send email with PDF attachment
