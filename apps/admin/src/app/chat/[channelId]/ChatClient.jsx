@@ -1,0 +1,308 @@
+"use client";
+
+import { useState, useEffect, useCallback, useRef } from "react";
+import { ChatLayout } from "@/components/chat/ChatLayout";
+import { ChannelList } from "@/components/chat/ChannelList";
+import { ChannelHeader } from "@/components/chat/ChannelHeader";
+import { MessageList } from "@/components/chat/MessageList";
+import { MessageInput } from "@/components/chat/MessageInput";
+import { ThreadPanel } from "@/components/chat/ThreadPanel";
+import { ChannelCreateDialog } from "@/components/chat/ChannelCreateDialog";
+import { NewDmDialog } from "@/components/chat/NewDmDialog";
+
+export function ChatClient({
+  channel,
+  currentUser,
+  initialMessages,
+  allUsers,
+  isMember,
+  memberCount,
+}) {
+  const [messages, setMessages] = useState(initialMessages || []);
+  const [channels, setChannels] = useState([]);
+  const [conversations, setConversations] = useState([]);
+  const [threadParent, setThreadParent] = useState(null);
+  const [threadReplies, setThreadReplies] = useState([]);
+  const [showCreateChannel, setShowCreateChannel] = useState(false);
+  const [showNewDm, setShowNewDm] = useState(false);
+  const [myChannels, setMyChannels] = useState(channel ? [channel] : []);
+  const sseRef = useRef(null);
+  const onlineUsersRef = useRef(new Set());
+  const [, forceUpdate] = useState(0);
+
+  useEffect(() => {
+    setMessages(initialMessages || []);
+  }, [channel?.id, initialMessages]);
+
+  useEffect(() => {
+    if (!channel?.id) return;
+
+    const es = new EventSource(`/api/channels/${channel.id}/events`);
+    sseRef.current = es;
+
+    es.addEventListener("new_message", (e) => {
+      const msg = JSON.parse(e.data);
+      setMessages((prev) => [...prev, msg]);
+    });
+
+    es.addEventListener("message_updated", (e) => {
+      const { id, content, editedAt } = JSON.parse(e.data);
+      setMessages((prev) =>
+        prev.map((m) => (m.id === id ? { ...m, content, editedAt } : m))
+      );
+    });
+
+    es.addEventListener("message_deleted", (e) => {
+      const { messageId } = JSON.parse(e.data);
+      setMessages((prev) => prev.filter((m) => m.id !== messageId));
+    });
+
+    es.addEventListener("reaction_added", (e) => {
+      const reaction = JSON.parse(e.data);
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === reaction.messageId
+            ? { ...m, reactions: [...(m.reactions || []), reaction] }
+            : m
+        )
+      );
+    });
+
+    es.addEventListener("reaction_removed", (e) => {
+      const { messageId, userId, emoji } = JSON.parse(e.data);
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === messageId
+            ? { ...m, reactions: (m.reactions || []).filter((r) => !(r.userId === userId && r.emoji === emoji)) }
+            : m
+        )
+      );
+    });
+
+    es.onerror = () => {
+      // EventSource auto-reconnects
+    };
+
+    return () => {
+      es.close();
+      sseRef.current = null;
+    };
+  }, [channel?.id]);
+
+  useEffect(() => {
+    fetchChannels();
+    fetchConversations();
+  }, []);
+
+  const fetchChannels = async () => {
+    try {
+      const res = await fetch("/api/channels");
+      if (res.ok) {
+        const data = await res.json();
+        setChannels(data);
+        setMyChannels(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch channels:", err);
+    }
+  };
+
+  const fetchConversations = async () => {
+    try {
+      const res = await fetch("/api/conversations");
+      if (res.ok) {
+        const data = await res.json();
+        setConversations(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch conversations:", err);
+    }
+  };
+
+  const handleSend = useCallback(
+    async (text) => {
+      try {
+        const res = await fetch("/api/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content: text, channelId: channel?.id, type: "text" }),
+        });
+        if (!res.ok) {
+          const err = await res.json();
+          console.error("Failed to send:", err);
+        }
+      } catch (err) {
+        console.error("Failed to send:", err);
+      }
+    },
+    [channel?.id]
+  );
+
+  const handleEdit = useCallback(
+    async (messageId, content) => {
+      try {
+        await fetch(`/api/messages/${messageId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ content }),
+        });
+      } catch (err) {
+        console.error("Failed to edit:", err);
+      }
+    },
+    []
+  );
+
+  const handleDelete = useCallback(
+    async (messageId) => {
+      try {
+        await fetch(`/api/messages/${messageId}`, { method: "DELETE" });
+      } catch (err) {
+        console.error("Failed to delete:", err);
+      }
+    },
+    []
+  );
+
+  const handleReact = useCallback(
+    async (messageId, emoji) => {
+      try {
+        await fetch(`/api/messages/${messageId}/reactions`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ emoji }),
+        });
+      } catch (err) {
+        console.error("Failed to add reaction:", err);
+      }
+    },
+    []
+  );
+
+  const handleRemoveReaction = useCallback(
+    async (messageId, emoji) => {
+      try {
+        await fetch(`/api/messages/${messageId}/reactions`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ emoji }),
+        });
+      } catch (err) {
+        console.error("Failed to remove reaction:", err);
+      }
+    },
+    []
+  );
+
+  const handleReply = useCallback(
+    (message) => {
+      setThreadParent(message);
+      setThreadReplies([]);
+    },
+    []
+  );
+
+  const handleSendReply = useCallback(
+    async (text) => {
+      if (!threadParent) return;
+      try {
+        const res = await fetch("/api/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            content: text,
+            channelId: channel?.id,
+            parentId: threadParent.id,
+            type: "text",
+          }),
+        });
+        if (res.ok) {
+          const msg = await res.json();
+          setThreadReplies((prev) => [...prev, msg]);
+        }
+      } catch (err) {
+        console.error("Failed to send reply:", err);
+      }
+    },
+    [threadParent, channel?.id]
+  );
+
+  const handleCreateChannel = async (data) => {
+    const res = await fetch("/api/channels", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || err.error || "Failed to create channel");
+    }
+    await fetchChannels();
+  };
+
+  const handleStartDm = async (otherUserId) => {
+    const res = await fetch("/api/conversations", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ type: "direct", participantIds: [otherUserId] }),
+    });
+    if (!res.ok) throw new Error("Failed to create conversation");
+    const conv = await res.json();
+    window.location.href = `/chat/dm/${conv.id}`;
+  };
+
+  return (
+    <>
+      <ChatLayout
+        sidebar={
+          <ChannelList
+            channels={myChannels}
+            conversations={conversations}
+            onNewChannel={() => setShowCreateChannel(true)}
+            onNewDm={() => setShowNewDm(true)}
+          />
+        }
+      >
+        <ChannelHeader channel={channel} memberCount={memberCount} />
+        <MessageList
+          messages={messages}
+          currentUserId={currentUser.id}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onReply={handleReply}
+          onReact={handleReact}
+          onRemoveReaction={handleRemoveReaction}
+          showThread={(msg) => handleReply(msg)}
+        />
+        <MessageInput onSend={handleSend} />
+      </ChatLayout>
+
+      {threadParent && (
+        <ThreadPanel
+          parentMessage={threadParent}
+          replies={threadReplies}
+          currentUserId={currentUser.id}
+          onClose={() => setThreadParent(null)}
+          onSendReply={handleSendReply}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onReact={handleReact}
+          onRemoveReaction={handleRemoveReaction}
+        />
+      )}
+
+      <ChannelCreateDialog
+        open={showCreateChannel}
+        onClose={() => setShowCreateChannel(false)}
+        onCreate={handleCreateChannel}
+      />
+
+      <NewDmDialog
+        open={showNewDm}
+        onClose={() => setShowNewDm(false)}
+        users={allUsers}
+        onStart={handleStartDm}
+      />
+    </>
+  );
+}

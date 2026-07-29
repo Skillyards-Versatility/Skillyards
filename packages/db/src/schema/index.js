@@ -17,3 +17,8 @@ export * from "./eodWarnings.js";
 export * from "./leaves.js";
 export * from "./batches.js";
 export * from "./counsellingSessions.js";
+export * from "./channels.js";
+export * from "./conversations.js";
+export * from "./conversationParticipants.js";
+export * from "./messages.js";
+export * from "./messageReactions.js";

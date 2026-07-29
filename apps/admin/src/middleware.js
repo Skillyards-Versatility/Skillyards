@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { decrypt } from "@/lib/auth";
 
-const protectedRoutes = ["/dashboard", "/students", "/enquiries", "/analytics", "/users", "/calls", "/eod"];
+const protectedRoutes = ["/dashboard", "/students", "/enquiries", "/analytics", "/users", "/calls", "/eod", "/chat"];
 const adminRoutes = ["/dashboard", "/students", "/enquiries", "/calls"];
 const publicRoutes = ["/login", "/forgot-password", "/reset-password", "/"];
 
