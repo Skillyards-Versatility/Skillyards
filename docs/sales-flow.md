@@ -111,3 +111,43 @@ Only completed counselling affects targets. Future bookings don't change expecta
 - **Walk-in and phone counselling both count** toward total
 - **Everything visible** on the analytics dashboard with clear breakdowns
 - **No code knowledge needed** to read the numbers
+
+---
+
+## Counselling Sessions Module
+
+The **Counselling Sessions** module lets BDAs log individual counselling sessions in real time, separate from the EOD form.
+
+### Where to find it
+
+Navigate to **Counselling** in the sidebar. BDAs see only their own entries; Admins/Managers see everyone's.
+
+### What you can do
+
+- **Log a session** — Add a student's name, phone, age/class, course interest, source (Walk-in / Phone / Referral), outcome (Session Booked / Enrolled / Follow-up / Not Interested / No Response), and notes.
+- **Filter by date range** — See sessions for any period.
+- **Delete a session** — Remove your own entries (admins can delete any).
+- **Summary stats** — Total sessions, breakdown by source and outcome.
+
+### How it ties into EOD
+
+When a BDA opens the **EOD form**, the counselling counts are **auto-populated** from their session logs for that day:
+
+| EOD Field | Auto-populated from |
+|---|---|
+| Counselling Done | Phone + Referral sessions |
+| Walk-in Counselling | Walk-in sessions |
+| Counselling Booked | Sessions with outcome = Session Booked or Enrolled |
+
+The BDA can still adjust these numbers manually if needed. If the EOD was already submitted for the day, existing values are preserved.
+
+### Counselling Pipeline (Team Analytics)
+
+The **Counselling Pipeline** section under Team Analytics shows a funnel:
+
+- **Booked** — Booked counselling slots
+- **Done** — Counselling sessions conducted (phone/referral)
+- **Walk-in** — Walk-in counselling conducted
+- **Conducted (Total)** — Done + Walk-in combined
+
+The pipeline chart (stacked bars per person) shows how each BDA is performing across the three categories over time.

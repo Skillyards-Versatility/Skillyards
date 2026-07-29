@@ -130,9 +130,11 @@ const TEAM_LABELS = {
   outside_sales: "Outside Sales",
 };
 
-export function EodFormClient({ team, role, existingReport }) {
+export function EodFormClient({ team, role, existingReport, counsellingDefaults }) {
   const router = useRouter();
-  const [formData, setFormData] = useState(existingReport?.data || {});
+  const existingData = existingReport?.data || {};
+  const mergedDefaults = { ...counsellingDefaults, ...existingData };
+  const [formData, setFormData] = useState(mergedDefaults);
   const [screenshotFile, setScreenshotFile] = useState(null);
   const [screenshotPreview, setScreenshotPreview] = useState(null);
   const [submitting, setSubmitting] = useState(false);
