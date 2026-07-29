@@ -1,5 +1,5 @@
 import { db, users } from "@repo/db";
-import { eq } from "drizzle-orm";
+import { eq, lt, and } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
 
 async function patchHandler(req, { ctx }) {
@@ -30,8 +30,12 @@ async function patchHandler(req, { ctx }) {
 
 async function getHandler(req, { ctx }) {
   try {
-    // Only return active statuses for users in the same team/company
-    // We'll fetch all users for now, or you could filter by team
+    // Auto-clear expired statuses
+    await db
+      .update(users)
+      .set({ statusEmoji: null, statusText: null, statusClearAt: null })
+      .where(and(lt(users.statusClearAt, new Date())));
+
     const allUsers = await db
       .select({
         id: users.id,
