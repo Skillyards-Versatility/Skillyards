@@ -70,7 +70,7 @@ async function getHandler(req, { ctx }) {
 
 async function postHandler(req, { ctx }) {
   try {
-    const { studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate } = await req.json();
+    const { studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, counselorId } = await req.json();
 
     if (!studentName || !sessionDate) {
       return Response.json(
@@ -79,10 +79,15 @@ async function postHandler(req, { ctx }) {
       );
     }
 
+    let finalCounselorId = ctx.session.userId;
+    if ((ctx.session.role === "ADMIN" || ctx.session.role === "MANAGER") && counselorId) {
+      finalCounselorId = counselorId;
+    }
+
     const [session] = await db
       .insert(counsellingSessions)
       .values({
-        counselorId: ctx.session.userId,
+        counselorId: finalCounselorId,
         studentName,
         phone: phone || null,
         ageOrClass: ageOrClass || null,

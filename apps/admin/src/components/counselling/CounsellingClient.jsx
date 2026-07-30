@@ -36,7 +36,7 @@ const SOURCE_BADGES = {
   referral: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
 };
 
-export function CounsellingClient({ isAdmin = false }) {
+export function CounsellingClient({ isAdmin = false, counselors = [] }) {
   const today = getIstDate();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,6 +60,7 @@ export function CounsellingClient({ isAdmin = false }) {
     outcome: "follow_up",
     notes: "",
     sessionDate: today,
+    counselorId: "", // Empty string means it will default to logged-in user on backend
   });
 
   const fetchSessions = useCallback(async () => {
@@ -95,7 +96,7 @@ export function CounsellingClient({ isAdmin = false }) {
       if (res.success) {
         toast.success("Session logged!");
         setShowForm(false);
-        setForm({ studentName: "", phone: "", ageOrClass: "", courseInterest: "", source: "walk_in", outcome: "follow_up", notes: "", sessionDate: today });
+        setForm({ studentName: "", phone: "", ageOrClass: "", courseInterest: "", source: "walk_in", outcome: "follow_up", notes: "", sessionDate: today, counselorId: "" });
         fetchSessions();
       } else {
         toast.error(res.message || "Failed to create session");
@@ -156,6 +157,17 @@ export function CounsellingClient({ isAdmin = false }) {
               <label className="text-xs font-medium block mb-1">Student Name *</label>
               <input className="input w-full" value={form.studentName} onChange={(e) => setForm({ ...form, studentName: e.target.value })} placeholder="e.g., Amit Sharma" />
             </div>
+            {isAdmin && (
+              <div>
+                <label className="text-xs font-medium block mb-1">Assign to BDA/Counselor</label>
+                <select className="input w-full" value={form.counselorId} onChange={(e) => setForm({ ...form, counselorId: e.target.value })}>
+                  <option value="">Assign to myself (Default)</option>
+                  {counselors.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name} ({c.role})</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div>
               <label className="text-xs font-medium block mb-1">Phone</label>
               <input className="input w-full" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="e.g., 9876543210" />
