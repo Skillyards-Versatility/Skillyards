@@ -4,6 +4,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { Edit2, Trash2, Reply, SmilePlus } from "lucide-react";
 import { ReactionPicker } from "./ReactionPicker";
+import { Emoji } from "emoji-picker-react";
 
 export function MessageBubble({
   message,
@@ -113,17 +114,28 @@ export function MessageBubble({
                     if (hasReacted) onRemoveReaction?.(message.id, r.emoji);
                     else onReact?.(message.id, r.emoji);
                   }}
-                  className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs cursor-pointer transition-colors shrink-0 ${
+                  className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs cursor-pointer transition-colors shrink-0 border ${
                     hasReacted
-                      ? "bg-primary/10 text-primary"
-                      : "bg-muted/60 text-foreground hover:bg-accent"
+                      ? "bg-primary/10 text-primary border-primary/20"
+                      : "bg-muted text-muted-foreground hover:bg-accent border-transparent"
                   }`}
                 >
-                  <span className="text-sm leading-none">{r.emoji}</span>
-                  <span className="text-[11px] leading-none font-medium">{r.count}</span>
+                  <span className="text-sm select-none flex items-center justify-center">{r.emoji}</span>
+                  <span className="font-semibold select-none text-[11px] leading-none">{r.count}</span>
                 </button>
               );
             })}
+          </div>
+        )}
+        {showThread && replyCount > 0 && (
+          <div className={`mt-1 flex ${isOwn ? "justify-end" : ""}`}>
+            <button
+              onClick={() => showThread(message)}
+              className="text-xs text-primary font-medium hover:underline cursor-pointer flex items-center gap-1"
+            >
+              <Reply className="w-3 h-3" />
+              {replyCount} {replyCount === 1 ? "reply" : "replies"}
+            </button>
           </div>
         )}
       </div>
@@ -147,7 +159,7 @@ export function MessageBubble({
           {showReactions && (
             <ReactionPicker
               onSelect={(emoji) => {
-                onReact?.(message.id, emoji);
+                if (emoji) onReact?.(message.id, emoji);
                 setShowReactions(false);
               }}
               className={isOwn ? "right-0" : "left-0"}
@@ -171,14 +183,6 @@ export function MessageBubble({
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           </>
-        )}
-        {showThread && replyCount > 0 && (
-          <button
-            onClick={() => showThread(message)}
-            className="shrink-0 text-xs text-primary hover:underline pl-1.5 pr-1 py-0.5 cursor-pointer"
-          >
-            {replyCount} {replyCount === 1 ? "reply" : "replies"}
-          </button>
         )}
       </div>
     </div>

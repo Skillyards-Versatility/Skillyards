@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-
-const COMMON_EMOJIS = [
-  "👍", "👎", "😄", "🎉", "🙏", "❤️", "😂", "🔥",
-  "✅", "❌", "⭐", "👀", "🤔", "🚀", "💯", "👏",
-];
+import { useRef, useEffect } from "react";
+import EmojiPicker, { Theme, EmojiStyle } from "emoji-picker-react";
+import { useTheme } from "next-themes";
 
 export function ReactionPicker({ onSelect, className = "" }) {
   const ref = useRef(null);
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -23,17 +21,18 @@ export function ReactionPicker({ onSelect, className = "" }) {
   return (
     <div
       ref={ref}
-      className={`absolute top-full mt-1 z-50 p-2 bg-popover border border-border rounded-lg shadow-lg grid grid-cols-4 gap-1 w-max ${className}`}
+      className={`absolute top-full mt-2 right-0 z-50 shadow-xl rounded-lg animate-in fade-in zoom-in-95 duration-200 ${className}`}
     >
-      {COMMON_EMOJIS.map((emoji) => (
-        <button
-          key={emoji}
-          onClick={() => onSelect(emoji)}
-          className="w-8 h-8 flex items-center justify-center rounded hover:bg-accent text-lg transition-colors cursor-pointer"
-        >
-          {emoji}
-        </button>
-      ))}
+      <EmojiPicker
+        theme={resolvedTheme === "dark" ? Theme.DARK : Theme.LIGHT}
+        emojiStyle={EmojiStyle.APPLE}
+        onEmojiClick={(emojiData) => onSelect(emojiData.emoji)}
+        lazyLoadEmojis={true}
+        searchDisabled={false}
+        skinTonesDisabled={true}
+        height={350}
+        width={300}
+      />
     </div>
   );
 }

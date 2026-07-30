@@ -90,8 +90,7 @@ async function getNewChannelMessages(db, channelId, since) {
       and(
         eq(messages.channelId, channelId),
         gt(messages.createdAt, new Date(since)),
-        isNull(messages.deletedAt),
-        isNull(messages.parentId),
+        isNull(messages.deletedAt)
       )
     )
     .orderBy(asc(messages.createdAt));

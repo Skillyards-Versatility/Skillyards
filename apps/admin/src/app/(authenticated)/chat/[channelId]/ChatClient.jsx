@@ -34,6 +34,12 @@ export function ChatClient({
     setMessages(initialMessages || []);
   }, [channel?.id, initialMessages]);
 
+  const threadParentIdRef = useRef(null);
+  
+  useEffect(() => {
+    threadParentIdRef.current = threadParent?.id || null;
+  }, [threadParent]);
+
   useEffect(() => {
     if (!channel?.id) return;
 
@@ -43,6 +49,10 @@ export function ChatClient({
     es.addEventListener("new_message", (e) => {
       const msg = JSON.parse(e.data);
       setMessages((prev) => [...prev, msg]);
+      
+      if (msg.parentId && msg.parentId === threadParentIdRef.current) {
+        setThreadReplies((prev) => [...prev, msg]);
+      }
     });
 
     es.addEventListener("message_updated", (e) => {
@@ -155,11 +165,10 @@ export function ChatClient({
   const handleEdit = useCallback(
     async (messageId, content) => {
       // Optimistic update
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === messageId ? { ...m, content, editedAt: new Date().toISOString() } : m
-        )
-      );
+      const now = new Date().toISOString();
+      setMessages((prev) => prev.map((m) => m.id === messageId ? { ...m, content, editedAt: now } : m));
+      setThreadReplies((prev) => prev.map((m) => m.id === messageId ? { ...m, content, editedAt: now } : m));
+      setThreadParent((prev) => prev?.id === messageId ? { ...prev, content, editedAt: now } : prev);
       try {
         await fetch(`/api/messages/${messageId}`, {
           method: "PUT",
@@ -177,6 +186,8 @@ export function ChatClient({
     async (messageId) => {
       // Optimistic update
       setMessages((prev) => prev.filter((m) => m.id !== messageId));
+      setThreadReplies((prev) => prev.filter((m) => m.id !== messageId));
+      setThreadParent((prev) => prev?.id === messageId ? null : prev);
       try {
         await fetch(`/api/messages/${messageId}`, { method: "DELETE" });
       } catch (err) {
@@ -189,13 +200,13 @@ export function ChatClient({
   const handleReact = useCallback(
     async (messageId, emoji) => {
       // Optimistic update
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === messageId
-            ? { ...m, reactions: [...(m.reactions || []), { messageId, emoji, userId: currentUser.id }] }
-            : m
-        )
-      );
+      const newReaction = { messageId, emoji, userId: currentUser.id };
+      const applyReaction = (m) => m.id === messageId ? { ...m, reactions: [...(m.reactions || []), newReaction] } : m;
+      
+      setMessages((prev) => prev.map(applyReaction));
+      setThreadReplies((prev) => prev.map(applyReaction));
+      setThreadParent((prev) => prev ? applyReaction(prev) : prev);
+
       try {
         await fetch(`/api/messages/${messageId}/reactions`, {
           method: "POST",
@@ -212,13 +223,12 @@ export function ChatClient({
   const handleRemoveReaction = useCallback(
     async (messageId, emoji) => {
       // Optimistic update
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === messageId
-            ? { ...m, reactions: (m.reactions || []).filter((r) => !(r.userId === currentUser.id && r.emoji === emoji)) }
-            : m
-        )
-      );
+      const removeReaction = (m) => m.id === messageId ? { ...m, reactions: (m.reactions || []).filter((r) => !(r.userId === currentUser.id && r.emoji === emoji)) } : m;
+
+      setMessages((prev) => prev.map(removeReaction));
+      setThreadReplies((prev) => prev.map(removeReaction));
+      setThreadParent((prev) => prev ? removeReaction(prev) : prev);
+
       try {
         await fetch(`/api/messages/${messageId}/reactions`, {
           method: "DELETE",
@@ -233,9 +243,18 @@ export function ChatClient({
   );
 
   const handleReply = useCallback(
-    (message) => {
+    async (message) => {
       setThreadParent(message);
       setThreadReplies([]);
+      try {
+        const res = await fetch(`/api/messages/${message.id}/replies`);
+        if (res.ok) {
+          const data = await res.json();
+          setThreadReplies(data);
+        }
+      } catch (err) {
+        console.error("Failed to fetch replies:", err);
+      }
     },
     []
   );
@@ -257,6 +276,7 @@ export function ChatClient({
         if (res.ok) {
           const msg = await res.json();
           setThreadReplies((prev) => [...prev, msg]);
+          setMessages((prev) => [...prev, msg]);
         }
       } catch (err) {
         console.error("Failed to send reply:", err);

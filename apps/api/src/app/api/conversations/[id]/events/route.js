@@ -84,8 +84,7 @@ async function getNewConversationMessages(db, conversationId, since) {
       and(
         eq(messages.conversationId, conversationId),
         gt(messages.createdAt, new Date(since)),
-        isNull(messages.deletedAt),
-        isNull(messages.parentId),
+        isNull(messages.deletedAt)
       )
     )
     .orderBy(sql`${messages.createdAt} ASC`);

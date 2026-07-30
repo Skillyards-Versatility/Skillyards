@@ -23,6 +23,12 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
     setMessages(initialMessages || []);
   }, [conversation?.id, initialMessages]);
 
+  const threadParentIdRef = useRef(null);
+  
+  useEffect(() => {
+    threadParentIdRef.current = threadParent?.id || null;
+  }, [threadParent]);
+
   useEffect(() => {
     if (!conversation?.id) return;
 
@@ -32,6 +38,10 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
     es.addEventListener("new_message", (e) => {
       const msg = JSON.parse(e.data);
       setMessages((prev) => [...prev, msg]);
+      
+      if (msg.parentId && msg.parentId === threadParentIdRef.current) {
+        setThreadReplies((prev) => [...prev, msg]);
+      }
     });
 
     es.addEventListener("message_updated", (e) => {
@@ -99,20 +109,40 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
 
   const handleSend = useCallback(
     async (text) => {
+      // Optimistic update
+      const tempId = `temp-${Date.now()}`;
+      const tempMsg = {
+        id: tempId,
+        content: text,
+        sender: { id: currentUser.id, name: currentUser.name },
+        senderId: currentUser.id,
+        createdAt: new Date().toISOString(),
+        reactions: [],
+      };
+      setMessages((prev) => [...prev, tempMsg]);
+
       try {
-        await fetch("/api/messages", {
+        const res = await fetch("/api/messages", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ content: text, conversationId: conversation?.id, type: "text" }),
         });
+        if (!res.ok) {
+          setMessages((prev) => prev.filter((m) => m.id !== tempId));
+        }
       } catch (err) {
         console.error("Failed to send:", err);
+        setMessages((prev) => prev.filter((m) => m.id !== tempId));
       }
     },
-    [conversation?.id]
+    [conversation?.id, currentUser]
   );
 
   const handleEdit = useCallback(async (messageId, content) => {
+    const now = new Date().toISOString();
+    setMessages((prev) => prev.map((m) => m.id === messageId ? { ...m, content, editedAt: now } : m));
+    setThreadReplies((prev) => prev.map((m) => m.id === messageId ? { ...m, content, editedAt: now } : m));
+    setThreadParent((prev) => prev?.id === messageId ? { ...prev, content, editedAt: now } : prev);
     try {
       await fetch(`/api/messages/${messageId}`, {
         method: "PUT",
@@ -125,6 +155,9 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
   }, []);
 
   const handleDelete = useCallback(async (messageId) => {
+    setMessages((prev) => prev.filter((m) => m.id !== messageId));
+    setThreadReplies((prev) => prev.filter((m) => m.id !== messageId));
+    setThreadParent((prev) => prev?.id === messageId ? null : prev);
     try {
       await fetch(`/api/messages/${messageId}`, { method: "DELETE" });
     } catch (err) {
@@ -133,6 +166,13 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
   }, []);
 
   const handleReact = useCallback(async (messageId, emoji) => {
+    const newReaction = { messageId, emoji, userId: currentUser.id };
+    const applyReaction = (m) => m.id === messageId ? { ...m, reactions: [...(m.reactions || []), newReaction] } : m;
+    
+    setMessages((prev) => prev.map(applyReaction));
+    setThreadReplies((prev) => prev.map(applyReaction));
+    setThreadParent((prev) => prev ? applyReaction(prev) : prev);
+
     try {
       await fetch(`/api/messages/${messageId}/reactions`, {
         method: "POST",
@@ -142,9 +182,15 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
     } catch (err) {
       console.error("Failed to add reaction:", err);
     }
-  }, []);
+  }, [currentUser]);
 
   const handleRemoveReaction = useCallback(async (messageId, emoji) => {
+    const removeReaction = (m) => m.id === messageId ? { ...m, reactions: (m.reactions || []).filter((r) => !(r.userId === currentUser.id && r.emoji === emoji)) } : m;
+    
+    setMessages((prev) => prev.map(removeReaction));
+    setThreadReplies((prev) => prev.map(removeReaction));
+    setThreadParent((prev) => prev ? removeReaction(prev) : prev);
+
     try {
       await fetch(`/api/messages/${messageId}/reactions`, {
         method: "DELETE",
@@ -154,11 +200,20 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
     } catch (err) {
       console.error("Failed to remove reaction:", err);
     }
-  }, []);
+  }, [currentUser]);
 
-  const handleReply = useCallback((message) => {
+  const handleReply = useCallback(async (message) => {
     setThreadParent(message);
     setThreadReplies([]);
+    try {
+      const res = await fetch(`/api/messages/${message.id}/replies`);
+      if (res.ok) {
+        const data = await res.json();
+        setThreadReplies(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch replies:", err);
+    }
   }, []);
 
   const handleSendReply = useCallback(
@@ -178,6 +233,7 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
         if (res.ok) {
           const msg = await res.json();
           setThreadReplies((prev) => [...prev, msg]);
+          setMessages((prev) => [...prev, msg]);
         }
       } catch (err) {
         console.error("Failed to send reply:", err);
@@ -197,6 +253,21 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
             onNewDm={() => setShowNewDm(true)}
           />
         }
+        threadPanel={
+          threadParent && (
+            <ThreadPanel
+              parentMessage={threadParent}
+              replies={threadReplies}
+              currentUserId={currentUser.id}
+              onClose={() => setThreadParent(null)}
+              onSendReply={handleSendReply}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onReact={handleReact}
+              onRemoveReaction={handleRemoveReaction}
+            />
+          )
+        }
       >
         <div className="px-4 py-3 border-b border-border bg-background shrink-0">
           <h2 className="font-semibold text-foreground">
@@ -211,23 +282,12 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
           onReply={handleReply}
           onReact={handleReact}
           onRemoveReaction={handleRemoveReaction}
+          showThread={(msg) => handleReply(msg)}
         />
         <MessageInput onSend={handleSend} />
       </ChatLayout>
 
-      {threadParent && (
-        <ThreadPanel
-          parentMessage={threadParent}
-          replies={threadReplies}
-          currentUserId={currentUser.id}
-          onClose={() => setThreadParent(null)}
-          onSendReply={handleSendReply}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onReact={handleReact}
-          onRemoveReaction={handleRemoveReaction}
-        />
-      )}
+
       <ChannelCreateDialog
         open={showCreateChannel}
         onClose={() => setShowCreateChannel(false)}
