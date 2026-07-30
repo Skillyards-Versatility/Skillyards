@@ -5,7 +5,10 @@ import { createProtectedRoute } from "@/lib/middleware";
 
 async function getHandler(req, { ctx }) {
   try {
-    const userId = "cm0h3qfbb000213er9y79m6l1"; // fake id
+    const userId = ctx.session?.userId;
+    if (!userId) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const convs = await listConversations(db, userId);
     return Response.json(convs);
   } catch (error) {
