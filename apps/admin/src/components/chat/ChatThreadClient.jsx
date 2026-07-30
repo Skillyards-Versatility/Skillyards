@@ -2,9 +2,19 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Send, Hash, Users, X, Check, Plus, Search } from "lucide-react";
+import { ArrowLeft, Send, Hash, Users, X, Check, Plus, Search, MessageSquare, Smile } from "lucide-react";
 import { toast } from "sonner";
-import { getMessages, sendMessage, markAsRead, getChannelMembers, addChannelMembers, addAllUsersToChannel } from "@/actions/chat";
+import {
+  getMessages,
+  sendMessage,
+  markAsRead,
+  getChannelMembers,
+  addChannelMembers,
+  addAllUsersToChannel,
+  getThreadReplies,
+  getParentMessage,
+  toggleReaction,
+} from "@/actions/chat";
 import { getUsers } from "@/actions/users";
 
 function formatMessageTime(dateStr) {
@@ -64,6 +74,14 @@ export function ChatThreadClient({
   const [selectedUserIds, setSelectedUserIds] = useState(new Set());
   const [memberSearch, setMemberSearch] = useState("");
   const [addingMembers, setAddingMembers] = useState(false);
+
+  const [threadParent, setThreadParent] = useState(null);
+  const [threadReplies, setThreadReplies] = useState([]);
+  const [threadReplyText, setThreadReplyText] = useState("");
+  const [sendingThreadReply, setSendingThreadReply] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(null);
+
+  const COMMON_EMOJIS = ["👍", "❤️", "😄", "😮", "😢", "😡"];
 
   const isChannel = convInfo?.type === "channel";
   const headerTitle = isChannel ? `# ${convInfo?.name || "channel"}` : (convInfo?.otherUserName || "Unknown");
@@ -136,12 +154,82 @@ export function ChatThreadClient({
           createdAt: result.message.createdAt,
           senderId: userId,
           senderName: "You",
+          parentId: null,
+          replyCount: 0,
+          reactions: [],
         },
       ]);
     } else {
       setNewMessage(content);
     }
   };
+
+  const handleOpenThread = useCallback(async (msg) => {
+    setThreadParent(msg);
+    const replies = await getThreadReplies(msg.id);
+    setThreadReplies(replies);
+  }, []);
+
+  const handleCloseThread = useCallback(() => {
+    setThreadParent(null);
+    setThreadReplies([]);
+    setThreadReplyText("");
+  }, []);
+
+  const handleThreadSend = async () => {
+    const content = threadReplyText.trim();
+    if (!content || sendingThreadReply || !threadParent) return;
+
+    setSendingThreadReply(true);
+    setThreadReplyText("");
+
+    const result = await sendMessage(conversationId, content, threadParent.id);
+    setSendingThreadReply(false);
+
+    if (result.success) {
+      const newReply = {
+        id: result.message.id,
+        content: result.message.content,
+        createdAt: result.message.createdAt,
+        senderId: userId,
+        senderName: "You",
+        reactions: [],
+      };
+      setThreadReplies((prev) => [...prev, newReply]);
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === threadParent.id
+            ? { ...m, replyCount: (m.replyCount || 0) + 1 }
+            : m
+        )
+      );
+    } else {
+      setThreadReplyText(content);
+    }
+  };
+
+  const handleToggleReaction = useCallback(async (messageId, emoji) => {
+    await toggleReaction(messageId, emoji);
+    if (threadParent?.id === messageId || threadReplies.some((r) => r.id === messageId)) {
+      const updated = await getThreadReplies(threadParent.id);
+      setThreadReplies(updated);
+    } else {
+      const latestMsg = messages[messages.length - 1];
+      const since = latestMsg?.createdAt
+        ? new Date(latestMsg.createdAt).getTime()
+        : undefined;
+      const updated = await getMessages(conversationId, since);
+      setMessages((prev) => {
+        const existingIds = new Set(prev.map((m) => m.id));
+        const unique = updated.filter((m) => !existingIds.has(m.id));
+        const merged = prev.map((m) => {
+          const found = updated.find((u) => u.id === m.id);
+          return found || m;
+        });
+        return unique.length > 0 ? [...merged, ...unique] : merged;
+      });
+    }
+  }, [messages, threadParent, threadReplies, conversationId]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -254,7 +342,7 @@ export function ChatThreadClient({
           const showSenderName = isChannel && !isMine;
 
           return (
-            <div key={msg.id}>
+            <div key={msg.id} className="group">
               {showDateSep && (
                 <div className="flex justify-center my-3">
                   <span className="text-[10px] text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
@@ -270,23 +358,83 @@ export function ChatThreadClient({
               <div
                 className={`flex ${isMine ? "justify-end" : "justify-start"} mb-1`}
               >
-                <div
-                  className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm leading-relaxed ${
-                    isMine
-                      ? "bg-primary text-primary-foreground rounded-br-sm"
-                      : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-sm"
-                  }`}
-                >
-                  <p className="whitespace-pre-wrap break-words">{msg.content}</p>
-                  <p
-                    className={`text-[10px] mt-1 ${
+                <div className="max-w-[75%]">
+                  <div
+                    className={`px-3 py-2 rounded-2xl text-sm leading-relaxed ${
                       isMine
-                        ? "text-primary-foreground/60"
-                        : "text-gray-400"
+                        ? "bg-primary text-primary-foreground rounded-br-sm"
+                        : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-sm"
                     }`}
                   >
-                    {formatMessageTime(msg.createdAt)}
-                  </p>
+                    <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                    <p
+                      className={`text-[10px] mt-1 ${
+                        isMine
+                          ? "text-primary-foreground/60"
+                          : "text-gray-400"
+                      }`}
+                    >
+                      {formatMessageTime(msg.createdAt)}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1 mt-0.5 px-1">
+                    {msg.reactions?.map((r) => (
+                      <button
+                        key={r.emoji}
+                        onClick={() => handleToggleReaction(msg.id, r.emoji)}
+                        className={`text-xs px-1.5 py-0.5 rounded-full border transition-colors cursor-pointer ${
+                          r.hasReacted
+                            ? "bg-primary/10 border-primary/30 text-primary"
+                            : "bg-transparent border-gray-200 dark:border-gray-700 text-gray-500"
+                        }`}
+                      >
+                        {r.emoji} {r.count}
+                      </button>
+                    ))}
+                    <div className="relative">
+                      <button
+                        onClick={() =>
+                          setShowEmojiPicker(
+                            showEmojiPicker === msg.id ? null : msg.id
+                          )
+                        }
+                        className="text-xs p-0.5 rounded-full border border-transparent hover:border-gray-200 dark:hover:border-gray-700 text-gray-400 hover:text-gray-600 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
+                      >
+                        <Smile className="w-3.5 h-3.5" />
+                      </button>
+                      {showEmojiPicker === msg.id && (
+                        <div className="absolute bottom-full left-0 mb-1 flex gap-0.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-1 shadow-lg z-10">
+                          {COMMON_EMOJIS.map((emoji) => (
+                            <button
+                              key={emoji}
+                              onClick={() => {
+                                handleToggleReaction(msg.id, emoji);
+                                setShowEmojiPicker(null);
+                              }}
+                              className="text-sm p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded cursor-pointer"
+                            >
+                              {emoji}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleOpenThread(msg)}
+                      className="text-[10px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors ml-auto flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
+                    >
+                      <MessageSquare className="w-3 h-3" />
+                      Reply
+                    </button>
+                  </div>
+                  {msg.replyCount > 0 && (
+                    <button
+                      onClick={() => handleOpenThread(msg)}
+                      className="text-[11px] text-primary hover:text-primary/80 transition-colors ml-1 mt-0.5 cursor-pointer"
+                    >
+                      {msg.replyCount} {msg.replyCount === 1 ? "reply" : "replies"}
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -449,6 +597,119 @@ export function ChatThreadClient({
             )}
           </div>
         </div>
+      )}
+
+      {threadParent && (
+        <>
+          <div
+            className="fixed inset-0 bg-black/20 z-40 md:hidden"
+            onClick={handleCloseThread}
+          />
+          <div
+            className={`fixed z-50 flex flex-col bg-white dark:bg-gray-900 ${
+              // mobile: full-screen; desktop: right slide-over
+              "inset-0 md:inset-y-4 md:right-4 md:left-auto md:w-[380px] md:rounded-xl md:shadow-xl md:border md:border-gray-200 dark:md:border-gray-700"
+            }`}
+          >
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 shrink-0">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCloseThread}
+                  className="md:hidden p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                </button>
+                <h3 className="text-sm font-semibold">Thread</h3>
+              </div>
+              <button
+                onClick={handleCloseThread}
+                className="hidden md:block p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto flex-1 px-4 py-3 space-y-3">
+              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
+                <div className="flex items-center gap-2 mb-1">
+                  <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <span className="text-[10px] font-semibold text-primary">
+                      {threadParent.senderName?.charAt(0)?.toUpperCase() || "?"}
+                    </span>
+                  </div>
+                  <p className="text-xs font-medium">{threadParent.senderName}</p>
+                  <p className="text-[10px] text-gray-400">{formatMessageTime(threadParent.createdAt)}</p>
+                </div>
+                <p className="text-sm whitespace-pre-wrap break-words">{threadParent.content}</p>
+              </div>
+
+              <div className="border-t border-gray-100 dark:border-gray-800 pt-3 space-y-3">
+                {threadReplies.length === 0 && (
+                  <p className="text-center text-xs text-gray-400 py-4">No replies yet</p>
+                )}
+                {threadReplies.map((reply) => {
+                  const isMine = reply.senderId === userId;
+                  return (
+                    <div key={reply.id}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                          <span className="text-[10px] font-semibold text-primary">
+                            {reply.senderName?.charAt(0)?.toUpperCase() || "?"}
+                          </span>
+                        </div>
+                        <p className="text-xs font-medium">{reply.senderName}</p>
+                        <p className="text-[10px] text-gray-400">{formatMessageTime(reply.createdAt)}</p>
+                      </div>
+                      <div className="ml-8">
+                        <p className="text-sm whitespace-pre-wrap break-words">{reply.content}</p>
+                        <div className="flex items-center gap-1 mt-1">
+                          {reply.reactions?.map((r) => (
+                            <button
+                              key={r.emoji}
+                              onClick={() => handleToggleReaction(reply.id, r.emoji)}
+                              className={`text-xs px-1.5 py-0.5 rounded-full border transition-colors cursor-pointer ${
+                                r.hasReacted
+                                  ? "bg-primary/10 border-primary/30 text-primary"
+                                  : "bg-transparent border-gray-200 dark:border-gray-700 text-gray-500"
+                              }`}
+                            >
+                              {r.emoji} {r.count}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 shrink-0">
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  placeholder="Reply in thread..."
+                  value={threadReplyText}
+                  onChange={(e) => setThreadReplyText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      handleThreadSend();
+                    }
+                  }}
+                  className="flex-1 px-4 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+                <button
+                  onClick={handleThreadSend}
+                  disabled={!threadReplyText.trim() || sendingThreadReply}
+                  className="p-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  <Send className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

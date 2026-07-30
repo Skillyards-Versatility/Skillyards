@@ -1,7 +1,7 @@
 "use server";
 
-import { db, users, conversations, conversationParticipants, messages } from "@repo/db";
-import { eq, and, ne, desc, sql, inArray } from "drizzle-orm";
+import { db, users, conversations, conversationParticipants, messages, messageReactions } from "@repo/db";
+import { eq, and, ne, desc, sql, inArray, isNull } from "drizzle-orm";
 import { getSession } from "@/lib/auth";
 import webPush from "web-push";
 
@@ -52,10 +52,12 @@ export async function getOrCreateConversation(otherUserId) {
     const [match] = await db
       .select({ conversationId: conversationParticipants.conversationId })
       .from(conversationParticipants)
+      .innerJoin(conversations, eq(conversationParticipants.conversationId, conversations.id))
       .where(
         and(
           inArray(conversationParticipants.conversationId, myConvIds),
-          eq(conversationParticipants.userId, otherUserId)
+          eq(conversationParticipants.userId, otherUserId),
+          eq(conversations.type, "dm")
         )
       )
       .limit(1);
@@ -455,7 +457,10 @@ export async function getMessages(conversationId, since) {
 
   if (!participation) return [];
 
-  const conditions = [eq(messages.conversationId, conversationId)];
+  const conditions = [
+    eq(messages.conversationId, conversationId),
+    isNull(messages.parentId),
+  ];
   if (since) {
     conditions.push(sql`${messages.createdAt} > ${new Date(since)}`);
   }
@@ -467,16 +472,38 @@ export async function getMessages(conversationId, since) {
       createdAt: messages.createdAt,
       senderId: messages.senderId,
       senderName: users.name,
+      parentId: messages.parentId,
+      replyCount: sql`(SELECT COUNT(*) FROM ${messages} AS r WHERE r.parent_id = ${messages.id})::int`,
+      reactions: sql`COALESCE(
+        json_agg(
+          json_build_object('emoji', mr.emoji, 'count', mr.cnt, 'hasReacted', mr.has_reacted)
+          ORDER BY mr.emoji
+        ) FILTER (WHERE mr.emoji IS NOT NULL),
+        '[]'::json
+      )`,
     })
     .from(messages)
     .innerJoin(users, eq(messages.senderId, users.id))
+    .leftJoin(
+      sql`(
+        SELECT
+          r.message_id,
+          r.emoji,
+          COUNT(*)::int AS cnt,
+          bool_or(r.user_id = ${userId}) AS has_reacted
+        FROM ${messageReactions} AS r
+        GROUP BY r.message_id, r.emoji
+      ) AS mr`,
+      eq(messages.id, sql`mr.message_id`)
+    )
     .where(and(...conditions))
+    .groupBy(messages.id, users.name)
     .orderBy(messages.createdAt);
 
   return msgs;
 }
 
-export async function sendMessage(conversationId, content) {
+export async function sendMessage(conversationId, content, parentId) {
   const session = await getSession();
   if (!session) return { success: false, error: "Not authenticated" };
 
@@ -497,9 +524,12 @@ export async function sendMessage(conversationId, content) {
     return { success: false, error: "Not a participant" };
   }
 
+  const insertValues = { conversationId, senderId: userId, content };
+  if (parentId) insertValues.parentId = parentId;
+
   const [message] = await db
     .insert(messages)
-    .values({ conversationId, senderId: userId, content })
+    .values(insertValues)
     .returning();
 
   await db
@@ -549,6 +579,99 @@ export async function sendMessage(conversationId, content) {
   }
 
   return { success: true, message };
+}
+
+export async function getParentMessage(messageId) {
+  const session = await getSession();
+  if (!session) return null;
+
+  const [msg] = await db
+    .select({
+      id: messages.id,
+      content: messages.content,
+      createdAt: messages.createdAt,
+      senderId: messages.senderId,
+      senderName: users.name,
+    })
+    .from(messages)
+    .innerJoin(users, eq(messages.senderId, users.id))
+    .where(eq(messages.id, messageId))
+    .limit(1);
+
+  return msg || null;
+}
+
+export async function getThreadReplies(messageId) {
+  const session = await getSession();
+  if (!session) return [];
+
+  const userId = session.userId;
+
+  const replies = await db
+    .select({
+      id: messages.id,
+      content: messages.content,
+      createdAt: messages.createdAt,
+      senderId: messages.senderId,
+      senderName: users.name,
+      reactions: sql`COALESCE(
+        json_agg(
+          json_build_object('emoji', mr.emoji, 'count', mr.cnt, 'hasReacted', mr.has_reacted)
+          ORDER BY mr.emoji
+        ) FILTER (WHERE mr.emoji IS NOT NULL),
+        '[]'::json
+      )`,
+    })
+    .from(messages)
+    .innerJoin(users, eq(messages.senderId, users.id))
+    .leftJoin(
+      sql`(
+        SELECT
+          r.message_id,
+          r.emoji,
+          COUNT(*)::int AS cnt,
+          bool_or(r.user_id = ${userId}) AS has_reacted
+        FROM ${messageReactions} AS r
+        GROUP BY r.message_id, r.emoji
+      ) AS mr`,
+      eq(messages.id, sql`mr.message_id`)
+    )
+    .where(eq(messages.parentId, messageId))
+    .groupBy(messages.id, users.name)
+    .orderBy(messages.createdAt);
+
+  return replies;
+}
+
+export async function toggleReaction(messageId, emoji) {
+  const session = await getSession();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  const userId = session.userId;
+
+  const [existing] = await db
+    .select()
+    .from(messageReactions)
+    .where(
+      and(
+        eq(messageReactions.messageId, messageId),
+        eq(messageReactions.userId, userId),
+        eq(messageReactions.emoji, emoji)
+      )
+    )
+    .limit(1);
+
+  if (existing) {
+    await db
+      .delete(messageReactions)
+      .where(eq(messageReactions.id, existing.id));
+  } else {
+    await db
+      .insert(messageReactions)
+      .values({ messageId, userId, emoji });
+  }
+
+  return { success: true };
 }
 
 export async function markAsRead(conversationId) {
