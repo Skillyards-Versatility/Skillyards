@@ -188,6 +188,14 @@ export function ChatClient({
 
   const handleReact = useCallback(
     async (messageId, emoji) => {
+      // Optimistic update
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === messageId
+            ? { ...m, reactions: [...(m.reactions || []), { messageId, emoji, userId: currentUser.id }] }
+            : m
+        )
+      );
       try {
         await fetch(`/api/messages/${messageId}/reactions`, {
           method: "POST",
@@ -198,11 +206,19 @@ export function ChatClient({
         console.error("Failed to add reaction:", err);
       }
     },
-    []
+    [currentUser]
   );
 
   const handleRemoveReaction = useCallback(
     async (messageId, emoji) => {
+      // Optimistic update
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === messageId
+            ? { ...m, reactions: (m.reactions || []).filter((r) => !(r.userId === currentUser.id && r.emoji === emoji)) }
+            : m
+        )
+      );
       try {
         await fetch(`/api/messages/${messageId}/reactions`, {
           method: "DELETE",
@@ -213,7 +229,7 @@ export function ChatClient({
         console.error("Failed to remove reaction:", err);
       }
     },
-    []
+    [currentUser]
   );
 
   const handleReply = useCallback(
