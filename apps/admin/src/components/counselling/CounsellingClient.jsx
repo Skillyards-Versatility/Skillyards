@@ -36,7 +36,7 @@ const SOURCE_BADGES = {
   referral: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
 };
 
-export function CounsellingClient({ isAdmin = false, counselors = [] }) {
+export function CounsellingClient({ isAdmin = false, counselors = [], batches = [] }) {
   const today = getIstDate();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -201,7 +201,24 @@ export function CounsellingClient({ isAdmin = false, counselors = [] }) {
             </div>
             <div>
               <label className="text-xs font-medium block mb-1">Course Interest</label>
-              <input className="input w-full" value={form.courseInterest} onChange={(e) => setForm({ ...form, courseInterest: e.target.value })} placeholder="e.g., Full Stack" />
+              <select 
+                className="input w-full" 
+                value={form.courseInterest} 
+                onChange={(e) => setForm({ ...form, courseInterest: e.target.value })}
+              >
+                <option value="">Select a Batch/Course</option>
+                {Array.from(new Set(batches.filter(b => b.status === "active").map(b => b.courseName))).map(courseName => (
+                  <optgroup key={courseName} label={courseName}>
+                    {batches
+                      .filter(b => b.status === "active" && b.courseName === courseName)
+                      .map(b => (
+                        <option key={b.id} value={`${b.courseName} - ${b.name}`}>
+                          {b.name}
+                        </option>
+                      ))}
+                  </optgroup>
+                ))}
+              </select>
             </div>
             <div>
               <label className="text-xs font-medium block mb-1">Source</label>
