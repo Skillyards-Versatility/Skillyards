@@ -22,11 +22,11 @@ export async function getCounsellingSessions({ startDate, endDate, source, outco
   return res.json();
 }
 
-export async function createCounsellingSession({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, counselorId }) {
+export async function createCounsellingSession({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, counselorId, imageKey }) {
   const res = await fetch(`${API}/api/counselling-sessions`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...(await authHeaders()) },
-    body: JSON.stringify({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, counselorId }),
+    body: JSON.stringify({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, counselorId, imageKey }),
   });
   return res.json();
 }
