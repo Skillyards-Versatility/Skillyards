@@ -16,5 +16,6 @@ export const users = pgTable("users", {
   statusEmoji: text("status_emoji"),
   statusText: text("status_text"),
   statusClearAt: timestamp("status_clear_at"),
+  lastSeenAt: timestamp("last_seen_at"),
   createdAt: timestamp("created_at").defaultNow()
 });
