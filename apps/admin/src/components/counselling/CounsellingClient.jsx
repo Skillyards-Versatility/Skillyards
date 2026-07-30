@@ -11,6 +11,7 @@ const SOURCE_OPTIONS = [
   { value: "walk_in", label: "Walk-in" },
   { value: "phone", label: "Phone" },
   { value: "referral", label: "Referral" },
+  { value: "qsp", label: "QSP" },
 ];
 
 const OUTCOME_OPTIONS = [
@@ -34,6 +35,7 @@ const SOURCE_BADGES = {
   walk_in: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
   phone: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
   referral: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
+  qsp: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20",
 };
 
 export function CounsellingClient({ isAdmin = false, counselors = [], batches = [] }) {
@@ -226,6 +228,7 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
                 <option value="walk_in">Walk-in</option>
                 <option value="phone">Phone</option>
                 <option value="referral">Referral</option>
+                <option value="qsp">QSP</option>
               </select>
             </div>
             <div>
