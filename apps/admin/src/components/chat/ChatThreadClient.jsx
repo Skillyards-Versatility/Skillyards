@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, Hash } from "lucide-react";
 import { getMessages, sendMessage, markAsRead } from "@/actions/chat";
 
 function formatMessageTime(dateStr) {
@@ -45,7 +45,7 @@ function shouldShowDateSeparator(currentMsg, previousMsg) {
 export function ChatThreadClient({
   conversationId,
   userId,
-  otherUserName,
+  convInfo,
   initialMessages,
 }) {
   const router = useRouter();
@@ -54,6 +54,10 @@ export function ChatThreadClient({
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  const isChannel = convInfo?.type === "channel";
+  const headerTitle = isChannel ? `# ${convInfo?.name || "channel"}` : (convInfo?.otherUserName || "Unknown");
+  const headerSubtitle = isChannel ? null : convInfo?.otherUserRole;
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -91,9 +95,7 @@ export function ChatThreadClient({
 
   useEffect(() => {
     const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
-        fetchMessages();
-      }
+      if (document.visibilityState === "visible") fetchMessages();
     };
     document.addEventListener("visibilitychange", handleVisibility);
     return () => document.removeEventListener("visibilitychange", handleVisibility);
@@ -147,13 +149,22 @@ export function ChatThreadClient({
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
-        <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-          <span className="text-sm font-semibold text-primary">
-            {otherUserName?.charAt(0)?.toUpperCase() || "?"}
-          </span>
-        </div>
+        {isChannel ? (
+          <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center shrink-0">
+            <Hash className="w-4 h-4 text-blue-500" />
+          </div>
+        ) : (
+          <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+            <span className="text-sm font-semibold text-primary">
+              {convInfo?.otherUserName?.charAt(0)?.toUpperCase() || "?"}
+            </span>
+          </div>
+        )}
         <div>
-          <p className="font-semibold text-sm">{otherUserName}</p>
+          <p className="font-semibold text-sm">{headerTitle}</p>
+          {headerSubtitle && (
+            <p className="text-xs text-gray-500">{headerSubtitle}</p>
+          )}
         </div>
       </div>
 
@@ -161,6 +172,7 @@ export function ChatThreadClient({
         {messages.map((msg, idx) => {
           const isMine = msg.senderId === userId;
           const showDateSep = shouldShowDateSeparator(msg, messages[idx - 1]);
+          const showSenderName = isChannel && !isMine;
 
           return (
             <div key={msg.id}>
@@ -170,6 +182,11 @@ export function ChatThreadClient({
                     {formatMessageDate(msg.createdAt)}
                   </span>
                 </div>
+              )}
+              {showSenderName && (
+                <p className="text-[11px] font-medium text-gray-500 mt-2 mb-0.5 ml-1">
+                  {msg.senderName}
+                </p>
               )}
               <div
                 className={`flex ${isMine ? "justify-end" : "justify-start"} mb-1`}
@@ -204,7 +221,7 @@ export function ChatThreadClient({
           <input
             ref={inputRef}
             type="text"
-            placeholder="Type a message..."
+            placeholder={isChannel ? `Message #${convInfo?.name || "channel"}` : "Type a message..."}
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyDown={handleKeyDown}
