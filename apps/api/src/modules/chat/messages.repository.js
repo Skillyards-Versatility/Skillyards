@@ -39,7 +39,7 @@ export async function getThreadReplies(db, parentId) {
   return db
     .select()
     .from(messages)
-    .where(and(eq(messages.parentId, parentId), isNull(messages.deletedAt)))
+    .where(eq(messages.parentId, parentId))
     .orderBy(asc(messages.createdAt));
 }
 

@@ -64,7 +64,10 @@ export function ChatClient({
 
     es.addEventListener("message_deleted", (e) => {
       const { messageId } = JSON.parse(e.data);
-      setMessages((prev) => prev.filter((m) => m.id !== messageId));
+      const now = new Date().toISOString();
+      setMessages((prev) => prev.map((m) => m.id === messageId ? { ...m, deletedAt: now } : m));
+      setThreadReplies((prev) => prev.map((m) => m.id === messageId ? { ...m, deletedAt: now } : m));
+      setThreadParent((prev) => prev?.id === messageId ? { ...prev, deletedAt: now } : prev);
     });
 
     es.addEventListener("reaction_added", (e) => {
@@ -185,9 +188,10 @@ export function ChatClient({
   const handleDelete = useCallback(
     async (messageId) => {
       // Optimistic update
-      setMessages((prev) => prev.filter((m) => m.id !== messageId));
-      setThreadReplies((prev) => prev.filter((m) => m.id !== messageId));
-      setThreadParent((prev) => prev?.id === messageId ? null : prev);
+      const now = new Date().toISOString();
+      setMessages((prev) => prev.map((m) => m.id === messageId ? { ...m, deletedAt: now } : m));
+      setThreadReplies((prev) => prev.map((m) => m.id === messageId ? { ...m, deletedAt: now } : m));
+      setThreadParent((prev) => prev?.id === messageId ? { ...prev, deletedAt: now } : prev);
       try {
         await fetch(`/api/messages/${messageId}`, { method: "DELETE" });
       } catch (err) {

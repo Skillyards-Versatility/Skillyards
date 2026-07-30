@@ -23,10 +23,7 @@ export default async function DmPage({ params }) {
     .select()
     .from(messages)
     .where(
-      and(
-        eq(messages.conversationId, conversationId),
-        isNull(messages.deletedAt)
-      )
+      eq(messages.conversationId, conversationId)
     )
     .orderBy(desc(messages.createdAt))
     .limit(100);

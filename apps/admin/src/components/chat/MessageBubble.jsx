@@ -94,6 +94,10 @@ export function MessageBubble({
               Cancel
             </button>
           </div>
+        ) : message.deletedAt ? (
+          <p className={`text-sm italic text-muted-foreground ${isOwn ? "text-right" : ""}`}>
+            This message was deleted.
+          </p>
         ) : (
           <p className={`text-sm text-foreground whitespace-pre-wrap break-words ${isOwn ? "text-right" : ""}`}>
             {message.content}
@@ -103,7 +107,7 @@ export function MessageBubble({
           </p>
         )}
 
-        {groupedReactions.length > 0 && (
+        {!message.deletedAt && groupedReactions.length > 0 && (
           <div className={`flex gap-1 mt-1.5 flex-wrap max-w-full ${isOwn ? "justify-end" : ""}`}>
             {groupedReactions.map((r) => {
               const hasReacted = r.users.includes(message._currentUserId);
@@ -127,7 +131,7 @@ export function MessageBubble({
             })}
           </div>
         )}
-        {showThread && replyCount > 0 && (
+        {!message.deletedAt && showThread && replyCount > 0 && (
           <div className={`mt-1 flex ${isOwn ? "justify-end" : ""}`}>
             <button
               onClick={() => showThread(message)}
@@ -140,51 +144,53 @@ export function MessageBubble({
         )}
       </div>
 
-      <div className={`absolute hidden group-hover:flex items-center gap-0.5 bg-background border border-border rounded-lg shadow-sm px-1 py-0.5 -top-2 z-10 ${isOwn ? "right-4" : "right-4"}`}>
-        <button
-          onClick={() => onReply?.(message)}
-          className="shrink-0 p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
-          title="Reply"
-        >
-          <Reply className="w-3.5 h-3.5" />
-        </button>
-        <div className="shrink-0 relative">
+      {!message.deletedAt && (
+        <div className={`absolute hidden group-hover:flex items-center gap-0.5 bg-background border border-border rounded-lg shadow-sm px-1 py-0.5 -bottom-3 z-10 ${isOwn ? "right-4" : "right-4"}`}>
           <button
-            onClick={() => setShowReactions(!showReactions)}
-            className="p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
-            title="React"
+            onClick={() => onReply?.(message)}
+            className="shrink-0 p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
+            title="Reply"
           >
-            <SmilePlus className="w-3.5 h-3.5" />
+            <Reply className="w-3.5 h-3.5" />
           </button>
-          {showReactions && (
-            <ReactionPicker
-              onSelect={(emoji) => {
-                if (emoji) onReact?.(message.id, emoji);
-                setShowReactions(false);
-              }}
-              className={isOwn ? "right-0" : "left-0"}
-            />
+          <div className="shrink-0 relative">
+            <button
+              onClick={() => setShowReactions(!showReactions)}
+              className="p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
+              title="React"
+            >
+              <SmilePlus className="w-3.5 h-3.5" />
+            </button>
+            {showReactions && (
+              <ReactionPicker
+                onSelect={(emoji) => {
+                  if (emoji) onReact?.(message.id, emoji);
+                  setShowReactions(false);
+                }}
+                className={isOwn ? "right-0" : "left-0"}
+              />
+            )}
+          </div>
+          {isOwn && (
+            <>
+              <button
+                onClick={() => setEditing(true)}
+                className="shrink-0 p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
+                title="Edit"
+              >
+                <Edit2 className="w-3.5 h-3.5" />
+              </button>
+              <button
+                onClick={() => onDelete?.(message.id)}
+                className="shrink-0 p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-destructive"
+                title="Delete"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </>
           )}
         </div>
-        {isOwn && (
-          <>
-            <button
-              onClick={() => setEditing(true)}
-              className="shrink-0 p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
-              title="Edit"
-            >
-              <Edit2 className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={() => onDelete?.(message.id)}
-              className="shrink-0 p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-destructive"
-              title="Delete"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          </>
-        )}
-      </div>
+      )}
     </div>
   );
 }

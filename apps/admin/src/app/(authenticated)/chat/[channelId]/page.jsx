@@ -34,10 +34,7 @@ export default async function ChannelPage({ params }) {
     .select()
     .from(messages)
     .where(
-      and(
-        eq(messages.channelId, channelId),
-        isNull(messages.deletedAt)
-      )
+      eq(messages.channelId, channelId)
     )
     .orderBy(desc(messages.createdAt))
     .limit(100);
