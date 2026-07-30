@@ -1,4 +1,5 @@
 import { db, messages, messageReactions, users, conversationParticipants } from "@repo/db";
+import { getTypingUserIds } from "@/modules/chat/typing.store";
 import { eq, and, gt, isNull, inArray, sql } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
 
@@ -54,6 +55,15 @@ async function getHandler(req, { ctx, context }) {
           for (const r of removedReactions) {
             if (closed) return;
             controller.enqueue(`event: reaction_removed\ndata: ${JSON.stringify(r)}\n\n`);
+          }
+
+          const typingUserIds = getTypingUserIds(id);
+          if (typingUserIds.length > 0) {
+            const typingUsers = await db
+              .select({ id: users.id, name: users.name })
+              .from(users)
+              .where(inArray(users.id, typingUserIds));
+            controller.enqueue(`event: typing\ndata: ${JSON.stringify({ users: typingUsers })}\n\n`);
           }
 
           controller.enqueue(`event: heartbeat\ndata: {}\n\n`);

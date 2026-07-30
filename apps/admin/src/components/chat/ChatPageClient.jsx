@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { MessageCircle, Plus, Search, ArrowLeft, Hash, User, Users, Check } from "lucide-react";
-import { getOrCreateConversation, getMyConversations, ensureTeamChannels, createChannel } from "@/actions/chat";
+import { getOrCreateConversation, getMyConversations, ensureTeamChannels, createChannel, getAvailableChannels, joinChannel } from "@/actions/chat";
 
 function formatTime(dateStr) {
   if (!dateStr) return "";
@@ -19,6 +19,18 @@ function formatTime(dateStr) {
   return d.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
 }
 
+function useVisibilityRefresh(cb) {
+  const cbRef = useRef(cb);
+  cbRef.current = cb;
+  useEffect(() => {
+    const handler = () => {
+      if (document.visibilityState === "visible") cbRef.current();
+    };
+    document.addEventListener("visibilitychange", handler);
+    return () => document.removeEventListener("visibilitychange", handler);
+  }, []);
+}
+
 export function ChatPageClient({ userId, conversations: initialConversations, users: allUsers }) {
   const router = useRouter();
   const [conversations, setConversations] = useState(initialConversations);
@@ -31,18 +43,21 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
   const [channelError, setChannelError] = useState("");
   const [selectedChannelMembers, setSelectedChannelMembers] = useState(new Set());
   const [channelMemberSearch, setChannelMemberSearch] = useState("");
+  const [showBrowseChannels, setShowBrowseChannels] = useState(false);
+  const [availableChannels, setAvailableChannels] = useState([]);
 
   const refreshConversations = useCallback(async () => {
-    await ensureTeamChannels();
     const convs = await getMyConversations();
     setConversations(convs);
   }, []);
 
   useEffect(() => {
-    refreshConversations();
-    const interval = setInterval(refreshConversations, 30000);
+    ensureTeamChannels().then(refreshConversations);
+    const interval = setInterval(refreshConversations, 60000);
     return () => clearInterval(interval);
   }, [refreshConversations]);
+
+  useVisibilityRefresh(refreshConversations);
 
   const handleNewChat = async (otherUserId) => {
     setLoading(true);
@@ -106,6 +121,13 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
                 >
                   <Hash className="w-4 h-4" />
                   New Channel
+                </button>
+                <button
+                  onClick={async () => { setShowNewMenu(false); const chs = await getAvailableChannels(); setAvailableChannels(chs); setShowBrowseChannels(true); }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+                >
+                  <Search className="w-4 h-4" />
+                  Browse Channels
                 </button>
               </div>
             </>
@@ -282,6 +304,65 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
                     )}
                   </button>
                 ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showBrowseChannels && (
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-t-2xl md:rounded-xl shadow-xl w-full md:max-w-md md:mx-4 max-h-[75vh] flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-sm font-semibold flex items-center gap-2">
+                <Hash className="w-4 h-4" />
+                Browse Channels
+              </h2>
+              <button
+                onClick={() => setShowBrowseChannels(false)}
+                className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              {availableChannels.length === 0 ? (
+                <p className="text-center text-sm text-gray-400 py-8">No channels available</p>
+              ) : (
+                availableChannels.map((ch) => {
+                  const isMember = channels.some((c) => c.conversationId === ch.id);
+                  return (
+                    <div key={ch.id} className="flex items-center gap-3 px-4 py-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center shrink-0">
+                        <Hash className="w-4 h-4 text-blue-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium"># {ch.name}</p>
+                        <p className="text-xs text-gray-500">{ch.participantCount} member{ch.participantCount !== 1 ? "s" : ""}</p>
+                      </div>
+                      {isMember ? (
+                        <button
+                          onClick={() => { setShowBrowseChannels(false); router.push(`/chat/${ch.id}`); }}
+                          className="px-3 py-1 text-xs font-medium rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors cursor-pointer"
+                        >
+                          Open
+                        </button>
+                      ) : (
+                        <button
+                          onClick={async () => {
+                            await joinChannel(ch.id);
+                            const convs = await getMyConversations();
+                            setConversations(convs);
+                            setAvailableChannels(await getAvailableChannels());
+                          }}
+                          className="px-3 py-1 text-xs font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors cursor-pointer"
+                        >
+                          Join
+                        </button>
+                      )}
+                    </div>
+                  );
+                })
               )}
             </div>
           </div>

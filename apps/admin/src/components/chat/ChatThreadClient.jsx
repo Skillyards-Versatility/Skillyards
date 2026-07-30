@@ -16,6 +16,8 @@ import {
   toggleReaction,
   editMessage,
   deleteMessage,
+  getReadReceipts,
+  leaveChannel,
 } from "@/actions/chat";
 import { getUsers } from "@/actions/users";
 
@@ -51,6 +53,37 @@ function shouldShowDateSeparator(currentMsg, previousMsg) {
 }
 
 const COMMON_EMOJIS = ["👍", "❤️", "😄", "😮", "😢", "😡"];
+
+function MarkdownContent({ content }) {
+  const parts = [];
+  let remaining = content;
+  let idx = 0;
+
+  const regex = /(`{1,3})(.*?)\1|(\*\*|__)(.*?)\4|(\*|_)(.*?)\5|(https?:\/\/[^\s<]+)/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(content)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(<span key={idx++}>{content.slice(lastIndex, match.index)}</span>);
+    }
+    if (match[1]) {
+      parts.push(<code key={idx++} className="bg-gray-200 dark:bg-gray-700 px-1 rounded text-xs font-mono">{match[2]}</code>);
+    } else if (match[3]) {
+      parts.push(<strong key={idx++}>{match[4]}</strong>);
+    } else if (match[5]) {
+      parts.push(<em key={idx++}>{match[6]}</em>);
+    } else if (match[7]) {
+      parts.push(<a key={idx++} href={match[7]} target="_blank" rel="noopener noreferrer" className="underline text-blue-500 hover:text-blue-600">{match[7]}</a>);
+    }
+    lastIndex = regex.lastIndex;
+  }
+  if (lastIndex < content.length) {
+    parts.push(<span key={idx++}>{content.slice(lastIndex)}</span>);
+  }
+
+  return <span className="whitespace-pre-wrap break-words">{parts.length > 0 ? parts : content}</span>;
+}
 
 function EmojiPickerPanel({ onSelect, onClose }) {
   return (
@@ -126,12 +159,18 @@ export function ChatThreadClient({
   const [sendingThreadReply, setSendingThreadReply] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(null);
 
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [showConfirm, setShowConfirm] = useState(null);
   const [connectionStatus, setConnectionStatus] = useState("connecting");
+  const [readReceipts, setReadReceipts] = useState([]);
   const [editingMessageId, setEditingMessageId] = useState(null);
   const [editContent, setEditContent] = useState("");
   const [uploadingFile, setUploadingFile] = useState(false);
   const fileInputRef = useRef(null);
+
+  const [typingUsers, setTypingUsers] = useState([]);
+  const typingTimeoutRef = useRef(null);
+  const lastTypingEmitRef = useRef(0);
 
   const latestTimestampRef = useRef(
     initialMessages.length > 0
@@ -166,7 +205,22 @@ export function ChatThreadClient({
 
   useEffect(() => {
     markAsRead(conversationId);
+    return () => clearTimeout(typingTimeoutRef.current);
   }, [conversationId]);
+
+  useEffect(() => {
+    if (messages.length === 0) return;
+    getReadReceipts(conversationId).then(setReadReceipts).catch(() => {});
+  }, [messages.length, conversationId]);
+
+  const presenceIntervalRef = useRef(null);
+  useEffect(() => {
+    fetch("/api/users/presence", { method: "PATCH" }).catch(() => {});
+    presenceIntervalRef.current = setInterval(() => {
+      fetch("/api/users/presence", { method: "PATCH" }).catch(() => {});
+    }, 60000);
+    return () => clearInterval(presenceIntervalRef.current);
+  }, []);
 
   useEffect(() => {
     if (isChannel) {
@@ -292,7 +346,14 @@ export function ChatThreadClient({
         );
       });
 
-      eventSource.addEventListener("heartbeat", () => {});
+      eventSource.addEventListener("typing", (e) => {
+        const { users: typing } = JSON.parse(e.data);
+        setTypingUsers(typing.filter((u) => u.id !== userId));
+      });
+
+      eventSource.addEventListener("heartbeat", () => {
+        setTypingUsers([]);
+      });
 
       eventSource.onerror = () => {
         eventSource.close();
@@ -402,11 +463,11 @@ export function ChatThreadClient({
     if (!content || sending) return;
 
     setSending(true);
-    setNewMessage("");
 
     try {
       const result = await sendMessage(conversationId, content);
       if (result.success) {
+        setNewMessage("");
         setMessages((prev) => [
           ...prev,
           {
@@ -422,16 +483,27 @@ export function ChatThreadClient({
           },
         ]);
       } else {
-        setNewMessage(content);
         toast.error(result.error || "Failed to send");
       }
     } catch {
-      setNewMessage(content);
       toast.error("Failed to send message");
     } finally {
       setSending(false);
     }
   };
+
+  const emitTyping = useCallback(() => {
+    const now = Date.now();
+    if (now - lastTypingEmitRef.current < 3000) return;
+    lastTypingEmitRef.current = now;
+    fetch(`/api/conversations/${conversationId}/typing`, { method: "POST" }).catch(() => {});
+  }, [conversationId]);
+
+  const handleInputChange = useCallback((e) => {
+    setNewMessage(e.target.value);
+    clearTimeout(typingTimeoutRef.current);
+    typingTimeoutRef.current = setTimeout(emitTyping, 500);
+  }, [emitTyping]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -658,13 +730,18 @@ export function ChatThreadClient({
             <Hash className="w-4 h-4 text-blue-500" />
           </div>
         ) : (
-          <div className="w-9 h-9 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
-            {otherUserAvatar ? (
-              <img src={otherUserAvatar} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-sm font-semibold text-primary">
-                {convInfo?.otherUserName?.charAt(0)?.toUpperCase() || "?"}
-              </span>
+          <div className="relative w-9 h-9 shrink-0">
+            <div className="w-9 h-9 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center">
+              {otherUserAvatar ? (
+                <img src={otherUserAvatar} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-sm font-semibold text-primary">
+                  {convInfo?.otherUserName?.charAt(0)?.toUpperCase() || "?"}
+                </span>
+              )}
+            </div>
+            {convInfo?.otherUserLastSeen && Date.now() - new Date(convInfo.otherUserLastSeen).getTime() < 120000 && (
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full" />
             )}
           </div>
         )}
@@ -695,11 +772,34 @@ export function ChatThreadClient({
               {members.length || "..."}
             </button>
           )}
+          {readReceipts.length > 0 && (
+            <span className="text-[10px] text-gray-400 hidden md:block" title={`Seen by ${readReceipts.map((r) => r.name).join(", ")}`}>
+              Seen by {readReceipts.length}
+            </span>
+          )}
         </div>
       </div>
 
-      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
-        {messages.map((msg, idx) => {
+      {connectionStatus === "disconnected" && (
+        <div className="px-4 py-2 bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-900 shrink-0">
+          <p className="text-xs text-red-600 dark:text-red-400 text-center">Connection lost. Retrying...</p>
+        </div>
+      )}
+
+      <div ref={messagesContainerRef} onScroll={() => setShowScrollBtn(!isNearBottom())} className="flex-1 overflow-y-auto px-4 py-4 space-y-1 relative">
+        {messages.length === 0 ? (
+          <div className="space-y-3 animate-pulse">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="flex gap-2">
+                <div className="w-7 h-7 rounded-full bg-gray-200 dark:bg-gray-700 shrink-0" />
+                <div className="flex-1 space-y-1.5">
+                  <div className="h-3 w-24 bg-gray-200 dark:bg-gray-700 rounded" />
+                  <div className="h-8 w-3/4 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : messages.map((msg, idx) => {
           const isMine = msg.senderId === userId;
           const showDateSep = shouldShowDateSeparator(msg, messages[idx - 1]);
           const prevMsg = messages[idx - 1];
@@ -813,7 +913,7 @@ export function ChatThreadClient({
                             )}
                           </div>
                         )}
-                        <p className="whitespace-pre-wrap break-words">{msg.content}</p>
+                        <MarkdownContent content={msg.content} />
                         {!showHeader && (
                           <p className={`text-[9px] mt-1 ${isMine ? "text-left text-primary-foreground/60" : "text-right text-gray-400"}`}>
                             {msg.editedAt ? `edited ${formatMessageTime(msg.editedAt)}` : formatMessageTime(msg.createdAt)}
@@ -908,7 +1008,7 @@ export function ChatThreadClient({
             ref={inputRef}
             placeholder={isChannel ? `Message #${convInfo?.name || "channel"}` : "Type a message..."}
             value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             rows={1}
             className="flex-1 px-4 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none overflow-y-auto max-h-32"
@@ -949,13 +1049,18 @@ export function ChatThreadClient({
             <div className="flex-1 overflow-y-auto">
               {members.map((m) => (
                 <div key={m.userId} className="flex items-center gap-3 px-4 py-2.5">
-                  <div className="w-8 h-8 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
-                    {m.profileImageKey ? (
-                      <img src={`/api/files/${m.profileImageKey}`} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-xs font-semibold text-primary">
-                        {m.name?.charAt(0)?.toUpperCase() || "?"}
-                      </span>
+                  <div className="relative w-8 h-8 shrink-0">
+                    <div className="w-8 h-8 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center">
+                      {m.profileImageKey ? (
+                        <img src={`/api/files/${m.profileImageKey}`} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-xs font-semibold text-primary">
+                          {m.name?.charAt(0)?.toUpperCase() || "?"}
+                        </span>
+                      )}
+                    </div>
+                    {m.lastSeenAt && Date.now() - new Date(m.lastSeenAt).getTime() < 120000 && (
+                      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full" />
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -988,6 +1093,24 @@ export function ChatThreadClient({
               >
                 <Users className="w-4 h-4" />
                 Add Everyone
+              </button>
+              <button
+                onClick={() => {
+                  setShowConfirm({
+                    title: "Leave Channel",
+                    message: `Are you sure you want to leave #${convInfo?.name || "this channel"}?`,
+                    confirmLabel: "Leave",
+                    onConfirm: async () => {
+                      setShowConfirm(null);
+                      setShowMembersPanel(false);
+                      await leaveChannel(conversationId);
+                      router.push("/chat");
+                    },
+                  });
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2 text-sm font-medium rounded-lg border border-red-200 dark:border-red-900 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors cursor-pointer"
+              >
+                Leave Channel
               </button>
             </div>
           </div>
@@ -1106,7 +1229,7 @@ export function ChatThreadClient({
                   <p className="text-xs font-medium">{threadParent.senderName}</p>
                   <p className="text-[10px] text-gray-400">{formatMessageTime(threadParent.createdAt)}</p>
                 </div>
-                <p className="text-sm whitespace-pre-wrap break-words">{threadParent.content}</p>
+                <MarkdownContent content={threadParent.content} />
               </div>
 
               <div className="border-t border-gray-100 dark:border-gray-800 pt-3 space-y-3">
@@ -1134,7 +1257,7 @@ export function ChatThreadClient({
                         <p className="text-[10px] text-gray-400">{formatMessageTime(reply.createdAt)}</p>
                       </div>
                       <div className="ml-8">
-                        <p className="text-sm whitespace-pre-wrap break-words">{reply.content}</p>
+                        <MarkdownContent content={reply.content} />
                         <div className="flex items-center gap-1 mt-1">
                           {reply.reactions?.map((r) => (
                             <button
@@ -1158,7 +1281,24 @@ export function ChatThreadClient({
               </div>
             </div>
 
-            <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 shrink-0">
+      {showScrollBtn && (
+        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10">
+          <button
+            onClick={() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })}
+            className="px-3 py-1.5 text-xs font-medium rounded-full bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 shadow-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors cursor-pointer"
+          >
+            Scroll to bottom
+          </button>
+        </div>
+      )}
+
+      {typingUsers.length > 0 && (
+        <div className="px-4 py-1 text-xs text-gray-400 italic shrink-0">
+          {typingUsers.map((u) => u.name).join(", ")} {typingUsers.length === 1 ? "is" : "are"} typing...
+        </div>
+      )}
+
+      <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 shrink-0">
               <div className="flex items-center gap-2">
                 <input
                   type="text"

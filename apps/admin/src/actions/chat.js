@@ -427,7 +427,7 @@ export async function getConversationInfo(conversationId) {
   if (conv.type === "channel") return conv;
 
   const [other] = await db
-    .select({ name: users.name, role: users.role, profileImageKey: users.profileImageKey })
+    .select({ id: users.id, name: users.name, role: users.role, profileImageKey: users.profileImageKey, lastSeenAt: users.lastSeenAt })
     .from(conversationParticipants)
     .innerJoin(users, eq(conversationParticipants.userId, users.id))
     .where(
@@ -438,7 +438,32 @@ export async function getConversationInfo(conversationId) {
     )
     .limit(1);
 
-  return { ...conv, otherUserName: other?.name, otherUserRole: other?.role, otherUserProfileImageKey: other?.profileImageKey };
+  const otherUserLastSeen = other?.lastSeenAt || null;
+
+  return { ...conv, otherUserName: other?.name, otherUserRole: other?.role, otherUserProfileImageKey: other?.profileImageKey, otherUserLastSeen };
+}
+
+export async function getReadReceipts(conversationId) {
+  const session = await getSession();
+  if (!session) return [];
+
+  const receipts = await db
+    .select({
+      userId: conversationParticipants.userId,
+      name: users.name,
+      lastReadAt: conversationParticipants.lastReadAt,
+    })
+    .from(conversationParticipants)
+    .innerJoin(users, eq(conversationParticipants.userId, users.id))
+    .where(
+      and(
+        eq(conversationParticipants.conversationId, conversationId),
+        sql`${conversationParticipants.lastReadAt} IS NOT NULL`
+      )
+    )
+    .orderBy(conversationParticipants.lastReadAt);
+
+  return receipts.filter((r) => r.userId !== session.userId);
 }
 
 export async function getMessages(conversationId, since) {
