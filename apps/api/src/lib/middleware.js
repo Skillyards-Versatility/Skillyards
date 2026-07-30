@@ -65,11 +65,13 @@ export function createProtectedRoute(handler, { policy, resourceLoader, isPublic
 
       // 3. ── RESOURCE FETCH (Targeted Loading) ──
       const resourceId = (await context?.params)?.id;
-      const resource = (resourceId && resourceLoader) ? await resourceLoader(resourceId) : null;
-      
-      if (resourceId && !resource) {
-        ctx.warn("RESOURCE_NOT_FOUND", { resourceId });
-        return new Response(JSON.stringify({ success: false, message: "Resource not found" }), { status: 404, headers });
+      let resource = null;
+      if (resourceId && resourceLoader) {
+        resource = await resourceLoader(resourceId);
+        if (!resource) {
+          ctx.warn("RESOURCE_NOT_FOUND", { resourceId });
+          return new Response(JSON.stringify({ success: false, message: "Resource not found" }), { status: 404, headers });
+        }
       }
 
       // 4. ── AUTHORIZATION (Policy Engine) ──

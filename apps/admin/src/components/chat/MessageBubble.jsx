@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
 import { Edit2, Trash2, Reply, SmilePlus } from "lucide-react";
-import { UserPresenceBadge } from "./UserPresenceBadge";
 import { ReactionPicker } from "./ReactionPicker";
 
 export function MessageBubble({
@@ -45,7 +44,7 @@ export function MessageBubble({
   };
 
   return (
-    <div className="group flex gap-3 px-4 py-1.5 hover:bg-accent/30 transition-colors">
+    <div className="group relative flex gap-3 px-4 py-1.5 hover:bg-accent/30 transition-colors">
       {!isOwn && (
         <div className="shrink-0 mt-0.5">
           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary">
@@ -103,9 +102,8 @@ export function MessageBubble({
           </p>
         )}
 
-        {/* Reactions */}
         {groupedReactions.length > 0 && (
-          <div className={`flex gap-1 mt-1 flex-wrap ${isOwn ? "justify-end" : ""}`}>
+          <div className={`flex gap-1 mt-1.5 flex-wrap max-w-full ${isOwn ? "justify-end" : ""}`}>
             {groupedReactions.map((r) => {
               const hasReacted = r.users.includes(message._currentUserId);
               return (
@@ -115,73 +113,73 @@ export function MessageBubble({
                     if (hasReacted) onRemoveReaction?.(message.id, r.emoji);
                     else onReact?.(message.id, r.emoji);
                   }}
-                  className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-xs border cursor-pointer transition-colors ${
+                  className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full text-xs cursor-pointer transition-colors shrink-0 ${
                     hasReacted
-                      ? "bg-primary/10 border-primary/30 text-primary"
-                      : "bg-muted border-border hover:bg-accent"
+                      ? "bg-primary/10 text-primary"
+                      : "bg-muted/60 text-foreground hover:bg-accent"
                   }`}
                 >
-                  {r.emoji} <span>{r.count}</span>
+                  <span className="text-sm leading-none">{r.emoji}</span>
+                  <span className="text-[11px] leading-none font-medium">{r.count}</span>
                 </button>
               );
             })}
           </div>
         )}
+      </div>
 
-        {/* Actions */}
-        <div className={`hidden group-hover:flex items-center gap-1 mt-0.5 ${isOwn ? "justify-end" : ""}`}>
+      <div className={`absolute hidden group-hover:flex items-center gap-0.5 bg-background border border-border rounded-lg shadow-sm px-1 py-0.5 -top-2 z-10 ${isOwn ? "right-4" : "right-4"}`}>
+        <button
+          onClick={() => onReply?.(message)}
+          className="shrink-0 p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
+          title="Reply"
+        >
+          <Reply className="w-3.5 h-3.5" />
+        </button>
+        <div className="shrink-0 relative">
           <button
-            onClick={() => onReply?.(message)}
-            className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
-            title="Reply"
+            onClick={() => setShowReactions(!showReactions)}
+            className="p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
+            title="React"
           >
-            <Reply className="w-3.5 h-3.5" />
+            <SmilePlus className="w-3.5 h-3.5" />
           </button>
-          <div className="relative">
-            <button
-              onClick={() => setShowReactions(!showReactions)}
-              className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
-              title="React"
-            >
-              <SmilePlus className="w-3.5 h-3.5" />
-            </button>
-            {showReactions && (
-              <ReactionPicker
-                onSelect={(emoji) => {
-                  onReact?.(message.id, emoji);
-                  setShowReactions(false);
-                }}
-                className={isOwn ? "right-0" : "left-0"}
-              />
-            )}
-          </div>
-          {isOwn && (
-            <>
-              <button
-                onClick={() => setEditing(true)}
-                className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer"
-                title="Edit"
-              >
-                <Edit2 className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={() => onDelete?.(message.id)}
-                className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
-                title="Delete"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            </>
-          )}
-          {showThread && replyCount > 0 && (
-            <button
-              onClick={() => showThread(message)}
-              className="text-xs text-primary hover:underline ml-2 cursor-pointer"
-            >
-              {replyCount} {replyCount === 1 ? "reply" : "replies"}
-            </button>
+          {showReactions && (
+            <ReactionPicker
+              onSelect={(emoji) => {
+                onReact?.(message.id, emoji);
+                setShowReactions(false);
+              }}
+              className={isOwn ? "right-0" : "left-0"}
+            />
           )}
         </div>
+        {isOwn && (
+          <>
+            <button
+              onClick={() => setEditing(true)}
+              className="shrink-0 p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-foreground"
+              title="Edit"
+            >
+              <Edit2 className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => onDelete?.(message.id)}
+              className="shrink-0 p-1 rounded hover:bg-accent transition-colors cursor-pointer text-muted-foreground hover:text-destructive"
+              title="Delete"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+          </>
+        )}
+        {showThread && replyCount > 0 && (
+          <button
+            onClick={() => showThread(message)}
+            className="shrink-0 text-xs text-primary hover:underline pl-1.5 pr-1 py-0.5 cursor-pointer"
+          >
+            {replyCount} {replyCount === 1 ? "reply" : "replies"}
+          </button>
+        )}
       </div>
     </div>
   );

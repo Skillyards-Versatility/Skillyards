@@ -37,7 +37,7 @@ export function ChatClient({
   useEffect(() => {
     if (!channel?.id) return;
 
-    const es = new EventSource(`/api/channels/${channel.id}/events`);
+    const es = new EventSource(`/api/channels/${channel.id}/events`, { withCredentials: true });
     sseRef.current = es;
 
     es.addEventListener("new_message", (e) => {
@@ -121,6 +121,18 @@ export function ChatClient({
 
   const handleSend = useCallback(
     async (text) => {
+      // Optimistic update
+      const tempId = `temp-${Date.now()}`;
+      const tempMsg = {
+        id: tempId,
+        content: text,
+        sender: { id: currentUser.id, name: currentUser.name },
+        senderId: currentUser.id,
+        createdAt: new Date().toISOString(),
+        reactions: [],
+      };
+      setMessages((prev) => [...prev, tempMsg]);
+
       try {
         const res = await fetch("/api/messages", {
           method: "POST",
@@ -130,16 +142,24 @@ export function ChatClient({
         if (!res.ok) {
           const err = await res.json();
           console.error("Failed to send:", err);
+          setMessages((prev) => prev.filter((m) => m.id !== tempId));
         }
       } catch (err) {
         console.error("Failed to send:", err);
+        setMessages((prev) => prev.filter((m) => m.id !== tempId));
       }
     },
-    [channel?.id]
+    [channel?.id, currentUser]
   );
 
   const handleEdit = useCallback(
     async (messageId, content) => {
+      // Optimistic update
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === messageId ? { ...m, content, editedAt: new Date().toISOString() } : m
+        )
+      );
       try {
         await fetch(`/api/messages/${messageId}`, {
           method: "PUT",
@@ -155,6 +175,8 @@ export function ChatClient({
 
   const handleDelete = useCallback(
     async (messageId) => {
+      // Optimistic update
+      setMessages((prev) => prev.filter((m) => m.id !== messageId));
       try {
         await fetch(`/api/messages/${messageId}`, { method: "DELETE" });
       } catch (err) {
@@ -237,7 +259,8 @@ export function ChatClient({
       const err = await res.json();
       throw new Error(err.error?.message || err.error || "Failed to create channel");
     }
-    await fetchChannels();
+    const channelRes = await res.json();
+    window.location.href = `/chat/${channelRes.id}`;
   };
 
   const handleStartDm = async (otherUserId) => {
@@ -262,6 +285,21 @@ export function ChatClient({
             onNewDm={() => setShowNewDm(true)}
           />
         }
+        threadPanel={
+          threadParent && (
+            <ThreadPanel
+              parentMessage={threadParent}
+              replies={threadReplies}
+              currentUserId={currentUser.id}
+              onClose={() => setThreadParent(null)}
+              onSendReply={handleSendReply}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onReact={handleReact}
+              onRemoveReaction={handleRemoveReaction}
+            />
+          )
+        }
       >
         <ChannelHeader channel={channel} memberCount={memberCount} />
         <MessageList
@@ -277,19 +315,6 @@ export function ChatClient({
         <MessageInput onSend={handleSend} />
       </ChatLayout>
 
-      {threadParent && (
-        <ThreadPanel
-          parentMessage={threadParent}
-          replies={threadReplies}
-          currentUserId={currentUser.id}
-          onClose={() => setThreadParent(null)}
-          onSendReply={handleSendReply}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onReact={handleReact}
-          onRemoveReaction={handleRemoveReaction}
-        />
-      )}
 
       <ChannelCreateDialog
         open={showCreateChannel}

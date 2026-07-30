@@ -23,7 +23,7 @@ export function ReactionPicker({ onSelect, className = "" }) {
   return (
     <div
       ref={ref}
-      className={`absolute top-full mt-1 z-50 p-2 bg-popover border border-border rounded-lg shadow-lg grid grid-cols-4 gap-1 ${className}`}
+      className={`absolute top-full mt-1 z-50 p-2 bg-popover border border-border rounded-lg shadow-lg grid grid-cols-4 gap-1 w-max ${className}`}
     >
       {COMMON_EMOJIS.map((emoji) => (
         <button

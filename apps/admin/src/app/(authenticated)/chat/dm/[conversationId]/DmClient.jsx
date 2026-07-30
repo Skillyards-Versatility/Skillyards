@@ -6,6 +6,8 @@ import { ChannelList } from "@/components/chat/ChannelList";
 import { MessageList } from "@/components/chat/MessageList";
 import { MessageInput } from "@/components/chat/MessageInput";
 import { ThreadPanel } from "@/components/chat/ThreadPanel";
+import { ChannelCreateDialog } from "@/components/chat/ChannelCreateDialog";
+import { NewDmDialog } from "@/components/chat/NewDmDialog";
 
 export function DmClient({ conversation, currentUser, initialMessages }) {
   const [messages, setMessages] = useState(initialMessages || []);
@@ -13,6 +15,8 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
   const [conversations, setConversations] = useState([]);
   const [threadParent, setThreadParent] = useState(null);
   const [threadReplies, setThreadReplies] = useState([]);
+  const [showCreateChannel, setShowCreateChannel] = useState(false);
+  const [showNewDm, setShowNewDm] = useState(false);
   const sseRef = useRef(null);
 
   useEffect(() => {
@@ -22,7 +26,7 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
   useEffect(() => {
     if (!conversation?.id) return;
 
-    const es = new EventSource(`/api/conversations/${conversation.id}/events`);
+    const es = new EventSource(`/api/conversations/${conversation.id}/events`, { withCredentials: true });
     sseRef.current = es;
 
     es.addEventListener("new_message", (e) => {
@@ -189,13 +193,15 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
           <ChannelList
             channels={myChannels}
             conversations={conversations}
-            onNewChannel={() => {}}
-            onNewDm={() => {}}
+            onNewChannel={() => setShowCreateChannel(true)}
+            onNewDm={() => setShowNewDm(true)}
           />
         }
       >
         <div className="px-4 py-3 border-b border-border bg-background shrink-0">
-          <h2 className="font-semibold text-foreground">DM</h2>
+          <h2 className="font-semibold text-foreground">
+            {conversation?.name || conversation?.participants?.filter(p => p.id !== currentUser.id)?.[0]?.name || "DM"}
+          </h2>
         </div>
         <MessageList
           messages={messages}
@@ -222,6 +228,37 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
           onRemoveReaction={handleRemoveReaction}
         />
       )}
+      <ChannelCreateDialog
+        open={showCreateChannel}
+        onClose={() => setShowCreateChannel(false)}
+        onCreate={async (data) => {
+          const res = await fetch("/api/channels", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            const channel = await res.json();
+            window.location.href = `/chat/${channel.id}`;
+          }
+        }}
+      />
+      <NewDmDialog
+        open={showNewDm}
+        onClose={() => setShowNewDm(false)}
+        users={[]} // We can pass allUsers here if we fetch it, but the dialog might fetch it
+        onStart={async (otherUserId) => {
+          const res = await fetch("/api/conversations", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ type: "direct", participantIds: [otherUserId] }),
+          });
+          if (res.ok) {
+            const conv = await res.json();
+            window.location.href = `/chat/dm/${conv.id}`;
+          }
+        }}
+      />
     </>
   );
 }
