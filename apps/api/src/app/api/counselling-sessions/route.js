@@ -37,6 +37,7 @@ async function getHandler(req, { ctx }) {
         outcome: counsellingSessions.outcome,
         notes: counsellingSessions.notes,
         sessionDate: counsellingSessions.sessionDate,
+        imageKey: counsellingSessions.imageKey,
         createdAt: counsellingSessions.createdAt,
       })
       .from(counsellingSessions)
@@ -70,7 +71,7 @@ async function getHandler(req, { ctx }) {
 
 async function postHandler(req, { ctx }) {
   try {
-    const { studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate } = await req.json();
+    const { studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, counselorId, imageKey } = await req.json();
 
     if (!studentName || !sessionDate) {
       return Response.json(
@@ -79,10 +80,15 @@ async function postHandler(req, { ctx }) {
       );
     }
 
+    let finalCounselorId = ctx.session.userId;
+    if ((ctx.session.role === "ADMIN" || ctx.session.role === "MANAGER") && counselorId) {
+      finalCounselorId = counselorId;
+    }
+
     const [session] = await db
       .insert(counsellingSessions)
       .values({
-        counselorId: ctx.session.userId,
+        counselorId: finalCounselorId,
         studentName,
         phone: phone || null,
         ageOrClass: ageOrClass || null,
@@ -91,6 +97,7 @@ async function postHandler(req, { ctx }) {
         outcome: outcome || "follow_up",
         notes: notes || null,
         sessionDate,
+        imageKey: imageKey || null,
       })
       .returning();
 

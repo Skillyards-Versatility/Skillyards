@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Search, Filter, Phone, User, GraduationCap, BookOpen, MessageSquare, Calendar, X } from "lucide-react";
+import { Loader2, Plus, Trash2, Search, Filter, Phone, User, GraduationCap, BookOpen, MessageSquare, Calendar, X, ImageIcon, UploadCloud } from "lucide-react";
 import { getCounsellingSessions, createCounsellingSession, deleteCounsellingSession } from "@/actions/counselling";
 import { getIstDate } from "@/lib/ist";
 
@@ -36,7 +36,7 @@ const SOURCE_BADGES = {
   referral: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
 };
 
-export function CounsellingClient({ isAdmin = false }) {
+export function CounsellingClient({ isAdmin = false, counselors = [] }) {
   const today = getIstDate();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -60,7 +60,10 @@ export function CounsellingClient({ isAdmin = false }) {
     outcome: "follow_up",
     notes: "",
     sessionDate: today,
+    counselorId: "", // Empty string means it will default to logged-in user on backend
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const fetchSessions = useCallback(async () => {
     setLoading(true);
@@ -91,11 +94,32 @@ export function CounsellingClient({ isAdmin = false }) {
     }
     setSubmitting(true);
     try {
-      const res = await createCounsellingSession(form);
+      let uploadedImageKey = null;
+
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        const uploadRes = await fetch("/api/counselling-sessions/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+        if (uploadData.success) {
+          uploadedImageKey = uploadData.imageKey;
+        } else {
+          toast.error(uploadData.message || "Failed to upload image");
+          setSubmitting(false);
+          return;
+        }
+      }
+
+      const res = await createCounsellingSession({ ...form, imageKey: uploadedImageKey });
       if (res.success) {
         toast.success("Session logged!");
         setShowForm(false);
-        setForm({ studentName: "", phone: "", ageOrClass: "", courseInterest: "", source: "walk_in", outcome: "follow_up", notes: "", sessionDate: today });
+        setForm({ studentName: "", phone: "", ageOrClass: "", courseInterest: "", source: "walk_in", outcome: "follow_up", notes: "", sessionDate: today, counselorId: "" });
+        setImageFile(null);
+        setImagePreview(null);
         fetchSessions();
       } else {
         toast.error(res.message || "Failed to create session");
@@ -156,6 +180,17 @@ export function CounsellingClient({ isAdmin = false }) {
               <label className="text-xs font-medium block mb-1">Student Name *</label>
               <input className="input w-full" value={form.studentName} onChange={(e) => setForm({ ...form, studentName: e.target.value })} placeholder="e.g., Amit Sharma" />
             </div>
+            {isAdmin && (
+              <div>
+                <label className="text-xs font-medium block mb-1">Assign to BDA/Counselor</label>
+                <select className="input w-full" value={form.counselorId} onChange={(e) => setForm({ ...form, counselorId: e.target.value })}>
+                  <option value="">Assign to myself (Default)</option>
+                  {counselors.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name} ({c.role})</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div>
               <label className="text-xs font-medium block mb-1">Phone</label>
               <input className="input w-full" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="e.g., 9876543210" />
@@ -193,6 +228,47 @@ export function CounsellingClient({ isAdmin = false }) {
             <div>
               <label className="text-xs font-medium block mb-1">Date</label>
               <input type="date" className="input w-full" value={form.sessionDate} onChange={(e) => setForm({ ...form, sessionDate: e.target.value })} max={today} />
+            </div>
+            
+            <div className="sm:col-span-2 lg:col-span-3">
+              <label className="text-xs font-medium block mb-1">Attachment (Image/Receipt)</label>
+              <div className="flex items-center gap-4">
+                {imagePreview ? (
+                  <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-border">
+                    <img src={imagePreview} alt="Preview" className="object-cover w-full h-full" />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setImageFile(null);
+                        setImagePreview(null);
+                      }}
+                      className="absolute top-1 right-1 bg-black/50 hover:bg-black/80 text-white rounded-full p-1 transition-colors"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/30 transition-colors">
+                    <UploadCloud className="w-5 h-5 text-muted-foreground mb-1" />
+                    <span className="text-[10px] text-muted-foreground font-medium">Upload</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        if (file) {
+                          setImageFile(file);
+                          setImagePreview(URL.createObjectURL(file));
+                        }
+                      }}
+                    />
+                  </label>
+                )}
+                <div className="text-xs text-muted-foreground flex-1">
+                  Upload any relevant image or document screenshot for this counselling session.
+                </div>
+              </div>
             </div>
           </div>
           <div className="flex justify-end pt-2">
@@ -266,6 +342,7 @@ export function CounsellingClient({ isAdmin = false }) {
                   <th className="text-left p-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Phone</th>
                   <th className="text-left p-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Source</th>
                   <th className="text-left p-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Outcome</th>
+                  <th className="text-left p-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Attachment</th>
                   <th className="text-left p-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Date</th>
                   <th className="text-right p-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Actions</th>
                 </tr>
@@ -292,6 +369,15 @@ export function CounsellingClient({ isAdmin = false }) {
                       <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${OUTCOME_BADGES[s.outcome] || ""}`}>
                         {s.outcome?.replace("_", " ") || "—"}
                       </span>
+                    </td>
+                    <td className="p-3">
+                      {s.imageKey ? (
+                        <a href={`/api/files/${s.imageKey}`} target="_blank" rel="noreferrer" className="block relative w-8 h-8 rounded overflow-hidden border border-border hover:opacity-80 transition-opacity">
+                          <img src={`/api/files/${s.imageKey}`} alt="Attachment" className="object-cover w-full h-full" />
+                        </a>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
                     </td>
                     <td className="p-3 text-muted-foreground">{s.sessionDate}</td>
                     <td className="p-3 text-right">
