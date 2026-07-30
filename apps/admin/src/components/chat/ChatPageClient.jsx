@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { MessageCircle, Plus, Search, ArrowLeft, Hash, User, Users } from "lucide-react";
+import { MessageCircle, Plus, Search, ArrowLeft, Hash, User, Users, Check } from "lucide-react";
 import { getOrCreateConversation, getMyConversations, ensureTeamChannels, createChannel } from "@/actions/chat";
 
 function formatTime(dateStr) {
@@ -29,6 +29,8 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [channelError, setChannelError] = useState("");
+  const [selectedChannelMembers, setSelectedChannelMembers] = useState(new Set());
+  const [channelMemberSearch, setChannelMemberSearch] = useState("");
 
   const refreshConversations = useCallback(async () => {
     await ensureTeamChannels();
@@ -52,13 +54,14 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
 
   const handleCreateChannel = async () => {
     setChannelError("");
-    const result = await createChannel(channelName);
+    const result = await createChannel(channelName, [...selectedChannelMembers]);
     if (!result.success) {
       setChannelError(result.error);
       return;
     }
     setShowCreateChannel(false);
     setChannelName("");
+    setSelectedChannelMembers(new Set());
     router.push(`/chat/${result.conversationId}`);
   };
 
@@ -278,14 +281,14 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
 
       {showCreateChannel && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md mx-4">
+          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md mx-4 max-h-[75vh] flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-sm font-semibold flex items-center gap-2">
                 <Hash className="w-4 h-4" />
                 Create Channel
               </h2>
               <button
-                onClick={() => { setShowCreateChannel(false); setChannelName(""); setChannelError(""); }}
+                onClick={() => { setShowCreateChannel(false); setChannelName(""); setChannelError(""); setSelectedChannelMembers(new Set()); }}
                 className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
               >
                 <ArrowLeft className="w-4 h-4" />
@@ -305,6 +308,70 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
                 />
                 {channelError && (
                   <p className="text-xs text-red-500 mt-1">{channelError}</p>
+                )}
+              </div>
+              <div>
+                <label className="text-xs font-medium text-gray-500 mb-1 block">Add members (optional)</label>
+                <div className="relative mb-2">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search people..."
+                    value={channelMemberSearch}
+                    onChange={(e) => setChannelMemberSearch(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div className="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg divide-y divide-gray-100 dark:divide-gray-800">
+                  {allUsers
+                    .filter((u) => u.id !== userId)
+                    .filter((u) => u.name?.toLowerCase().includes(channelMemberSearch.toLowerCase()))
+                    .length === 0 ? (
+                    <p className="text-center text-sm text-gray-400 py-4">No users found</p>
+                  ) : (
+                    allUsers
+                      .filter((u) => u.id !== userId)
+                      .filter((u) => u.name?.toLowerCase().includes(channelMemberSearch.toLowerCase()))
+                      .map((u) => (
+                        <button
+                          key={u.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedChannelMembers((prev) => {
+                              const next = new Set(prev);
+                              if (next.has(u.id)) next.delete(u.id);
+                              else next.add(u.id);
+                              return next;
+                            });
+                          }}
+                          className="w-full flex items-center gap-3 px-3 py-2 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left cursor-pointer"
+                        >
+                          <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
+                            selectedChannelMembers.has(u.id)
+                              ? "bg-primary border-primary"
+                              : "border-gray-300 dark:border-gray-600"
+                          }`}>
+                            {selectedChannelMembers.has(u.id) && (
+                              <Check className="w-2.5 h-2.5 text-white" />
+                            )}
+                          </div>
+                          <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                            <span className="text-[10px] font-semibold text-primary">
+                              {u.name?.charAt(0)?.toUpperCase() || "?"}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate">{u.name}</p>
+                            <p className="text-[10px] text-gray-500 truncate">{u.role}</p>
+                          </div>
+                        </button>
+                      ))
+                  )}
+                </div>
+                {selectedChannelMembers.size > 0 && (
+                  <p className="text-[10px] text-gray-400 mt-1">
+                    {selectedChannelMembers.size} member{selectedChannelMembers.size > 1 ? "s" : ""} selected
+                  </p>
                 )}
               </div>
               <button

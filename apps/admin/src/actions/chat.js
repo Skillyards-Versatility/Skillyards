@@ -137,7 +137,7 @@ export async function getAvailableChannels() {
   return channels;
 }
 
-export async function createChannel(name) {
+export async function createChannel(name, userIds = []) {
   const session = await getSession();
   if (!session) return { success: false, error: "Not authenticated" };
 
@@ -158,11 +158,141 @@ export async function createChannel(name) {
     .values({ type: "channel", name: trimmed, createdBy: session.userId })
     .returning();
 
-  await db.insert(conversationParticipants).values([
+  const participants = [
     { conversationId: conv.id, userId: session.userId, role: "admin" },
-  ]);
+  ];
+
+  if (userIds?.length) {
+    const existingParticipants = await db
+      .select({ userId: conversationParticipants.userId })
+      .from(conversationParticipants)
+      .where(
+        and(
+          eq(conversationParticipants.conversationId, conv.id),
+          inArray(conversationParticipants.userId, userIds)
+        )
+      );
+    const existingSet = new Set(existingParticipants.map((p) => p.userId));
+    for (const uid of userIds) {
+      if (uid !== session.userId && !existingSet.has(uid)) {
+        participants.push({ conversationId: conv.id, userId: uid });
+      }
+    }
+  }
+
+  await db.insert(conversationParticipants).values(participants);
 
   return { success: true, conversationId: conv.id };
+}
+
+export async function getChannelMembers(channelId) {
+  const session = await getSession();
+  if (!session) return [];
+
+  const [conv] = await db
+    .select()
+    .from(conversations)
+    .where(and(eq(conversations.id, channelId), eq(conversations.type, "channel")))
+    .limit(1);
+
+  if (!conv) return [];
+
+  const members = await db
+    .select({
+      userId: conversationParticipants.userId,
+      role: conversationParticipants.role,
+      joinedAt: conversationParticipants.joinedAt,
+      name: users.name,
+      email: users.email,
+      userRole: users.role,
+      team: users.team,
+    })
+    .from(conversationParticipants)
+    .innerJoin(users, eq(conversationParticipants.userId, users.id))
+    .where(eq(conversationParticipants.conversationId, channelId))
+    .orderBy(conversationParticipants.joinedAt);
+
+  return members;
+}
+
+export async function addChannelMembers(channelId, userIds) {
+  const session = await getSession();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  if (!userIds?.length) return { success: false, error: "No users specified" };
+
+  const [membership] = await db
+    .select({ role: conversationParticipants.role })
+    .from(conversationParticipants)
+    .where(
+      and(
+        eq(conversationParticipants.conversationId, channelId),
+        eq(conversationParticipants.userId, session.userId)
+      )
+    )
+    .limit(1);
+
+  if (!membership) return { success: false, error: "Not a participant" };
+  if (membership.role !== "admin") return { success: false, error: "Only admins can add members" };
+
+  const existing = await db
+    .select({ userId: conversationParticipants.userId })
+    .from(conversationParticipants)
+    .where(
+      and(
+        eq(conversationParticipants.conversationId, channelId),
+        inArray(conversationParticipants.userId, userIds)
+      )
+    );
+
+  const existingSet = new Set(existing.map((p) => p.userId));
+  const toAdd = userIds
+    .filter((uid) => !existingSet.has(uid))
+    .map((uid) => ({ conversationId: channelId, userId: uid }));
+
+  if (toAdd.length === 0) return { success: true, added: 0 };
+
+  await db.insert(conversationParticipants).values(toAdd);
+
+  return { success: true, added: toAdd.length };
+}
+
+export async function addAllUsersToChannel(channelId) {
+  const session = await getSession();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  const [membership] = await db
+    .select({ role: conversationParticipants.role })
+    .from(conversationParticipants)
+    .where(
+      and(
+        eq(conversationParticipants.conversationId, channelId),
+        eq(conversationParticipants.userId, session.userId)
+      )
+    )
+    .limit(1);
+
+  if (!membership) return { success: false, error: "Not a participant" };
+  if (membership.role !== "admin") return { success: false, error: "Only admins can add members" };
+
+  const allUsers = await db.select({ id: users.id }).from(users);
+  const allUserIds = allUsers.map((u) => u.id);
+
+  const existing = await db
+    .select({ userId: conversationParticipants.userId })
+    .from(conversationParticipants)
+    .where(eq(conversationParticipants.conversationId, channelId));
+
+  const existingSet = new Set(existing.map((p) => p.userId));
+  const toAdd = allUserIds
+    .filter((uid) => !existingSet.has(uid))
+    .map((uid) => ({ conversationId: channelId, userId: uid }));
+
+  if (toAdd.length === 0) return { success: true, added: 0 };
+
+  await db.insert(conversationParticipants).values(toAdd);
+
+  return { success: true, added: toAdd.length };
 }
 
 export async function joinChannel(channelId) {
@@ -225,11 +355,17 @@ export async function ensureTeamChannels() {
     if (!channel) {
       [channel] = await db
         .insert(conversations)
-        .values({ type: "channel", name: slug })
+        .values({ type: "channel", name: slug, createdBy: userId })
         .returning();
+
+      await db.insert(conversationParticipants).values([
+        { conversationId: channel.id, userId, role: "admin" },
+      ]);
+
+      continue;
     }
 
-    const [alreadyJoined] = await db
+    const [membership] = await db
       .select()
       .from(conversationParticipants)
       .where(
@@ -240,10 +376,28 @@ export async function ensureTeamChannels() {
       )
       .limit(1);
 
-    if (!alreadyJoined) {
-      if (slug === "general" || slug === teamSlug) {
+    if (slug === "general" || slug === teamSlug) {
+      const [hasAdmin] = await db
+        .select()
+        .from(conversationParticipants)
+        .where(
+          and(
+            eq(conversationParticipants.conversationId, channel.id),
+            eq(conversationParticipants.role, "admin")
+          )
+        )
+        .limit(1);
+
+      if (membership) {
+        if (!hasAdmin && membership.role !== "admin") {
+          await db
+            .update(conversationParticipants)
+            .set({ role: "admin" })
+            .where(eq(conversationParticipants.id, membership.id));
+        }
+      } else {
         await db.insert(conversationParticipants).values([
-          { conversationId: channel.id, userId },
+          { conversationId: channel.id, userId, role: hasAdmin ? "member" : "admin" },
         ]);
       }
     }
