@@ -1,37 +1,29 @@
-import { eq, desc, asc, and, isNull, sql, inArray } from "drizzle-orm";
-import { channels, conversationParticipants, users, messages } from "@repo/db";
+import { eq, desc, asc, and, sql, inArray } from "drizzle-orm";
+import { conversations, conversationParticipants, users } from "@repo/db";
 
 export async function getChannels(db) {
   return db
     .select({
-      id: channels.id,
-      name: channels.name,
-      description: channels.description,
-      type: channels.type,
-      team: channels.team,
-      createdAt: channels.createdAt,
-      archivedAt: channels.archivedAt,
-      createdBy: channels.createdBy,
+      id: conversations.id,
+      name: conversations.name,
+      createdAt: conversations.createdAt,
+      createdBy: conversations.createdBy,
     })
-    .from(channels)
-    .where(isNull(channels.archivedAt))
-    .orderBy(asc(channels.name));
+    .from(conversations)
+    .where(eq(conversations.type, "channel"))
+    .orderBy(asc(conversations.name));
 }
 
 export async function getChannelById(db, channelId) {
   const res = await db
     .select({
-      id: channels.id,
-      name: channels.name,
-      description: channels.description,
-      type: channels.type,
-      team: channels.team,
-      createdAt: channels.createdAt,
-      archivedAt: channels.archivedAt,
-      createdBy: channels.createdBy,
+      id: conversations.id,
+      name: conversations.name,
+      createdAt: conversations.createdAt,
+      createdBy: conversations.createdBy,
     })
-    .from(channels)
-    .where(and(eq(channels.id, channelId), isNull(channels.archivedAt)))
+    .from(conversations)
+    .where(and(eq(conversations.id, channelId), eq(conversations.type, "channel")))
     .limit(1);
   return res[0] || null;
 }
@@ -39,20 +31,18 @@ export async function getChannelById(db, channelId) {
 export async function getChannelByName(db, name) {
   const res = await db
     .select()
-    .from(channels)
-    .where(eq(channels.name, name))
+    .from(conversations)
+    .where(and(eq(conversations.name, name), eq(conversations.type, "channel")))
     .limit(1);
   return res[0] || null;
 }
 
 export async function createChannelRecord(db, data) {
   const inserted = await db
-    .insert(channels)
+    .insert(conversations)
     .values({
       name: data.name,
-      description: data.description || null,
-      type: data.type || "public",
-      team: data.team || null,
+      type: "channel",
       createdBy: data.createdBy,
     })
     .returning();
@@ -61,18 +51,18 @@ export async function createChannelRecord(db, data) {
 
 export async function updateChannelRecord(db, channelId, data) {
   const updated = await db
-    .update(channels)
+    .update(conversations)
     .set(data)
-    .where(eq(channels.id, channelId))
+    .where(eq(conversations.id, channelId))
     .returning();
   return updated[0] || null;
 }
 
 export async function archiveChannel(db, channelId) {
   const updated = await db
-    .update(channels)
-    .set({ archivedAt: new Date() })
-    .where(eq(channels.id, channelId))
+    .update(conversations)
+    .set({ updatedAt: new Date() })
+    .where(eq(conversations.id, channelId))
     .returning();
   return updated[0] || null;
 }
@@ -93,7 +83,7 @@ export async function getChannelMembers(db, channelId) {
     })
     .from(conversationParticipants)
     .innerJoin(users, eq(users.id, conversationParticipants.userId))
-    .where(eq(conversationParticipants.channelId, channelId))
+    .where(eq(conversationParticipants.conversationId, channelId))
     .orderBy(asc(users.name));
 }
 
@@ -103,7 +93,7 @@ export async function isChannelMember(db, channelId, userId) {
     .from(conversationParticipants)
     .where(
       and(
-        eq(conversationParticipants.channelId, channelId),
+        eq(conversationParticipants.conversationId, channelId),
         eq(conversationParticipants.userId, userId)
       )
     )
@@ -114,7 +104,7 @@ export async function isChannelMember(db, channelId, userId) {
 export async function addChannelMember(db, channelId, userId) {
   const inserted = await db
     .insert(conversationParticipants)
-    .values({ channelId, userId, role: "member" })
+    .values({ conversationId: channelId, userId, role: "member" })
     .returning();
   return inserted[0];
 }
@@ -124,7 +114,7 @@ export async function removeChannelMember(db, channelId, userId) {
     .delete(conversationParticipants)
     .where(
       and(
-        eq(conversationParticipants.channelId, channelId),
+        eq(conversationParticipants.conversationId, channelId),
         eq(conversationParticipants.userId, userId)
       )
     );
@@ -132,7 +122,7 @@ export async function removeChannelMember(db, channelId, userId) {
 
 export async function getUserChannelIds(db, userId) {
   const rows = await db
-    .select({ channelId: conversationParticipants.channelId })
+    .select({ channelId: conversationParticipants.conversationId })
     .from(conversationParticipants)
     .where(eq(conversationParticipants.userId, userId));
   return rows.map((r) => r.channelId).filter(Boolean);
@@ -143,15 +133,12 @@ export async function getChannelsForUser(db, userId) {
   if (userChannelIds.length === 0) return [];
   return db
     .select({
-      id: channels.id,
-      name: channels.name,
-      description: channels.description,
-      type: channels.type,
-      team: channels.team,
-      createdAt: channels.createdAt,
-      archivedAt: channels.archivedAt,
+      id: conversations.id,
+      name: conversations.name,
+      createdAt: conversations.createdAt,
+      createdBy: conversations.createdBy,
     })
-    .from(channels)
-    .where(and(inArray(channels.id, userChannelIds), isNull(channels.archivedAt)))
-    .orderBy(asc(channels.name));
+    .from(conversations)
+    .where(and(inArray(conversations.id, userChannelIds), eq(conversations.type, "channel")))
+    .orderBy(asc(conversations.name));
 }

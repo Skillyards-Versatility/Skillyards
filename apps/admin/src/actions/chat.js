@@ -92,6 +92,7 @@ export async function getMyConversations() {
       CASE WHEN c.type = 'dm' THEN u.name END AS "otherUserName",
       CASE WHEN c.type = 'dm' THEN u.role END AS "otherUserRole",
       CASE WHEN c.type = 'dm' THEN u.team END AS "otherUserTeam",
+      CASE WHEN c.type = 'dm' THEN u.profile_image_key END AS "otherUserProfileImageKey",
       CASE WHEN c.type = 'channel' THEN (
         SELECT COUNT(*) FROM conversation_participants WHERE conversation_id = c.id
       ) ELSE NULL END::int AS "participantCount",
@@ -101,6 +102,7 @@ export async function getMyConversations() {
       m.sender_id AS "lastMessageSenderId",
       (SELECT COUNT(*) FROM messages
        WHERE conversation_id = c.id
+       AND parent_id IS NULL
        AND created_at > COALESCE(cp.last_read_at, '1970-01-01'::timestamp)
        AND sender_id != ${userId})::int AS "unreadCount"
     FROM conversation_participants cp
@@ -110,7 +112,7 @@ export async function getMyConversations() {
     LEFT JOIN LATERAL (
       SELECT id, content, created_at, sender_id
       FROM messages
-      WHERE conversation_id = c.id
+      WHERE conversation_id = c.id AND parent_id IS NULL
       ORDER BY created_at DESC
       LIMIT 1
     ) m ON true
@@ -143,9 +145,10 @@ export async function createChannel(name, userIds = []) {
   const session = await getSession();
   if (!session) return { success: false, error: "Not authenticated" };
 
-  const trimmed = name?.trim();
+  const trimmed = name?.trim().toLowerCase().replace(/\s+/g, "-");
   if (!trimmed) return { success: false, error: "Channel name is required" };
   if (trimmed.length < 2) return { success: false, error: "Channel name must be at least 2 characters" };
+  if (!/^[a-z0-9-]+$/.test(trimmed)) return { success: false, error: "Channel name can only contain lowercase letters, numbers, and hyphens" };
 
   const [existing] = await db
     .select()
@@ -424,7 +427,7 @@ export async function getConversationInfo(conversationId) {
   if (conv.type === "channel") return conv;
 
   const [other] = await db
-    .select({ name: users.name, role: users.role })
+    .select({ name: users.name, role: users.role, profileImageKey: users.profileImageKey })
     .from(conversationParticipants)
     .innerJoin(users, eq(conversationParticipants.userId, users.id))
     .where(
@@ -435,7 +438,7 @@ export async function getConversationInfo(conversationId) {
     )
     .limit(1);
 
-  return { ...conv, otherUserName: other?.name, otherUserRole: other?.role };
+  return { ...conv, otherUserName: other?.name, otherUserRole: other?.role, otherUserProfileImageKey: other?.profileImageKey };
 }
 
 export async function getMessages(conversationId, since) {
@@ -472,6 +475,7 @@ export async function getMessages(conversationId, since) {
       createdAt: messages.createdAt,
       senderId: messages.senderId,
       senderName: users.name,
+      senderProfileImageKey: users.profileImageKey,
       parentId: messages.parentId,
       replyCount: sql`(SELECT COUNT(*) FROM ${messages} AS r WHERE r.parent_id = ${messages.id})::int`,
       reactions: sql`COALESCE(
@@ -497,13 +501,13 @@ export async function getMessages(conversationId, since) {
       eq(messages.id, sql`mr.message_id`)
     )
     .where(and(...conditions))
-    .groupBy(messages.id, users.name)
+    .groupBy(messages.id, users.name, users.profileImageKey)
     .orderBy(messages.createdAt);
 
   return msgs;
 }
 
-export async function sendMessage(conversationId, content, parentId) {
+export async function sendMessage(conversationId, content, parentId, fileData) {
   const session = await getSession();
   if (!session) return { success: false, error: "Not authenticated" };
 
@@ -524,8 +528,25 @@ export async function sendMessage(conversationId, content, parentId) {
     return { success: false, error: "Not a participant" };
   }
 
+  if (parentId) {
+    const [parentMsg] = await db
+      .select({ conversationId: messages.conversationId })
+      .from(messages)
+      .where(eq(messages.id, parentId))
+      .limit(1);
+
+    if (!parentMsg || parentMsg.conversationId !== conversationId) {
+      return { success: false, error: "Invalid parent message" };
+    }
+  }
+
   const insertValues = { conversationId, senderId: userId, content };
   if (parentId) insertValues.parentId = parentId;
+  if (fileData?.fileKey) {
+    insertValues.fileKey = fileData.fileKey;
+    insertValues.fileType = fileData.fileType || null;
+    insertValues.fileName = fileData.fileName || null;
+  }
 
   const [message] = await db
     .insert(messages)
@@ -592,6 +613,7 @@ export async function getParentMessage(messageId) {
       createdAt: messages.createdAt,
       senderId: messages.senderId,
       senderName: users.name,
+      senderProfileImageKey: users.profileImageKey,
     })
     .from(messages)
     .innerJoin(users, eq(messages.senderId, users.id))
@@ -614,6 +636,7 @@ export async function getThreadReplies(messageId) {
       createdAt: messages.createdAt,
       senderId: messages.senderId,
       senderName: users.name,
+      senderProfileImageKey: users.profileImageKey,
       reactions: sql`COALESCE(
         json_agg(
           json_build_object('emoji', mr.emoji, 'count', mr.cnt, 'hasReacted', mr.has_reacted)
@@ -637,7 +660,7 @@ export async function getThreadReplies(messageId) {
       eq(messages.id, sql`mr.message_id`)
     )
     .where(eq(messages.parentId, messageId))
-    .groupBy(messages.id, users.name)
+    .groupBy(messages.id, users.name, users.profileImageKey)
     .orderBy(messages.createdAt);
 
   return replies;
@@ -670,6 +693,59 @@ export async function toggleReaction(messageId, emoji) {
       .insert(messageReactions)
       .values({ messageId, userId, emoji });
   }
+
+  const reactions = await db
+    .select({
+      emoji: messageReactions.emoji,
+      count: sql`COUNT(*)::int`,
+      hasReacted: sql`bool_or(${messageReactions.userId} = ${userId})`,
+    })
+    .from(messageReactions)
+    .where(eq(messageReactions.messageId, messageId))
+    .groupBy(messageReactions.emoji)
+    .orderBy(messageReactions.emoji);
+
+  return { success: true, reactions };
+}
+
+export async function editMessage(messageId, content) {
+  const session = await getSession();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  const [msg] = await db
+    .select({ senderId: messages.senderId })
+    .from(messages)
+    .where(eq(messages.id, messageId))
+    .limit(1);
+
+  if (!msg) return { success: false, error: "Message not found" };
+  if (msg.senderId !== session.userId) return { success: false, error: "Can only edit your own messages" };
+
+  await db
+    .update(messages)
+    .set({ content, editedAt: new Date() })
+    .where(eq(messages.id, messageId));
+
+  return { success: true };
+}
+
+export async function deleteMessage(messageId) {
+  const session = await getSession();
+  if (!session) return { success: false, error: "Not authenticated" };
+
+  const [msg] = await db
+    .select({ senderId: messages.senderId })
+    .from(messages)
+    .where(eq(messages.id, messageId))
+    .limit(1);
+
+  if (!msg) return { success: false, error: "Message not found" };
+  if (msg.senderId !== session.userId) return { success: false, error: "Can only delete your own messages" };
+
+  await db
+    .update(messages)
+    .set({ deletedAt: new Date(), content: "" })
+    .where(eq(messages.id, messageId));
 
   return { success: true };
 }

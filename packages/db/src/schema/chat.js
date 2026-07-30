@@ -24,8 +24,13 @@ export const messages = pgTable("messages", {
   conversationId: uuid("conversation_id").notNull().references(() => conversations.id, { onDelete: "cascade" }),
   senderId: uuid("sender_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
-  parentId: uuid("parent_id"),
+  parentId: uuid("parent_id").references(() => messages.id, { onDelete: "cascade" }),
+  fileKey: text("file_key"),
+  fileType: text("file_type"),
+  fileName: text("file_name"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  editedAt: timestamp("edited_at"),
+  deletedAt: timestamp("deleted_at"),
 });
 
 export const messageReactions = pgTable("message_reactions", {

@@ -1,9 +1,9 @@
-import { db, users } from "@repo/db";
-import { inArray } from "drizzle-orm";
+import { db, users, messageReactions } from "@repo/db";
+import { inArray, eq, sql } from "drizzle-orm";
 import { getThreadMessages } from "@/modules/chat/messages.service";
 import { createProtectedRoute } from "@/lib/middleware";
 
-async function getHandler(req, { context }) {
+async function getHandler(req, { ctx, context }) {
   const { id: parentId } = await context.params;
   
   try {
@@ -21,12 +21,35 @@ async function getHandler(req, { context }) {
       
     const senderMap = Object.fromEntries(senders.map((s) => [s.id, s]));
 
+    const replyIds = rawReplies.map((r) => r.id);
+    const reactions = await db
+      .select({
+        messageId: messageReactions.messageId,
+        emoji: messageReactions.emoji,
+        count: sql`COUNT(*)::int`,
+        hasReacted: sql`bool_or(${messageReactions.userId} = ${ctx.session.userId})`,
+      })
+      .from(messageReactions)
+      .where(inArray(messageReactions.messageId, replyIds))
+      .groupBy(messageReactions.messageId, messageReactions.emoji)
+      .orderBy(messageReactions.messageId, messageReactions.emoji);
+
+    const reactionsByMsg = {};
+    for (const r of reactions) {
+      if (!reactionsByMsg[r.messageId]) reactionsByMsg[r.messageId] = [];
+      reactionsByMsg[r.messageId].push({
+        emoji: r.emoji,
+        count: r.count,
+        hasReacted: r.hasReacted,
+      });
+    }
+
     const replies = rawReplies.map(r => ({
       ...r,
       sender: senderMap[r.senderId] || { id: r.senderId, name: "Unknown" },
       createdAt: r.createdAt?.toISOString?.() || r.createdAt,
       editedAt: r.editedAt?.toISOString?.() || null,
-      reactions: [] 
+      reactions: reactionsByMsg[r.id] || [],
     }));
 
     return Response.json(replies);

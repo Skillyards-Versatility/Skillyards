@@ -50,6 +50,12 @@ async function getHandler(req, { ctx, context }) {
             controller.enqueue(`event: reaction_added\ndata: ${JSON.stringify(r)}\n\n`);
           }
 
+          const removedReactions = await getRemovedConversationReactions(db, id, since);
+          for (const r of removedReactions) {
+            if (closed) return;
+            controller.enqueue(`event: reaction_removed\ndata: ${JSON.stringify(r)}\n\n`);
+          }
+
           controller.enqueue(`event: heartbeat\ndata: {}\n\n`);
         } catch (err) {
           console.error("[SSE] Poll error:", err);
@@ -136,6 +142,10 @@ async function getDeletedConversationMessages(db, conversationId, since) {
       )
     );
   return rows;
+}
+
+async function getRemovedConversationReactions(db, conversationId, since) {
+  return [];
 }
 
 async function getNewConversationReactions(db, conversationId, since) {

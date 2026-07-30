@@ -127,15 +127,17 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
           </div>
         ) : (
           <>
-            {channels.length > 0 && (
-              <div>
-                <div className="px-4 pt-4 pb-1">
-                  <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Hash className="w-3 h-3" />
-                    Channels
-                  </p>
-                </div>
-                {channels.map((conv) => (
+            <div>
+              <div className="px-4 pt-4 pb-1">
+                <p className="text-[11px] font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <Hash className="w-3 h-3" />
+                  Channels
+                </p>
+              </div>
+              {channels.length === 0 ? (
+                <p className="text-xs text-gray-400 text-center py-4">No channels yet. Create one!</p>
+              ) : (
+                channels.map((conv) => (
                   <button
                     key={conv.conversationId}
                     onClick={() => router.push(`/chat/${conv.conversationId}`)}
@@ -171,9 +173,8 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
                       </div>
                     </div>
                   </button>
-                ))}
+                )))}
               </div>
-            )}
 
             {dms.length > 0 && (
               <div>
@@ -190,10 +191,14 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
                       onClick={() => router.push(`/chat/${conv.conversationId}`)}
                       className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left cursor-pointer"
                     >
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                        <span className="text-xs font-semibold text-primary">
-                          {conv.otherUserName?.charAt(0)?.toUpperCase() || "?"}
-                        </span>
+                      <div className="w-8 h-8 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
+                        {conv.otherUserProfileImageKey ? (
+                          <img src={`/api/files/${conv.otherUserProfileImageKey}`} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-xs font-semibold text-primary">
+                            {conv.otherUserName?.charAt(0)?.toUpperCase() || "?"}
+                          </span>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
@@ -225,8 +230,8 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
       </div>
 
       {showUserPicker && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md mx-4 max-h-[70vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-t-2xl md:rounded-xl shadow-xl w-full md:max-w-md md:mx-4 max-h-[75vh] flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-sm font-semibold">New Message</h2>
               <button
@@ -259,10 +264,14 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
                     disabled={loading}
                     className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left cursor-pointer disabled:opacity-50"
                   >
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <span className="text-xs font-semibold text-primary">
-                        {u.name?.charAt(0)?.toUpperCase() || "?"}
-                      </span>
+                    <div className="w-8 h-8 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
+                      {u.profileImageKey ? (
+                        <img src={`/api/files/${u.profileImageKey}`} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-xs font-semibold text-primary">
+                          {u.name?.charAt(0)?.toUpperCase() || "?"}
+                        </span>
+                      )}
                     </div>
                     <div>
                       <p className="text-sm font-medium">{u.name}</p>
@@ -280,8 +289,8 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
       )}
 
       {showCreateChannel && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-md mx-4 max-h-[75vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-900 rounded-t-2xl md:rounded-xl shadow-xl w-full md:max-w-md md:mx-4 max-h-[85vh] flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-sm font-semibold flex items-center gap-2">
                 <Hash className="w-4 h-4" />
@@ -294,7 +303,7 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
                 <ArrowLeft className="w-4 h-4" />
               </button>
             </div>
-            <div className="p-4 space-y-3">
+            <div className="overflow-y-auto flex-1 p-4 space-y-3">
               <div>
                 <label className="text-xs font-medium text-gray-500 mb-1 block">Channel name</label>
                 <input
@@ -355,10 +364,14 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
                               <Check className="w-2.5 h-2.5 text-white" />
                             )}
                           </div>
-                          <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                            <span className="text-[10px] font-semibold text-primary">
-                              {u.name?.charAt(0)?.toUpperCase() || "?"}
-                            </span>
+                          <div className="w-7 h-7 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
+                            {u.profileImageKey ? (
+                              <img src={`/api/files/${u.profileImageKey}`} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="text-[10px] font-semibold text-primary">
+                                {u.name?.charAt(0)?.toUpperCase() || "?"}
+                              </span>
+                            )}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate">{u.name}</p>

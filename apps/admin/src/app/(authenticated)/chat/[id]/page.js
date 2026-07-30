@@ -21,6 +21,7 @@ export default async function ChatThreadPage({ params }) {
     name: info.type === "channel" ? info.name : null,
     otherUserName: info.type === "dm" ? info.otherUserName : null,
     otherUserRole: info.type === "dm" ? info.otherUserRole : null,
+    otherUserProfileImageKey: info.type === "dm" ? info.otherUserProfileImageKey : null,
   };
 
   return (
