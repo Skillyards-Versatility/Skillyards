@@ -6,13 +6,15 @@ import { ChannelList } from "@/components/chat/ChannelList";
 import { ChannelCreateDialog } from "@/components/chat/ChannelCreateDialog";
 import { NewDmDialog } from "@/components/chat/NewDmDialog";
 
+import { chatCache } from "@/components/chat/chatCache";
+
 export default function ChatPage() {
-  const [channels, setChannels] = useState([]);
-  const [conversations, setConversations] = useState([]);
-  const [allUsers, setAllUsers] = useState([]);
+  const [channels, setChannels] = useState(chatCache.channels || []);
+  const [conversations, setConversations] = useState(chatCache.conversations || []);
+  const [allUsers, setAllUsers] = useState(chatCache.users || []);
   const [showCreateChannel, setShowCreateChannel] = useState(false);
   const [showNewDm, setShowNewDm] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!chatCache.channels);
 
   useEffect(() => {
     fetchChannels();
@@ -23,7 +25,11 @@ export default function ChatPage() {
   const fetchChannels = async () => {
     try {
       const res = await fetch("/api/channels");
-      if (res.ok) setChannels(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        chatCache.channels = data;
+        setChannels(data);
+      }
     } catch (err) {
       console.error(err);
     } finally {
@@ -34,7 +40,11 @@ export default function ChatPage() {
   const fetchConversations = async () => {
     try {
       const res = await fetch("/api/conversations");
-      if (res.ok) setConversations(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        chatCache.conversations = data;
+        setConversations(data);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -45,6 +55,7 @@ export default function ChatPage() {
       const res = await fetch("/api/users/presence");
       if (res.ok) {
         const { users } = await res.json();
+        chatCache.users = users;
         setAllUsers(users);
       }
     } catch (err) {

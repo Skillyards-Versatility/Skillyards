@@ -93,7 +93,7 @@ async function getNewConversationMessages(db, conversationId, since) {
 
   const senderIds = [...new Set(rows.map((r) => r.senderId))];
   const senders = await db
-    .select({ id: users.id, name: users.name })
+    .select({ id: users.id, name: users.name, role: users.role, profileImageKey: users.profileImageKey })
     .from(users)
     .where(inArray(users.id, senderIds));
   const senderMap = Object.fromEntries(senders.map((s) => [s.id, s]));

@@ -43,7 +43,7 @@ export default async function DmPage({ params }) {
 
   const senderIds = [...new Set(rawMessages.map((m) => m.senderId))];
   const senderRows = await db
-    .select({ id: users.id, name: users.name })
+    .select({ id: users.id, name: users.name, role: users.role, profileImageKey: users.profileImageKey })
     .from(users)
     .where(inArray(users.id, senderIds));
   const senderMap = {};

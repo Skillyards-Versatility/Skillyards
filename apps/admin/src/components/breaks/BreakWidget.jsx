@@ -33,6 +33,93 @@ export function BreakWidget() {
   const intervalRef = useRef(null);
   const panelRef = useRef(null);
 
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const isDraggingRef = useRef(false);
+  const dragStartRef = useRef({ x: 0, y: 0 });
+  const offsetRef = useRef({ x: 0, y: 0 });
+  const draggedRef = useRef(false);
+
+  const clampPosition = (newX, newY) => {
+    if (typeof window === "undefined") return { x: newX, y: newY };
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const padding = w >= 640 ? 24 : 16;
+    const fabSize = 56;
+    const minX = -(w - padding - fabSize);
+    const maxX = padding;
+    const minY = -(h - padding - fabSize);
+    const maxY = padding;
+    return {
+      x: Math.max(minX, Math.min(maxX, newX)),
+      y: Math.max(minY, Math.min(maxY, newY)),
+    };
+  };
+
+  const handleMouseDown = (e) => {
+    if (e.button !== 0) return;
+    isDraggingRef.current = true;
+    draggedRef.current = false;
+    dragStartRef.current = { x: e.clientX, y: e.clientY };
+    offsetRef.current = { ...position };
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDraggingRef.current) return;
+    const dx = e.clientX - dragStartRef.current.x;
+    const dy = e.clientY - dragStartRef.current.y;
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+      draggedRef.current = true;
+    }
+    const clamped = clampPosition(offsetRef.current.x + dx, offsetRef.current.y + dy);
+    setPosition(clamped);
+  };
+
+  const handleMouseUp = () => {
+    isDraggingRef.current = false;
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleTouchStart = (e) => {
+    const touch = e.touches[0];
+    isDraggingRef.current = true;
+    draggedRef.current = false;
+    dragStartRef.current = { x: touch.clientX, y: touch.clientY };
+    offsetRef.current = { ...position };
+    document.addEventListener("touchmove", handleTouchMove, { passive: false });
+    document.addEventListener("touchend", handleTouchEnd);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDraggingRef.current) return;
+    const touch = e.touches[0];
+    const dx = touch.clientX - dragStartRef.current.x;
+    const dy = touch.clientY - dragStartRef.current.y;
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+      draggedRef.current = true;
+    }
+    if (e.cancelable) e.preventDefault();
+    const clamped = clampPosition(offsetRef.current.x + dx, offsetRef.current.y + dy);
+    setPosition(clamped);
+  };
+
+  const handleTouchEnd = () => {
+    isDraggingRef.current = false;
+    document.removeEventListener("touchmove", handleTouchMove);
+    document.removeEventListener("touchend", handleTouchEnd);
+  };
+
+  useEffect(() => {
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+      document.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [position]);
+
   useEffect(() => {
     let active = false;
     let remaining = 0;
@@ -215,7 +302,14 @@ export function BreakWidget() {
   const displayRemaining = Math.max(0, maxSec - elapsed);
 
   return (
-    <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50" ref={panelRef}>
+    <div
+      ref={panelRef}
+      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 select-none touch-none"
+      style={{
+        transform: `translate(${position.x}px, ${position.y}px)`,
+        transition: isDraggingRef.current ? "none" : "transform 0.15s ease-out",
+      }}
+    >
       {/* Strict Lockout Overlay Modal when Break Limit Exceeded */}
       {isOngoing && currentOverage > 0 && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200">
@@ -327,7 +421,10 @@ export function BreakWidget() {
       )}
 
       <button
+        onMouseDown={handleMouseDown}
+        onTouchStart={handleTouchStart}
         onClick={() => {
+          if (draggedRef.current) return;
           if (!panelOpen && !isOngoing && isLimitDone) {
             toast.info("Daily break limit reached (3 breaks or 30m total).");
             return;

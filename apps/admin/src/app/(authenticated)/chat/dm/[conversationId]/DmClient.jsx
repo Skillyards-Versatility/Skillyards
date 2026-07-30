@@ -1,22 +1,71 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { ChatLayout } from "@/components/chat/ChatLayout";
+import Link from "next/link";
+import { ChatLayout, useChatLayout } from "@/components/chat/ChatLayout";
 import { ChannelList } from "@/components/chat/ChannelList";
 import { MessageList } from "@/components/chat/MessageList";
 import { MessageInput } from "@/components/chat/MessageInput";
 import { ThreadPanel } from "@/components/chat/ThreadPanel";
 import { ChannelCreateDialog } from "@/components/chat/ChannelCreateDialog";
 import { NewDmDialog } from "@/components/chat/NewDmDialog";
+import { UserPresenceBadge } from "@/components/chat/UserPresenceBadge";
+import { ChevronLeft } from "lucide-react";
+import { chatCache } from "@/components/chat/chatCache";
+
+function DmHeader({ conversation, currentUser }) {
+  const otherParticipant = conversation?.participants?.filter(p => p.id !== currentUser.id)?.[0];
+
+  return (
+    <div className="flex items-center justify-between px-4 py-3 border-b border-border/80 bg-card/45 backdrop-blur-md shrink-0 z-10">
+      <div className="flex items-center gap-3 min-w-0">
+        {/* Mobile Back Button */}
+        <Link
+          href="/chat"
+          className="p-1.5 -ml-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/80 md:hidden transition-colors flex items-center gap-0.5"
+          title="Back to channels"
+        >
+          <ChevronLeft className="w-5 h-5" />
+          <span className="text-xs font-semibold pr-1">Channels</span>
+        </Link>
+
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="relative shrink-0">
+            <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary border border-primary/20">
+              {otherParticipant?.name?.charAt(0)?.toUpperCase() || "?"}
+            </div>
+            {otherParticipant && (
+              <UserPresenceBadge
+                userId={otherParticipant.id}
+                className="absolute -bottom-0.5 -right-0.5 ring-2 ring-background w-2.5 h-2.5"
+              />
+            )}
+          </div>
+          <div className="flex flex-col min-w-0">
+            <span className="font-semibold text-foreground text-sm sm:text-base leading-tight truncate">
+              {conversation?.name || otherParticipant?.name || "Direct Message"}
+            </span>
+            {otherParticipant?.role && (
+              <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider leading-none mt-0.5">
+                {otherParticipant.role}
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function DmClient({ conversation, currentUser, initialMessages }) {
   const [messages, setMessages] = useState(initialMessages || []);
-  const [myChannels, setMyChannels] = useState([]);
-  const [conversations, setConversations] = useState([]);
+  const [myChannels, setMyChannels] = useState(chatCache.channels || []);
+  const [conversations, setConversations] = useState(chatCache.conversations || []);
   const [threadParent, setThreadParent] = useState(null);
   const [threadReplies, setThreadReplies] = useState([]);
   const [showCreateChannel, setShowCreateChannel] = useState(false);
   const [showNewDm, setShowNewDm] = useState(false);
+  const [replyTarget, setReplyTarget] = useState(null);
   const sseRef = useRef(null);
 
   useEffect(() => {
@@ -95,7 +144,11 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
   const fetchChannels = async () => {
     try {
       const res = await fetch("/api/channels");
-      if (res.ok) setMyChannels(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        chatCache.channels = data;
+        setMyChannels(data);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -104,7 +157,11 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
   const fetchConversations = async () => {
     try {
       const res = await fetch("/api/conversations");
-      if (res.ok) setConversations(await res.json());
+      if (res.ok) {
+        const data = await res.json();
+        chatCache.conversations = data;
+        setConversations(data);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -112,6 +169,33 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
 
   const handleSend = useCallback(
     async (text) => {
+      if (replyTarget) {
+        const targetId = replyTarget.id;
+        setReplyTarget(null);
+        try {
+          const res = await fetch("/api/messages", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              content: text,
+              conversationId: conversation?.id,
+              parentId: targetId,
+              type: "text",
+            }),
+          });
+          if (res.ok) {
+            const msg = await res.json();
+            if (threadParent && targetId === threadParent.id) {
+              setThreadReplies((prev) => [...prev, msg]);
+            }
+            setMessages((prev) => [...prev, msg]);
+          }
+        } catch (err) {
+          console.error("Failed to send reply:", err);
+        }
+        return;
+      }
+
       // Optimistic update
       const tempId = `temp-${Date.now()}`;
       const tempMsg = {
@@ -138,7 +222,7 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
         setMessages((prev) => prev.filter((m) => m.id !== tempId));
       }
     },
-    [conversation?.id, currentUser]
+    [conversation?.id, currentUser, replyTarget, threadParent]
   );
 
   const handleEdit = useCallback(async (messageId, content) => {
@@ -273,22 +357,22 @@ export function DmClient({ conversation, currentUser, initialMessages }) {
           )
         }
       >
-        <div className="px-4 py-3 border-b border-border bg-background shrink-0">
-          <h2 className="font-semibold text-foreground">
-            {conversation?.name || conversation?.participants?.filter(p => p.id !== currentUser.id)?.[0]?.name || "DM"}
-          </h2>
-        </div>
+        <DmHeader conversation={conversation} currentUser={currentUser} />
         <MessageList
           messages={messages}
           currentUserId={currentUser.id}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onReply={handleReply}
+          onReply={setReplyTarget}
           onReact={handleReact}
           onRemoveReaction={handleRemoveReaction}
-          showThread={(msg) => handleReply(msg)}
+          showThread={handleReply}
         />
-        <MessageInput onSend={handleSend} />
+        <MessageInput
+          onSend={handleSend}
+          replyTarget={replyTarget}
+          onCancelReply={() => setReplyTarget(null)}
+        />
       </ChatLayout>
 
 

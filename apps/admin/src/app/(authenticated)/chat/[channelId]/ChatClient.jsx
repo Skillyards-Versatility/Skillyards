@@ -9,6 +9,7 @@ import { MessageInput } from "@/components/chat/MessageInput";
 import { ThreadPanel } from "@/components/chat/ThreadPanel";
 import { ChannelCreateDialog } from "@/components/chat/ChannelCreateDialog";
 import { NewDmDialog } from "@/components/chat/NewDmDialog";
+import { chatCache } from "@/components/chat/chatCache";
 
 export function ChatClient({
   channel,
@@ -19,13 +20,14 @@ export function ChatClient({
   memberCount,
 }) {
   const [messages, setMessages] = useState(initialMessages || []);
-  const [channels, setChannels] = useState([]);
-  const [conversations, setConversations] = useState([]);
+  const [channels, setChannels] = useState(chatCache.channels || []);
+  const [conversations, setConversations] = useState(chatCache.conversations || []);
   const [threadParent, setThreadParent] = useState(null);
   const [threadReplies, setThreadReplies] = useState([]);
   const [showCreateChannel, setShowCreateChannel] = useState(false);
   const [showNewDm, setShowNewDm] = useState(false);
-  const [myChannels, setMyChannels] = useState(channel ? [channel] : []);
+  const [myChannels, setMyChannels] = useState(chatCache.channels || (channel ? [channel] : []));
+  const [replyTarget, setReplyTarget] = useState(null);
   const sseRef = useRef(null);
   const onlineUsersRef = useRef(new Set());
   const [, forceUpdate] = useState(0);
@@ -112,6 +114,7 @@ export function ChatClient({
       const res = await fetch("/api/channels");
       if (res.ok) {
         const data = await res.json();
+        chatCache.channels = data;
         setChannels(data);
         setMyChannels(data);
       }
@@ -125,6 +128,7 @@ export function ChatClient({
       const res = await fetch("/api/conversations");
       if (res.ok) {
         const data = await res.json();
+        chatCache.conversations = data;
         setConversations(data);
       }
     } catch (err) {
@@ -134,6 +138,33 @@ export function ChatClient({
 
   const handleSend = useCallback(
     async (text) => {
+      if (replyTarget) {
+        const targetId = replyTarget.id;
+        setReplyTarget(null);
+        try {
+          const res = await fetch("/api/messages", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              content: text,
+              channelId: channel?.id,
+              parentId: targetId,
+              type: "text",
+            }),
+          });
+          if (res.ok) {
+            const msg = await res.json();
+            if (threadParent && targetId === threadParent.id) {
+              setThreadReplies((prev) => [...prev, msg]);
+            }
+            setMessages((prev) => [...prev, msg]);
+          }
+        } catch (err) {
+          console.error("Failed to send reply:", err);
+        }
+        return;
+      }
+
       // Optimistic update
       const tempId = `temp-${Date.now()}`;
       const tempMsg = {
@@ -162,7 +193,7 @@ export function ChatClient({
         setMessages((prev) => prev.filter((m) => m.id !== tempId));
       }
     },
-    [channel?.id, currentUser]
+    [channel?.id, currentUser, replyTarget, threadParent]
   );
 
   const handleEdit = useCallback(
@@ -347,12 +378,16 @@ export function ChatClient({
           currentUserId={currentUser.id}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          onReply={handleReply}
+          onReply={setReplyTarget}
           onReact={handleReact}
           onRemoveReaction={handleRemoveReaction}
-          showThread={(msg) => handleReply(msg)}
+          showThread={handleReply}
         />
-        <MessageInput onSend={handleSend} />
+        <MessageInput
+          onSend={handleSend}
+          replyTarget={replyTarget}
+          onCancelReply={() => setReplyTarget(null)}
+        />
       </ChatLayout>
 
 
