@@ -17,3 +17,4 @@ export * from "./eodWarnings.js";
 export * from "./leaves.js";
 export * from "./batches.js";
 export * from "./counsellingSessions.js";
+export * from "./chat.js";
