@@ -32,7 +32,7 @@ export async function GET(_, { params }) {
 
     const headers = {
       "Content-Type": mime,
-      "Cache-Control": "public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400",
+      "Cache-Control": "private, max-age=86400, stale-while-revalidate=86400",
     };
     if (contentLength) {
       headers["Content-Length"] = contentLength.toString();
