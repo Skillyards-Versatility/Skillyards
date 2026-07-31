@@ -85,6 +85,21 @@ function MarkdownContent({ content }) {
   return <span className="whitespace-pre-wrap break-words">{parts.length > 0 ? parts : content}</span>;
 }
 
+function Avatar({ src, name, className }) {
+  const [error, setError] = useState(false);
+  const showImg = src && !error;
+  return (
+    <div className={`relative shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center ${className || ""}`}>
+      {showImg && (
+        <img src={src} alt="" className="w-full h-full object-cover absolute inset-0" onError={() => setError(true)} />
+      )}
+      <span className={`text-xs font-semibold text-primary ${showImg ? "opacity-0" : ""}`}>
+        {name?.charAt(0)?.toUpperCase() || "?"}
+      </span>
+    </div>
+  );
+}
+
 function EmojiPickerPanel({ onSelect, onClose }) {
   return (
     <>
@@ -182,7 +197,7 @@ export function ChatThreadClient({
   const headerTitle = isChannel ? `# ${convInfo?.name || "channel"}` : (convInfo?.otherUserName || "Unknown");
   const headerSubtitle = isChannel ? null : convInfo?.otherUserRole;
   const otherUserAvatar = convInfo?.otherUserProfileImageKey
-    ? `/api/files/${convInfo.otherUserProfileImageKey}`
+    ? `/files/${convInfo.otherUserProfileImageKey}`
     : null;
 
   const isNearBottom = useCallback(() => {
@@ -717,29 +732,21 @@ export function ChatThreadClient({
   };
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-gray-900">
-      <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-200 dark:border-gray-700 shrink-0">
+    <div className="h-full flex flex-col bg-white dark:bg-[#0f172a]">
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 dark:border-gray-800/60 bg-white/80 dark:bg-[#0f172a]/80 backdrop-blur-md z-10 shrink-0 shadow-sm">
         <button
           onClick={() => router.push("/chat")}
-          className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+          className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer text-gray-500 hover:text-gray-900 dark:hover:text-gray-100"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
         {isChannel ? (
-          <div className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center shrink-0">
-            <Hash className="w-4 h-4 text-blue-500" />
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500/20 to-primary/20 flex items-center justify-center shrink-0 border border-blue-500/10 shadow-inner">
+            <Hash className="w-4 h-4 text-primary" />
           </div>
         ) : (
           <div className="relative w-9 h-9 shrink-0">
-            <div className="w-9 h-9 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center">
-              {otherUserAvatar ? (
-                <img src={otherUserAvatar} alt="" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-sm font-semibold text-primary">
-                  {convInfo?.otherUserName?.charAt(0)?.toUpperCase() || "?"}
-                </span>
-              )}
-            </div>
+            <Avatar src={otherUserAvatar} name={convInfo?.otherUserName} className="w-9 h-9 rounded-full" />
             {convInfo?.otherUserLastSeen && Date.now() - new Date(convInfo.otherUserLastSeen).getTime() < 120000 && (
               <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full" />
             )}
@@ -800,57 +807,49 @@ export function ChatThreadClient({
             ))}
           </div>
         ) : messages.map((msg, idx) => {
-          const isMine = msg.senderId === userId;
+          const isMine = String(msg.senderId) === String(userId);
           const showDateSep = shouldShowDateSeparator(msg, messages[idx - 1]);
           const prevMsg = messages[idx - 1];
           const sameSender = prevMsg && prevMsg.senderId === msg.senderId && !shouldShowDateSeparator(msg, prevMsg);
           const showHeader = !sameSender;
 
           const avatarUrl = msg.senderProfileImageKey
-            ? `/api/files/${msg.senderProfileImageKey}`
+            ? `/files/${msg.senderProfileImageKey}`
             : null;
 
           return (
-            <div key={msg.id} className="group">
+            <div key={msg.id} className="group animate-in fade-in slide-in-from-bottom-2 duration-300">
               {showDateSep && (
-                <div className="flex justify-center my-3">
-                  <span className="text-[10px] text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">
+                <div className="flex justify-center my-6">
+                  <span className="text-[11px] font-medium text-gray-500 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm border border-gray-200/50 dark:border-gray-700/50">
                     {formatMessageDate(msg.createdAt)}
                   </span>
                 </div>
               )}
-              <div className={`flex gap-2 mb-1 ${isMine ? "justify-end" : "justify-start"}`}>
+              <div className={`flex gap-2.5 mb-2 ${isMine ? "justify-end" : "justify-start"}`}>
                 {!isMine && (
                   <div className="flex flex-col items-end">
                     {showHeader ? (
-                      <div className="w-7 h-7 md:w-8 md:h-8 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
-                        {avatarUrl ? (
-                          <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-[10px] md:text-xs font-semibold text-primary">
-                            {msg.senderName?.charAt(0)?.toUpperCase() || "?"}
-                          </span>
-                        )}
-                      </div>
+                      <Avatar src={avatarUrl} name={msg.senderName} className="w-8 h-8 rounded-full" />
                     ) : (
-                      <div className="w-7 h-7 md:w-8 md:h-8 shrink-0" />
+                      <div className="w-8 h-8 shrink-0" />
                     )}
                   </div>
                 )}
-                <div className={`max-w-[75%] flex flex-col ${isMine ? "items-end" : "items-start"}`}>
+                <div className={`max-w-[80%] md:max-w-[70%] flex flex-col ${isMine ? "items-end" : "items-start"}`}>
                   {showHeader && (
-                    <div className={`flex items-center gap-2 mb-0.5 ${isMine ? "flex-row-reverse" : "flex-row"}`}>
-                      <p className="text-[11px] font-medium text-gray-500 dark:text-gray-400">
+                    <div className={`flex items-center gap-2 mb-1.5 ${isMine ? "flex-row-reverse" : "flex-row"}`}>
+                      <p className="text-[11px] font-semibold text-gray-700 dark:text-gray-300">
                         {isMine ? "You" : msg.senderName}
                       </p>
-                      <p className="text-[9px] text-gray-400 dark:text-gray-500">{formatMessageTime(msg.createdAt)}</p>
+                      <p className="text-[10px] text-gray-400 font-medium">{formatMessageTime(msg.createdAt)}</p>
                     </div>
                   )}
                   <div
-                    className={`px-3 py-2 rounded-2xl text-sm leading-relaxed ${
+                    className={`px-4 py-2.5 rounded-[20px] text-[14px] leading-relaxed shadow-sm transition-all duration-200 hover:shadow-md ${
                       isMine
-                        ? "bg-primary text-primary-foreground rounded-br-sm"
-                        : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-bl-sm"
+                        ? "bg-gradient-to-br from-primary to-teal-500 text-white rounded-tr-sm border border-primary/20"
+                        : "bg-white dark:bg-[#1e293b] text-gray-800 dark:text-gray-100 rounded-tl-sm border border-gray-100 dark:border-gray-800 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)]"
                     }`}
                   >
                     {editingMessageId === msg.id ? (
@@ -891,14 +890,15 @@ export function ChatThreadClient({
                           <div className="mb-1.5">
                             {msg.fileType?.startsWith("image/") ? (
                               <img
-                                src={`/api/files/${msg.fileKey}`}
+                                src={`/files/${msg.fileKey}`}
                                 alt={msg.fileName || "Image"}
                                 className="max-w-full max-h-48 rounded-lg object-cover cursor-pointer"
-                                onClick={() => window.open(`/api/files/${msg.fileKey}`, "_blank")}
+                                onClick={() => window.open(`/files/${msg.fileKey}`, "_blank")}
+                                onError={(e) => { e.target.style.display = "none"; }}
                               />
                             ) : (
                               <a
-                                href={`/api/files/${msg.fileKey}`}
+                                href={`/files/${msg.fileKey}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs ${
@@ -915,31 +915,31 @@ export function ChatThreadClient({
                         )}
                         <MarkdownContent content={msg.content} />
                         {!showHeader && (
-                          <p className={`text-[9px] mt-1 ${isMine ? "text-left text-primary-foreground/60" : "text-right text-gray-400"}`}>
+                          <p className={`text-[10px] mt-1.5 font-medium ${isMine ? "text-right text-white/70" : "text-left text-gray-400 dark:text-gray-500"}`}>
                             {msg.editedAt ? `edited ${formatMessageTime(msg.editedAt)}` : formatMessageTime(msg.createdAt)}
                           </p>
                         )}
                       </>
                     )}
                   </div>
-                  <div className={`flex items-center gap-1 mt-0.5 ${isMine ? "flex-row-reverse" : "flex-row"}`}>
+                  <div className={`flex items-center gap-1.5 mt-1 ${isMine ? "flex-row-reverse" : "flex-row"}`}>
                     {msg.reactions?.map((r) => (
                       <button
                         key={r.emoji}
                         onClick={() => handleToggleReaction(msg.id, r.emoji)}
-                        className={`text-xs px-1.5 py-0.5 rounded-full border transition-colors cursor-pointer ${
+                        className={`text-[11px] font-medium px-2 py-0.5 rounded-full border transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95 ${
                           r.hasReacted
-                            ? "bg-primary/10 border-primary/30 text-primary"
-                            : "bg-transparent border-gray-200 dark:border-gray-700 text-gray-500"
+                            ? "bg-primary/10 border-primary/30 text-primary shadow-primary/5"
+                            : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300"
                         }`}
                       >
-                        {r.emoji} {r.count}
+                        {r.emoji} <span className={r.hasReacted ? "font-bold" : "opacity-80"}>{r.count}</span>
                       </button>
                     ))}
                     <div className="relative">
                       <button
                         onClick={() => setShowEmojiPicker(showEmojiPicker === msg.id ? null : msg.id)}
-                        className="text-xs p-0.5 rounded-full border border-transparent hover:border-gray-200 dark:hover:border-gray-700 text-gray-400 hover:text-gray-600 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
+                        className="text-xs p-1 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:border-gray-300 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer hover:scale-110 active:scale-95"
                       >
                         <Smile className="w-3.5 h-3.5" />
                       </button>
@@ -955,7 +955,7 @@ export function ChatThreadClient({
                     </div>
                     <button
                       onClick={() => handleOpenThread(msg)}
-                      className="text-[10px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
+                      className="text-[11px] font-medium text-gray-500 hover:text-primary transition-colors flex items-center gap-1 px-2 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
                     >
                       <MessageSquare className="w-3 h-3" />
                       Reply
@@ -964,14 +964,14 @@ export function ChatThreadClient({
                       <>
                         <button
                           onClick={() => handleStartEdit(msg)}
-                          className="text-[10px] text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
+                          className="text-[11px] font-medium text-gray-500 hover:text-blue-500 transition-colors px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
                           title="Edit"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleDeleteMessage(msg.id)}
-                          className="text-[10px] text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
+                          className="text-[11px] font-medium text-gray-500 hover:text-red-500 transition-colors px-2 py-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
                           title="Delete"
                         >
                           Delete
@@ -982,8 +982,9 @@ export function ChatThreadClient({
                   {msg.replyCount > 0 && (
                     <button
                       onClick={() => handleOpenThread(msg)}
-                      className="text-[11px] text-primary hover:text-primary/80 transition-colors mt-0.5 cursor-pointer"
+                      className={`text-[11px] font-semibold flex items-center gap-1.5 transition-colors mt-1 cursor-pointer px-3 py-1 rounded-full ${isMine ? 'text-primary bg-primary/5 hover:bg-primary/10' : 'text-primary bg-primary/5 hover:bg-primary/10'}`}
                     >
+                      <MessageSquare className="w-3 h-3" />
                       {msg.replyCount} {msg.replyCount === 1 ? "reply" : "replies"}
                     </button>
                   )}
@@ -992,11 +993,11 @@ export function ChatThreadClient({
             </div>
           );
         })}
-        <div ref={messagesEndRef} />
+        <div ref={messagesEndRef} className="h-4" />
       </div>
 
-      <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 shrink-0">
-        <div className="flex items-center gap-2">
+      <div className="px-4 py-4 bg-white/50 dark:bg-[#0f172a]/50 backdrop-blur-sm border-t border-gray-100 dark:border-gray-800/60 shrink-0 z-10">
+        <div className="flex items-end gap-2 bg-white dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-700/50 p-1.5 shadow-sm focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/30 transition-all">
           <input
             type="file"
             ref={fileInputRef}
@@ -1004,6 +1005,14 @@ export function ChatThreadClient({
             className="hidden"
             accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt"
           />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploadingFile}
+            className="p-2.5 mb-0.5 rounded-xl text-gray-400 hover:text-primary hover:bg-primary/5 transition-colors disabled:opacity-50 cursor-pointer shrink-0"
+            title="Attach file"
+          >
+            {uploadingFile ? <Loader2 className="w-5 h-5 animate-spin" /> : <Paperclip className="w-5 h-5" />}
+          </button>
           <textarea
             ref={inputRef}
             placeholder={isChannel ? `Message #${convInfo?.name || "channel"}` : "Type a message..."}
@@ -1011,22 +1020,14 @@ export function ChatThreadClient({
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             rows={1}
-            className="flex-1 px-4 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none overflow-y-auto max-h-32"
+            className="flex-1 py-3 px-2 text-sm bg-transparent border-none focus:outline-none focus:ring-0 resize-none overflow-y-auto max-h-32 text-gray-800 dark:text-gray-100 placeholder:text-gray-400"
           />
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploadingFile}
-            className="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-gray-400 hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 cursor-pointer shrink-0"
-            title="Attach file"
-          >
-            {uploadingFile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Paperclip className="w-4 h-4" />}
-          </button>
           <button
             onClick={handleSend}
             disabled={!newMessage.trim() || sending}
-            className="p-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer shrink-0"
+            className="p-2.5 mb-0.5 rounded-xl bg-gradient-to-br from-primary to-teal-500 text-white hover:opacity-90 transition-all shadow-sm disabled:opacity-50 cursor-pointer shrink-0"
           >
-            {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 translate-x-[-1px] translate-y-[1px]" />}
           </button>
         </div>
       </div>
@@ -1050,15 +1051,7 @@ export function ChatThreadClient({
               {members.map((m) => (
                 <div key={m.userId} className="flex items-center gap-3 px-4 py-2.5">
                   <div className="relative w-8 h-8 shrink-0">
-                    <div className="w-8 h-8 rounded-full overflow-hidden bg-primary/10 flex items-center justify-center">
-                      {m.profileImageKey ? (
-                        <img src={`/api/files/${m.profileImageKey}`} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-xs font-semibold text-primary">
-                          {m.name?.charAt(0)?.toUpperCase() || "?"}
-                        </span>
-                      )}
-                    </div>
+                    <Avatar src={m.profileImageKey ? `/files/${m.profileImageKey}` : null} name={m.name} className="w-8 h-8 rounded-full" />
                     {m.lastSeenAt && Date.now() - new Date(m.lastSeenAt).getTime() < 120000 && (
                       <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full" />
                     )}
@@ -1162,15 +1155,7 @@ export function ChatThreadClient({
                           <Check className="w-3 h-3 text-white" />
                         )}
                       </div>
-                      <div className="w-8 h-8 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
-                        {u.profileImageKey ? (
-                          <img src={`/api/files/${u.profileImageKey}`} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-xs font-semibold text-primary">
-                            {u.name?.charAt(0)?.toUpperCase() || "?"}
-                          </span>
-                        )}
-                      </div>
+                      <Avatar src={u.profileImageKey ? `/files/${u.profileImageKey}` : null} name={u.name} className="w-8 h-8 rounded-full" />
                       <div>
                         <p className="text-sm font-medium">{u.name}</p>
                         <p className="text-xs text-gray-500">{u.role}</p>
@@ -1217,15 +1202,7 @@ export function ChatThreadClient({
             <div className="overflow-y-auto flex-1 px-4 py-3 space-y-3">
               <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="w-6 h-6 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
-                    {threadParent.senderProfileImageKey ? (
-                      <img src={`/api/files/${threadParent.senderProfileImageKey}`} alt="" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-[9px] font-semibold text-primary">
-                        {threadParent.senderName?.charAt(0)?.toUpperCase() || "?"}
-                      </span>
-                    )}
-                  </div>
+                  <Avatar src={threadParent.senderProfileImageKey ? `/files/${threadParent.senderProfileImageKey}` : null} name={threadParent.senderName} className="w-6 h-6 rounded-full" />
                   <p className="text-xs font-medium">{threadParent.senderName}</p>
                   <p className="text-[10px] text-gray-400">{formatMessageTime(threadParent.createdAt)}</p>
                 </div>
@@ -1237,22 +1214,14 @@ export function ChatThreadClient({
                   <p className="text-center text-xs text-gray-400 py-4">No replies yet</p>
                 )}
                 {threadReplies.map((reply) => {
-                  const isMine = reply.senderId === userId;
+                  const isMine = String(reply.senderId) === String(userId);
                   const avatarUrl = reply.senderProfileImageKey
-                    ? `/api/files/${reply.senderProfileImageKey}`
+                    ? `/files/${reply.senderProfileImageKey}`
                     : null;
                   return (
                     <div key={reply.id}>
                       <div className="flex items-center gap-2 mb-1">
-                        <div className="w-6 h-6 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
-                          {avatarUrl ? (
-                            <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <span className="text-[9px] font-semibold text-primary">
-                              {isMine ? "Y" : (reply.senderName?.charAt(0)?.toUpperCase() || "?")}
-                            </span>
-                          )}
-                        </div>
+                        <Avatar src={avatarUrl} name={isMine ? "You" : reply.senderName} className="w-6 h-6 rounded-full" />
                         <p className="text-xs font-medium">{isMine ? "You" : reply.senderName}</p>
                         <p className="text-[10px] text-gray-400">{formatMessageTime(reply.createdAt)}</p>
                       </div>

@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { getSettings } from "@/actions/settings";
 import { getCalls } from "@/actions/calls";
 import { getUsers } from "@/actions/users";
 import { getSession } from "@/lib/auth";
@@ -6,6 +8,9 @@ import { CallsClient } from "./calls-client";
 export const dynamic = "force-dynamic";
 
 export default async function CallsPage() {
+  const settings = await getSettings();
+  if (settings.calls_feature === false) redirect("/dashboard");
+
   const session = await getSession();
   
   if (!["ADMIN", "MANAGER"].includes(session?.role)) {

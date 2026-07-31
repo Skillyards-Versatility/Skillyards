@@ -163,7 +163,7 @@ export function EodAnalyticsClient({ isAdmin = false, isManager = false, userNam
               <div className="flex items-center gap-4 mb-6">
                 {userObj.image ? (
                   <img 
-                    src={`/api/files/${userObj.image}`}
+                    src={`/files/${userObj.image}`}
                     alt={userObj.user}
                     className="w-12 h-12 rounded-full object-cover border-2 border-primary/20 group-hover:scale-105 transition-transform"
                   />

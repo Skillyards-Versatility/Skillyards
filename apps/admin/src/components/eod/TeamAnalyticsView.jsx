@@ -301,7 +301,7 @@ export function TeamAnalyticsView({ teamAggregates = [], reports = [], onSelectU
                         >
                           <div className="flex items-center gap-2.5 overflow-hidden">
                             {m.image ? (
-                              <img src={`/api/files/${m.image}`} alt={m.name} className="w-7 h-7 rounded-full object-cover shrink-0" />
+                              <img src={`/files/${m.image}`} alt={m.name} className="w-7 h-7 rounded-full object-cover shrink-0" />
                             ) : (
                               <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs shrink-0">
                                 {m.name.charAt(0)}

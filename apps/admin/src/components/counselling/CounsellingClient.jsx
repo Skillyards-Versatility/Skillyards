@@ -392,8 +392,8 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
                     </td>
                     <td className="p-3">
                       {s.imageKey ? (
-                        <a href={`/api/files/${s.imageKey}`} target="_blank" rel="noreferrer" className="block relative w-8 h-8 rounded overflow-hidden border border-border hover:opacity-80 transition-opacity">
-                          <img src={`/api/files/${s.imageKey}`} alt="Attachment" className="object-cover w-full h-full" />
+                        <a href={`/files/${s.imageKey}`} target="_blank" rel="noreferrer" className="block relative w-8 h-8 rounded overflow-hidden border border-border hover:opacity-80 transition-opacity">
+                          <img src={`/files/${s.imageKey}`} alt="Attachment" className="object-cover w-full h-full" />
                         </a>
                       ) : (
                         <span className="text-muted-foreground">—</span>

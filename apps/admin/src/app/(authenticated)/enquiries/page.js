@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { getSettings } from "@/actions/settings";
 import { desc, eq } from "drizzle-orm";
 
 import { db, enquiries as enquiriesTable, testLeads as testLeadsTable, testSessions as testSessionsTable } from "@repo/db";
@@ -84,6 +86,9 @@ function matchesSearch(enquiry, q) {
 }
 
 export default async function EnquiriesPage({ searchParams }) {
+  const settings = await getSettings();
+  if (settings.enquiries_feature === false) redirect("/dashboard");
+
   const params = await searchParams;
   const requestedPage = Number(params?.page || 1);
   const currentPage = Number.isFinite(requestedPage) && requestedPage > 0

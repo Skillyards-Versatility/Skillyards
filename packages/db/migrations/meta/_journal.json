@@ -169,6 +169,13 @@
       "when": 1786030000000,
       "tag": "0023_indexes_and_fixes",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1785475464139,
+      "tag": "0024_flowery_zaladane",
+      "breakpoints": true
     }
   ]
 }

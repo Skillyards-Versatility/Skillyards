@@ -215,7 +215,7 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
                     >
                       <div className="w-8 h-8 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
                         {conv.otherUserProfileImageKey ? (
-                          <img src={`/api/files/${conv.otherUserProfileImageKey}`} alt="" className="w-full h-full object-cover" />
+                          <img src={`/files/${conv.otherUserProfileImageKey}`} alt="" className="w-full h-full object-cover" />
                         ) : (
                           <span className="text-xs font-semibold text-primary">
                             {conv.otherUserName?.charAt(0)?.toUpperCase() || "?"}
@@ -288,7 +288,7 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
                   >
                     <div className="w-8 h-8 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
                       {u.profileImageKey ? (
-                        <img src={`/api/files/${u.profileImageKey}`} alt="" className="w-full h-full object-cover" />
+                        <img src={`/files/${u.profileImageKey}`} alt="" className="w-full h-full object-cover" />
                       ) : (
                         <span className="text-xs font-semibold text-primary">
                           {u.name?.charAt(0)?.toUpperCase() || "?"}
@@ -447,7 +447,7 @@ export function ChatPageClient({ userId, conversations: initialConversations, us
                           </div>
                           <div className="w-7 h-7 rounded-full shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center">
                             {u.profileImageKey ? (
-                              <img src={`/api/files/${u.profileImageKey}`} alt="" className="w-full h-full object-cover" />
+                              <img src={`/files/${u.profileImageKey}`} alt="" className="w-full h-full object-cover" />
                             ) : (
                               <span className="text-[10px] font-semibold text-primary">
                                 {u.name?.charAt(0)?.toUpperCase() || "?"}

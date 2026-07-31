@@ -211,6 +211,10 @@ export async function getChannelMembers(channelId) {
       email: users.email,
       userRole: users.role,
       team: users.team,
+      profileImageKey: users.profileImageKey,
+      lastSeenAt: users.lastSeenAt,
+      statusEmoji: users.statusEmoji,
+      statusText: users.statusText,
     })
     .from(conversationParticipants)
     .innerJoin(users, eq(conversationParticipants.userId, users.id))

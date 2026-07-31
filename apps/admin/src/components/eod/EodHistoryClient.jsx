@@ -256,7 +256,7 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
                           <div className="flex items-center gap-3 overflow-hidden">
                             <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-medium text-xs border border-border/50 shrink-0 overflow-hidden">
                               {u.profileImageKey ? (
-                                <img src={`/api/files/${u.profileImageKey}`} alt={u.name} className="h-full w-full object-cover" />
+                                <img src={`/files/${u.profileImageKey}`} alt={u.name} className="h-full w-full object-cover" />
                               ) : (
                                 (u.name || "U").charAt(0)
                               )}
@@ -303,7 +303,7 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
                             <div className="flex items-center gap-3">
                               <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-medium text-sm border border-border/50 overflow-hidden shrink-0">
                                 {report.profileImageKey ? (
-                                  <img src={`/api/files/${report.profileImageKey}`} alt={report.userName} className="h-full w-full object-cover" />
+                                  <img src={`/files/${report.profileImageKey}`} alt={report.userName} className="h-full w-full object-cover" />
                                 ) : (
                                   (report.userName || "U").charAt(0)
                                 )}
@@ -398,7 +398,7 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
               <div className="flex items-center gap-3">
                 <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-700 dark:text-slate-300 font-medium text-sm border border-border/50 overflow-hidden shrink-0">
                   {selectedReport.profileImageKey ? (
-                    <img src={`/api/files/${selectedReport.profileImageKey}`} alt={selectedReport.userName} className="h-full w-full object-cover" />
+                    <img src={`/files/${selectedReport.profileImageKey}`} alt={selectedReport.userName} className="h-full w-full object-cover" />
                   ) : (
                     (selectedReport.userName || "U").charAt(0)
                   )}
@@ -452,7 +452,7 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
                   <h4 className="text-sm font-medium text-foreground">Attached Screenshot</h4>
                   <div className="rounded-xl border border-border/50 overflow-hidden bg-muted/20">
                     <img 
-                      src={`/api/files/${selectedReport.screenshotKey}`} 
+                      src={`/files/${selectedReport.screenshotKey}`} 
                       alt="EOD Screenshot"
                       className="w-full h-auto object-contain max-h-[500px]"
                     />

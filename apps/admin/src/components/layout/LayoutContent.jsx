@@ -4,12 +4,12 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 
-export function LayoutContent({ children, user }) {
+export function LayoutContent({ children, user, settings }) {
   const { isCollapsed } = useSidebar();
 
   return (
     <div className="min-h-screen bg-background flex">
-      <Sidebar user={user} />
+      <Sidebar user={user} settings={settings} />
       <div
         className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${
           isCollapsed ? "lg:pl-20" : "lg:pl-64"
