@@ -30,7 +30,7 @@ async function getHandler(req, { ctx }) {
 
     const headers = {
       "Content-Type": mime,
-      "Cache-Control": "public, max-age=86400",
+      "Cache-Control": "private, max-age=86400",
     };
     if (contentLength) {
       headers["Content-Length"] = contentLength.toString();

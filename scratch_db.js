@@ -1,9 +1,14 @@
 require('dotenv').config({ path: 'apps/admin/.env.local' });
-const { db, counsellingSessions } = require('@repo/db');
+const { db, users } = require('@repo/db');
 const { isNotNull } = require('drizzle-orm');
 
 async function test() {
-  const sessions = await db.select().from(counsellingSessions).where(isNotNull(counsellingSessions.imageKey)).limit(3);
-  console.log("Keys:", sessions.map(s => s.imageKey));
+  const allUsers = await db.select({ name: users.name, profileImageKey: users.profileImageKey }).from(users);
+  console.log("Total users:", allUsers.length);
+  console.log("Users with photos:", allUsers.filter(u => u.profileImageKey !== null).length);
+  console.log("Details:");
+  allUsers.forEach(u => {
+    console.log(u.name, "->", u.profileImageKey);
+  });
 }
 test();
