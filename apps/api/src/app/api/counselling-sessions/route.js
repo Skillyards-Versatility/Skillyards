@@ -72,9 +72,29 @@ async function getHandler(req, { ctx }) {
       .from(counsellingSessions)
       .where(conditions.length > 0 ? and(...conditions) : undefined);
       
-    // For summary, if we want full breakdown, we could do aggregate queries,
-    // but for simplicity we'll just return the total count for the summary.
-    // If the user wants full breakdown across all pages, we'd need separate GROUP BY queries.
+    // Get aggregate breakdown by source
+    const sourceStats = await db
+      .select({ source: counsellingSessions.source, count: sql`count(*)`.mapWith(Number) })
+      .from(counsellingSessions)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .groupBy(counsellingSessions.source);
+
+    // Get aggregate breakdown by outcome
+    const outcomeStats = await db
+      .select({ outcome: counsellingSessions.outcome, count: sql`count(*)`.mapWith(Number) })
+      .from(counsellingSessions)
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .groupBy(counsellingSessions.outcome);
+
+    const bySource = {};
+    sourceStats.forEach(s => {
+      if (s.source) bySource[s.source] = s.count;
+    });
+
+    const byOutcome = {};
+    outcomeStats.forEach(s => {
+      if (s.outcome) byOutcome[s.outcome] = s.count;
+    });
 
     return Response.json({
       success: true,
@@ -82,7 +102,8 @@ async function getHandler(req, { ctx }) {
       totalCount: count,
       summary: {
         total: count,
-        // We omit full breakdown here to avoid massive DB queries for pagination.
+        bySource,
+        byOutcome,
       },
     });
   } catch (error) {

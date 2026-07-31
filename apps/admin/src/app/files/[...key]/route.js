@@ -26,8 +26,11 @@ export async function GET(_, { params }) {
       wav: "audio/wav",
     };
     const mime = MIME_MAP[ext] || contentType || "application/octet-stream";
+    
+    // AWS SDK v3 returns a Node.js stream for Body. Next.js Response requires Web stream or Buffer.
+    const buffer = await body.transformToByteArray();
 
-    return new Response(body, {
+    return new Response(buffer, {
       headers: {
         "Content-Type": mime,
         "Cache-Control": "public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400",
