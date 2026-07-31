@@ -436,11 +436,11 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
             />
           </div>
           
-          <div className="flex items-center gap-2 w-full lg:w-auto bg-card p-1 rounded-xl border border-border/60 shadow-sm">
-            <Calendar className="w-4 h-4 text-muted-foreground ml-3 shrink-0" />
-            <input type="date" className="input border-none shadow-none text-sm py-1.5 flex-1 lg:w-[130px] bg-transparent focus:ring-0" value={startDate} onChange={(e) => setStartDate(e.target.value)} max={today} />
-            <span className="text-xs text-muted-foreground font-medium">to</span>
-            <input type="date" className="input border-none shadow-none text-sm py-1.5 flex-1 lg:w-[130px] bg-transparent focus:ring-0" value={endDate} onChange={(e) => setEndDate(e.target.value)} max={today} />
+          <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full lg:w-auto bg-card p-1.5 sm:p-1 rounded-xl border border-border/60 shadow-sm">
+            <Calendar className="hidden sm:block w-4 h-4 text-muted-foreground ml-3 shrink-0" />
+            <input type="date" className="input border-none shadow-none text-[11px] sm:text-sm py-1.5 w-full lg:w-[130px] bg-transparent focus:ring-0" value={startDate} onChange={(e) => setStartDate(e.target.value)} max={today} />
+            <span className="hidden sm:inline text-xs text-muted-foreground font-medium">to</span>
+            <input type="date" className="input border-none shadow-none text-[11px] sm:text-sm py-1.5 w-full lg:w-[130px] bg-transparent focus:ring-0" value={endDate} onChange={(e) => setEndDate(e.target.value)} max={today} />
           </div>
         </div>
 
@@ -473,7 +473,59 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
           <p className="text-sm mt-1">Log your first session to get started.</p>
         </div>
       ) : (
-        <div className="bg-card border border-border/60 rounded-2xl overflow-hidden">
+        <div className="space-y-4">
+          {/* Mobile Card View (Hidden on sm and larger) */}
+          <div className="grid grid-cols-1 gap-3 sm:hidden">
+            {sessions.map((s) => (
+              <div key={s.id} className="bg-card border border-border/60 rounded-xl p-4 shadow-sm relative flex flex-col">
+                 <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <h4 className="font-bold text-foreground text-[15px]">{s.studentName}</h4>
+                      {isAdmin && (
+                        <div className="text-[11px] font-semibold text-primary mt-1 flex items-center gap-1.5">
+                          <User className="w-3 h-3" /> {s.counselorName}
+                        </div>
+                      )}
+                      {s.courseInterest && <div className="text-[11px] text-muted-foreground mt-1">{s.courseInterest}</div>}
+                    </div>
+                    <div className="flex flex-col gap-1.5 items-end shrink-0">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap shadow-sm ${OUTCOME_BADGES[s.outcome] || ""}`}>
+                        {s.outcome?.replace("_", " ") || "—"}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-medium">{s.sessionDate}</span>
+                    </div>
+                 </div>
+                 
+                 {s.phone && (
+                   <div className="text-xs text-muted-foreground flex items-center gap-1.5 mb-4">
+                      <Phone className="w-3 h-3" /> {s.phone}
+                   </div>
+                 )}
+
+                 <div className="flex items-center gap-2 mt-auto pt-3 border-t border-border/40">
+                    <button
+                      onClick={() => setSelectedSession(s)}
+                      className="flex-1 flex items-center justify-center gap-1.5 p-2.5 text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-colors"
+                    >
+                      <Eye className="w-3.5 h-3.5" /> Details
+                    </button>
+                    {s.phone && (
+                      <div className="flex gap-2">
+                        <a href={`tel:${s.phone}`} className="flex items-center justify-center w-9 h-9 bg-green-500/10 text-green-600 hover:bg-green-500/20 rounded-lg transition-colors">
+                          <Phone className="w-4 h-4" />
+                        </a>
+                        <a href={`https://wa.me/${s.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="flex items-center justify-center w-9 h-9 bg-green-500/10 text-green-600 hover:bg-green-500/20 rounded-lg transition-colors">
+                          <MessageSquare className="w-4 h-4" />
+                        </a>
+                      </div>
+                    )}
+                 </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop Table View (Hidden on screens smaller than sm) */}
+          <div className="hidden sm:block bg-card border border-border/60 rounded-2xl overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
@@ -556,23 +608,26 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
               </tbody>
             </table>
           </div>
-          <div className="p-3 text-xs text-muted-foreground border-t border-border/40 flex items-center justify-between bg-muted/10">
-            <div>
+          </div>
+          
+          {/* Pagination Controls */}
+          <div className="p-4 sm:p-3 text-xs sm:text-sm text-muted-foreground border border-border/60 rounded-xl sm:rounded-none sm:border-0 sm:border-t flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-2 bg-card sm:bg-muted/10 shadow-sm sm:shadow-none">
+            <div className="font-medium text-center sm:text-left">
               Showing {sessions.length} of {totalCount} session{totalCount !== 1 ? "s" : ""}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 bg-muted/30 sm:bg-transparent p-1 sm:p-0 rounded-lg">
               <button 
                 disabled={page === 1} 
                 onClick={() => setPage(p => p - 1)}
-                className="p-1 rounded-md hover:bg-muted disabled:opacity-50 transition-colors"
+                className="p-2 sm:p-1.5 rounded-md hover:bg-muted disabled:opacity-50 transition-colors flex items-center justify-center"
               >
                 <ArrowLeft className="w-4 h-4" />
               </button>
-              <span className="font-medium px-2">Page {page} of {Math.max(1, Math.ceil(totalCount / limit))}</span>
+              <span className="font-semibold px-3 sm:px-2">Page {page} of {Math.max(1, Math.ceil(totalCount / limit))}</span>
               <button 
                 disabled={page >= Math.ceil(totalCount / limit)} 
                 onClick={() => setPage(p => p + 1)}
-                className="p-1 rounded-md hover:bg-muted disabled:opacity-50 transition-colors"
+                className="p-2 sm:p-1.5 rounded-md hover:bg-muted disabled:opacity-50 transition-colors flex items-center justify-center"
               >
                 <ArrowRight className="w-4 h-4" />
               </button>
@@ -628,35 +683,35 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
 
               {/* Data Grid */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm">
-                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                    <Phone className="w-3 h-3 text-primary/70" /> Phone
+                <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm flex flex-col justify-between">
+                  <div>
+                    <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                      <Phone className="w-3 h-3 text-primary/70" /> Phone
+                    </div>
+                    <div className="font-medium text-[15px]">{selectedSession.phone || "Not provided"}</div>
                   </div>
-                  <div className="font-medium text-sm flex items-center gap-2">
-                    {selectedSession.phone || "Not provided"}
-                    {selectedSession.phone && (
-                      <div className="flex items-center ml-auto">
-                        <a href={`tel:${selectedSession.phone}`} className="p-1.5 bg-green-500/10 text-green-600 rounded-md hover:bg-green-500/20 transition-colors mr-1">
-                          <Phone className="w-3.5 h-3.5" />
-                        </a>
-                        <a href={`https://wa.me/${selectedSession.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="p-1.5 bg-green-500/10 text-green-600 rounded-md hover:bg-green-500/20 transition-colors">
-                          <MessageSquare className="w-3.5 h-3.5" />
-                        </a>
-                      </div>
-                    )}
-                  </div>
+                  {selectedSession.phone && (
+                    <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border/40">
+                      <a href={`tel:${selectedSession.phone}`} className="flex-1 flex items-center justify-center gap-1.5 py-1.5 bg-green-500/10 text-green-700 hover:bg-green-500/20 rounded-lg transition-colors text-xs font-semibold">
+                        <Phone className="w-3.5 h-3.5" /> Call
+                      </a>
+                      <a href={`https://wa.me/${selectedSession.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-1.5 py-1.5 bg-green-500/10 text-green-700 hover:bg-green-500/20 rounded-lg transition-colors text-xs font-semibold">
+                        <MessageSquare className="w-3.5 h-3.5" /> Chat
+                      </a>
+                    </div>
+                  )}
                 </div>
-                <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm">
+                <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm flex flex-col">
                   <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
                     <GraduationCap className="w-3 h-3 text-primary/70" /> Age / Class
                   </div>
-                  <div className="font-medium text-sm">{selectedSession.ageOrClass || "Not provided"}</div>
+                  <div className="font-medium text-[15px]">{selectedSession.ageOrClass || "Not provided"}</div>
                 </div>
                 <div className="col-span-2 bg-card p-4 rounded-xl border border-border/50 shadow-sm">
                   <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
                     <BookOpen className="w-3 h-3 text-primary/70" /> Course Interest
                   </div>
-                  <div className="font-medium text-sm">{selectedSession.courseInterest || "Not provided"}</div>
+                  <div className="font-medium text-[15px]">{selectedSession.courseInterest || "Not provided"}</div>
                 </div>
               </div>
 
