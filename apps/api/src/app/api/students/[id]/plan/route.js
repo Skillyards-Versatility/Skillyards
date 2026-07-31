@@ -80,7 +80,7 @@ async function patchHandler(req, { context, ctx, resource: student }) {
 
   ctx.log("PLAN_UPDATED", { studentId, planId: plan.id, totalAmount });
 
-  return Response.json({ success: true, data: updated[0] });
+  return Response.json({ success: true, data: updated });
 }
 
 // ── STRUCTURAL ENFORCEMENT ──

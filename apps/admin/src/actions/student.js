@@ -38,6 +38,25 @@ export async function updateStudent(studentId, studentData) {
   return data;
 }
 
+export async function deleteStudent(studentId) {
+  await requireAdmin();
+
+  const res = await fetch(`${API}/api/students/${studentId}`, {
+    method: "DELETE",
+    headers: await getAuthHeaders(),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Failed to delete student");
+  }
+
+  revalidateTag("students");
+  revalidatePath("/students");
+  return data;
+}
+
 export async function updateStudentPlan(studentId, planData) {
   await requireAdmin();
 

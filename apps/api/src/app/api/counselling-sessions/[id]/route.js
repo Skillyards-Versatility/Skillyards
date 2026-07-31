@@ -11,7 +11,7 @@ async function putHandler(req, { ctx, params }) {
     }
 
     const [existing] = await db
-      .select({ id: counsellingSessions.id })
+      .select({ id: counsellingSessions.id, imageKey: counsellingSessions.imageKey })
       .from(counsellingSessions)
       .where(eq(counsellingSessions.id, id))
       .limit(1);
@@ -42,7 +42,7 @@ async function putHandler(req, { ctx, params }) {
         sessionDate,
         nextFollowUpDate: nextFollowUpDate || null,
         counselorId: counselorId || existing.counselorId,
-        imageKey: imageKey ?? undefined,
+        imageKey: imageKey === undefined ? existing.imageKey : (imageKey || null),
       })
       .where(eq(counsellingSessions.id, id))
       .returning();
@@ -60,18 +60,18 @@ async function deleteHandler(req, { ctx, params }) {
   try {
     const { id } = params;
 
+    if (ctx.session.role !== "ADMIN") {
+      return Response.json({ success: false, message: "Admin access required to delete sessions" }, { status: 403 });
+    }
+
     const [existing] = await db
-      .select({ id: counsellingSessions.id, counselorId: counsellingSessions.counselorId })
+      .select({ id: counsellingSessions.id })
       .from(counsellingSessions)
       .where(eq(counsellingSessions.id, id))
       .limit(1);
 
     if (!existing) {
       return Response.json({ success: false, message: "Session not found" }, { status: 404 });
-    }
-
-    if (ctx.session.role !== "ADMIN" && existing.counselorId !== ctx.session.userId) {
-      return Response.json({ success: false, message: "Cannot delete another counselor's session" }, { status: 403 });
     }
 
     await db.delete(counsellingSessions).where(eq(counsellingSessions.id, id));

@@ -148,7 +148,7 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
     setInstallmentEditForm({
       id: inst.id,
       amount: String(inst.amount ?? ""),
-      dueDate: inst.dueDate,
+      dueDate: inst.dueDateISO ?? inst.dueDate ?? "",
     });
     setInstallmentEditOpen(true);
   };

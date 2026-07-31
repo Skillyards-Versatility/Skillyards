@@ -85,3 +85,27 @@ export async function PATCH(request) {
 
   return Response.json({ success: true, updated: count });
 }
+
+export async function DELETE(request) {
+  const session = await getSession();
+  if (session?.role !== "ADMIN") {
+    return Response.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+
+  if (!id) {
+    return Response.json({ error: "id query param is required" }, { status: 400 });
+  }
+
+  const result = await db.delete(enquiriesTable).where(eq(enquiriesTable.id, id));
+
+  invalidateCache();
+
+  if (!result?.rowCount) {
+    return Response.json({ error: "Enquiry not found" }, { status: 404 });
+  }
+
+  return Response.json({ success: true, deleted: id });
+}

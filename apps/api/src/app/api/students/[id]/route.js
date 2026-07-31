@@ -57,6 +57,25 @@ async function patchHandler(req, { context, ctx, resource: student }) {
   return Response.json(updated);
 }
 
+/**
+ * SECURED STUDENT DELETE HANDLER (Admin only)
+ * Removes a mistakenly-entered student. Plans, installments, payments and
+ * allocations are removed via DB cascades.
+ */
+async function deleteHandler(req, { context, ctx, resource: student }) {
+  if (ctx.session.role !== "ADMIN") {
+    return Response.json({ error: "Admin access required to delete students" }, { status: 403 });
+  }
+
+  const { id: studentId } = await context.params;
+
+  await db.delete(students).where(eq(students.id, studentId));
+
+  ctx.log("STUDENT_DELETED", { studentId });
+
+  return Response.json({ success: true, deleted: studentId });
+}
+
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
   policy: canAccessStudent,
@@ -64,6 +83,11 @@ export const GET = createProtectedRoute(getHandler, {
 });
 
 export const PATCH = createProtectedRoute(patchHandler, {
+  policy: canAccessStudent,
+  resourceLoader: (id) => getStudentById(db, id)
+});
+
+export const DELETE = createProtectedRoute(deleteHandler, {
   policy: canAccessStudent,
   resourceLoader: (id) => getStudentById(db, id)
 });

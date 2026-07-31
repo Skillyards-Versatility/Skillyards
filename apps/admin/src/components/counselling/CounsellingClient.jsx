@@ -92,6 +92,9 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
+  const [editImageFile, setEditImageFile] = useState(null);
+  const [editImagePreview, setEditImagePreview] = useState(null);
+
   // View details modal
   const [selectedSession, setSelectedSession] = useState(null);
 
@@ -234,7 +237,10 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
       sessionDate: s.sessionDate || today,
       nextFollowUpDate: s.nextFollowUpDate || "",
       counselorId: s.counselorId || "",
+      imageKey: s.imageKey || "",
     });
+    setEditImageFile(null);
+    setEditImagePreview(null);
   };
 
   const handleEditSubmit = async (e) => {
@@ -245,11 +251,29 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
     }
     setEditSaving(true);
     try {
-      const res = await updateCounsellingSession(editingSession.id, editForm);
+      let imageKey = editForm.imageKey;
+      if (editImageFile) {
+        const formData = new FormData();
+        formData.append("file", editImageFile);
+        const uploadRes = await fetch("/api/counselling-sessions/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+        if (!uploadData.success) {
+          toast.error(uploadData.message || "Failed to upload image");
+          return;
+        }
+        imageKey = uploadData.imageKey;
+      }
+
+      const res = await updateCounsellingSession(editingSession.id, { ...editForm, imageKey });
       if (res.success) {
         toast.success("Session updated");
         setEditingSession(null);
         setEditForm(null);
+        setEditImageFile(null);
+        setEditImagePreview(null);
         fetchSessions();
       } else {
         toast.error(res.message || "Failed to update session");
@@ -572,6 +596,15 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
                         </a>
                       </div>
                     )}
+                    {canEdit && (
+                      <button
+                        onClick={() => handleDelete(s.id)}
+                        className="flex items-center justify-center w-9 h-9 bg-destructive/10 text-destructive hover:bg-destructive/20 rounded-lg transition-colors"
+                        title="Delete Session"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
                  </div>
               </div>
             ))}
@@ -640,30 +673,34 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
                       )}
                     </td>
                     <td className="p-3 text-muted-foreground">{s.sessionDate}</td>
-                    <td className="p-3 text-right">
+                    <td className="p-3 text-right whitespace-nowrap">
+                      <div className="flex items-center justify-end gap-1.5">
                         {canEdit && (
                           <button
                             onClick={() => openEdit(s)}
-                            className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-lg transition-colors"
                             title="Edit Session"
                           >
-                            <Pencil className="w-3.5 h-3.5" />
+                            <Pencil className="w-3.5 h-3.5" /> Edit
                           </button>
                         )}
                         <button
                           onClick={() => setSelectedSession(s)}
-                          className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-colors"
                           title="View Details"
                         >
-                          <Eye className="w-3.5 h-3.5" />
+                          <Eye className="w-3.5 h-3.5" /> Details
                         </button>
-                        <button
-                          onClick={() => handleDelete(s.id)}
-                          className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
-                          title="Delete"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        {canEdit && (
+                          <button
+                            onClick={() => handleDelete(s.id)}
+                            className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold bg-destructive/10 text-destructive hover:bg-destructive/20 rounded-lg transition-colors"
+                            title="Delete Session"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" /> Delete
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -938,6 +975,57 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
                 <div>
                   <label className="text-xs font-medium block mb-1">Notes</label>
                   <textarea className="input w-full min-h-[80px]" value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} />
+                </div>
+
+                <div>
+                  <label className="text-xs font-medium block mb-1">Attachment (Image/Receipt)</label>
+                  <div className="flex items-center gap-4">
+                    {editImageFile ? (
+                      <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-border">
+                        <img src={editImagePreview} alt="Preview" className="object-cover w-full h-full" />
+                        <button
+                          type="button"
+                          onClick={() => { setEditImageFile(null); setEditImagePreview(null); }}
+                          className="absolute top-1 right-1 bg-black/50 hover:bg-black/80 text-white rounded-full p-1 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : editForm.imageKey ? (
+                      <div className="relative w-20 h-20 rounded-lg overflow-hidden border border-border">
+                        <img src={`/files/${editForm.imageKey}`} alt="Current" className="object-cover w-full h-full" />
+                        <button
+                          type="button"
+                          onClick={() => setEditForm({ ...editForm, imageKey: "" })}
+                          className="absolute top-1 right-1 bg-black/50 hover:bg-black/80 text-white rounded-full p-1 transition-colors"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="flex flex-col items-center justify-center w-20 h-20 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/30 transition-colors">
+                        <UploadCloud className="w-5 h-5 text-muted-foreground mb-1" />
+                        <span className="text-[10px] text-muted-foreground font-medium">Upload</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              setEditImageFile(file);
+                              setEditImagePreview(URL.createObjectURL(file));
+                            }
+                          }}
+                        />
+                      </label>
+                    )}
+                    <div className="text-xs text-muted-foreground flex-1">
+                      {editForm.imageKey || editImageFile
+                        ? "Click the X on the image to remove it, or pick a new file to replace it."
+                        : "Upload or replace the attachment for this session."}
+                    </div>
+                  </div>
                 </div>
               </div>
 

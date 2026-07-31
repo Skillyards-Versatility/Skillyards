@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useTransition, useRef } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   Search, X, Download, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
-  Mail, Phone, Inbox, Loader2, Check, RefreshCw, Pencil,
+  Mail, Phone, Inbox, Loader2, Check, RefreshCw, Pencil, Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
@@ -212,6 +212,19 @@ export function EnquiriesClient({
       toast.error("Failed to update enquiry", { id: toastId });
     } finally {
       setSavingEdit(false);
+    }
+  }
+
+  async function handleDelete(enquiry) {
+    if (!window.confirm(`Delete enquiry from ${enquiry.firstName || "this contact"}? This cannot be undone.`)) return;
+    const toastId = toast.loading("Deleting enquiry...");
+    try {
+      const res = await fetch(`/api/enquiries?id=${enquiry.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete");
+      toast.success("Enquiry deleted", { id: toastId });
+      router.refresh();
+    } catch {
+      toast.error("Failed to delete enquiry", { id: toastId });
     }
   }
 
@@ -543,7 +556,7 @@ export function EnquiriesClient({
                             >
                               {fullName || "—"}
                             </button>
-                            {isAdmin && enquiry.source === "website" && (
+                            {isAdmin && (
                               <button
                                 type="button"
                                 onClick={() => openEdit(enquiry)}
@@ -551,6 +564,16 @@ export function EnquiriesClient({
                                 title="Edit enquiry"
                               >
                                 <Pencil className="h-3 w-3 text-primary" />
+                              </button>
+                            )}
+                            {isAdmin && (
+                              <button
+                                type="button"
+                                onClick={() => handleDelete(enquiry)}
+                                className="opacity-0 group-hover:opacity-100 inline-flex items-center gap-1 rounded-md border border-destructive/20 bg-destructive/5 px-1.5 py-1 text-[10px] font-semibold text-destructive hover:bg-destructive/10 transition-all cursor-pointer"
+                                title="Delete enquiry"
+                              >
+                                <Trash2 className="h-3 w-3" />
                               </button>
                             )}
                           </div>
@@ -726,16 +749,28 @@ export function EnquiriesClient({
                 <DialogDescription>
                   Enquiry details and contact information
                 </DialogDescription>
-                {isAdmin && detailEnquiry.source === "website" && (
-                  <button
-                    type="button"
-                    onClick={() => { openEdit(detailEnquiry); setDetailEnquiry(null); }}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
-                  >
-                    <Pencil className="h-3.5 w-3.5 text-primary" />
-                    Edit Details
-                  </button>
-                )}
+                <div className="flex items-center gap-2">
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      onClick={() => { openEdit(detailEnquiry); setDetailEnquiry(null); }}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
+                    >
+                      <Pencil className="h-3.5 w-3.5 text-primary" />
+                      Edit Details
+                    </button>
+                  )}
+                  {isAdmin && (
+                    <button
+                      type="button"
+                      onClick={() => { handleDelete(detailEnquiry); setDetailEnquiry(null); }}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Delete
+                    </button>
+                  )}
+                </div>
               </DialogHeader>
 
               <div className="space-y-5">

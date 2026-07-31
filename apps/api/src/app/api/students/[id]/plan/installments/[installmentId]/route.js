@@ -1,4 +1,4 @@
-import { db, installments } from "@repo/db";
+import { db, installments, plans } from "@repo/db";
 import { eq } from "drizzle-orm";
 import { getStudentById } from "@/modules/students/student.repository";
 import { createProtectedRoute } from "@/lib/middleware";
@@ -27,6 +27,16 @@ async function patchHandler(req, { context, ctx, resource: student }) {
     return Response.json({ error: "Installment not found" }, { status: 404 });
   }
 
+  const [plan] = await db
+    .select({ id: plans.id })
+    .from(plans)
+    .where(eq(plans.studentId, studentId))
+    .limit(1);
+
+  if (!plan || existing.planId !== plan.id) {
+    return Response.json({ error: "Installment does not belong to this student's plan" }, { status: 404 });
+  }
+
   if (amountDue !== undefined && (Number(amountDue) <= 0 || !Number.isInteger(Number(amountDue)))) {
     return Response.json({ error: "Amount must be a positive integer" }, { status: 400 });
   }
@@ -47,7 +57,7 @@ async function patchHandler(req, { context, ctx, resource: student }) {
 
   ctx.log("INSTALLMENT_UPDATED", { studentId, installmentId });
 
-  return Response.json({ success: true, data: updated[0] });
+  return Response.json({ success: true, data: updated });
 }
 
 export const PATCH = createProtectedRoute(patchHandler, {

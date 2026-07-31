@@ -49,6 +49,7 @@ export async function StudentDataSection({ student, plan, payments = [], canEdit
   const initialInstallments = sortedInstallments.map((inst) => ({
     id: inst.id,
     dueDate: formatDate(inst.dueDate),
+    dueDateISO: inst.dueDate,
     amount: inst.amountDue,
     paid: allocationMap[inst.id] || 0,
   }));
