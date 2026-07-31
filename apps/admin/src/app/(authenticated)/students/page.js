@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { getSettings } from "@/actions/settings";
 import Link from "next/link";
 import { API } from "@/lib/api";
 import { getAuthHeaders } from "@/lib/auth";
@@ -48,6 +50,9 @@ async function getBatches() {
 }
 
 export default async function StudentsListPage({ searchParams }) {
+  const settings = await getSettings();
+  if (settings.students_feature === false) redirect("/dashboard");
+
   const { limit = 100, offset = 0 } = await searchParams;
   const [students, batches] = await Promise.all([
     getStudents(limit, offset),

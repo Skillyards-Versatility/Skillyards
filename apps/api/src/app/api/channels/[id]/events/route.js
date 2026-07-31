@@ -1,5 +1,5 @@
 import { db, messages, messageReactions, users } from "@repo/db";
-import { eq, and, gt, isNull, inArray, or, sql, desc } from "drizzle-orm";
+import { eq, and, gt, isNull, inArray, sql } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
 
 const POLL_INTERVAL = 3000;
@@ -50,12 +50,6 @@ async function getHandler(req, { ctx, context }) {
             controller.enqueue(`event: reaction_added\ndata: ${JSON.stringify(r)}\n\n`);
           }
 
-          const removedReactions = await getRemovedChannelReactions(db, id, since);
-          for (const r of removedReactions) {
-            if (closed) return;
-            controller.enqueue(`event: reaction_removed\ndata: ${JSON.stringify(r)}\n\n`);
-          }
-
           controller.enqueue(`event: heartbeat\ndata: {}\n\n`);
         } catch (err) {
           console.error("[SSE] Poll error:", err);
@@ -88,12 +82,12 @@ async function getNewChannelMessages(db, channelId, since) {
     .from(messages)
     .where(
       and(
-        eq(messages.channelId, channelId),
+        eq(messages.conversationId, channelId),
         gt(messages.createdAt, new Date(since)),
         isNull(messages.deletedAt)
       )
     )
-    .orderBy(asc(messages.createdAt));
+    .orderBy(sql`${messages.createdAt} ASC`);
 
   if (rows.length === 0) return [];
 
@@ -119,12 +113,12 @@ async function getEditedChannelMessages(db, channelId, since) {
     .from(messages)
     .where(
       and(
-        eq(messages.channelId, channelId),
+        eq(messages.conversationId, channelId),
         gt(messages.editedAt, new Date(since)),
         isNull(messages.deletedAt),
       )
     )
-    .orderBy(asc(messages.createdAt));
+    .orderBy(sql`${messages.createdAt} ASC`);
 
   return rows.map((r) => ({
     id: r.id,
@@ -139,7 +133,7 @@ async function getDeletedChannelMessages(db, channelId, since) {
     .from(messages)
     .where(
       and(
-        eq(messages.channelId, channelId),
+        eq(messages.conversationId, channelId),
         gt(messages.deletedAt, new Date(since)),
       )
     );
@@ -159,7 +153,7 @@ async function getNewChannelReactions(db, channelId, since) {
     .innerJoin(messages, eq(messages.id, messageReactions.messageId))
     .where(
       and(
-        eq(messages.channelId, channelId),
+        eq(messages.conversationId, channelId),
         gt(messageReactions.createdAt, new Date(since)),
         isNull(messages.deletedAt),
       )
@@ -168,12 +162,4 @@ async function getNewChannelReactions(db, channelId, since) {
     ...r,
     createdAt: r.createdAt?.toISOString?.() || r.createdAt,
   }));
-}
-
-async function getRemovedChannelReactions(db, channelId, since) {
-  return [];
-}
-
-function asc(col) {
-  return sql`${col} ASC`;
 }

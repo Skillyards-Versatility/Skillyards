@@ -57,7 +57,7 @@ export function ProfileClient({ user }) {
 
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [removingPhoto, setRemovingPhoto] = useState(false);
-  const [photoPreview, setPhotoPreview] = useState(user.profileImageKey ? `/api/files/${user.profileImageKey}` : null);
+  const [photoPreview, setPhotoPreview] = useState(user.profileImageKey ? `/files/${user.profileImageKey}` : null);
 
   const initials = user.name
     .split(" ")
@@ -106,7 +106,7 @@ export function ProfileClient({ user }) {
     try {
       const res = await uploadProfilePhoto(formData);
       if (res.success) {
-        setPhotoPreview(`/api/files/${res.profileImageKey}`);
+        setPhotoPreview(`/files/${res.profileImageKey}`);
         toast.success("Photo updated");
       } else {
         toast.error(res.error || "Upload failed");

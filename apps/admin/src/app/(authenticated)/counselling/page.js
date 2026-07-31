@@ -1,3 +1,5 @@
+import { redirect } from "next/navigation";
+import { getSettings } from "@/actions/settings";
 import { getSession } from "@/lib/auth";
 import { CounsellingClient } from "@/components/counselling/CounsellingClient";
 import { db, users } from "@repo/db";
@@ -8,6 +10,9 @@ import { getBatches } from "@/actions/batch";
 export const dynamic = "force-dynamic";
 
 export default async function CounsellingPage() {
+  const settings = await getSettings();
+  if (settings.counselling_feature === false) redirect("/dashboard");
+
   const session = await getSession();
   const isAdmin = session?.role === "ADMIN" || session?.role === "MANAGER";
   

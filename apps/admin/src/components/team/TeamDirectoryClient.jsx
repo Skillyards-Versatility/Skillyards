@@ -103,7 +103,7 @@ export function TeamDirectoryClient({ userRole }) {
                 <div className="relative shrink-0">
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg overflow-hidden border border-primary/20">
                     {user.profileImageKey ? (
-                      <img src={`/api/files/${user.profileImageKey}`} alt={user.name} className="w-full h-full object-cover" />
+                      <img src={`/files/${user.profileImageKey}`} alt={user.name} className="w-full h-full object-cover" />
                     ) : (
                       initials
                     )}

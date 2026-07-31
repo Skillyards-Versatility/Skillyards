@@ -303,7 +303,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-<<<<<<< HEAD
     "public.channels": {
       "name": "channels",
       "schema": "",
@@ -390,8 +389,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-=======
->>>>>>> improv3
     "public.conversation_participants": {
       "name": "conversation_participants",
       "schema": "",
@@ -403,24 +400,17 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-<<<<<<< HEAD
         "channel_id": {
           "name": "channel_id",
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
-=======
->>>>>>> improv3
         "conversation_id": {
           "name": "conversation_id",
           "type": "uuid",
           "primaryKey": false,
-<<<<<<< HEAD
           "notNull": false
-=======
-          "notNull": true
->>>>>>> improv3
         },
         "user_id": {
           "name": "user_id",
@@ -428,7 +418,6 @@
           "primaryKey": false,
           "notNull": true
         },
-<<<<<<< HEAD
         "role": {
           "name": "role",
           "type": "text",
@@ -436,18 +425,12 @@
           "notNull": true,
           "default": "'member'"
         },
-=======
->>>>>>> improv3
         "last_read_at": {
           "name": "last_read_at",
           "type": "timestamp",
           "primaryKey": false,
-<<<<<<< HEAD
           "notNull": true,
           "default": "now()"
-=======
-          "notNull": false
->>>>>>> improv3
         },
         "joined_at": {
           "name": "joined_at",
@@ -457,7 +440,6 @@
           "default": "now()"
         }
       },
-<<<<<<< HEAD
       "indexes": {
         "conv_part_channel_user_idx": {
           "name": "conv_part_channel_user_idx",
@@ -516,10 +498,6 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-=======
-      "indexes": {},
-      "foreignKeys": {
->>>>>>> improv3
         "conversation_participants_conversation_id_conversations_id_fk": {
           "name": "conversation_participants_conversation_id_conversations_id_fk",
           "tableFrom": "conversation_participants",
@@ -564,7 +542,6 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-<<<<<<< HEAD
         "type": {
           "name": "type",
           "type": "text",
@@ -581,57 +558,6 @@
         "created_by": {
           "name": "created_by",
           "type": "uuid",
-=======
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.messages": {
-      "name": "messages",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "conversation_id": {
-          "name": "conversation_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "sender_id": {
-          "name": "sender_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "content": {
-          "name": "content",
-          "type": "text",
->>>>>>> improv3
           "primaryKey": false,
           "notNull": true
         },
@@ -645,34 +571,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-<<<<<<< HEAD
         "conversations_created_by_users_id_fk": {
           "name": "conversations_created_by_users_id_fk",
           "tableFrom": "conversations",
           "tableTo": "users",
           "columnsFrom": [
             "created_by"
-=======
-        "messages_conversation_id_conversations_id_fk": {
-          "name": "messages_conversation_id_conversations_id_fk",
-          "tableFrom": "messages",
-          "tableTo": "conversations",
-          "columnsFrom": [
-            "conversation_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "messages_sender_id_users_id_fk": {
-          "name": "messages_sender_id_users_id_fk",
-          "tableFrom": "messages",
-          "tableTo": "users",
-          "columnsFrom": [
-            "sender_id"
->>>>>>> improv3
           ],
           "columnsTo": [
             "id"
@@ -754,15 +658,6 @@
           "primaryKey": false,
           "notNull": true
         },
-<<<<<<< HEAD
-=======
-        "image_key": {
-          "name": "image_key",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
->>>>>>> improv3
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -2176,7 +2071,6 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
-<<<<<<< HEAD
     },
     "public.messages": {
       "name": "messages",
@@ -2411,8 +2305,6 @@
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
-=======
->>>>>>> improv3
     }
   },
   "enums": {},

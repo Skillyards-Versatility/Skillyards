@@ -356,7 +356,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                         <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center text-primary font-bold text-sm shrink-0 shadow-sm overflow-hidden">
                           {user.profileImageKey ? (
                             <img
-                              src={`/api/files/${user.profileImageKey}`}
+                              src={`/files/${user.profileImageKey}`}
                               alt={user.name}
                               className="h-full w-full object-cover"
                             />
@@ -473,7 +473,7 @@ export function UserManagementClient({ initialUsers, currentUserId, userRole }) 
                       <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center text-primary font-bold text-lg shrink-0 shadow-sm overflow-hidden">
                         {user.profileImageKey ? (
                           <img
-                            src={`/api/files/${user.profileImageKey}`}
+                            src={`/files/${user.profileImageKey}`}
                             alt={user.name}
                             className="h-full w-full object-cover"
                           />

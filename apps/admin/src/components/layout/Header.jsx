@@ -48,7 +48,7 @@ export function Header({ user }) {
           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs shrink-0 overflow-hidden">
             {user?.profileImageKey ? (
               <img
-                src={`/api/files/${user.profileImageKey}`}
+                src={`/files/${user.profileImageKey}`}
                 alt={user.name}
                 className="h-full w-full object-cover"
               />

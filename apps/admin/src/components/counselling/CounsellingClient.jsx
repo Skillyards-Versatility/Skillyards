@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Search, Filter, Phone, User, GraduationCap, BookOpen, MessageSquare, Calendar, X, ImageIcon, UploadCloud } from "lucide-react";
+import { Loader2, Plus, Trash2, Search, Filter, Phone, User, GraduationCap, BookOpen, MessageSquare, Calendar, X, ImageIcon, UploadCloud, Eye, FileText, Download, ArrowLeft, ArrowRight, Bell } from "lucide-react";
 import { getCounsellingSessions, createCounsellingSession, deleteCounsellingSession } from "@/actions/counselling";
 import { getIstDate } from "@/lib/ist";
 
@@ -24,18 +24,18 @@ const OUTCOME_OPTIONS = [
 ];
 
 const OUTCOME_BADGES = {
-  session_booked: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20",
-  enrolled: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
-  follow_up: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
-  not_interested: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20",
-  no_response: "bg-slate-500/10 text-slate-600 dark:text-slate-400 border-slate-500/20",
+  session_booked: "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20",
+  enrolled: "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400 dark:border-blue-500/20",
+  follow_up: "bg-amber-100 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20",
+  not_interested: "bg-red-100 text-red-700 border-red-200 dark:bg-red-500/10 dark:text-red-400 dark:border-red-500/20",
+  no_response: "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-500/10 dark:text-slate-400 dark:border-slate-500/20",
 };
 
 const SOURCE_BADGES = {
-  walk_in: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
-  phone: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20",
-  referral: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
-  qsp: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20",
+  walk_in: "bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-500/10 dark:text-purple-400 dark:border-purple-500/20",
+  phone: "bg-sky-100 text-sky-700 border-sky-200 dark:bg-sky-500/10 dark:text-sky-400 dark:border-sky-500/20",
+  referral: "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-500/10 dark:text-orange-400 dark:border-orange-500/20",
+  qsp: "bg-teal-100 text-teal-700 border-teal-200 dark:bg-teal-500/10 dark:text-teal-400 dark:border-teal-500/20",
 };
 
 export function CounsellingClient({ isAdmin = false, counselors = [], batches = [] }) {
@@ -43,12 +43,36 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState(null);
+  const [totalCount, setTotalCount] = useState(0);
+
+  // Pagination
+  const [page, setPage] = useState(1);
+  const limit = 50;
 
   // Filters
-  const [startDate, setStartDate] = useState(today);
+  const [startDate, setStartDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 7);
+    return getIstDate(d);
+  });
   const [endDate, setEndDate] = useState(today);
   const [sourceFilter, setSourceFilter] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState("");
+  const [counselorFilter, setCounselorFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [showTodayFollowUps, setShowTodayFollowUps] = useState(false);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setPage(1);
+  }, [startDate, endDate, sourceFilter, outcomeFilter, counselorFilter, debouncedSearch, showTodayFollowUps]);
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // New session form
   const [showForm, setShowForm] = useState(false);
@@ -62,18 +86,34 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
     outcome: "follow_up",
     notes: "",
     sessionDate: today,
+    nextFollowUpDate: "",
     counselorId: "", // Empty string means it will default to logged-in user on backend
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
 
+  // View details modal
+  const [selectedSession, setSelectedSession] = useState(null);
+
   const fetchSessions = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getCounsellingSessions({ startDate, endDate, source: sourceFilter || undefined, outcome: outcomeFilter || undefined });
+      const res = await getCounsellingSessions({ 
+        startDate, 
+        endDate, 
+        source: sourceFilter || undefined, 
+        outcome: outcomeFilter || undefined,
+        counselorId: counselorFilter || undefined,
+        search: debouncedSearch || undefined,
+        limit,
+        offset: (page - 1) * limit,
+        showTodayFollowUps: showTodayFollowUps || undefined,
+        followUpDate: today
+      });
       if (res.success) {
         setSessions(res.sessions || []);
         setSummary(res.summary || null);
+        setTotalCount(res.totalCount || 0);
       } else {
         toast.error("Failed to load sessions");
       }
@@ -82,11 +122,39 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
     } finally {
       setLoading(false);
     }
-  }, [startDate, endDate, sourceFilter, outcomeFilter]);
+  }, [startDate, endDate, sourceFilter, outcomeFilter, counselorFilter, debouncedSearch, page, limit, showTodayFollowUps, today]);
 
   useEffect(() => {
     fetchSessions();
   }, [fetchSessions]);
+
+  const handleExportCSV = () => {
+    if (!sessions.length) return toast.error("No sessions to export");
+    const headers = ["Date", "Student", "Phone", "Counselor", "Age/Class", "Course", "Source", "Outcome", "Next Follow-up", "Notes"];
+    const csvContent = [
+      headers.join(","),
+      ...sessions.map(s => [
+        s.sessionDate,
+        `"${s.studentName?.replace(/"/g, '""') || ""}"`,
+        s.phone || "",
+        `"${s.counselorName || ""}"`,
+        `"${s.ageOrClass || ""}"`,
+        `"${s.courseInterest || ""}"`,
+        s.source,
+        s.outcome,
+        s.nextFollowUpDate || "",
+        `"${(s.notes || "").replace(/"/g, '""').replace(/\n/g, " ")}"`
+      ].join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `counselling_sessions_${today}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -119,7 +187,7 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
       if (res.success) {
         toast.success("Session logged!");
         setShowForm(false);
-        setForm({ studentName: "", phone: "", ageOrClass: "", courseInterest: "", source: "walk_in", outcome: "follow_up", notes: "", sessionDate: today, counselorId: "" });
+        setForm({ studentName: "", phone: "", ageOrClass: "", courseInterest: "", source: "walk_in", outcome: "follow_up", notes: "", sessionDate: today, nextFollowUpDate: "", counselorId: "" });
         setImageFile(null);
         setImagePreview(null);
         fetchSessions();
@@ -153,21 +221,30 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold tracking-tight flex items-center gap-2">
-            <MessageSquare className="w-5 h-5 text-primary" />
+          <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+            <MessageSquare className="w-6 h-6 text-primary" />
             Counselling Sessions
           </h2>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="text-sm text-muted-foreground mt-1.5">
             {isAdmin ? "View all counselors' sessions" : "Log your daily counselling sessions"}
           </p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors"
-        >
-          {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-          {showForm ? "Cancel" : "New Session"}
-        </button>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto mt-2 sm:mt-0">
+          <button
+            onClick={handleExportCSV}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-secondary/80 transition-all shadow-sm"
+          >
+            <Download className="w-4 h-4" />
+            Export CSV
+          </button>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all shadow-sm"
+          >
+            {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+            {showForm ? "Cancel" : "New Session"}
+          </button>
+        </div>
       </div>
 
       {/* Quick-add form */}
@@ -249,8 +326,15 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
               <label className="text-xs font-medium block mb-1">Date</label>
               <input type="date" className="input w-full" value={form.sessionDate} onChange={(e) => setForm({ ...form, sessionDate: e.target.value })} max={today} />
             </div>
+
+            {form.outcome === "follow_up" && (
+              <div className="animate-in fade-in slide-in-from-top-2">
+                <label className="text-xs font-medium block mb-1 text-amber-600 dark:text-amber-500">Next Follow-up Date</label>
+                <input type="date" className="input w-full border-amber-500/30 focus:border-amber-500/50" value={form.nextFollowUpDate} onChange={(e) => setForm({ ...form, nextFollowUpDate: e.target.value })} min={today} />
+              </div>
+            )}
             
-            <div className="sm:col-span-2 lg:col-span-3">
+            <div className={`sm:col-span-2 lg:col-span-3 ${form.outcome === "follow_up" ? 'lg:col-span-2' : ''}`}>
               <label className="text-xs font-medium block mb-1">Attachment (Image/Receipt)</label>
               <div className="flex items-center gap-4">
                 {imagePreview ? (
@@ -302,41 +386,78 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
 
       {/* Summary stats */}
       {summary && summary.total > 0 && (
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-          <div className="bg-card border border-border/60 rounded-xl p-3 text-center">
-            <div className="text-xs text-muted-foreground uppercase font-bold">Total</div>
-            <div className="text-xl font-extrabold text-foreground">{summary.total}</div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+          <div className="bg-gradient-to-br from-card to-muted/30 border border-border/60 rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow">
+            <div className="text-[10px] sm:text-xs text-muted-foreground uppercase font-bold tracking-wider mb-1">Total</div>
+            <div className="text-2xl sm:text-3xl font-black text-foreground">{summary.total}</div>
           </div>
           {Object.entries(summary.bySource || {}).map(([key, count]) => (
-            <div key={key} className="bg-card border border-border/60 rounded-xl p-3 text-center">
-              <div className="text-xs text-muted-foreground uppercase font-bold capitalize">{key.replace("_", " ")}</div>
-              <div className="text-xl font-extrabold text-foreground">{count}</div>
+            <div key={key} className="bg-gradient-to-br from-card to-muted/30 border border-border/60 rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow">
+              <div className="text-[10px] sm:text-xs text-muted-foreground uppercase font-bold tracking-wider mb-1 capitalize truncate">{key.replace("_", " ")}</div>
+              <div className="text-2xl sm:text-3xl font-black text-foreground">{count}</div>
             </div>
           ))}
           {Object.entries(summary.byOutcome || {}).map(([key, count]) => (
-            <div key={key} className="bg-card border border-border/60 rounded-xl p-3 text-center">
-              <div className="text-xs text-muted-foreground uppercase font-bold capitalize">{key.replace("_", " ")}</div>
-              <div className="text-xl font-extrabold text-foreground">{count}</div>
+            <div key={key} className="bg-gradient-to-br from-card to-muted/30 border border-border/60 rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition-shadow">
+              <div className="text-[10px] sm:text-xs text-muted-foreground uppercase font-bold tracking-wider mb-1 capitalize truncate">{key.replace("_", " ")}</div>
+              <div className="text-2xl sm:text-3xl font-black text-foreground">{count}</div>
             </div>
           ))}
         </div>
       )}
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 bg-muted/30 p-3 rounded-2xl border border-border/60">
-        <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
-        <div className="flex items-center gap-2">
-          <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
-          <input type="date" className="input text-sm py-1.5 w-[140px]" value={startDate} onChange={(e) => setStartDate(e.target.value)} max={today} />
-          <span className="text-xs text-muted-foreground">to</span>
-          <input type="date" className="input text-sm py-1.5 w-[140px]" value={endDate} onChange={(e) => setEndDate(e.target.value)} max={today} />
+      <div className="flex flex-col gap-4 bg-gradient-to-br from-muted/30 to-muted/10 p-5 rounded-2xl border border-border/60 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <div className="p-1.5 bg-primary/10 rounded-lg text-primary">
+              <Filter className="w-4 h-4" />
+            </div>
+            <h3 className="text-sm font-bold text-foreground tracking-wide">Filters & Search</h3>
+          </div>
+          <button
+            onClick={() => setShowTodayFollowUps(!showTodayFollowUps)}
+            className={`flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 rounded-xl text-xs sm:text-sm font-bold border transition-all shadow-sm ${showTodayFollowUps ? 'bg-amber-500 text-white border-amber-500 shadow-amber-500/20' : 'bg-card text-muted-foreground border-border hover:bg-muted/50'}`}
+          >
+            <Bell className="w-4 h-4" /> Today's Follow-ups
+          </button>
         </div>
-        <select className="input text-sm py-1.5" value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)}>
-          {SOURCE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-        <select className="input text-sm py-1.5" value={outcomeFilter} onChange={(e) => setOutcomeFilter(e.target.value)}>
-          {OUTCOME_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
+        
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3">
+          {/* Search Bar */}
+          <div className="relative flex-1">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input 
+              type="text" 
+              placeholder="Search by student name or phone..." 
+              className="input text-sm py-2.5 pl-10 w-full bg-card shadow-sm"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex items-center gap-2 w-full lg:w-auto bg-card p-1 rounded-xl border border-border/60 shadow-sm">
+            <Calendar className="w-4 h-4 text-muted-foreground ml-3 shrink-0" />
+            <input type="date" className="input border-none shadow-none text-sm py-1.5 flex-1 lg:w-[130px] bg-transparent focus:ring-0" value={startDate} onChange={(e) => setStartDate(e.target.value)} max={today} />
+            <span className="text-xs text-muted-foreground font-medium">to</span>
+            <input type="date" className="input border-none shadow-none text-sm py-1.5 flex-1 lg:w-[130px] bg-transparent focus:ring-0" value={endDate} onChange={(e) => setEndDate(e.target.value)} max={today} />
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          {isAdmin && (
+            <select className="input text-sm py-2.5 flex-1 bg-card shadow-sm" value={counselorFilter} onChange={(e) => setCounselorFilter(e.target.value)}>
+              <option value="">All Counselors</option>
+              {counselors.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          )}
+          <select className="input text-sm py-2.5 flex-1 bg-card shadow-sm" value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)}>
+            {SOURCE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+          <select className="input text-sm py-2.5 flex-1 bg-card shadow-sm" value={outcomeFilter} onChange={(e) => setOutcomeFilter(e.target.value)}>
+            {OUTCOME_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </div>
       </div>
 
       {/* Sessions table */}
@@ -379,21 +500,35 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
                       <div className="font-medium text-foreground">{s.studentName}</div>
                       {s.courseInterest && <div className="text-[11px] text-muted-foreground">{s.courseInterest}</div>}
                     </td>
-                    <td className="p-3 text-muted-foreground">{s.phone || "—"}</td>
                     <td className="p-3">
-                      <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${SOURCE_BADGES[s.source] || ""}`}>
+                      {s.phone ? (
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">{s.phone}</span>
+                          <div className="flex items-center">
+                            <a href={`tel:${s.phone}`} title="Call" className="p-1 text-muted-foreground hover:text-green-500 transition-colors">
+                              <Phone className="w-3 h-3" />
+                            </a>
+                            <a href={`https://wa.me/${s.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" title="WhatsApp" className="p-1 text-muted-foreground hover:text-green-500 transition-colors">
+                              <MessageSquare className="w-3 h-3" />
+                            </a>
+                          </div>
+                        </div>
+                      ) : "—"}
+                    </td>
+                    <td className="p-3">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap shadow-sm ${SOURCE_BADGES[s.source] || ""}`}>
                         {s.source?.replace("_", " ") || "—"}
                       </span>
                     </td>
                     <td className="p-3">
-                      <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${OUTCOME_BADGES[s.outcome] || ""}`}>
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border whitespace-nowrap shadow-sm ${OUTCOME_BADGES[s.outcome] || ""}`}>
                         {s.outcome?.replace("_", " ") || "—"}
                       </span>
                     </td>
                     <td className="p-3">
                       {s.imageKey ? (
-                        <a href={`/api/files/${s.imageKey}`} target="_blank" rel="noreferrer" className="block relative w-8 h-8 rounded overflow-hidden border border-border hover:opacity-80 transition-opacity">
-                          <img src={`/api/files/${s.imageKey}`} alt="Attachment" className="object-cover w-full h-full" />
+                        <a href={`/files/${s.imageKey}`} target="_blank" rel="noreferrer" className="block relative w-8 h-8 rounded overflow-hidden border border-border hover:opacity-80 transition-opacity">
+                          <img src={`/files/${s.imageKey}`} alt="Attachment" className="object-cover w-full h-full" />
                         </a>
                       ) : (
                         <span className="text-muted-foreground">—</span>
@@ -401,21 +536,180 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
                     </td>
                     <td className="p-3 text-muted-foreground">{s.sessionDate}</td>
                     <td className="p-3 text-right">
-                      <button
-                        onClick={() => handleDelete(s.id)}
-                        className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                        <button
+                          onClick={() => setSelectedSession(s)}
+                          className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                          title="View Details"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(s.id)}
+                          className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          <div className="p-3 text-xs text-muted-foreground border-t border-border/40">
-            {sessions.length} session{sessions.length !== 1 ? "s" : ""}
+          <div className="p-3 text-xs text-muted-foreground border-t border-border/40 flex items-center justify-between bg-muted/10">
+            <div>
+              Showing {sessions.length} of {totalCount} session{totalCount !== 1 ? "s" : ""}
+            </div>
+            <div className="flex items-center gap-2">
+              <button 
+                disabled={page === 1} 
+                onClick={() => setPage(p => p - 1)}
+                className="p-1 rounded-md hover:bg-muted disabled:opacity-50 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+              <span className="font-medium px-2">Page {page} of {Math.max(1, Math.ceil(totalCount / limit))}</span>
+              <button 
+                disabled={page >= Math.ceil(totalCount / limit)} 
+                onClick={() => setPage(p => p + 1)}
+                className="p-1 rounded-md hover:bg-muted disabled:opacity-50 transition-colors"
+              >
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Session Details Drawer */}
+      {selectedSession && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => setSelectedSession(null)}
+          />
+          
+          {/* Sliding Panel */}
+          <div className="relative w-full max-w-md h-full bg-card shadow-2xl border-l border-border/50 flex flex-col animate-in slide-in-from-right duration-300 z-10">
+            {/* Header */}
+            <div className="flex items-center justify-between p-5 border-b border-border/50 bg-muted/20">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary shadow-sm border border-primary/10">
+                  <User className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg leading-tight">{selectedSession.studentName}</h3>
+                  <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5">
+                    Logged on {selectedSession.sessionDate}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedSession(null)}
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-6 bg-gradient-to-b from-transparent to-muted/10">
+              
+              {/* Status Badges */}
+              <div className="flex flex-wrap items-center gap-3">
+                <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border shadow-sm ${SOURCE_BADGES[selectedSession.source] || "bg-muted text-muted-foreground border-border/50"}`}>
+                  <Search className="w-3.5 h-3.5 opacity-70" /> {selectedSession.source?.replace("_", " ") || "No Source"}
+                </span>
+                <span className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold border shadow-sm ${OUTCOME_BADGES[selectedSession.outcome] || "bg-muted text-muted-foreground border-border/50"}`}>
+                  <MessageSquare className="w-3.5 h-3.5 opacity-70" /> {selectedSession.outcome?.replace("_", " ") || "No Outcome"}
+                </span>
+              </div>
+
+              {/* Data Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm">
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <Phone className="w-3 h-3 text-primary/70" /> Phone
+                  </div>
+                  <div className="font-medium text-sm flex items-center gap-2">
+                    {selectedSession.phone || "Not provided"}
+                    {selectedSession.phone && (
+                      <div className="flex items-center ml-auto">
+                        <a href={`tel:${selectedSession.phone}`} className="p-1.5 bg-green-500/10 text-green-600 rounded-md hover:bg-green-500/20 transition-colors mr-1">
+                          <Phone className="w-3.5 h-3.5" />
+                        </a>
+                        <a href={`https://wa.me/${selectedSession.phone.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="p-1.5 bg-green-500/10 text-green-600 rounded-md hover:bg-green-500/20 transition-colors">
+                          <MessageSquare className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm">
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <GraduationCap className="w-3 h-3 text-primary/70" /> Age / Class
+                  </div>
+                  <div className="font-medium text-sm">{selectedSession.ageOrClass || "Not provided"}</div>
+                </div>
+                <div className="col-span-2 bg-card p-4 rounded-xl border border-border/50 shadow-sm">
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <BookOpen className="w-3 h-3 text-primary/70" /> Course Interest
+                  </div>
+                  <div className="font-medium text-sm">{selectedSession.courseInterest || "Not provided"}</div>
+                </div>
+              </div>
+
+              {/* Notes Section */}
+              <div className="space-y-2">
+                <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 px-1">
+                  <FileText className="w-3.5 h-3.5" /> Counselor Notes
+                </div>
+                <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm min-h-[100px]">
+                  {selectedSession.notes ? (
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed text-foreground/90">{selectedSession.notes}</p>
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic flex items-center gap-2">
+                      No notes recorded.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Attachment Section */}
+              {selectedSession.imageKey && (
+                <div className="space-y-2 pb-6">
+                  <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 px-1">
+                    <ImageIcon className="w-3.5 h-3.5" /> Attachment / Receipt
+                  </div>
+                  <div className="rounded-xl overflow-hidden border border-border/50 bg-muted/20 shadow-sm group relative">
+                    <img 
+                      src={`/files/${selectedSession.imageKey}`} 
+                      alt="Attachment" 
+                      className="w-full h-auto object-cover max-h-[300px] transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <a 
+                      href={`/files/${selectedSession.imageKey}`} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"
+                    >
+                      <span className="bg-white/90 text-black px-4 py-2 rounded-lg text-xs font-bold shadow-lg">View Full Image</span>
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Footer */}
+            <div className="p-5 border-t border-border/50 bg-card shrink-0">
+              <button
+                onClick={() => setSelectedSession(null)}
+                className="w-full py-2.5 bg-primary/10 text-primary hover:bg-primary/20 font-semibold text-sm rounded-xl transition-colors"
+              >
+                Close Details
+              </button>
+            </div>
           </div>
         </div>
       )}

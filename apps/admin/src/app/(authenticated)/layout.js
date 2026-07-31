@@ -4,10 +4,13 @@ import { BreakWidget } from "@/components/breaks/BreakWidget";
 import { getSession } from "@/lib/auth";
 import { db, users } from "@repo/db";
 import { eq } from "drizzle-orm";
+import { getSettings } from "@/actions/settings";
 
 export default async function AuthenticatedLayout({ children }) {
   const session = await getSession();
   let user = session ? { name: session.name, role: session.role, userId: session.userId, profileImageKey: null } : null;
+  
+  let settings = {};
 
   if (session) {
     try {
@@ -25,6 +28,8 @@ export default async function AuthenticatedLayout({ children }) {
         user.statusEmoji = dbUser.statusEmoji;
         user.statusText = dbUser.statusText;
       }
+      
+      settings = await getSettings();
     } catch {
       // ignore
     }
@@ -32,7 +37,7 @@ export default async function AuthenticatedLayout({ children }) {
 
   return (
     <SidebarProvider>
-      <LayoutContent user={user}>{children}</LayoutContent>
+      <LayoutContent user={user} settings={settings}>{children}</LayoutContent>
       {session && <BreakWidget />}
     </SidebarProvider>
   );

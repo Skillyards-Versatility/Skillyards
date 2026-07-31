@@ -265,7 +265,7 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <div className="flex items-center gap-2.5">
                     {caller.image ? (
-                      <img src={`/api/files/${caller.image}`} alt={caller.name} className="w-8 h-8 rounded-full object-cover border border-indigo-500/20 shrink-0" />
+                      <img src={`/files/${caller.image}`} alt={caller.name} className="w-8 h-8 rounded-full object-cover border border-indigo-500/20 shrink-0" />
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-extrabold text-xs shrink-0">
                         {caller.name.charAt(0)}

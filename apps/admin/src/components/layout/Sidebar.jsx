@@ -2,25 +2,26 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, LogOut, ChevronsLeft, ChevronsRight, X, ShieldCheck, Inbox, PhoneCall, ClipboardList, UserCircle, Coffee, CalendarRange, BarChart3, MessageSquare, MessageCircle } from "lucide-react";
+import { LayoutDashboard, Users, LogOut, ChevronsLeft, ChevronsRight, X, ShieldCheck, Inbox, PhoneCall, ClipboardList, UserCircle, Coffee, CalendarRange, BarChart3, MessageSquare, MessageCircle, Settings } from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { logout } from "@/actions/auth";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, minRole: "MANAGER" },
-  { name: "Students", href: "/students", icon: Users, minRole: "MANAGER" },
-  { name: "Enquiries", href: "/enquiries", icon: Inbox, minRole: "MANAGER" },
-  { name: "Calls", href: "/calls", icon: PhoneCall, minRole: "MANAGER" },
-  { name: "Team Directory", href: "/team", icon: Users },
-  { name: "EOD Reports", href: "/eod", icon: ClipboardList },
-  { name: "EOD Analytics", href: "/eod/analytics", icon: BarChart3 },
-  { name: "Chat", href: "/chat", icon: MessageCircle },
-  { name: "Counselling", href: "/counselling", icon: MessageSquare },
-  { name: "Leaves", href: "/leaves", icon: CalendarRange },
-  { name: "Breaks", href: "/breaks", icon: Coffee },
+  { name: "Students", href: "/students", icon: Users, minRole: "MANAGER", featureFlag: "students_feature" },
+  { name: "Enquiries", href: "/enquiries", icon: Inbox, minRole: "MANAGER", featureFlag: "enquiries_feature" },
+  { name: "Calls", href: "/calls", icon: PhoneCall, minRole: "MANAGER", featureFlag: "calls_feature" },
+  { name: "Team Directory", href: "/team", icon: Users, featureFlag: "team_feature" },
+  { name: "EOD Reports", href: "/eod", icon: ClipboardList, featureFlag: "eod_feature" },
+  { name: "EOD Analytics", href: "/eod/analytics", icon: BarChart3, featureFlag: "eod_analytics_feature" },
+  { name: "Chat", href: "/chat", icon: MessageCircle, featureFlag: "chat_feature" },
+  { name: "Counselling", href: "/counselling", icon: MessageSquare, featureFlag: "counselling_feature" },
+  { name: "Leaves", href: "/leaves", icon: CalendarRange, featureFlag: "leaves_feature" },
+  { name: "Breaks", href: "/breaks", icon: Coffee, featureFlag: "breaks_feature" },
   { name: "Profile", href: "/profile", icon: UserCircle },
-  { name: "Users", href: "/users", icon: ShieldCheck },
+  { name: "Users", href: "/users", icon: ShieldCheck, featureFlag: "users_feature" },
+  { name: "Settings", href: "/settings", icon: Settings, minRole: "ADMIN" },
 ];
 
 
@@ -31,7 +32,7 @@ function canSee(minRole, userRole) {
   return (ROLE_LEVEL[userRole] ?? 0) >= (ROLE_LEVEL[minRole] ?? 0);
 }
 
-function SidebarContent({ variant, user }) {
+function SidebarContent({ variant, user, settings }) {
   const pathname = usePathname();
   const { isCollapsed, toggle, closeMobile } = useSidebar();
   const collapsed = variant === "desktop" && isCollapsed;
@@ -85,7 +86,11 @@ function SidebarContent({ variant, user }) {
           <p className="px-3 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider mb-4">Core</p>
         )}
         {navItems
-          .filter((item) => canSee(item.minRole, user?.role))
+          .filter((item) => {
+            if (!canSee(item.minRole, user?.role)) return false;
+            if (item.featureFlag && settings?.[item.featureFlag] === false) return false;
+            return true;
+          })
           .map((item) => {
             const isActive = item.href === "/eod" 
               ? pathname === "/eod" || pathname.startsWith("/eod/history") || pathname.startsWith("/eod/submit")
@@ -129,7 +134,7 @@ function SidebarContent({ variant, user }) {
   );
 }
 
-export function Sidebar({ user }) {
+export function Sidebar({ user, settings }) {
   const { isCollapsed, isMobileOpen, closeMobile } = useSidebar();
 
   return (
@@ -140,7 +145,7 @@ export function Sidebar({ user }) {
           isCollapsed ? "w-20" : "w-64"
         }`}
       >
-        <SidebarContent variant="desktop" user={user} />
+        <SidebarContent variant="desktop" user={user} settings={settings} />
       </div>
 
       {/* Mobile Overlay */}
@@ -158,7 +163,7 @@ export function Sidebar({ user }) {
           isMobileOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <SidebarContent variant="mobile" user={user} />
+        <SidebarContent variant="mobile" user={user} settings={settings} />
       </div>
     </>
   );

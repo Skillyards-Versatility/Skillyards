@@ -22,6 +22,7 @@ export const counsellingSessions = pgTable(
     notes: text("notes"),
 
     sessionDate: date("session_date").notNull(), // YYYY-MM-DD
+    nextFollowUpDate: date("next_follow_up_date"), // YYYY-MM-DD
     imageKey: text("image_key"),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),

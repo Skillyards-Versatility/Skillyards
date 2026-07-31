@@ -14,11 +14,12 @@ export async function getThreadMessages(db, parentId) {
 }
 
 export async function sendMessage(db, data, userId) {
-  if (data.channelId) {
-    const isMember = await channelRepo.isChannelMember(db, data.channelId, userId);
+  const convId = data.channelId || data.conversationId;
+  if (convId) {
+    const isMember = await channelRepo.isChannelMember(db, convId, userId);
     if (!isMember) throw new Error("NOT_CHANNEL_MEMBER");
   }
-  return msgRepo.createMessageRecord(db, { ...data, senderId: userId });
+  return msgRepo.createMessageRecord(db, { ...data, conversationId: convId, senderId: userId });
 }
 
 export async function editMessage(db, messageId, content, userId) {

@@ -1,9 +1,13 @@
+import { getSettings } from "@/actions/settings";
 import { redirect } from "next/navigation";
 import { getUsers } from "@/actions/users";
 import { getSession } from "@/lib/auth";
 import { UserManagementClient } from "./UserManagementClient";
 
 export default async function UsersPage() {
+  const settings = await getSettings();
+  if (settings.users_feature === false) redirect("/dashboard");
+
   const session = await getSession();
 
   const initialUsers = await getUsers();

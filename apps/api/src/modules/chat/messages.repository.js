@@ -3,7 +3,7 @@ import { messages, messageReactions } from "@repo/db";
 
 export async function getMessagesByChannel(db, channelId, { limit = 50, before } = {}) {
   let conditions = and(
-    eq(messages.channelId, channelId),
+    eq(messages.conversationId, channelId),
     isNull(messages.deletedAt),
     isNull(messages.parentId),
   );
@@ -49,10 +49,8 @@ export async function createMessageRecord(db, data) {
     .values({
       content: data.content,
       senderId: data.senderId,
-      channelId: data.channelId || null,
       conversationId: data.conversationId || null,
       parentId: data.parentId || null,
-      type: data.type || "text",
       fileKey: data.fileKey || null,
       fileType: data.fileType || null,
       fileName: data.fileName || null,
