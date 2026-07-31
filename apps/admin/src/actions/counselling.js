@@ -8,7 +8,7 @@ async function authHeaders() {
   return token ? { Cookie: `session=${token}` } : {};
 }
 
-export async function getCounsellingSessions({ startDate, endDate, source, outcome, counselorId, search } = {}) {
+export async function getCounsellingSessions({ startDate, endDate, source, outcome, counselorId, search, limit, offset, showTodayFollowUps, followUpDate } = {}) {
   const params = new URLSearchParams();
   if (startDate) params.set("startDate", startDate);
   if (endDate) params.set("endDate", endDate);
@@ -16,6 +16,10 @@ export async function getCounsellingSessions({ startDate, endDate, source, outco
   if (outcome) params.set("outcome", outcome);
   if (counselorId) params.set("counselorId", counselorId);
   if (search) params.set("search", search);
+  if (limit) params.set("limit", limit);
+  if (offset) params.set("offset", offset);
+  if (showTodayFollowUps) params.set("showTodayFollowUps", "true");
+  if (followUpDate) params.set("followUpDate", followUpDate);
 
   const res = await fetch(`${API}/api/counselling-sessions?${params}`, {
     headers: await authHeaders(),
@@ -24,11 +28,11 @@ export async function getCounsellingSessions({ startDate, endDate, source, outco
   return res.json();
 }
 
-export async function createCounsellingSession({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, counselorId, imageKey }) {
+export async function createCounsellingSession({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, imageKey }) {
   const res = await fetch(`${API}/api/counselling-sessions`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...(await authHeaders()) },
-    body: JSON.stringify({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, counselorId, imageKey }),
+    body: JSON.stringify({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, imageKey }),
   });
   return res.json();
 }

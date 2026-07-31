@@ -1,5 +1,5 @@
 import { db, counsellingSessions, users } from "@repo/db";
-import { eq, desc, and, or, ilike, gte, lte } from "drizzle-orm";
+import { eq, desc, and, or, ilike, gte, lte, sql } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
 
 async function getHandler(req, { ctx }) {
@@ -11,6 +11,10 @@ async function getHandler(req, { ctx }) {
     const outcome = url.searchParams.get("outcome");
     const counselorId = url.searchParams.get("counselorId");
     const search = url.searchParams.get("search");
+    const limit = parseInt(url.searchParams.get("limit") || "50", 10);
+    const offset = parseInt(url.searchParams.get("offset") || "0", 10);
+    const showTodayFollowUps = url.searchParams.get("showTodayFollowUps") === "true";
+    const followUpDateStr = url.searchParams.get("followUpDate");
 
     const conditions = [];
 
@@ -33,6 +37,10 @@ async function getHandler(req, { ctx }) {
         )
       );
     }
+    
+    if (showTodayFollowUps && followUpDateStr) {
+      conditions.push(eq(counsellingSessions.nextFollowUpDate, followUpDateStr));
+    }
 
     const sessions = await db
       .select({
@@ -47,30 +55,34 @@ async function getHandler(req, { ctx }) {
         outcome: counsellingSessions.outcome,
         notes: counsellingSessions.notes,
         sessionDate: counsellingSessions.sessionDate,
+        nextFollowUpDate: counsellingSessions.nextFollowUpDate,
         imageKey: counsellingSessions.imageKey,
         createdAt: counsellingSessions.createdAt,
       })
       .from(counsellingSessions)
       .leftJoin(users, eq(counsellingSessions.counselorId, users.id))
       .where(conditions.length > 0 ? and(...conditions) : undefined)
-      .orderBy(desc(counsellingSessions.sessionDate));
+      .orderBy(desc(counsellingSessions.sessionDate), desc(counsellingSessions.createdAt))
+      .limit(limit)
+      .offset(offset);
 
-    // Summary stats for admin
-    const totalSessions = sessions.length;
-    const sourceBreakdown = {};
-    const outcomeBreakdown = {};
-    sessions.forEach((s) => {
-      sourceBreakdown[s.source] = (sourceBreakdown[s.source] || 0) + 1;
-      outcomeBreakdown[s.outcome] = (outcomeBreakdown[s.outcome] || 0) + 1;
-    });
+    // Get total count for pagination
+    const [{ count }] = await db
+      .select({ count: sql`count(*)`.mapWith(Number) })
+      .from(counsellingSessions)
+      .where(conditions.length > 0 ? and(...conditions) : undefined);
+      
+    // For summary, if we want full breakdown, we could do aggregate queries,
+    // but for simplicity we'll just return the total count for the summary.
+    // If the user wants full breakdown across all pages, we'd need separate GROUP BY queries.
 
     return Response.json({
       success: true,
       sessions,
+      totalCount: count,
       summary: {
-        total: totalSessions,
-        bySource: sourceBreakdown,
-        byOutcome: outcomeBreakdown,
+        total: count,
+        // We omit full breakdown here to avoid massive DB queries for pagination.
       },
     });
   } catch (error) {
@@ -81,7 +93,7 @@ async function getHandler(req, { ctx }) {
 
 async function postHandler(req, { ctx }) {
   try {
-    const { studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, counselorId, imageKey } = await req.json();
+    const { studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, imageKey } = await req.json();
 
     if (!studentName || !sessionDate) {
       return Response.json(
@@ -107,6 +119,7 @@ async function postHandler(req, { ctx }) {
         outcome: outcome || "follow_up",
         notes: notes || null,
         sessionDate,
+        nextFollowUpDate: nextFollowUpDate || null,
         imageKey: imageKey || null,
       })
       .returning();

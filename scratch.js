@@ -1,8 +1,12 @@
 require('dotenv').config();
-const { db, counsellingSessions } = require('@repo/db');
-const { desc } = require('drizzle-orm');
+const { sql } = require('drizzle-orm');
+const { db } = require('@repo/db');
 async function run() {
-  const sessions = await db.select().from(counsellingSessions).orderBy(desc(counsellingSessions.createdAt)).limit(5);
-  console.log(JSON.stringify(sessions, null, 2));
+  try {
+    await db.execute(sql`ALTER TABLE counselling_sessions ADD COLUMN IF NOT EXISTS next_follow_up_date date;`);
+    console.log("Migration successful");
+  } catch (err) {
+    console.error("Migration failed:", err);
+  }
 }
 run();
