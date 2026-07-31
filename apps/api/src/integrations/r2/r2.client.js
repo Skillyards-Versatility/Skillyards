@@ -86,5 +86,6 @@ export async function getObjectFromR2({ key }) {
   return {
     body: response.Body,
     contentType: response.ContentType || "application/octet-stream",
+    contentLength: response.ContentLength,
   };
 }

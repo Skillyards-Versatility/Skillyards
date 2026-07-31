@@ -13,7 +13,7 @@ export async function GET(_, { params }) {
     const { key } = await params;
     const fileKey = key.join("/");
 
-    const { body, contentType } = await getObjectFromR2({ key: fileKey });
+    const { body, contentType, contentLength } = await getObjectFromR2({ key: fileKey });
 
     const ext = fileKey.split(".").pop().toLowerCase();
     const MIME_MAP = {
@@ -28,14 +28,17 @@ export async function GET(_, { params }) {
     const mime = MIME_MAP[ext] || contentType || "application/octet-stream";
     
     // AWS SDK v3 returns a Node.js stream for Body. Next.js Response requires Web stream or Buffer.
-    const buffer = await body.transformToByteArray();
+    const webStream = body.transformToWebStream();
 
-    return new Response(buffer, {
-      headers: {
-        "Content-Type": mime,
-        "Cache-Control": "public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400",
-      },
-    });
+    const headers = {
+      "Content-Type": mime,
+      "Cache-Control": "public, max-age=86400, s-maxage=86400, stale-while-revalidate=86400",
+    };
+    if (contentLength) {
+      headers["Content-Length"] = contentLength.toString();
+    }
+
+    return new Response(webStream, { headers });
   } catch (error) {
     if (error.name === "NoSuchKey") {
       return new Response("Not found", { status: 404 });
