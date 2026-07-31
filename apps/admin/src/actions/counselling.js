@@ -18,6 +18,7 @@ export async function getCounsellingSessions({ startDate, endDate, source, outco
 
   const res = await fetch(`${API}/api/counselling-sessions?${params}`, {
     headers: await authHeaders(),
+    cache: "no-store"
   });
   return res.json();
 }

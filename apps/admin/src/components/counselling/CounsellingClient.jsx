@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Search, Filter, Phone, User, GraduationCap, BookOpen, MessageSquare, Calendar, X, ImageIcon, UploadCloud } from "lucide-react";
+import { Loader2, Plus, Trash2, Search, Filter, Phone, User, GraduationCap, BookOpen, MessageSquare, Calendar, X, ImageIcon, UploadCloud, Eye, FileText } from "lucide-react";
 import { getCounsellingSessions, createCounsellingSession, deleteCounsellingSession } from "@/actions/counselling";
 import { getIstDate } from "@/lib/ist";
 
@@ -44,8 +44,13 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState(null);
 
-  // Filters
-  const [startDate, setStartDate] = useState(today);
+  // Calculate 7 days ago for default start date
+  const [startDate, setStartDate] = useState(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 7);
+    return getIstDate(d);
+  });
+
   const [endDate, setEndDate] = useState(today);
   const [sourceFilter, setSourceFilter] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState("");
@@ -66,6 +71,9 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+
+  // View details modal
+  const [selectedSession, setSelectedSession] = useState(null);
 
   const fetchSessions = useCallback(async () => {
     setLoading(true);
@@ -401,13 +409,20 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
                     </td>
                     <td className="p-3 text-muted-foreground">{s.sessionDate}</td>
                     <td className="p-3 text-right">
-                      <button
-                        onClick={() => handleDelete(s.id)}
-                        className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                        <button
+                          onClick={() => setSelectedSession(s)}
+                          className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                          title="View Details"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(s.id)}
+                          className="p-1.5 text-muted-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
                     </td>
                   </tr>
                 ))}
@@ -416,6 +431,127 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
           </div>
           <div className="p-3 text-xs text-muted-foreground border-t border-border/40">
             {sessions.length} session{sessions.length !== 1 ? "s" : ""}
+          </div>
+        </div>
+      )}
+
+      {/* Session Details Drawer */}
+      {selectedSession && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          {/* Backdrop */}
+          <div 
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => setSelectedSession(null)}
+          />
+          
+          {/* Sliding Panel */}
+          <div className="relative w-full max-w-md h-full bg-card shadow-2xl border-l border-border/50 flex flex-col animate-in slide-in-from-right duration-300 z-10">
+            {/* Header */}
+            <div className="flex items-center justify-between p-5 border-b border-border/50 bg-muted/20">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary shadow-sm border border-primary/10">
+                  <User className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg leading-tight">{selectedSession.studentName}</h3>
+                  <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5">
+                    Logged on {selectedSession.sessionDate}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedSession(null)}
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Scrollable Content */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-6 bg-gradient-to-b from-transparent to-muted/10">
+              
+              {/* Status Badges */}
+              <div className="flex items-center gap-2">
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${SOURCE_BADGES[selectedSession.source] || "bg-muted text-muted-foreground border-border/50"}`}>
+                  <Search className="w-3.5 h-3.5" /> {selectedSession.source?.replace("_", " ") || "No Source"}
+                </span>
+                <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${OUTCOME_BADGES[selectedSession.outcome] || "bg-muted text-muted-foreground border-border/50"}`}>
+                  <MessageSquare className="w-3.5 h-3.5" /> {selectedSession.outcome?.replace("_", " ") || "No Outcome"}
+                </span>
+              </div>
+
+              {/* Data Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm">
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <Phone className="w-3 h-3 text-primary/70" /> Phone
+                  </div>
+                  <div className="font-medium text-sm">{selectedSession.phone || "Not provided"}</div>
+                </div>
+                <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm">
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <GraduationCap className="w-3 h-3 text-primary/70" /> Age / Class
+                  </div>
+                  <div className="font-medium text-sm">{selectedSession.ageOrClass || "Not provided"}</div>
+                </div>
+                <div className="col-span-2 bg-card p-4 rounded-xl border border-border/50 shadow-sm">
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <BookOpen className="w-3 h-3 text-primary/70" /> Course Interest
+                  </div>
+                  <div className="font-medium text-sm">{selectedSession.courseInterest || "Not provided"}</div>
+                </div>
+              </div>
+
+              {/* Notes Section */}
+              <div className="space-y-2">
+                <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 px-1">
+                  <FileText className="w-3.5 h-3.5" /> Counselor Notes
+                </div>
+                <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm min-h-[100px]">
+                  {selectedSession.notes ? (
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed text-foreground/90">{selectedSession.notes}</p>
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic flex items-center gap-2">
+                      No notes recorded.
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Attachment Section */}
+              {selectedSession.imageKey && (
+                <div className="space-y-2 pb-6">
+                  <div className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5 px-1">
+                    <ImageIcon className="w-3.5 h-3.5" /> Attachment / Receipt
+                  </div>
+                  <div className="rounded-xl overflow-hidden border border-border/50 bg-muted/20 shadow-sm group relative">
+                    <img 
+                      src={`/files/${selectedSession.imageKey}`} 
+                      alt="Attachment" 
+                      className="w-full h-auto object-cover max-h-[300px] transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <a 
+                      href={`/files/${selectedSession.imageKey}`} 
+                      target="_blank" 
+                      rel="noreferrer"
+                      className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100"
+                    >
+                      <span className="bg-white/90 text-black px-4 py-2 rounded-lg text-xs font-bold shadow-lg">View Full Image</span>
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/* Footer */}
+            <div className="p-5 border-t border-border/50 bg-card shrink-0">
+              <button
+                onClick={() => setSelectedSession(null)}
+                className="w-full py-2.5 bg-primary/10 text-primary hover:bg-primary/20 font-semibold text-sm rounded-xl transition-colors"
+              >
+                Close Details
+              </button>
+            </div>
           </div>
         </div>
       )}
