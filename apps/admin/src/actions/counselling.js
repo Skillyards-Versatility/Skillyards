@@ -8,13 +8,14 @@ async function authHeaders() {
   return token ? { Cookie: `session=${token}` } : {};
 }
 
-export async function getCounsellingSessions({ startDate, endDate, source, outcome, counselorId } = {}) {
+export async function getCounsellingSessions({ startDate, endDate, source, outcome, counselorId, search } = {}) {
   const params = new URLSearchParams();
   if (startDate) params.set("startDate", startDate);
   if (endDate) params.set("endDate", endDate);
   if (source) params.set("source", source);
   if (outcome) params.set("outcome", outcome);
   if (counselorId) params.set("counselorId", counselorId);
+  if (search) params.set("search", search);
 
   const res = await fetch(`${API}/api/counselling-sessions?${params}`, {
     headers: await authHeaders(),

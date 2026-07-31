@@ -44,16 +44,24 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState(null);
 
-  // Calculate 7 days ago for default start date
+  // Filters
   const [startDate, setStartDate] = useState(() => {
     const d = new Date();
     d.setDate(d.getDate() - 7);
     return getIstDate(d);
   });
-
   const [endDate, setEndDate] = useState(today);
   const [sourceFilter, setSourceFilter] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState("");
+  const [counselorFilter, setCounselorFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // New session form
   const [showForm, setShowForm] = useState(false);
@@ -78,7 +86,14 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
   const fetchSessions = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await getCounsellingSessions({ startDate, endDate, source: sourceFilter || undefined, outcome: outcomeFilter || undefined });
+      const res = await getCounsellingSessions({ 
+        startDate, 
+        endDate, 
+        source: sourceFilter || undefined, 
+        outcome: outcomeFilter || undefined,
+        counselorId: counselorFilter || undefined,
+        search: debouncedSearch || undefined
+      });
       if (res.success) {
         setSessions(res.sessions || []);
         setSummary(res.summary || null);
@@ -90,7 +105,7 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
     } finally {
       setLoading(false);
     }
-  }, [startDate, endDate, sourceFilter, outcomeFilter]);
+  }, [startDate, endDate, sourceFilter, outcomeFilter, counselorFilter, debouncedSearch]);
 
   useEffect(() => {
     fetchSessions();
@@ -331,20 +346,47 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
       )}
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 bg-muted/30 p-3 rounded-2xl border border-border/60">
-        <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
-        <div className="flex items-center gap-2">
-          <Calendar className="w-3.5 h-3.5 text-muted-foreground" />
-          <input type="date" className="input text-sm py-1.5 w-[140px]" value={startDate} onChange={(e) => setStartDate(e.target.value)} max={today} />
-          <span className="text-xs text-muted-foreground">to</span>
-          <input type="date" className="input text-sm py-1.5 w-[140px]" value={endDate} onChange={(e) => setEndDate(e.target.value)} max={today} />
+      <div className="flex flex-col gap-3 bg-muted/30 p-4 rounded-2xl border border-border/60">
+        <div className="flex items-center gap-2 mb-1">
+          <Filter className="w-4 h-4 text-primary" />
+          <h3 className="text-sm font-semibold text-foreground">Filters & Search</h3>
         </div>
-        <select className="input text-sm py-1.5" value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)}>
-          {SOURCE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-        <select className="input text-sm py-1.5" value={outcomeFilter} onChange={(e) => setOutcomeFilter(e.target.value)}>
-          {OUTCOME_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
+        
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Search Bar */}
+          <div className="relative flex-1 min-w-[200px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input 
+              type="text" 
+              placeholder="Search by student name or phone..." 
+              className="input text-sm py-2 pl-9 w-full"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          
+          <div className="flex items-center gap-2 shrink-0">
+            <Calendar className="w-4 h-4 text-muted-foreground" />
+            <input type="date" className="input text-sm py-2 w-[130px]" value={startDate} onChange={(e) => setStartDate(e.target.value)} max={today} />
+            <span className="text-xs text-muted-foreground">to</span>
+            <input type="date" className="input text-sm py-2 w-[130px]" value={endDate} onChange={(e) => setEndDate(e.target.value)} max={today} />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {isAdmin && (
+            <select className="input text-sm py-2 flex-1 min-w-[150px]" value={counselorFilter} onChange={(e) => setCounselorFilter(e.target.value)}>
+              <option value="">All Counselors</option>
+              {counselors.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          )}
+          <select className="input text-sm py-2 flex-1 min-w-[150px]" value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)}>
+            {SOURCE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+          <select className="input text-sm py-2 flex-1 min-w-[150px]" value={outcomeFilter} onChange={(e) => setOutcomeFilter(e.target.value)}>
+            {OUTCOME_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </div>
       </div>
 
       {/* Sessions table */}

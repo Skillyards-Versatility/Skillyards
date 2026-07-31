@@ -1,5 +1,5 @@
 import { db, counsellingSessions, users } from "@repo/db";
-import { eq, desc, and, gte, lte } from "drizzle-orm";
+import { eq, desc, and, or, ilike, gte, lte } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
 
 async function getHandler(req, { ctx }) {
@@ -10,6 +10,7 @@ async function getHandler(req, { ctx }) {
     const source = url.searchParams.get("source");
     const outcome = url.searchParams.get("outcome");
     const counselorId = url.searchParams.get("counselorId");
+    const search = url.searchParams.get("search");
 
     const conditions = [];
 
@@ -23,6 +24,15 @@ async function getHandler(req, { ctx }) {
     if (endDate) conditions.push(lte(counsellingSessions.sessionDate, endDate));
     if (source) conditions.push(eq(counsellingSessions.source, source));
     if (outcome) conditions.push(eq(counsellingSessions.outcome, outcome));
+    
+    if (search) {
+      conditions.push(
+        or(
+          ilike(counsellingSessions.studentName, `%${search}%`),
+          ilike(counsellingSessions.phone, `%${search}%`)
+        )
+      );
+    }
 
     const sessions = await db
       .select({
