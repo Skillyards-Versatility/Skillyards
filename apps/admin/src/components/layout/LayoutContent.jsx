@@ -17,7 +17,7 @@ export function LayoutContent({ children, user, settings }) {
       >
         <Header user={user} />
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
-          <div className="max-w-6xl mx-auto w-full">{children}</div>
+          <div className="w-full">{children}</div>
         </main>
       </div>
     </div>
