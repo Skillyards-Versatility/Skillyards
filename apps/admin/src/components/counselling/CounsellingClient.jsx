@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { Loader2, Plus, Trash2, Search, Filter, Phone, User, GraduationCap, BookOpen, MessageSquare, Calendar, X, ImageIcon, UploadCloud, Eye, FileText, Download, ArrowLeft, ArrowRight, Bell } from "lucide-react";
-import { getCounsellingSessions, createCounsellingSession, deleteCounsellingSession } from "@/actions/counselling";
+import { Loader2, Plus, Trash2, Search, Filter, Phone, User, GraduationCap, BookOpen, MessageSquare, Calendar, X, ImageIcon, UploadCloud, Eye, FileText, Download, ArrowLeft, ArrowRight, Bell, Pencil } from "lucide-react";
+import { getCounsellingSessions, createCounsellingSession, updateCounsellingSession, deleteCounsellingSession } from "@/actions/counselling";
 import { getIstDate } from "@/lib/ist";
 
 const SOURCE_OPTIONS = [
@@ -38,7 +38,7 @@ const SOURCE_BADGES = {
   qsp: "bg-teal-100 text-teal-700 border-teal-200 dark:bg-teal-500/10 dark:text-teal-400 dark:border-teal-500/20",
 };
 
-export function CounsellingClient({ isAdmin = false, counselors = [], batches = [] }) {
+export function CounsellingClient({ isAdmin = false, canEdit = false, counselors = [], batches = [] }) {
   const today = getIstDate();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -94,6 +94,11 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
 
   // View details modal
   const [selectedSession, setSelectedSession] = useState(null);
+
+  // Edit modal
+  const [editingSession, setEditingSession] = useState(null);
+  const [editForm, setEditForm] = useState(null);
+  const [editSaving, setEditSaving] = useState(false);
 
   const fetchSessions = useCallback(async () => {
     setLoading(true);
@@ -213,6 +218,46 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
       }
     } catch {
       toast.error("Something went wrong");
+    }
+  };
+
+  const openEdit = (s) => {
+    setEditingSession(s);
+    setEditForm({
+      studentName: s.studentName || "",
+      phone: s.phone || "",
+      ageOrClass: s.ageOrClass || "",
+      courseInterest: s.courseInterest || "",
+      source: s.source || "walk_in",
+      outcome: s.outcome || "follow_up",
+      notes: s.notes || "",
+      sessionDate: s.sessionDate || today,
+      nextFollowUpDate: s.nextFollowUpDate || "",
+      counselorId: s.counselorId || "",
+    });
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editForm.studentName.trim()) {
+      toast.error("Student name is required");
+      return;
+    }
+    setEditSaving(true);
+    try {
+      const res = await updateCounsellingSession(editingSession.id, editForm);
+      if (res.success) {
+        toast.success("Session updated");
+        setEditingSession(null);
+        setEditForm(null);
+        fetchSessions();
+      } else {
+        toast.error(res.message || "Failed to update session");
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setEditSaving(false);
     }
   };
 
@@ -503,9 +548,17 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
                  )}
 
                  <div className="flex items-center gap-2 mt-auto pt-3 border-t border-border/40">
+                    {canEdit && (
+                      <button
+                        onClick={() => openEdit(s)}
+                        className="flex-1 flex items-center justify-center gap-1.5 p-2.5 text-xs font-semibold bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-lg transition-colors"
+                      >
+                        <Pencil className="w-3.5 h-3.5" /> Edit
+                      </button>
+                    )}
                     <button
                       onClick={() => setSelectedSession(s)}
-                      className="flex-1 flex items-center justify-center gap-1.5 p-2.5 text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-colors"
+                      className={`${canEdit ? "flex-1" : "flex-1"} flex items-center justify-center gap-1.5 p-2.5 text-xs font-semibold bg-primary/10 text-primary hover:bg-primary/20 rounded-lg transition-colors`}
                     >
                       <Eye className="w-3.5 h-3.5" /> Details
                     </button>
@@ -588,6 +641,15 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
                     </td>
                     <td className="p-3 text-muted-foreground">{s.sessionDate}</td>
                     <td className="p-3 text-right">
+                        {canEdit && (
+                          <button
+                            onClick={() => openEdit(s)}
+                            className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                            title="Edit Session"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                         <button
                           onClick={() => setSelectedSession(s)}
                           className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
@@ -765,6 +827,139 @@ export function CounsellingClient({ isAdmin = false, counselors = [], batches = 
                 Close Details
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Session Drawer */}
+      {editingSession && editForm && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300"
+            onClick={() => { setEditingSession(null); setEditForm(null); }}
+          />
+
+          <div className="relative w-full max-w-md h-full bg-card shadow-2xl border-l border-border/50 flex flex-col animate-in slide-in-from-right duration-300 z-10">
+            <form onSubmit={handleEditSubmit} className="flex flex-col h-full">
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-border/50 bg-muted/20">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 text-primary shadow-sm border border-primary/10">
+                    <Pencil className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-lg leading-tight">Edit Session</h3>
+                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider mt-0.5">
+                      Admin correction
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => { setEditingSession(null); setEditForm(null); }}
+                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Scrollable Content */}
+              <div className="flex-1 overflow-y-auto p-5 space-y-4">
+                <div>
+                  <label className="text-xs font-medium block mb-1">Student Name *</label>
+                  <input className="input w-full" value={editForm.studentName} onChange={(e) => setEditForm({ ...editForm, studentName: e.target.value })} />
+                </div>
+                {canEdit && (
+                  <div>
+                    <label className="text-xs font-medium block mb-1">Assign to BDA/Counselor</label>
+                    <select className="input w-full" value={editForm.counselorId} onChange={(e) => setEditForm({ ...editForm, counselorId: e.target.value })}>
+                      {counselors.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name} ({c.role})</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                <div>
+                  <label className="text-xs font-medium block mb-1">Phone</label>
+                  <input className="input w-full" value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-xs font-medium block mb-1">Age / Class</label>
+                  <input className="input w-full" value={editForm.ageOrClass} onChange={(e) => setEditForm({ ...editForm, ageOrClass: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-xs font-medium block mb-1">Course Interest</label>
+                  <select className="input w-full" value={editForm.courseInterest} onChange={(e) => setEditForm({ ...editForm, courseInterest: e.target.value })}>
+                    <option value="">Select a Batch/Course</option>
+                    {Array.from(new Set(batches.filter(b => b.status === "active").map(b => b.courseName))).map(courseName => (
+                      <optgroup key={courseName} label={courseName}>
+                        {batches
+                          .filter(b => b.status === "active" && b.courseName === courseName)
+                          .map(b => (
+                            <option key={b.id} value={`${b.courseName} - ${b.name}`}>
+                              {b.name}
+                            </option>
+                          ))}
+                      </optgroup>
+                    ))}
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-medium block mb-1">Source</label>
+                    <select className="input w-full" value={editForm.source} onChange={(e) => setEditForm({ ...editForm, source: e.target.value })}>
+                      <option value="walk_in">Walk-in</option>
+                      <option value="phone">Phone</option>
+                      <option value="referral">Referral</option>
+                      <option value="qsp">QSP</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium block mb-1">Outcome</label>
+                    <select className="input w-full" value={editForm.outcome} onChange={(e) => setEditForm({ ...editForm, outcome: e.target.value })}>
+                      <option value="follow_up">Follow-up</option>
+                      <option value="session_booked">Session Booked</option>
+                      <option value="enrolled">Enrolled</option>
+                      <option value="not_interested">Not Interested</option>
+                      <option value="no_response">No Response</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-medium block mb-1">Date</label>
+                  <input type="date" className="input w-full" value={editForm.sessionDate} onChange={(e) => setEditForm({ ...editForm, sessionDate: e.target.value })} />
+                </div>
+                {editForm.outcome === "follow_up" && (
+                  <div className="animate-in fade-in slide-in-from-top-2">
+                    <label className="text-xs font-medium block mb-1 text-amber-600 dark:text-amber-500">Next Follow-up Date</label>
+                    <input type="date" className="input w-full border-amber-500/30 focus:border-amber-500/50" value={editForm.nextFollowUpDate} onChange={(e) => setEditForm({ ...editForm, nextFollowUpDate: e.target.value })} />
+                  </div>
+                )}
+                <div>
+                  <label className="text-xs font-medium block mb-1">Notes</label>
+                  <textarea className="input w-full min-h-[80px]" value={editForm.notes} onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })} />
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div className="p-5 border-t border-border/50 bg-card shrink-0 space-y-2">
+                <button
+                  type="submit"
+                  disabled={editSaving}
+                  className="w-full py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-sm rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {editSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Save Changes
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setEditingSession(null); setEditForm(null); }}
+                  className="w-full py-2.5 bg-secondary text-secondary-foreground hover:bg-secondary/80 font-semibold text-sm rounded-xl transition-colors"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

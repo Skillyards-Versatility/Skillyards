@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getSettings } from "@/actions/settings";
 import Link from "next/link";
 import { API } from "@/lib/api";
-import { getAuthHeaders } from "@/lib/auth";
+import { getAuthHeaders, getSession } from "@/lib/auth";
 import { StudentsDirectoryClient } from "@/components/students/StudentsDirectoryClient";
 
 async function getStudents(limit = 100, offset = 0) {
@@ -58,6 +58,8 @@ export default async function StudentsListPage({ searchParams }) {
     getStudents(limit, offset),
     getBatches()
   ]);
+  const session = await getSession();
+  const canEdit = session?.role === "ADMIN";
 
   return (
     <div className="space-y-6">
@@ -76,7 +78,7 @@ export default async function StudentsListPage({ searchParams }) {
         </Link>
       </div>
 
-      <StudentsDirectoryClient initialStudents={students} initialBatches={batches} />
+      <StudentsDirectoryClient initialStudents={students} initialBatches={batches} canEdit={canEdit} />
     </div>
   );
 }

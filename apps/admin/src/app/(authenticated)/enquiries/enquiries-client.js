@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useTransition, useRef } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   Search, X, Download, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
-  Mail, Phone, Inbox, Loader2, Check, RefreshCw,
+  Mail, Phone, Inbox, Loader2, Check, RefreshCw, Pencil,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
@@ -49,6 +49,7 @@ export function EnquiriesClient({
   order: initialOrder,
   statusFilter: initialStatusFilter,
   sourceFilter: initialSourceFilter = "",
+  isAdmin = false,
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -58,6 +59,9 @@ export function EnquiriesClient({
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [searchInput, setSearchInput] = useState(initialSearch || "");
   const [detailEnquiry, setDetailEnquiry] = useState(null);
+  const [editEnquiry, setEditEnquiry] = useState(null);
+  const [editForm, setEditForm] = useState(null);
+  const [savingEdit, setSavingEdit] = useState(false);
   const [editingStatusId, setEditingStatusId] = useState(null);
   const [busy, setBusy] = useState(null);
   const tableRef = useRef(null);
@@ -174,6 +178,40 @@ export function EnquiriesClient({
       toast.error("Failed to update status", { id: toastId });
     } finally {
       setBusy(null);
+    }
+  }
+
+  function openEdit(enquiry) {
+    setEditEnquiry(enquiry);
+    setEditForm({
+      firstName: enquiry.firstName || "",
+      lastName: enquiry.lastName || "",
+      email: enquiry.email || "",
+      phone: enquiry.phone || "",
+      message: enquiry.message || "",
+    });
+  }
+
+  async function handleEditSubmit(e) {
+    e.preventDefault();
+    if (!editEnquiry || !editForm) return;
+    setSavingEdit(true);
+    const toastId = toast.loading("Updating enquiry...");
+    try {
+      const res = await fetch("/api/enquiries", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: editEnquiry.id, updates: editForm }),
+      });
+      if (!res.ok) throw new Error("Failed to update");
+      toast.success("Enquiry updated", { id: toastId });
+      setEditEnquiry(null);
+      setEditForm(null);
+      router.refresh();
+    } catch {
+      toast.error("Failed to update enquiry", { id: toastId });
+    } finally {
+      setSavingEdit(false);
     }
   }
 
@@ -497,13 +535,25 @@ export function EnquiriesClient({
 
                         {/* Name */}
                         <td className="px-5 py-4">
-                          <button
-                            type="button"
-                            onClick={() => setDetailEnquiry(enquiry)}
-                            className="font-semibold text-foreground hover:text-primary transition-colors text-left"
-                          >
-                            {fullName || "—"}
-                          </button>
+                          <div className="flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => setDetailEnquiry(enquiry)}
+                              className="font-semibold text-foreground hover:text-primary transition-colors text-left"
+                            >
+                              {fullName || "—"}
+                            </button>
+                            {isAdmin && enquiry.source === "website" && (
+                              <button
+                                type="button"
+                                onClick={() => openEdit(enquiry)}
+                                className="opacity-0 group-hover:opacity-100 inline-flex items-center gap-1 rounded-md border border-border bg-card px-1.5 py-1 text-[10px] font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-all cursor-pointer"
+                                title="Edit enquiry"
+                              >
+                                <Pencil className="h-3 w-3 text-primary" />
+                              </button>
+                            )}
+                          </div>
                         </td>
 
                         {/* Contact */}
@@ -676,6 +726,16 @@ export function EnquiriesClient({
                 <DialogDescription>
                   Enquiry details and contact information
                 </DialogDescription>
+                {isAdmin && detailEnquiry.source === "website" && (
+                  <button
+                    type="button"
+                    onClick={() => { openEdit(detailEnquiry); setDetailEnquiry(null); }}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
+                  >
+                    <Pencil className="h-3.5 w-3.5 text-primary" />
+                    Edit Details
+                  </button>
+                )}
               </DialogHeader>
 
               <div className="space-y-5">
@@ -768,6 +828,92 @@ export function EnquiriesClient({
                   </div>
                 </div>
               </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+      {/* Edit Enquiry Dialog */}
+      <Dialog open={!!editEnquiry} onOpenChange={(open) => { if (!open) { setEditEnquiry(null); setEditForm(null); } }}>
+        <DialogContent className="sm:max-w-lg">
+          {editEnquiry && editForm && (
+            <>
+              <DialogHeader>
+                <DialogTitle>Edit Enquiry</DialogTitle>
+                <DialogDescription>
+                  Correct data-entry mistakes. This is restricted to admins.
+                </DialogDescription>
+              </DialogHeader>
+              <form onSubmit={handleEditSubmit} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">First Name</label>
+                    <input
+                      type="text"
+                      required
+                      value={editForm.firstName}
+                      onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
+                      className="input text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Last Name</label>
+                    <input
+                      type="text"
+                      value={editForm.lastName}
+                      onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
+                      className="input text-sm"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Email</label>
+                    <input
+                      type="email"
+                      required
+                      value={editForm.email}
+                      onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                      className="input text-sm"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Phone</label>
+                    <input
+                      type="tel"
+                      value={editForm.phone}
+                      onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                      className="input text-sm"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Message</label>
+                  <textarea
+                    required
+                    rows={4}
+                    value={editForm.message}
+                    onChange={(e) => setEditForm({ ...editForm, message: e.target.value })}
+                    className="input text-sm resize-none"
+                  />
+                </div>
+                <div className="flex justify-end gap-2 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => { setEditEnquiry(null); setEditForm(null); }}
+                    className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={savingEdit}
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    {savingEdit && <Loader2 className="h-4 w-4 animate-spin" />}
+                    Save Changes
+                  </button>
+                </div>
+              </form>
             </>
           )}
         </DialogContent>

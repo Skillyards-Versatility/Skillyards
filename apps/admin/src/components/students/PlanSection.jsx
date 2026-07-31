@@ -1,4 +1,6 @@
-export function PlanSection({ plan, onAssignPlan }) {
+import { Pencil } from "lucide-react";
+
+export function PlanSection({ plan, onAssignPlan, onEditPlan, canEdit }) {
   if (!plan) {
     return (
       <div className="card p-6 flex items-center justify-between gap-4">
@@ -24,9 +26,20 @@ export function PlanSection({ plan, onAssignPlan }) {
           Fee Plan
         </h3>
 
-        <span className="text-xs font-semibold px-2.5 py-1 rounded bg-primary/10 text-primary border border-primary/20">
-          {plan.type}
-        </span>
+        <div className="flex items-center gap-2">
+          {canEdit && onEditPlan && (
+            <button
+              onClick={onEditPlan}
+              className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border rounded-lg transition-colors"
+              title="Edit Plan"
+            >
+              <Pencil className="w-3 h-3" /> Edit
+            </button>
+          )}
+          <span className="text-xs font-semibold px-2.5 py-1 rounded bg-primary/10 text-primary border border-primary/20">
+            {plan.type}
+          </span>
+        </div>
       </div>
 
       {/* Content */}

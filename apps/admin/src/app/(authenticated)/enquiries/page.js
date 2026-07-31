@@ -89,6 +89,8 @@ export default async function EnquiriesPage({ searchParams }) {
   const settings = await getSettings();
   if (settings.enquiries_feature === false) redirect("/dashboard");
 
+  const session = await getSession();
+  const isAdmin = session?.role === "ADMIN";
   const params = await searchParams;
   const requestedPage = Number(params?.page || 1);
   const currentPage = Number.isFinite(requestedPage) && requestedPage > 0
@@ -155,6 +157,7 @@ export default async function EnquiriesPage({ searchParams }) {
       order={order}
       statusFilter={statusFilter}
       sourceFilter={sourceFilter}
+      isAdmin={isAdmin}
     />
   );
 }

@@ -8,7 +8,7 @@ import { LedgerSkeleton, DetailsSkeleton } from "./sections/Skeletons";
 export const dynamic = "force-dynamic";
 
 import { API } from "@/lib/api";
-import { getAuthHeaders } from "@/lib/auth";
+import { getAuthHeaders, getSession } from "@/lib/auth";
 
 async function getMegaData(id) {
   const res = await fetch(`${API}/api/students/${id}`, {
@@ -21,6 +21,8 @@ async function getMegaData(id) {
 
 async function StudentDetailContent({ studentId }) {
   const data = await getMegaData(studentId);
+  const session = await getSession();
+  const canEdit = session?.role === "ADMIN";
 
   if (!data?.student) {
     return (
@@ -57,7 +59,7 @@ async function StudentDetailContent({ studentId }) {
       </div>
 
       <LedgerSection ledger={ledger} />
-      <StudentDataSection student={student} plan={plan} payments={transactions} />
+      <StudentDataSection student={student} plan={plan} payments={transactions} canEdit={canEdit} />
     </div>
   );
 }

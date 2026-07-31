@@ -15,6 +15,7 @@ export default async function CounsellingPage() {
 
   const session = await getSession();
   const isAdmin = session?.role === "ADMIN" || session?.role === "MANAGER";
+  const canEdit = session?.role === "ADMIN";
   
   const batches = await getBatches(); console.log("BATCHES FETCHED:", batches.length);
 
@@ -35,7 +36,7 @@ export default async function CounsellingPage() {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <CounsellingClient isAdmin={isAdmin} counselors={counselors} batches={batches} />
+      <CounsellingClient isAdmin={isAdmin} canEdit={canEdit} counselors={counselors} batches={batches} />
     </div>
   );
 }

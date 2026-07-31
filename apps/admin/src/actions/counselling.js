@@ -1,11 +1,19 @@
 "use server";
 
 import { API } from "@/lib/api";
-import { getRawToken } from "@/lib/auth";
+import { getRawToken, getSession } from "@/lib/auth";
 
 async function authHeaders() {
   const token = await getRawToken();
   return token ? { Cookie: `session=${token}` } : {};
+}
+
+async function requireAdmin() {
+  const session = await getSession();
+  if (session?.role !== "ADMIN") {
+    throw new Error("Unauthorized: admin access required");
+  }
+  return session;
 }
 
 export async function getCounsellingSessions({ startDate, endDate, source, outcome, counselorId, search, limit, offset, showTodayFollowUps, followUpDate } = {}) {
@@ -33,6 +41,17 @@ export async function createCounsellingSession({ studentName, phone, ageOrClass,
     method: "POST",
     headers: { "Content-Type": "application/json", ...(await authHeaders()) },
     body: JSON.stringify({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, imageKey }),
+  });
+  return res.json();
+}
+
+export async function updateCounsellingSession(id, data) {
+  await requireAdmin();
+
+  const res = await fetch(`${API}/api/counselling-sessions/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...(await authHeaders()) },
+    body: JSON.stringify(data),
   });
   return res.json();
 }

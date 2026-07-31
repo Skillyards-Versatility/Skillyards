@@ -4,15 +4,15 @@ import { useState, useMemo, useEffect } from "react";
 import { 
   Search, Phone, PhoneCall, PhoneMissed, Play, Pause, Volume2, Clock, Calendar, User, FileAudio,
   Brain, CheckCircle2, XCircle, AlertCircle, X, MessageSquare, Sparkles, Loader2, ListChecks, ThumbsUp, ShieldAlert,
-  Filter
+  Filter, Pencil, Trash2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import { API } from "@/lib/api";
-import { refreshCall, getUploadPresignedUrlAction, finalizeCallUploadAction } from "@/actions/calls";
+import { refreshCall, getUploadPresignedUrlAction, finalizeCallUploadAction, updateCall, deleteCall } from "@/actions/calls";
 import { toast } from "sonner";
 
-export function CallsClient({ initialCalls, allUsers = [] }) {
+export function CallsClient({ initialCalls, allUsers = [], isAdmin = false }) {
   const [calls, setCalls] = useState(initialCalls);
   const [searchInput, setSearchInput] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState("");
@@ -39,6 +39,12 @@ export function CallsClient({ initialCalls, allUsers = [] }) {
   const [durationFilter, setDurationFilter] = useState("all");
   const [startDateFilter, setStartDateFilter] = useState("");
   const [endDateFilter, setEndDateFilter] = useState("");
+
+  // Admin edit/delete states
+  const [editCall, setEditCall] = useState(null);
+  const [editForm, setEditForm] = useState(null);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [deletingIds, setDeletingIds] = useState([]);
 
   const computedUsers = useMemo(() => {
     const map = {};
@@ -223,6 +229,70 @@ export function CallsClient({ initialCalls, allUsers = [] }) {
     } catch (error) {
       console.error("Manual audit dispatch failed:", error);
       setAuditingIds((prev) => prev.filter((id) => id !== call.id));
+    }
+  };
+
+  const openEditCall = (call) => {
+    setEditCall(call);
+    setEditForm({
+      outcome: call.outcome || "reached",
+      duration: String(call.duration ?? ""),
+      leadPhone: call.leadPhone || "",
+    });
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editCall) return;
+    setSavingEdit(true);
+    try {
+      const res = await updateCall(editCall.id, {
+        outcome: editForm.outcome,
+        duration: editForm.duration ? Number(editForm.duration) : undefined,
+        leadPhone: editForm.leadPhone || undefined,
+      });
+      if (res.success) {
+        setCalls(prev =>
+          prev.map(c =>
+            c.id === editCall.id
+              ? {
+                  ...c,
+                  outcome: editForm.outcome,
+                  duration: editForm.duration ? Number(editForm.duration) : c.duration,
+                  leadPhone: editForm.leadPhone ? editForm.leadPhone.replace(/\D/g, "").slice(-10) : c.leadPhone,
+                }
+              : c
+          )
+        );
+        setEditCall(null);
+        setEditForm(null);
+        toast.success("Call updated");
+      } else {
+        toast.error(res.error || "Failed to update call");
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to update call");
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
+  const handleDeleteCall = async (call) => {
+    if (!window.confirm(`Delete call log for ${call.telecallerName} (${call.leadPhone})? This cannot be undone.`)) return;
+    setDeletingIds(prev => [...prev, call.id]);
+    try {
+      const res = await deleteCall(call.id);
+      if (res.success) {
+        setCalls(prev => prev.filter(c => c.id !== call.id));
+        if (activeCall?.id === call.id) setActiveCall(null);
+        toast.success("Call deleted");
+      } else {
+        toast.error(res.error || "Failed to delete call");
+      }
+    } catch (err) {
+      toast.error(err.message || "Failed to delete call");
+    } finally {
+      setDeletingIds(prev => prev.filter(id => id !== call.id));
     }
   };
 
@@ -831,6 +901,31 @@ export function CallsClient({ initialCalls, allUsers = [] }) {
                         )}
                       </div>
                     </div>
+
+                    {/* Admin Actions */}
+                    {isAdmin && (
+                      <div className="flex items-center gap-2 pt-1">
+                        <button
+                          onClick={() => openEditCall(call)}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                        >
+                          <Pencil className="h-3.5 w-3.5 text-primary" />
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDeleteCall(call)}
+                          disabled={deletingIds.includes(call.id)}
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                        >
+                          {deletingIds.includes(call.id) ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-3.5 w-3.5" />
+                          )}
+                          Delete
+                        </button>
+                      </div>
+                    )}
                   </div>
                 );
               })}
@@ -975,31 +1070,56 @@ export function CallsClient({ initialCalls, allUsers = [] }) {
 
                         {/* Actions */}
                         <td className="px-5 py-4 text-right">
-                          {hasRecording ? (
-                            <button
-                              onClick={() => handlePlayCall(call)}
-                              className={cn(
-                                "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold shadow-sm transition-all cursor-pointer",
-                                isCallActive && isPlaying
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-card text-foreground hover:bg-muted border border-border"
-                              )}
-                            >
-                               {isCallActive && isPlaying ? (
-                                <>
-                                  <Pause className="h-3.5 w-3.5 fill-current" />
-                                  Playing
-                                </>
-                              ) : (
-                                <>
-                                  <Play className="h-3.5 w-3.5 fill-current" />
-                                  Listen
-                                </>
-                              )}
-                            </button>
-                          ) : (
-                            <span className="text-xs text-muted-foreground italic">No Audio</span>
-                          )}
+                          <div className="flex items-center justify-end gap-2">
+                            {isAdmin && (
+                              <>
+                                <button
+                                  onClick={() => openEditCall(call)}
+                                  className="inline-flex items-center gap-1 rounded-lg border border-border bg-card px-2.5 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors"
+                                  title="Edit Call"
+                                >
+                                  <Pencil className="h-3.5 w-3.5 text-primary" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteCall(call)}
+                                  disabled={deletingIds.includes(call.id)}
+                                  className="inline-flex items-center gap-1 rounded-lg border border-destructive/20 bg-destructive/5 px-2.5 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50"
+                                  title="Delete Call"
+                                >
+                                  {deletingIds.includes(call.id) ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  )}
+                                </button>
+                              </>
+                            )}
+                            {hasRecording ? (
+                              <button
+                                onClick={() => handlePlayCall(call)}
+                                className={cn(
+                                  "inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold shadow-sm transition-all cursor-pointer",
+                                  isCallActive && isPlaying
+                                    ? "bg-primary text-primary-foreground"
+                                    : "bg-card text-foreground hover:bg-muted border border-border"
+                                )}
+                              >
+                                 {isCallActive && isPlaying ? (
+                                  <>
+                                    <Pause className="h-3.5 w-3.5 fill-current" />
+                                    Playing
+                                  </>
+                                ) : (
+                                  <>
+                                    <Play className="h-3.5 w-3.5 fill-current" />
+                                    Listen
+                                  </>
+                                )}
+                              </button>
+                            ) : (
+                              <span className="text-xs text-muted-foreground italic">No Audio</span>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );
@@ -1886,6 +2006,79 @@ export function CallsClient({ initialCalls, allUsers = [] }) {
               )}
             </form>
           </div>
+        </div>
+      )}
+
+      {/* Admin Edit Call Modal */}
+      {editCall && editForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => { setEditCall(null); setEditForm(null); }} />
+          <form onSubmit={handleEditSubmit} className="relative w-full max-w-md bg-card border border-border/60 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 p-6 space-y-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="font-semibold text-lg">Edit Call Log</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Admin correction of call details</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setEditCall(null); setEditForm(null); }}
+                className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium block mb-1">Outcome</label>
+              <select
+                className="input w-full"
+                value={editForm.outcome}
+                onChange={(e) => setEditForm({ ...editForm, outcome: e.target.value })}
+              >
+                <option value="reached">Reached</option>
+                <option value="not_reached">Not Reached</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-xs font-medium block mb-1">Duration (seconds)</label>
+              <input
+                type="number"
+                min="0"
+                className="input w-full"
+                value={editForm.duration}
+                onChange={(e) => setEditForm({ ...editForm, duration: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <label className="text-xs font-medium block mb-1">Phone Number</label>
+              <input
+                type="text"
+                className="input w-full"
+                value={editForm.leadPhone}
+                onChange={(e) => setEditForm({ ...editForm, leadPhone: e.target.value })}
+              />
+            </div>
+
+            <div className="space-y-2 pt-1">
+              <button
+                type="submit"
+                disabled={savingEdit}
+                className="w-full py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-sm rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {savingEdit && <Loader2 className="w-4 h-4 animate-spin" />}
+                Save Changes
+              </button>
+              <button
+                type="button"
+                onClick={() => { setEditCall(null); setEditForm(null); }}
+                className="w-full py-2.5 bg-secondary text-secondary-foreground hover:bg-secondary/80 font-semibold text-sm rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
       )}
     </div>

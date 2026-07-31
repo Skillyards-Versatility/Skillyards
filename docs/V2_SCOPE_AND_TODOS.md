@@ -1,5 +1,6 @@
 # Skillyards V2: Scope, TODOs, and TBDs
 
+  Continue  opencode -s ses_0482b5326ffeUZiej4nDeFKtoY
 This document outlines the identified technical debt, incomplete features (TBDs), and proposed scope for the V2 evolution of the Skillyards platform.
 
 ## 1. Authorization & Security (Policy Engine)

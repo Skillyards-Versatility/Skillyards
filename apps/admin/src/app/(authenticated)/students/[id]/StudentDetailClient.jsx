@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus } from "lucide-react";
-import { addStudentPayment, addFlexibleInstallment } from "@/actions/student";
+import { Plus, Loader2 } from "lucide-react";
+import { addStudentPayment, addFlexibleInstallment, updateStudentPlan, updateInstallment } from "@/actions/student";
 import { formatDate } from "@/lib/format";
 
 import { PlanSection } from "@/components/students/PlanSection";
@@ -14,7 +14,7 @@ import { AddPaymentForm } from "@/components/students/AddPaymentForm";
 import { AddInstallmentForm } from "@/components/students/AddInstallmentForm";
 import { AssignPlanWizard } from "@/components/students/AssignPlanWizard";
 
-export function StudentDetailClient({ student, initialTransactions, initialPlan, initialInstallments }) {
+export function StudentDetailClient({ student, initialTransactions, initialPlan, initialInstallments, canEdit = false }) {
   const router = useRouter();
 
   const [plan, setPlan] = useState(initialPlan ?? null);
@@ -30,6 +30,14 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
   const [installmentModalOpen, setInstallmentModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAddingInstallment, setIsAddingInstallment] = useState(false);
+
+  const [planEditOpen, setPlanEditOpen] = useState(false);
+  const [planEditForm, setPlanEditForm] = useState({ total: "" });
+  const [isSavingPlan, setIsSavingPlan] = useState(false);
+
+  const [installmentEditOpen, setInstallmentEditOpen] = useState(false);
+  const [installmentEditForm, setInstallmentEditForm] = useState(null);
+  const [isSavingInstallment, setIsSavingInstallment] = useState(false);
 
   const [paymentForm, setPaymentForm] = useState({ amount: "", mode: "upi", reference: "" });
   const [installmentContext, setInstallmentContext] = useState(null);
@@ -109,9 +117,80 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
     }
   };
 
+  const openPlanEdit = () => {
+    if (!plan) return;
+    setPlanEditForm({ total: String(plan.total ?? "") });
+    setPlanEditOpen(true);
+  };
+
+  const handlePlanEditSubmit = async (e) => {
+    e.preventDefault();
+    const total = Number(planEditForm.total);
+    if (!total || total <= 0) {
+      toast.error("Invalid total amount");
+      return;
+    }
+    setIsSavingPlan(true);
+    try {
+      await updateStudentPlan(student.id, { totalAmount: total });
+      setPlan(prev => prev ? { ...prev, total } : prev);
+      setPlanEditOpen(false);
+      router.refresh();
+      toast.success("Plan updated");
+    } catch (err) {
+      toast.error(err.message || "Failed to update plan");
+    } finally {
+      setIsSavingPlan(false);
+    }
+  };
+
+  const openInstallmentEdit = (inst) => {
+    setInstallmentEditForm({
+      id: inst.id,
+      amount: String(inst.amount ?? ""),
+      dueDate: inst.dueDate,
+    });
+    setInstallmentEditOpen(true);
+  };
+
+  const handleInstallmentEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!installmentEditForm) return;
+    const amount = Number(installmentEditForm.amount);
+    if (!amount || amount <= 0) {
+      toast.error("Invalid amount");
+      return;
+    }
+    if (!installmentEditForm.dueDate) {
+      toast.error("Due date is required");
+      return;
+    }
+    setIsSavingInstallment(true);
+    try {
+      await updateInstallment(student.id, installmentEditForm.id, {
+        amountDue: amount,
+        dueDate: installmentEditForm.dueDate,
+      });
+      setInstallments(prev =>
+        prev.map(i =>
+          i.id === installmentEditForm.id
+            ? { ...i, amount, dueDate: formatDate(installmentEditForm.dueDate) }
+            : i
+        )
+      );
+      setInstallmentEditOpen(false);
+      setInstallmentEditForm(null);
+      router.refresh();
+      toast.success("Installment updated");
+    } catch (err) {
+      toast.error(err.message || "Failed to update installment");
+    } finally {
+      setIsSavingInstallment(false);
+    }
+  };
+
   const scheduledTotal = installments.reduce((s, i) => s + i.amount, 0);
   const flexibleRemaining = plan ? (plan.total - scheduledTotal) : 0;
-
   const totalPaid = installments.reduce((s, i) => s + (i.paid ?? 0), 0);
   const isFullyPaid = !!plan && totalPaid >= plan.total;
   const isFlexibleNoExtraInstallments = plan?.type === "Flexible" && (
@@ -134,12 +213,14 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
         </button>
       </div>
 
-      <PlanSection plan={plan} onAssignPlan={() => setWizardOpen(true)} />
+      <PlanSection plan={plan} onAssignPlan={() => setWizardOpen(true)} onEditPlan={canEdit ? openPlanEdit : undefined} canEdit={canEdit} />
 
       <InstallmentsTable
         installments={installments}
         onPay={openPaymentModal}
         onAddInstallment={plan?.type === "Flexible" && flexibleRemaining > 0 ? () => setInstallmentModalOpen(true) : undefined}
+        onEditInstallment={canEdit ? openInstallmentEdit : undefined}
+        canEdit={canEdit}
         unscheduled={plan?.type === "Flexible" ? flexibleRemaining : 0}
       />
 
@@ -170,6 +251,95 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
         setPaymentForm={setPaymentForm}
         onSubmit={handleSubmitPayment}
       />
+
+      {/* Edit Plan Modal */}
+      {planEditOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setPlanEditOpen(false)} />
+          <form onSubmit={handlePlanEditSubmit} className="relative w-full max-w-sm bg-card border border-border/60 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 p-6 space-y-4">
+            <div>
+              <h3 className="font-semibold text-lg">Edit Fee Plan</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Admin correction of plan total</p>
+            </div>
+            <div>
+              <label className="text-xs font-medium block mb-1">Total Amount (₹)</label>
+              <input
+                type="number"
+                min="0"
+                className="input w-full"
+                value={planEditForm.total}
+                onChange={(e) => setPlanEditForm({ ...planEditForm, total: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <button
+                type="submit"
+                disabled={isSavingPlan}
+                className="w-full py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-sm rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isSavingPlan && <Loader2 className="w-4 h-4 animate-spin" />}
+                Save Changes
+              </button>
+              <button
+                type="button"
+                onClick={() => setPlanEditOpen(false)}
+                className="w-full py-2.5 bg-secondary text-secondary-foreground hover:bg-secondary/80 font-semibold text-sm rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Edit Installment Modal */}
+      {installmentEditOpen && installmentEditForm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setInstallmentEditOpen(false)} />
+          <form onSubmit={handleInstallmentEditSubmit} className="relative w-full max-w-sm bg-card border border-border/60 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 p-6 space-y-4">
+            <div>
+              <h3 className="font-semibold text-lg">Edit Installment</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Admin correction of installment details</p>
+            </div>
+            <div>
+              <label className="text-xs font-medium block mb-1">Amount (₹)</label>
+              <input
+                type="number"
+                min="0"
+                className="input w-full"
+                value={installmentEditForm.amount}
+                onChange={(e) => setInstallmentEditForm({ ...installmentEditForm, amount: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium block mb-1">Due Date</label>
+              <input
+                type="date"
+                className="input w-full"
+                value={installmentEditForm.dueDate}
+                onChange={(e) => setInstallmentEditForm({ ...installmentEditForm, dueDate: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <button
+                type="submit"
+                disabled={isSavingInstallment}
+                className="w-full py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-sm rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isSavingInstallment && <Loader2 className="w-4 h-4 animate-spin" />}
+                Save Changes
+              </button>
+              <button
+                type="button"
+                onClick={() => { setInstallmentEditOpen(false); setInstallmentEditForm(null); }}
+                className="w-full py-2.5 bg-secondary text-secondary-foreground hover:bg-secondary/80 font-semibold text-sm rounded-xl transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
     </div>
   );

@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Coffee, Clock, ChevronLeft, ChevronRight, X } from "lucide-react";
-import { getAllBreaks, getBreakStats } from "@/actions/breaks";
+import { Coffee, Clock, ChevronLeft, ChevronRight, X, Pencil, Trash2, Loader2 } from "lucide-react";
+import { getAllBreaks, getBreakStats, updateBreak, deleteBreak } from "@/actions/breaks";
 import { getMyBreaks, savePushSubscription } from "@/actions/breaks";
 import { getIstDate } from "@/lib/ist";
 import { subscribeToPushNotifications } from "@/lib/push";
 import { Bell } from "lucide-react";
+import { toast } from "sonner";
 
 const PRIVILEGED_ROLES = ["ADMIN", "HR", "MANAGER"];
 
@@ -303,7 +304,7 @@ function UserBreakCards({ stats, allBreaks, onUserClick }) {
   );
 }
 
-function BreakTimeline({ breaks, showUser }) {
+function BreakTimeline({ breaks, showUser, isAdmin, onEdit, onDelete }) {
   if (breaks.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
@@ -332,40 +333,60 @@ function BreakTimeline({ breaks, showUser }) {
                 </p>
               </div>
             </div>
-            <div className="text-right">
-              {b.endedAt ? (
-                <div className="flex flex-col items-end gap-1">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    b.duration > 900 
-                      ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50' 
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-                  }`}>
-                    {formatDuration(b.duration)}
-                  </span>
-                  {b.duration > 900 && showUser && (
-                    <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider">
-                      Flagged (Overage)
-                    </span>
-                  )}
-                </div>
-              ) : (
-                <div className="flex flex-col items-end gap-1">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 animate-pulse">
-                    Active
-                  </span>
-                  {(() => {
-                    const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
-                    if (activeSeconds > 900 && showUser) {
-                      return (
-                         <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider animate-pulse">
-                           Flagged (Overage)
-                         </span>
-                      );
-                    }
-                    return null;
-                  })()}
+            <div className="flex items-center gap-3">
+              {isAdmin && (
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => onEdit && onEdit(b)}
+                    className="p-1.5 rounded-lg text-gray-500 hover:text-foreground hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+                    title="Edit break"
+                  >
+                    <Pencil className="w-3.5 h-3.5 text-primary" />
+                  </button>
+                  <button
+                    onClick={() => onDelete && onDelete(b)}
+                    className="p-1.5 rounded-lg text-gray-500 hover:text-destructive hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors cursor-pointer"
+                    title="Delete break"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-destructive" />
+                  </button>
                 </div>
               )}
+              <div className="text-right">
+                {b.endedAt ? (
+                  <div className="flex flex-col items-end gap-1">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      b.duration > 900 
+                        ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50' 
+                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
+                    }`}>
+                      {formatDuration(b.duration)}
+                    </span>
+                    {b.duration > 900 && showUser && (
+                      <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider">
+                        Flagged (Overage)
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-end gap-1">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 animate-pulse">
+                      Active
+                    </span>
+                    {(() => {
+                      const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
+                      if (activeSeconds > 900 && showUser) {
+                        return (
+                           <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider animate-pulse">
+                             Flagged (Overage)
+                           </span>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -510,7 +531,15 @@ const TEAM_OPTIONS = [
   { value: "outside_sales", label: "Outside Sales" },
 ];
 
-function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users }) {
+function toLocalInput(date) {
+  if (!date) return "";
+  const d = new Date(date);
+  if (Number.isNaN(d.getTime())) return "";
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users, isAdmin = false }) {
   const [stats, setStats] = useState([]);
   const [allBreaks, setAllBreaks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -520,6 +549,9 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
   const [showActiveModal, setShowActiveModal] = useState(false);
   const [showFlaggedModal, setShowFlaggedModal] = useState(false);
   const [selectedUserTimeline, setSelectedUserTimeline] = useState(null);
+  const [editingBreak, setEditingBreak] = useState(null);
+  const [editBreakForm, setEditBreakForm] = useState(null);
+  const [savingBreak, setSavingBreak] = useState(false);
 
   const fetchData = useCallback(async () => {
     try {
@@ -541,6 +573,57 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
     setLoading(true);
     fetchData();
   }, [fetchData]);
+
+  const openBreakEdit = (b) => {
+    setEditingBreak(b);
+    setEditBreakForm({
+      startedAt: toLocalInput(b.startedAt),
+      endedAt: b.endedAt ? toLocalInput(b.endedAt) : "",
+    });
+  };
+
+  const handleBreakEditSubmit = async (e) => {
+    e.preventDefault();
+    if (!editingBreak || !editBreakForm) return;
+    setSavingBreak(true);
+    try {
+      const res = await updateBreak(editingBreak.id, {
+        startedAt: new Date(editBreakForm.startedAt).toISOString(),
+        endedAt: editBreakForm.endedAt ? new Date(editBreakForm.endedAt).toISOString() : "",
+      });
+      if (res.success) {
+        setAllBreaks(prev =>
+          prev.map(b => (b.id === editingBreak.id ? { ...b, ...res.break } : b))
+        );
+        setEditingBreak(null);
+        setEditBreakForm(null);
+        toast.success("Break updated");
+        fetchData();
+      } else {
+        toast.error(res.error || "Failed to update break");
+      }
+    } catch {
+      toast.error("Failed to update break");
+    } finally {
+      setSavingBreak(false);
+    }
+  };
+
+  const handleBreakDelete = async (b) => {
+    if (!window.confirm(`Delete this break for ${b.userName} (${formatTime(b.startedAt)})? This cannot be undone.`)) return;
+    try {
+      const res = await deleteBreak(b.id);
+      if (res.success) {
+        setAllBreaks(prev => prev.filter(x => x.id !== b.id));
+        toast.success("Break deleted");
+        fetchData();
+      } else {
+        toast.error(res.error || "Failed to delete break");
+      }
+    } catch {
+      toast.error("Failed to delete break");
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -658,7 +741,7 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                   <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
                     Break Timeline ({filteredBreaks.length})
                   </h2>
-                  <BreakTimeline breaks={filteredBreaks} showUser={true} />
+                  <BreakTimeline breaks={filteredBreaks} showUser={true} isAdmin={isAdmin} onEdit={openBreakEdit} onDelete={handleBreakDelete} />
                 </div>
               )}
             </>
@@ -814,6 +897,9 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
               <BreakTimeline 
                 breaks={allBreaks.filter(b => b.userId === selectedUserTimeline.userId)} 
                 showUser={false} 
+                isAdmin={isAdmin}
+                onEdit={openBreakEdit}
+                onDelete={handleBreakDelete}
               />
             </div>
           </div>

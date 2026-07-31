@@ -26,10 +26,11 @@ export default async function CallsPage() {
   
   // Filter users to only show BDAs (SALES role)
   const bdaUsers = allUsers.filter(u => u.role === "SALES");
+  const isAdmin = session?.role === "ADMIN";
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-8">
-      <CallsClient initialCalls={initialCalls} allUsers={bdaUsers} />
+      <CallsClient initialCalls={initialCalls} allUsers={bdaUsers} isAdmin={isAdmin} />
     </div>
   );
 }
