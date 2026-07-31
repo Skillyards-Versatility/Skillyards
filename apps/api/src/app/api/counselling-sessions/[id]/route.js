@@ -11,7 +11,7 @@ async function putHandler(req, { ctx, params }) {
     }
 
     const [existing] = await db
-      .select({ id: counsellingSessions.id, imageKey: counsellingSessions.imageKey })
+      .select({ id: counsellingSessions.id, imageKey: counsellingSessions.imageKey, counselorId: counsellingSessions.counselorId, bookedById: counsellingSessions.bookedById })
       .from(counsellingSessions)
       .where(eq(counsellingSessions.id, id))
       .limit(1);
@@ -20,7 +20,7 @@ async function putHandler(req, { ctx, params }) {
       return Response.json({ success: false, message: "Session not found" }, { status: 404 });
     }
 
-    const { studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, imageKey } = await req.json();
+    const { studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, bookedById, imageKey } = await req.json();
 
     if (!studentName || !sessionDate) {
       return Response.json(
@@ -42,6 +42,7 @@ async function putHandler(req, { ctx, params }) {
         sessionDate,
         nextFollowUpDate: nextFollowUpDate || null,
         counselorId: counselorId || existing.counselorId,
+        bookedById: bookedById === undefined ? existing.bookedById : (bookedById || null),
         imageKey: imageKey === undefined ? existing.imageKey : (imageKey || null),
       })
       .where(eq(counsellingSessions.id, id))

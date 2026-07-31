@@ -10,6 +10,9 @@ export const counsellingSessions = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
 
+    bookedById: uuid("booked_by_id")
+      .references(() => users.id, { onDelete: "set null" }),
+
     studentName: text("student_name").notNull(),
     phone: text("phone"),
     ageOrClass: text("age_or_class"),

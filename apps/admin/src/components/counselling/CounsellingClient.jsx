@@ -59,6 +59,7 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
   const [sourceFilter, setSourceFilter] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState("");
   const [counselorFilter, setCounselorFilter] = useState("");
+  const [bookedByFilter, setBookedByFilter] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [showTodayFollowUps, setShowTodayFollowUps] = useState(false);
@@ -66,7 +67,7 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
   // Reset page when filters change
   useEffect(() => {
     setPage(1);
-  }, [startDate, endDate, sourceFilter, outcomeFilter, counselorFilter, debouncedSearch, showTodayFollowUps]);
+  }, [startDate, endDate, sourceFilter, outcomeFilter, counselorFilter, bookedByFilter, debouncedSearch, showTodayFollowUps]);
 
   // Debounce search
   useEffect(() => {
@@ -88,6 +89,7 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
     sessionDate: today,
     nextFollowUpDate: "",
     counselorId: "", // Empty string means it will default to logged-in user on backend
+    bookedById: "",
   });
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
@@ -112,6 +114,7 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
         source: sourceFilter || undefined, 
         outcome: outcomeFilter || undefined,
         counselorId: counselorFilter || undefined,
+        bookedById: bookedByFilter || undefined,
         search: debouncedSearch || undefined,
         limit,
         offset: (page - 1) * limit,
@@ -130,7 +133,7 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
     } finally {
       setLoading(false);
     }
-  }, [startDate, endDate, sourceFilter, outcomeFilter, counselorFilter, debouncedSearch, page, limit, showTodayFollowUps, today]);
+  }, [startDate, endDate, sourceFilter, outcomeFilter, counselorFilter, bookedByFilter, debouncedSearch, page, limit, showTodayFollowUps, today]);
 
   useEffect(() => {
     fetchSessions();
@@ -138,7 +141,7 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
 
   const handleExportCSV = () => {
     if (!sessions.length) return toast.error("No sessions to export");
-    const headers = ["Date", "Student", "Phone", "Counselor", "Age/Class", "Course", "Source", "Outcome", "Next Follow-up", "Notes"];
+    const headers = ["Date", "Student", "Phone", "Taken By", "Booked By", "Age/Class", "Course", "Source", "Outcome", "Next Follow-up", "Notes"];
     const csvContent = [
       headers.join(","),
       ...sessions.map(s => [
@@ -146,6 +149,7 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
         `"${s.studentName?.replace(/"/g, '""') || ""}"`,
         s.phone || "",
         `"${s.counselorName || ""}"`,
+        `"${s.bookedByName || ""}"`,
         `"${s.ageOrClass || ""}"`,
         `"${s.courseInterest || ""}"`,
         s.source,
@@ -195,7 +199,7 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
       if (res.success) {
         toast.success("Session logged!");
         setShowForm(false);
-        setForm({ studentName: "", phone: "", ageOrClass: "", courseInterest: "", source: "walk_in", outcome: "follow_up", notes: "", sessionDate: today, nextFollowUpDate: "", counselorId: "" });
+        setForm({ studentName: "", phone: "", ageOrClass: "", courseInterest: "", source: "walk_in", outcome: "follow_up", notes: "", sessionDate: today, nextFollowUpDate: "", counselorId: "", bookedById: "" });
         setImageFile(null);
         setImagePreview(null);
         fetchSessions();
@@ -237,6 +241,7 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
       sessionDate: s.sessionDate || today,
       nextFollowUpDate: s.nextFollowUpDate || "",
       counselorId: s.counselorId || "",
+      bookedById: s.bookedById || "",
       imageKey: s.imageKey || "",
     });
     setEditImageFile(null);
@@ -330,9 +335,20 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
             </div>
             {isAdmin && (
               <div>
-                <label className="text-xs font-medium block mb-1">Assign to BDA/Counselor</label>
+                <label className="text-xs font-medium block mb-1">Taken By (BDA/Counselor)</label>
                 <select className="input w-full" value={form.counselorId} onChange={(e) => setForm({ ...form, counselorId: e.target.value })}>
                   <option value="">Assign to myself (Default)</option>
+                  {counselors.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name} ({c.role})</option>
+                  ))}
+                </select>
+              </div>
+            )}
+            {isAdmin && (
+              <div>
+                <label className="text-xs font-medium block mb-1">Booked By (BDA)</label>
+                <select className="input w-full" value={form.bookedById} onChange={(e) => setForm({ ...form, bookedById: e.target.value })}>
+                  <option value="">Defaults to me</option>
                   {counselors.map((c) => (
                     <option key={c.id} value={c.id}>{c.name} ({c.role})</option>
                   ))}
@@ -520,6 +536,12 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
               {counselors.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
           )}
+          {isAdmin && (
+            <select className="input text-sm py-2.5 flex-1 bg-card shadow-sm" value={bookedByFilter} onChange={(e) => setBookedByFilter(e.target.value)}>
+              <option value="">All Booked By</option>
+              {counselors.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            </select>
+          )}
           <select className="input text-sm py-2.5 flex-1 bg-card shadow-sm" value={sourceFilter} onChange={(e) => setSourceFilter(e.target.value)}>
             {SOURCE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
           </select>
@@ -553,6 +575,11 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
                       {isAdmin && (
                         <div className="text-[11px] font-semibold text-primary mt-1 flex items-center gap-1.5">
                           <User className="w-3 h-3" /> {s.counselorName}
+                        </div>
+                      )}
+                      {isAdmin && s.bookedByName && (
+                        <div className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                          <Calendar className="w-3 h-3" /> Booked by {s.bookedByName}
                         </div>
                       )}
                       {s.courseInterest && <div className="text-[11px] text-muted-foreground mt-1">{s.courseInterest}</div>}
@@ -617,6 +644,7 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
               <thead>
                 <tr className="border-b border-border/60 bg-muted/30">
                   {isAdmin && <th className="text-left p-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Counselor</th>}
+                  {isAdmin && <th className="text-left p-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Booked By</th>}
                   <th className="text-left p-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Student</th>
                   <th className="text-left p-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Phone</th>
                   <th className="text-left p-3 text-[11px] font-bold text-muted-foreground uppercase tracking-wider">Source</th>
@@ -632,6 +660,15 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
                     {isAdmin && (
                       <td className="p-3">
                         <span className="font-medium text-foreground">{s.counselorName}</span>
+                      </td>
+                    )}
+                    {isAdmin && (
+                      <td className="p-3">
+                        {s.bookedByName ? (
+                          <span className="text-muted-foreground">{s.bookedByName}</span>
+                        ) : (
+                          <span className="text-muted-foreground/50">—</span>
+                        )}
                       </td>
                     )}
                     <td className="p-3">
@@ -806,6 +843,20 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
                   </div>
                   <div className="font-medium text-[15px]">{selectedSession.ageOrClass || "Not provided"}</div>
                 </div>
+                {selectedSession.counselorName && (
+                  <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm flex flex-col">
+                    <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                      <User className="w-3 h-3 text-primary/70" /> Taken By
+                    </div>
+                    <div className="font-medium text-[15px]">{selectedSession.counselorName}</div>
+                  </div>
+                )}
+                <div className="bg-card p-4 rounded-xl border border-border/50 shadow-sm flex flex-col">
+                  <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                    <User className="w-3 h-3 text-primary/70" /> Booked By
+                  </div>
+                  <div className="font-medium text-[15px]">{selectedSession.bookedByName || "Not specified"}</div>
+                </div>
                 <div className="col-span-2 bg-card p-4 rounded-xl border border-border/50 shadow-sm">
                   <div className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1.5">
                     <BookOpen className="w-3 h-3 text-primary/70" /> Course Interest
@@ -908,8 +959,19 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
                 </div>
                 {canEdit && (
                   <div>
-                    <label className="text-xs font-medium block mb-1">Assign to BDA/Counselor</label>
+                    <label className="text-xs font-medium block mb-1">Taken By (BDA/Counselor)</label>
                     <select className="input w-full" value={editForm.counselorId} onChange={(e) => setEditForm({ ...editForm, counselorId: e.target.value })}>
+                      {counselors.map((c) => (
+                        <option key={c.id} value={c.id}>{c.name} ({c.role})</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+                {canEdit && (
+                  <div>
+                    <label className="text-xs font-medium block mb-1">Booked By (BDA)</label>
+                    <select className="input w-full" value={editForm.bookedById} onChange={(e) => setEditForm({ ...editForm, bookedById: e.target.value })}>
+                      <option value="">Not specified / Walk-in</option>
                       {counselors.map((c) => (
                         <option key={c.id} value={c.id}>{c.name} ({c.role})</option>
                       ))}

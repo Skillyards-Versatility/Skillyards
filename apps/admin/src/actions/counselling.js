@@ -16,13 +16,14 @@ async function requireAdmin() {
   return session;
 }
 
-export async function getCounsellingSessions({ startDate, endDate, source, outcome, counselorId, search, limit, offset, showTodayFollowUps, followUpDate } = {}) {
+export async function getCounsellingSessions({ startDate, endDate, source, outcome, counselorId, bookedById, search, limit, offset, showTodayFollowUps, followUpDate } = {}) {
   const params = new URLSearchParams();
   if (startDate) params.set("startDate", startDate);
   if (endDate) params.set("endDate", endDate);
   if (source) params.set("source", source);
   if (outcome) params.set("outcome", outcome);
   if (counselorId) params.set("counselorId", counselorId);
+  if (bookedById) params.set("bookedById", bookedById);
   if (search) params.set("search", search);
   if (limit) params.set("limit", limit);
   if (offset) params.set("offset", offset);
@@ -36,11 +37,11 @@ export async function getCounsellingSessions({ startDate, endDate, source, outco
   return res.json();
 }
 
-export async function createCounsellingSession({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, imageKey }) {
+export async function createCounsellingSession({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, bookedById, imageKey }) {
   const res = await fetch(`${API}/api/counselling-sessions`, {
     method: "POST",
     headers: { "Content-Type": "application/json", ...(await authHeaders()) },
-    body: JSON.stringify({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, imageKey }),
+    body: JSON.stringify({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, bookedById, imageKey }),
   });
   return res.json();
 }

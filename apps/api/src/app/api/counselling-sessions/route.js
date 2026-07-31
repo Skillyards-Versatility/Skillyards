@@ -1,6 +1,9 @@
 import { db, counsellingSessions, users } from "@repo/db";
 import { eq, desc, and, or, ilike, gte, lte, sql } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 import { createProtectedRoute } from "@/lib/middleware";
+
+const bookedByUser = alias(users, "booked_by_user");
 
 async function getHandler(req, { ctx }) {
   try {
@@ -10,6 +13,7 @@ async function getHandler(req, { ctx }) {
     const source = url.searchParams.get("source");
     const outcome = url.searchParams.get("outcome");
     const counselorId = url.searchParams.get("counselorId");
+    const bookedById = url.searchParams.get("bookedById");
     const search = url.searchParams.get("search");
     const limit = parseInt(url.searchParams.get("limit") || "50", 10);
     const offset = parseInt(url.searchParams.get("offset") || "0", 10);
@@ -19,9 +23,15 @@ async function getHandler(req, { ctx }) {
     const conditions = [];
 
     if (ctx.session.role !== "ADMIN" && ctx.session.role !== "MANAGER") {
-      conditions.push(eq(counsellingSessions.counselorId, ctx.session.userId));
-    } else if (counselorId) {
-      conditions.push(eq(counsellingSessions.counselorId, counselorId));
+      conditions.push(
+        or(
+          eq(counsellingSessions.counselorId, ctx.session.userId),
+          eq(counsellingSessions.bookedById, ctx.session.userId)
+        )
+      );
+    } else {
+      if (counselorId) conditions.push(eq(counsellingSessions.counselorId, counselorId));
+      if (bookedById) conditions.push(eq(counsellingSessions.bookedById, bookedById));
     }
 
     if (startDate) conditions.push(gte(counsellingSessions.sessionDate, startDate));
@@ -47,6 +57,8 @@ async function getHandler(req, { ctx }) {
         id: counsellingSessions.id,
         counselorId: counsellingSessions.counselorId,
         counselorName: users.name,
+        bookedById: counsellingSessions.bookedById,
+        bookedByName: bookedByUser.name,
         studentName: counsellingSessions.studentName,
         phone: counsellingSessions.phone,
         ageOrClass: counsellingSessions.ageOrClass,
@@ -61,6 +73,7 @@ async function getHandler(req, { ctx }) {
       })
       .from(counsellingSessions)
       .leftJoin(users, eq(counsellingSessions.counselorId, users.id))
+      .leftJoin(bookedByUser, eq(counsellingSessions.bookedById, bookedByUser.id))
       .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(desc(counsellingSessions.sessionDate), desc(counsellingSessions.createdAt))
       .limit(limit)
@@ -114,7 +127,7 @@ async function getHandler(req, { ctx }) {
 
 async function postHandler(req, { ctx }) {
   try {
-    const { studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, imageKey } = await req.json();
+    const { studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, bookedById, imageKey } = await req.json();
 
     if (!studentName || !sessionDate) {
       return Response.json(
@@ -128,10 +141,16 @@ async function postHandler(req, { ctx }) {
       finalCounselorId = counselorId;
     }
 
+    let finalBookedById = ctx.session.userId;
+    if ((ctx.session.role === "ADMIN" || ctx.session.role === "MANAGER") && bookedById) {
+      finalBookedById = bookedById;
+    }
+
     const [session] = await db
       .insert(counsellingSessions)
       .values({
         counselorId: finalCounselorId,
+        bookedById: finalBookedById,
         studentName,
         phone: phone || null,
         ageOrClass: ageOrClass || null,
