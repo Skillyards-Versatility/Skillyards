@@ -372,3 +372,79 @@ export async function getBreakStats(date) {
     return [];
   }
 }
+
+export async function updateBreak(breakId, { startedAt, endedAt }) {
+  const session = await getSession();
+  if (session?.role !== "ADMIN") {
+    return { success: false, error: "Only admins can edit breaks" };
+  }
+
+  try {
+    const [existing] = await db
+      .select()
+      .from(breaks)
+      .where(eq(breaks.id, breakId))
+      .limit(1);
+
+    if (!existing) {
+      return { success: false, error: "Break not found" };
+    }
+
+    const start = startedAt ? new Date(startedAt) : existing.startedAt;
+    const end = endedAt !== undefined && endedAt !== null && endedAt !== "" ? new Date(endedAt) : (endedAt === "" ? null : existing.endedAt);
+
+    if (Number.isNaN(start.getTime())) {
+      return { success: false, error: "Invalid start time" };
+    }
+    if (end && Number.isNaN(end.getTime())) {
+      return { success: false, error: "Invalid end time" };
+    }
+    if (start && end && end.getTime() <= start.getTime()) {
+      return { success: false, error: "End time must be after start time" };
+    }
+
+    const patch = {
+      startedAt: start,
+      endedAt: end ?? null,
+    };
+    if (end) {
+      patch.duration = Math.max(0, Math.floor((end.getTime() - start.getTime()) / 1000));
+    } else {
+      patch.duration = null;
+    }
+
+    const [updated] = await db
+      .update(breaks)
+      .set(patch)
+      .where(eq(breaks.id, breakId))
+      .returning();
+
+    return { success: true, break: updated };
+  } catch (err) {
+    console.error("Update break error:", err);
+    return { success: false, error: "Failed to update break" };
+  }
+}
+
+export async function deleteBreak(breakId) {
+  const session = await getSession();
+  if (session?.role !== "ADMIN") {
+    return { success: false, error: "Only admins can delete breaks" };
+  }
+
+  try {
+    const [deleted] = await db
+      .delete(breaks)
+      .where(eq(breaks.id, breakId))
+      .returning();
+
+    if (!deleted) {
+      return { success: false, error: "Break not found" };
+    }
+
+    return { success: true, break: deleted };
+  } catch (err) {
+    console.error("Delete break error:", err);
+    return { success: false, error: "Failed to delete break" };
+  }
+}

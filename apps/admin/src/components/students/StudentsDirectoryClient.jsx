@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { CourseBatchesSection } from "./CourseBatchesSection";
 import { StudentTable } from "./StudentTable";
 
-export function StudentsDirectoryClient({ initialStudents = [], initialBatches = [] }) {
+export function StudentsDirectoryClient({ initialStudents = [], initialBatches = [], canEdit = false }) {
   const router = useRouter();
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedBatchId, setSelectedBatchId] = useState("");
@@ -42,6 +42,7 @@ export function StudentsDirectoryClient({ initialStudents = [], initialBatches =
           selectedBatchId={selectedBatchId}
           setSelectedBatchId={setSelectedBatchId}
           onStudentUpdated={handleRefresh}
+          canEdit={canEdit}
         />
       </div>
     </div>

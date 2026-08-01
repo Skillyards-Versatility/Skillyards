@@ -8,6 +8,80 @@ import { API } from "@/lib/api";
 
 let migrated = false;
 
+async function requireAdmin() {
+  const session = await getSession();
+  if (session?.role !== "ADMIN") {
+    return { success: false, error: "Unauthorized: admin access required" };
+  }
+  return session;
+}
+
+export async function updateCall(callId, { outcome, duration, leadPhone }) {
+  try {
+    const session = await requireAdmin();
+    if (!session?.userId) return session;
+
+    const values = {};
+    if (outcome !== undefined) values.outcome = outcome;
+    if (duration !== undefined) {
+      const dur = Number(duration);
+      if (!Number.isFinite(dur) || dur < 0) {
+        return { success: false, error: "Invalid duration" };
+      }
+      values.duration = Math.round(dur);
+    }
+    if (leadPhone !== undefined) {
+      const cleanPhone = String(leadPhone).replace(/\D/g, "").slice(-10);
+      if (!cleanPhone) return { success: false, error: "Invalid phone number" };
+      values.leadPhone = cleanPhone;
+    }
+
+    if (Object.keys(values).length === 0) {
+      return { success: false, error: "Nothing to update" };
+    }
+
+    const [updated] = await db
+      .update(followUps)
+      .set(values)
+      .where(eq(followUps.id, callId))
+      .returning();
+
+    revalidatePath("/calls");
+
+    return { success: true, call: updated[0] };
+  } catch (error) {
+    console.error("updateCall error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteCall(callId) {
+  try {
+    const session = await requireAdmin();
+    if (!session?.userId) return session;
+
+    const [existing] = await db
+      .select({ id: followUps.id })
+      .from(followUps)
+      .where(eq(followUps.id, callId))
+      .limit(1);
+
+    if (!existing) {
+      return { success: false, error: "Call not found" };
+    }
+
+    await db.delete(callAnalyses).where(eq(callAnalyses.followUpId, callId));
+    await db.delete(followUps).where(eq(followUps.id, callId));
+
+    revalidatePath("/calls");
+
+    return { success: true };
+  } catch (error) {
+    console.error("deleteCall error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
 export async function getCalls() {
   try {
     if (!migrated) {

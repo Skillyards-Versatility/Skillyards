@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Users, Search, Filter, Edit2, Layers } from "lucide-react";
+import { Users, Search, Filter, Edit2, Layers, Pencil, Trash2, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { deleteStudent } from "@/actions/student";
 import { AssignBatchModal } from "./AssignBatchModal";
+import { EditStudentModal } from "./EditStudentModal";
 
 const COURSES = [
   "OJT (Full Stack Development)",
@@ -20,9 +23,26 @@ export function StudentTable({
   selectedBatchId = "",
   setSelectedBatchId,
   onStudentUpdated,
+  canEdit = false,
 }) {
   const [query, setQuery] = useState("");
   const [editingStudent, setEditingStudent] = useState(null);
+  const [editingDetailsStudent, setEditingDetailsStudent] = useState(null);
+  const [deletingIds, setDeletingIds] = useState([]);
+
+  const handleDeleteStudent = async (student) => {
+    if (!window.confirm(`Delete ${student.name}? This permanently removes their plan, installments and payment history. This cannot be undone.`)) return;
+    setDeletingIds((prev) => [...prev, student.id]);
+    try {
+      await deleteStudent(student.id);
+      toast.success("Student deleted");
+      if (onStudentUpdated) onStudentUpdated();
+    } catch (err) {
+      toast.error(err.message || "Failed to delete student");
+    } finally {
+      setDeletingIds((prev) => prev.filter((id) => id !== student.id));
+    }
+  };
 
   // Available batches for selected course dropdown
   const availableBatchesForFilter = selectedCourse
@@ -200,14 +220,41 @@ export function StudentTable({
 
                   {/* Action - Custom Batch Assignment */}
                   <td className="px-4 sm:px-6 py-4 text-center">
-                    <button
-                      onClick={() => setEditingStudent(student)}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-foreground hover:bg-muted border border-border rounded-lg transition-colors cursor-pointer"
-                      title="Assign/Change Batch"
-                    >
-                      <Edit2 className="w-3.5 h-3.5 text-primary" />
-                      <span>Assign Batch</span>
-                    </button>
+                    <div className="flex items-center justify-center gap-2">
+                      {canEdit && (
+                        <button
+                          onClick={() => setEditingDetailsStudent(student)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-foreground hover:bg-muted border border-border rounded-lg transition-colors cursor-pointer"
+                          title="Edit Student Details"
+                        >
+                          <Pencil className="w-3.5 h-3.5 text-primary" />
+                          <span>Edit</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setEditingStudent(student)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-foreground hover:bg-muted border border-border rounded-lg transition-colors cursor-pointer"
+                        title="Assign/Change Batch"
+                      >
+                        <Edit2 className="w-3.5 h-3.5 text-primary" />
+                        <span>Assign Batch</span>
+                      </button>
+                      {canEdit && (
+                        <button
+                          onClick={() => handleDeleteStudent(student)}
+                          disabled={deletingIds.includes(student.id)}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10 border border-destructive/20 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                          title="Delete Student"
+                        >
+                          {deletingIds.includes(student.id) ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                          ) : (
+                            <Trash2 className="w-3.5 h-3.5" />
+                          )}
+                          <span>Delete</span>
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -221,6 +268,19 @@ export function StudentTable({
           isOpen={!!editingStudent}
           onClose={() => setEditingStudent(null)}
           student={editingStudent}
+          batches={batches}
+          onSuccess={() => {
+            if (onStudentUpdated) onStudentUpdated();
+          }}
+        />
+      )}
+
+      {/* Edit Student Details Modal */}
+      {canEdit && (
+        <EditStudentModal
+          isOpen={!!editingDetailsStudent}
+          onClose={() => setEditingDetailsStudent(null)}
+          student={editingDetailsStudent}
           batches={batches}
           onSuccess={() => {
             if (onStudentUpdated) onStudentUpdated();

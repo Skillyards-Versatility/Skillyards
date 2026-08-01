@@ -1,8 +1,8 @@
 "use client";
 
-import { CheckCircle, Clock, AlertCircle, Plus } from "lucide-react";
+import { CheckCircle, Clock, AlertCircle, Plus, Pencil } from "lucide-react";
 
-export function InstallmentsTable({ installments = [], onPay, onAddInstallment, unscheduled }) {
+export function InstallmentsTable({ installments = [], onPay, onAddInstallment, onEditInstallment, canEdit, unscheduled }) {
   const getStatus = (inst) => {
     if (inst.paid >= inst.amount) return "paid";
     const due = new Date(inst.dueDate);
@@ -97,14 +97,25 @@ export function InstallmentsTable({ installments = [], onPay, onAddInstallment, 
                     </span>
                   </td>
                   <td className="px-5 py-4 text-right">
-                    {status !== "paid" && (
-                      <button
-                        onClick={() => onPay?.(inst.id)}
-                        className="px-3 py-1.5 text-xs font-semibold bg-primary text-primary-foreground rounded-md hover:opacity-90"
-                      >
-                        Pay
-                      </button>
-                    )}
+                    <div className="flex items-center justify-end gap-2">
+                      {canEdit && onEditInstallment && (
+                        <button
+                          onClick={() => onEditInstallment(inst)}
+                          className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
+                          title="Edit Installment"
+                        >
+                          <Pencil className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                      {status !== "paid" && (
+                        <button
+                          onClick={() => onPay?.(inst.id)}
+                          className="px-3 py-1.5 text-xs font-semibold bg-primary text-primary-foreground rounded-md hover:opacity-90"
+                        >
+                          Pay
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               );

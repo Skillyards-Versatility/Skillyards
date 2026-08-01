@@ -17,7 +17,7 @@ async function fetchPayments(studentId) {
 }
 
 
-export async function StudentDataSection({ student, plan, payments = [] }) {
+export async function StudentDataSection({ student, plan, payments = [], canEdit = false }) {
   const studentId = student.id;
 
   const allocationMap = {};
@@ -39,6 +39,7 @@ export async function StudentDataSection({ student, plan, payments = [] }) {
   const TYPE_LABEL = { full: "Full Pay", emi: "EMI", custom: "Custom", flexible: "Flexible" };
 
   const initialPlan = plan ? {
+    id: plan.id,
     type: TYPE_LABEL[plan.type] ?? plan.type,
     total: plan.totalAmount,
     installments: sortedInstallments.length,
@@ -48,6 +49,7 @@ export async function StudentDataSection({ student, plan, payments = [] }) {
   const initialInstallments = sortedInstallments.map((inst) => ({
     id: inst.id,
     dueDate: formatDate(inst.dueDate),
+    dueDateISO: inst.dueDate,
     amount: inst.amountDue,
     paid: allocationMap[inst.id] || 0,
   }));
@@ -72,6 +74,7 @@ export async function StudentDataSection({ student, plan, payments = [] }) {
       initialPlan={initialPlan}
       initialInstallments={initialInstallments}
       initialTransactions={initialTransactions}
+      canEdit={canEdit}
     />
   );
 }
