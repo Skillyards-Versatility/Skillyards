@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 export const s3Client = new S3Client({
   region: "auto",
@@ -67,6 +67,20 @@ export async function uploadImageToR2({ key, buffer, contentType }) {
     ContentType: contentType || "image/png",
   });
 
+  await s3Client.send(command);
+  return key;
+}
+
+/**
+ * Delete an object from R2 by key.
+ * @param {Object} params
+ * @param {string} params.key - R2 storage key
+ */
+export async function deleteObjectFromR2({ key }) {
+  const command = new DeleteObjectCommand({
+    Bucket: getBucket(),
+    Key: key,
+  });
   await s3Client.send(command);
   return key;
 }
