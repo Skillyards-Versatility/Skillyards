@@ -2,9 +2,9 @@ import { db, counsellingSessions } from "@repo/db";
 import { eq } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
 
-async function putHandler(req, { ctx, params }) {
+async function putHandler(req, { ctx, context }) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
 
     if (ctx.session.role !== "ADMIN") {
       return Response.json({ success: false, message: "Admin access required to edit sessions" }, { status: 403 });
@@ -57,9 +57,9 @@ async function putHandler(req, { ctx, params }) {
   }
 }
 
-async function deleteHandler(req, { ctx, params }) {
+async function deleteHandler(req, { ctx, context }) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
 
     if (ctx.session.role !== "ADMIN") {
       return Response.json({ success: false, message: "Admin access required to delete sessions" }, { status: 403 });
