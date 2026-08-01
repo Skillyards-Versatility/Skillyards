@@ -1060,6 +1060,9 @@ export function CounsellingClient({ isAdmin = false, canEdit = false, counselors
                   <div>
                     <label className="text-xs font-medium block mb-1">Taken By (BDA/Counselor)</label>
                     <select className="input w-full" value={editForm.counselorId} onChange={(e) => setEditForm({ ...editForm, counselorId: e.target.value })}>
+                      {editForm.counselorId && !counselors.some((c) => c.id === editForm.counselorId) && (
+                        <option value={editForm.counselorId}>{editingSession.counselorName || "Unassigned counselor"}</option>
+                      )}
                       {counselors.map((c) => (
                         <option key={c.id} value={c.id}>{c.name} ({c.role})</option>
                       ))}

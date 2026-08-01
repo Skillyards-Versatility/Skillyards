@@ -17,7 +17,7 @@ export default async function CounsellingPage() {
   const isAdmin = session?.role === "ADMIN" || session?.role === "MANAGER";
   const canEdit = session?.role === "ADMIN";
   
-  const batches = await getBatches(); console.log("BATCHES FETCHED:", batches.length);
+  const batches = await getBatches();
 
   let counselors = [];
   if (isAdmin) {

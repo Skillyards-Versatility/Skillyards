@@ -1,6 +1,7 @@
 import { db, counsellingSessions } from "@repo/db";
 import { eq } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
+import { deleteObjectFromR2 } from "@/integrations/r2/r2.client";
 
 async function putHandler(req, { ctx, context }) {
   try {
@@ -29,6 +30,9 @@ async function putHandler(req, { ctx, context }) {
       );
     }
 
+    const oldImageKey = existing.imageKey;
+    const finalImageKey = imageKey === undefined ? existing.imageKey : (imageKey || null);
+
     const [updated] = await db
       .update(counsellingSessions)
       .set({
@@ -40,13 +44,17 @@ async function putHandler(req, { ctx, context }) {
         outcome: outcome || "follow_up",
         notes: notes || null,
         sessionDate,
-        nextFollowUpDate: nextFollowUpDate || null,
+        nextFollowUpDate: outcome && outcome !== "follow_up" ? null : (nextFollowUpDate || null),
         counselorId: counselorId || existing.counselorId,
         bookedById: bookedById === undefined ? existing.bookedById : (bookedById || null),
-        imageKey: imageKey === undefined ? existing.imageKey : (imageKey || null),
+        imageKey: finalImageKey,
       })
       .where(eq(counsellingSessions.id, id))
       .returning();
+
+    if (oldImageKey && finalImageKey !== oldImageKey) {
+      deleteObjectFromR2({ key: oldImageKey }).catch(() => {});
+    }
 
     ctx.log("COUNSELLING_SESSION_UPDATED", { sessionId: id });
 
@@ -66,7 +74,7 @@ async function deleteHandler(req, { ctx, context }) {
     }
 
     const [existing] = await db
-      .select({ id: counsellingSessions.id })
+      .select({ id: counsellingSessions.id, imageKey: counsellingSessions.imageKey })
       .from(counsellingSessions)
       .where(eq(counsellingSessions.id, id))
       .limit(1);
@@ -76,6 +84,10 @@ async function deleteHandler(req, { ctx, context }) {
     }
 
     await db.delete(counsellingSessions).where(eq(counsellingSessions.id, id));
+
+    if (existing.imageKey) {
+      deleteObjectFromR2({ key: existing.imageKey }).catch(() => {});
+    }
 
     ctx.log("COUNSELLING_SESSION_DELETED", { sessionId: id });
 
