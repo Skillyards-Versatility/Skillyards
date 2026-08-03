@@ -240,12 +240,18 @@ export function BreakWidget() {
 
   useEffect(() => {
     function handleClickOutside(e) {
-      if (panelRef.current && !panelRef.current.contains(e.target)) {
-        setPanelOpen(false);
-      }
+      if (panelRef.current && panelRef.current.contains(e.target)) return;
+      if (e.target.closest && e.target.closest(".mobile-break-portal")) return;
+      setPanelOpen(false);
     }
-    if (panelOpen) document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    if (panelOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
   }, [panelOpen]);
 
   const handleStart = async () => {
@@ -337,7 +343,7 @@ export function BreakWidget() {
 
       {/* Mobile Bottom Sheet (Portalled) */}
       {mounted && panelOpen && createPortal(
-        <div className="sm:hidden">
+        <div className="sm:hidden mobile-break-portal">
           {/* Mobile Bottom Sheet Backdrop */}
           <div 
             className="fixed inset-0 z-[99] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
