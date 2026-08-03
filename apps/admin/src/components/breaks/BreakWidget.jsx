@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Coffee, Square, Clock } from "lucide-react";
 import { startBreak, endBreak, getActiveBreak, getDailyBreakTotal } from "@/actions/breaks";
 import { toast } from "sonner";
@@ -22,7 +23,12 @@ function formatMinutes(seconds) {
 }
 
 export function BreakWidget() {
+  const [mounted, setMounted] = useState(false);
   const [activeBreak, setActiveBreak] = useState(null);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const [elapsed, setElapsed] = useState(0);
   const [loading, setLoading] = useState(false);
   const [dailyInfo, setDailyInfo] = useState({ breakCount: 0, maxBreaks: MAX_BREAKS, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, remainingDailySeconds: 1800 });
@@ -302,16 +308,9 @@ export function BreakWidget() {
   const displayRemaining = Math.max(0, maxSec - elapsed);
 
   return (
-    <div
-      ref={panelRef}
-      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 select-none touch-none"
-      style={{
-        transform: `translate(${position.x}px, ${position.y}px)`,
-        transition: isDraggingRef.current ? "none" : "transform 0.15s ease-out",
-      }}
-    >
-      {/* Strict Lockout Overlay Modal when Break Limit Exceeded */}
-      {isOngoing && currentOverage > 0 && (
+    <>
+      {/* Strict Lockout Overlay Modal when Break Limit Exceeded (Portalled) */}
+      {mounted && isOngoing && currentOverage > 0 && createPortal(
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200">
           <div className="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl border border-red-200 dark:border-red-900/50 p-6 space-y-6 text-center animate-in zoom-in-95 duration-200">
             <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-500 animate-bounce">
@@ -332,19 +331,21 @@ export function BreakWidget() {
               {loading ? "Ending..." : "Resume Work"}
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {panelOpen && (
-        <>
+      {/* Mobile Bottom Sheet (Portalled) */}
+      {mounted && panelOpen && createPortal(
+        <div className="sm:hidden">
           {/* Mobile Bottom Sheet Backdrop */}
           <div 
-            className="sm:hidden fixed inset-0 z-[99] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 z-[99] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={() => setPanelOpen(false)}
           />
           {/* Mobile Bottom Sheet Container */}
           <div 
-            className="sm:hidden fixed bottom-0 left-0 right-0 z-[100] rounded-t-3xl bg-background border-t border-border p-6 pb-8 space-y-6 shadow-2xl animate-in slide-in-from-bottom duration-300"
+            className="fixed bottom-0 left-0 right-0 z-[100] rounded-t-3xl bg-background border-t border-border p-6 pb-8 space-y-6 shadow-2xl animate-in slide-in-from-bottom duration-300"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Drag Handle indicator */}
@@ -434,14 +435,27 @@ export function BreakWidget() {
               </div>
             )}
           </div>
+        </div>,
+        document.body
+      )}
 
-          {/* Desktop Floating Panel */}
+      {/* Floating Trigger Widget with Desktop panel inside */}
+      <div
+        ref={panelRef}
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 select-none touch-none"
+        style={{
+          transform: `translate(${position.x}px, ${position.y}px)`,
+          transition: isDraggingRef.current ? "none" : "transform 0.15s ease-out",
+        }}
+      >
+        {panelOpen && (
+          /* Desktop Floating Panel */
           <div className="hidden sm:block absolute bottom-full right-0 mb-4 rounded-2xl shadow-2xl border border-border/50 bg-background/90 backdrop-blur-xl p-5 w-72 animate-in slide-in-from-bottom-2 fade-in duration-200">
             {isOngoing ? (
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse" />
                     <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Break {dailyInfo.breakCount || 1} of {dailyInfo.maxBreaks || 3}</span>
                   </div>
                   <span className={`text-xl font-mono font-bold tracking-tight ${currentOverage > 0 ? "text-red-500" : "text-foreground"}`}>
@@ -518,42 +532,42 @@ export function BreakWidget() {
               </div>
             )}
           </div>
-        </>
-      )}
-
-      <button
-        onMouseDown={handleMouseDown}
-        onTouchStart={handleTouchStart}
-        onClick={() => {
-          if (draggedRef.current) return;
-          if (!panelOpen && !isOngoing && isLimitDone) {
-            toast.info("Daily break limit reached (3 breaks or 30m total).");
-            return;
-          }
-          setPanelOpen(!panelOpen);
-        }}
-        className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 text-white ${
-          panelOpen ? "ring-2 ring-amber-500 ring-offset-2 ring-offset-background" : ""
-        } ${
-          isOngoing
-            ? currentOverage > 0 
-              ? "bg-red-500 hover:bg-red-600 shadow-[0_4px_20px_rgba(239,68,68,0.3)] animate-pulse" 
-              : "bg-orange-500 hover:bg-orange-600 shadow-[0_4px_20px_rgba(249,115,22,0.3)] animate-pulse"
-            : isLimitDone
-            ? "bg-slate-400 hover:bg-slate-500"
-            : "bg-amber-500 hover:bg-amber-600 shadow-[0_4px_20px_rgba(245,158,11,0.3)]"
-        }`}
-      >
-        {isOngoing ? (
-          <span className={`text-xs font-bold font-mono tracking-tighter ${currentOverage > 0 ? "text-white" : ""}`}>
-            {currentOverage > 0 ? `+${formatTime(currentOverage)}` : formatTime(displayRemaining)}
-          </span>
-        ) : isLimitDone ? (
-          <Clock className="w-6 h-6" />
-        ) : (
-          <Coffee className="w-6 h-6" />
         )}
-      </button>
-    </div>
+
+        <button
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          onClick={() => {
+            if (draggedRef.current) return;
+            if (!panelOpen && !isOngoing && isLimitDone) {
+              toast.info("Daily break limit reached (3 breaks or 30m total).");
+              return;
+            }
+            setPanelOpen(!panelOpen);
+          }}
+          className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 text-white ${
+            panelOpen ? "ring-2 ring-amber-500 ring-offset-2 ring-offset-background" : ""
+          } ${
+            isOngoing
+              ? currentOverage > 0 
+                ? "bg-red-500 hover:bg-red-600 shadow-[0_4px_20px_rgba(239,68,68,0.3)] animate-pulse" 
+                : "bg-orange-500 hover:bg-orange-600 shadow-[0_4px_20px_rgba(249,115,22,0.3)] animate-pulse"
+              : isLimitDone
+              ? "bg-slate-400 hover:bg-slate-500"
+              : "bg-amber-500 hover:bg-amber-600 shadow-[0_4px_20px_rgba(245,158,11,0.3)]"
+          }`}
+        >
+          {isOngoing ? (
+            <span className={`text-xs font-bold font-mono tracking-tighter ${currentOverage > 0 ? "text-white" : ""}`}>
+              {currentOverage > 0 ? `+${formatTime(currentOverage)}` : formatTime(displayRemaining)}
+            </span>
+          ) : isLimitDone ? (
+            <Clock className="w-6 h-6" />
+          ) : (
+            <Coffee className="w-6 h-6" />
+          )}
+        </button>
+      </div>
+    </>
   );
 }
