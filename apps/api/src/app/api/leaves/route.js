@@ -30,13 +30,15 @@ async function postHandler(req, { ctx }) {
       );
     }
 
-    // Validate: at least 2 days notice
-    const diffDays = Math.ceil((startNormalized.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
-    if (diffDays < 2) {
-      return Response.json(
-        { success: false, message: "Leave must be applied at least 2 days in advance." },
-        { status: 400 }
-      );
+    // Validate: at least 2 days notice (only for full-day leaves)
+    if (!isHalfDay) {
+      const diffDays = Math.ceil((startNormalized.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      if (diffDays < 2) {
+        return Response.json(
+          { success: false, message: "Leave must be applied at least 2 days in advance." },
+          { status: 400 }
+        );
+      }
     }
 
     // Check for overlapping leaves
@@ -81,10 +83,10 @@ async function postHandler(req, { ctx }) {
         }
       } else if (halfDayPeriod === "EVENING") {
         const noonCutoff = new Date(leaveDayStart);
-        noonCutoff.setHours(12, 0, 0, 0);
+        noonCutoff.setHours(14, 0, 0, 0); // 2:00 PM
         if (nowIST >= noonCutoff) {
           return Response.json(
-            { success: false, message: "Evening half-days must be applied before 12:00 PM on the same day." },
+            { success: false, message: "Evening half-days must be applied before 2:00 PM on the same day." },
             { status: 400 }
           );
         }

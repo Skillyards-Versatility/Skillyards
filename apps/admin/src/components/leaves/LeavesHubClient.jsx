@@ -65,11 +65,9 @@ export function LeavesHubClient({ userRole }) {
     const diffTime = start.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 2) {
-      const confirmed = window.confirm(
-        "Notice: You are applying for leave less than 2 days in advance. Standard policy requires at least 2 days notice.\n\nDo you want to proceed with submission?"
-      );
-      if (!confirmed) return;
+    if (!isHalfDay && diffDays < 2) {
+      toast.error("Leave must be applied at least 2 days in advance.");
+      return;
     }
     
     try {

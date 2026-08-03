@@ -750,8 +750,8 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
       )}
       
       {showActiveModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[85vh]">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh] animate-in slide-in-from-bottom sm:zoom-in-95 duration-300">
             <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 <Coffee className="w-5 h-5 text-orange-600" />
@@ -804,8 +804,8 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
       )}
 
       {showFlaggedModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[85vh]">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh] animate-in slide-in-from-bottom sm:zoom-in-95 duration-300">
             <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 <Coffee className="w-5 h-5 text-red-600" />
@@ -878,8 +878,8 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
       )}
       
       {selectedUserTimeline && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white dark:bg-gray-900 w-full max-w-lg rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[85vh]">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh] animate-in slide-in-from-bottom sm:zoom-in-95 duration-300">
             <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 <Clock className="w-5 h-5 text-blue-600" />
@@ -902,6 +902,77 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                 onDelete={handleBreakDelete}
               />
             </div>
+          </div>
+        </div>
+      )}
+
+      {editingBreak && editBreakForm && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-gray-900 w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh] animate-in slide-in-from-bottom sm:zoom-in-95 duration-300">
+            <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
+              <h2 className="text-lg font-bold flex items-center gap-2">
+                <Pencil className="w-5 h-5 text-primary" />
+                Edit Break Time
+              </h2>
+              <button 
+                onClick={() => {
+                  setEditingBreak(null);
+                  setEditBreakForm(null);
+                }}
+                className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <form onSubmit={handleBreakEditSubmit} className="p-5 space-y-4 overflow-y-auto">
+              <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
+                User: <span className="text-foreground font-bold">{editingBreak.userName}</span>
+              </p>
+              
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">Start Time</label>
+                <input
+                  type="datetime-local"
+                  required
+                  className="w-full p-2.5 text-base sm:text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-foreground outline-none focus:ring-1 focus:ring-primary"
+                  value={editBreakForm.startedAt}
+                  onChange={(e) => setEditBreakForm(prev => ({ ...prev, startedAt: e.target.value }))}
+                />
+              </div>
+              
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">End Time (Optional)</label>
+                <input
+                  type="datetime-local"
+                  className="w-full p-2.5 text-base sm:text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-foreground outline-none focus:ring-1 focus:ring-primary"
+                  value={editBreakForm.endedAt}
+                  onChange={(e) => setEditBreakForm(prev => ({ ...prev, endedAt: e.target.value }))}
+                />
+                <span className="text-[10px] text-gray-400 block">Leave blank if the break is still ongoing.</span>
+              </div>
+              
+              <div className="flex items-center gap-3 pt-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEditingBreak(null);
+                    setEditBreakForm(null);
+                  }}
+                  className="flex-1 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 text-sm font-bold transition-all active:scale-[0.98] cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={savingBreak}
+                  className="flex-1 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-bold shadow-md hover:bg-primary/95 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  {savingBreak && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Save Changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
