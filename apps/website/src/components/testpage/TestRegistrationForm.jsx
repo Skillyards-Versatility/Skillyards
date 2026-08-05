@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import ReCAPTCHA from "react-google-recaptcha";
 import { ArrowRight, Loader2 } from "lucide-react";
+
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
 export default function TestRegistrationForm() {
     const router = useRouter();
@@ -10,6 +13,8 @@ export default function TestRegistrationForm() {
     const [form, setForm] = useState({ name: "", email: "", phone: "" });
     const [status, setStatus] = useState("idle"); 
     const [error, setError] = useState("");
+    const [captchaError, setCaptchaError] = useState("");
+    const recaptchaRef = useRef(null);
 
     const handleChange = (e) => {
         setForm((prev) => ({
@@ -32,6 +37,13 @@ export default function TestRegistrationForm() {
             return;
         }
 
+        const token = recaptchaRef.current?.getValue();
+        if (RECAPTCHA_SITE_KEY && !token) {
+            setCaptchaError("Please verify that you are not a robot.");
+            return;
+        }
+        setCaptchaError("");
+
         setStatus("loading");
 
         const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -47,6 +59,8 @@ export default function TestRegistrationForm() {
                     name: form.name,
                     email: form.email,
                     phone: form.phone,
+                    captchaToken: token,
+                    website: "",
                 }),
             });
 
@@ -61,8 +75,13 @@ export default function TestRegistrationForm() {
             }
 
             if (!res.ok) {
-                setError(data?.error || "Something went wrong.");
+                if (res.status === 429) {
+                    setError("Too many attempts. Please try again later.");
+                } else {
+                    setError(data?.error || "Something went wrong.");
+                }
                 setStatus("error");
+                recaptchaRef.current?.reset();
                 return;
             }
 
@@ -72,6 +91,7 @@ export default function TestRegistrationForm() {
         } catch (err) {
             setError("Network error. Please try again.");
             setStatus("error");
+            recaptchaRef.current?.reset();
         }
     };
 
@@ -96,6 +116,18 @@ export default function TestRegistrationForm() {
                     e.preventDefault();
                     handleSubmit(e);
                 }} className="flex flex-col gap-4" noValidate>
+
+                    {/* Honeypot — hidden from humans, irresistible to bots */}
+                    <div className="absolute left-[-9999px] top-auto w-px h-px overflow-hidden" aria-hidden="true">
+                        <label htmlFor="website">Website</label>
+                        <input
+                            id="website"
+                            name="website"
+                            type="text"
+                            tabIndex={-1}
+                            autoComplete="off"
+                        />
+                    </div>
 
                     {/* Name */}
                     <div className="flex flex-col gap-1.5">
@@ -152,6 +184,23 @@ export default function TestRegistrationForm() {
                             />
                         </div>
                     </div>
+
+                    {/* reCAPTCHA */}
+                    {RECAPTCHA_SITE_KEY && (
+                        <div className="flex flex-col items-start gap-1.5">
+                            <ReCAPTCHA
+                                ref={recaptchaRef}
+                                sitekey={RECAPTCHA_SITE_KEY}
+                                onExpired={() =>
+                                    setCaptchaError("reCAPTCHA expired. Please verify again.")
+                                }
+                                onChange={() => setCaptchaError("")}
+                            />
+                            {captchaError && (
+                                <p className="text-xs text-red-500 font-medium">{captchaError}</p>
+                            )}
+                        </div>
+                    )}
 
                     {/* Error */}
                     {error && (

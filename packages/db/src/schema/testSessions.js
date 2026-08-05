@@ -18,4 +18,6 @@ export const testSessions = pgTable("test_sessions", {
   questionsSnapshot: jsonb("questions_snapshot"),
 
   evaluationSnapshot: jsonb("evaluation_snapshot"),
+
+  archivedAt: timestamp("archived_at"),
 });

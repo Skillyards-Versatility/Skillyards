@@ -4,46 +4,6 @@ import { randomUUID } from "node:crypto";
 const secretKey = process.env.JWT_SECRET || "skillyards_secret_key_change_me_in_prod";
 const encodedKey = new TextEncoder().encode(secretKey);
 
-// ── RATE LIMITER (Systemic Resilience - Sliding Window) ──
-// We use a global variable to persist state across hot-reloads in dev mode.
-const rateTracker = global.rateTracker || new Map();
-if (process.env.NODE_ENV !== "production") global.rateTracker = rateTracker;
-
-const MAX_RATE_KEYS = 5000;
-const WINDOW_MS = 15000; 
-const BURST_LIMIT = 10;
-
-/**
- * Checks if a request is within the rate limit (Sliding Window).
- */
-export function checkRateLimit(key) {
-  const now = Date.now();
-  const entry = rateTracker.get(key);
-
-  // Auto-Cleanup logic if map gets too large
-  if (rateTracker.size > MAX_RATE_KEYS) {
-    const cutoff = now - WINDOW_MS;
-    for (const [k, v] of rateTracker) {
-      if (v.timestamp < cutoff) rateTracker.delete(k);
-    }
-  }
-
-  if (entry && (now - entry.timestamp) < WINDOW_MS) {
-    if (entry.count >= BURST_LIMIT) {
-      return { 
-        limited: true, 
-        retryAfterMs: WINDOW_MS - (now - entry.timestamp) 
-      };
-    }
-    entry.count++;
-    return { limited: false };
-  }
-
-  // New window or expired
-  rateTracker.set(key, { count: 1, timestamp: now });
-  return { limited: false };
-}
-
 /**
  * Decrypts and validates a JWT token.
  */

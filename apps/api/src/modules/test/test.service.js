@@ -16,24 +16,26 @@ import { generateAndSendCertificate } from "./certificate.service";
 export async function registerTestLead({ db, data }) {
   const existing = await findLeadByEmail(db, data.email);
 
-  let lead;
-  let alreadyExists = false;
-
   if (existing) {
-    lead = existing;
-    alreadyExists = true;
-  } else {
-    lead = await createLead(db, {
+    return { alreadyExists: true, lead: existing };
+  }
+
+  try {
+    const lead = await createLead(db, {
       ...data,
       source: "10_min_test",
       status: "registered",
     });
+    return { alreadyExists: false, lead };
+  } catch (err) {
+    // Race with a concurrent request for the same email. The UNIQUE constraint
+    // won; return the winner's lead instead of failing.
+    if (err?.code === "23505") {
+      const raced = await findLeadByEmail(db, data.email);
+      if (raced) return { alreadyExists: true, lead: raced };
+    }
+    throw err;
   }
-
-  return {
-    alreadyExists,
-    lead,
-  };
 }
 
 

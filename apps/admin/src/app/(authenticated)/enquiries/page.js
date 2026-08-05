@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getSettings } from "@/actions/settings";
 import { desc, eq } from "drizzle-orm";
 
-import { db, enquiries as enquiriesTable, testLeads as testLeadsTable, testSessions as testSessionsTable } from "@repo/db";
+import { db, enquiries as enquiriesTable } from "@repo/db";
 import { getSession } from "@/lib/auth";
 import { shouldFetch, getCachedEnquiries, setCachedEnquiries } from "@/lib/enquiries-cache";
 import { EnquiriesClient } from "./enquiries-client";
@@ -12,23 +12,6 @@ export const dynamic = "force-dynamic";
 const PAGE_SIZE = 10;
 
 const VALID_SORT_COLUMNS = ["firstName", "email", "status", "createdAt", "source"];
-
-function mapTestLead(lead, session) {
-  const total = session?.questionsSnapshot?.length || 30;
-  const rawScore = session?.score;
-  const cappedScore = rawScore != null ? Math.min(rawScore, Math.round(total * 0.6)) : null;
-  return {
-    id: lead.id,
-    firstName: lead.name,
-    lastName: "",
-    email: lead.email,
-    phone: lead.phone,
-    message: cappedScore != null ? `Score: ${cappedScore}` : "\u2014",
-    status: lead.status === "registered" ? "new" : (lead.status || "new"),
-    createdAt: lead.createdAt,
-    source: lead.source || "10_min_test",
-  };
-}
 
 function mapEnquiry(enquiry) {
   return {
@@ -52,26 +35,7 @@ async function getAllMerged() {
     setCachedEnquiries(rows);
   }
 
-  const enquiries = (getCachedEnquiries() || []).map(mapEnquiry);
-
-  const [leads, allSessions] = await Promise.all([
-    db.select().from(testLeadsTable).orderBy(desc(testLeadsTable.createdAt)),
-    db.select().from(testSessionsTable),
-  ]);
-
-  const sessionByLeadId = {};
-  for (const s of allSessions) {
-    const existing = sessionByLeadId[s.leadId];
-    if (!existing || (s.completedAt && (!existing.completedAt || s.completedAt > existing.completedAt))) {
-      sessionByLeadId[s.leadId] = s;
-    }
-  }
-
-  const testLeads = leads.map((lead) => mapTestLead(lead, sessionByLeadId[lead.id]));
-
-  return [...enquiries, ...testLeads].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  return (getCachedEnquiries() || []).map(mapEnquiry);
 }
 
 function matchesSearch(enquiry, q) {
