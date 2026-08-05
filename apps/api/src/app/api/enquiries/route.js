@@ -4,6 +4,15 @@ import { success, error } from "@/utils/response";
 import { createProtectedRoute } from "@/lib/middleware";
 import { publicAllow, canAccessEnquiry } from "@/lib/permissions";
 
+// Moderate policy: the form is already reCAPTCHA-protected, so the limiter is a
+// secondary net rather than the primary defence.
+const ENQUIRY_POST_RATE_LIMIT = {
+  prefix: "enquiries",
+  burst: { limit: 10, windowMs: 60000 },
+  hourly: { limit: 60 },
+  daily: { limit: 300 },
+};
+
 /**
  * SECURED ENQUIRY LIST HANDLER (Admin/Manager)
  */
@@ -55,8 +64,9 @@ export const GET = createProtectedRoute(getHandler, {
 });
 
 // POST: Publicly accessible but still through the structural wrapper
-// This allows us to have requestId, logging, and rate limiting on the website form!
+// This allows us to have requestId, logging, rate limiting, and CAPTCHA on the website form!
 export const POST = createProtectedRoute(postHandler, {
   policy: publicAllow,
-  isPublic: true
+  isPublic: true,
+  rateLimit: ENQUIRY_POST_RATE_LIMIT
 });

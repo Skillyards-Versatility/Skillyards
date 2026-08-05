@@ -1,24 +1,9 @@
 import { desc, inArray } from "drizzle-orm";
 
-import { db, enquiries as enquiriesTable, testLeads as testLeadsTable, testSessions as testSessionsTable } from "@repo/db";
+import { db, enquiries as enquiriesTable } from "@repo/db";
 import { getSession } from "@/lib/auth";
 
-function normalizeRow(row, session) {
-  if (row.name) {
-    const total = session?.questionsSnapshot?.length || 30;
-    const rawScore = session?.score;
-    const cappedScore = rawScore != null ? Math.min(rawScore, Math.round(total * 0.6)) : null;
-    return {
-      firstName: row.name,
-      lastName: "",
-      email: row.email,
-      phone: row.phone,
-      message: cappedScore != null ? `Score: ${cappedScore}` : "\u2014",
-      status: row.status === "registered" ? "new" : (row.status || "new"),
-      createdAt: row.createdAt,
-      source: row.source || "10_min_test",
-    };
-  }
+function normalizeRow(row) {
   return {
     firstName: row.firstName,
     lastName: row.lastName || "",
@@ -250,24 +235,14 @@ export async function GET() {
     return new Response("Forbidden", { status: 403 });
   }
 
-  const [enquiryRows, leadRows, allSessions] = await Promise.all([
-    db.select().from(enquiriesTable).orderBy(desc(enquiriesTable.createdAt)),
-    db.select().from(testLeadsTable).orderBy(desc(testLeadsTable.createdAt)),
-    db.select().from(testSessionsTable),
-  ]);
+  const enquiryRows = await db
+    .select()
+    .from(enquiriesTable)
+    .orderBy(desc(enquiriesTable.createdAt));
 
-  const sessionByLeadId = {};
-  for (const s of allSessions) {
-    const existing = sessionByLeadId[s.leadId];
-    if (!existing || (s.completedAt && (!existing.completedAt || s.completedAt > existing.completedAt))) {
-      sessionByLeadId[s.leadId] = s;
-    }
-  }
-
-  const all = [
-    ...enquiryRows.map(normalizeRow),
-    ...leadRows.map((lead) => normalizeRow(lead, sessionByLeadId[lead.id])),
-  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const all = enquiryRows.map(normalizeRow).sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
   const bytes = workbookBytes(all);
   const date = new Date().toISOString().slice(0, 10);
@@ -300,24 +275,15 @@ export async function POST(request) {
     return Response.json({ error: "ids must be a non-empty array" }, { status: 400 });
   }
 
-  const [enquiryRows, leadRows, allSessions] = await Promise.all([
-    db.select().from(enquiriesTable).where(inArray(enquiriesTable.id, ids)).orderBy(desc(enquiriesTable.createdAt)),
-    db.select().from(testLeadsTable).where(inArray(testLeadsTable.id, ids)).orderBy(desc(testLeadsTable.createdAt)),
-    db.select().from(testSessionsTable),
-  ]);
+  const enquiryRows = await db
+    .select()
+    .from(enquiriesTable)
+    .where(inArray(enquiriesTable.id, ids))
+    .orderBy(desc(enquiriesTable.createdAt));
 
-  const sessionByLeadId = {};
-  for (const s of allSessions) {
-    const existing = sessionByLeadId[s.leadId];
-    if (!existing || (s.completedAt && (!existing.completedAt || s.completedAt > existing.completedAt))) {
-      sessionByLeadId[s.leadId] = s;
-    }
-  }
-
-  const all = [
-    ...enquiryRows.map(normalizeRow),
-    ...leadRows.map((lead) => normalizeRow(lead, sessionByLeadId[lead.id])),
-  ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const all = enquiryRows.map(normalizeRow).sort(
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
   const bytes = workbookBytes(all);
   const date = new Date().toISOString().slice(0, 10);

@@ -16,7 +16,6 @@ import { toast } from "sonner";
 
 const SOURCE_OPTIONS = [
   { value: "website", label: "Website", color: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800" },
-  { value: "10_min_test", label: "10-min Test", color: "border-sky-200 bg-sky-50 text-sky-700 dark:bg-sky-950 dark:text-sky-300 dark:border-sky-800" },
 ];
 
 function SourceBadge({ source }) {
@@ -303,7 +302,7 @@ export function EnquiriesClient({
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Enquiries</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Website enquiries and 10-minute test registrations from prospective students.
+            Website enquiries from prospective students.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
@@ -498,7 +497,7 @@ export function EnquiriesClient({
               <p className="mt-1 max-w-sm text-sm text-muted-foreground">
                 {initialSearch || initialStatusFilter
                   ? "No enquiries match your current filters. Try adjusting your search."
-                  : "New enquiries and test registrations will appear here as soon as they are submitted."}
+                  : "New enquiries will appear here as soon as they are submitted."}
               </p>
             </div>
           ) : (

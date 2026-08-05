@@ -1,4 +1,5 @@
-import { getRequestContext, checkRateLimit } from "./auth";
+import { getRequestContext } from "./auth";
+import { checkRateLimit, DEFAULT_RATE_LIMIT } from "./rateLimiter";
 import { canAccessReceipt } from "./permissions.js"; // This will be generalized later
 import { corsHeaders } from "../utils/cors";
 
@@ -13,7 +14,7 @@ import { corsHeaders } from "../utils/cors";
  * 5. Request Correlation (requestId)
  */
 
-export function createProtectedRoute(handler, { policy, resourceLoader, isPublic = false, internalServiceOnly = false }) {
+export function createProtectedRoute(handler, { policy, resourceLoader, isPublic = false, internalServiceOnly = false, rateLimit }) {
   return async (req, context) => {
     const ctx = await getRequestContext(req);
     const headers = corsHeaders(req);
@@ -45,26 +46,33 @@ export function createProtectedRoute(handler, { policy, resourceLoader, isPublic
         return new Response(JSON.stringify({ success: false, message: "Unauthorized" }), { status: 401, headers });
       }
 
-      // 2. ── RATE PROTECTION (Standardized - Moving to boundary) ──
+      // 2. ── RATE PROTECTION (Configurable per route, distributed via Upstash) ──
       const session = ctx.session || {}; 
-      const ip = req.headers.get("x-forwarded-for")?.split(',')[0] || "anon";
-      
-      const rateKey = session.userId 
-        ? `${session.userId}:${(await context?.params)?.id || "global"}`
-        : `${ip}:${req.url}`; 
-        
-      const { limited, retryAfterMs } = checkRateLimit(rateKey);
+      const ip = req.headers.get("x-forwarded-for")?.split(',')[0]?.trim() || "anon";
+      const resourceId = (await context?.params)?.id;
+
+      const limits = rateLimit || DEFAULT_RATE_LIMIT;
+      const identity = session.userId
+        ? `${session.userId}:${resourceId || "global"}`
+        : ip;
+
+      const { limited, retryAfterMs } = await checkRateLimit({
+        prefix: limits.prefix || "api",
+        identity,
+        burst: limits.burst,
+        hourly: limits.hourly,
+        daily: limits.daily,
+      });
       
       if (limited) {
-        ctx.warn("RATE_LIMIT_EXCEEDED", { rateKey, retryAfterMs });
+        ctx.warn("RATE_LIMIT_EXCEEDED", { prefix: limits.prefix, retryAfterMs });
         return new Response(
           JSON.stringify({ success: false, message: "Too many requests. Please wait." }), 
-          { status: 429, headers }
+          { status: 429, headers: { ...headers, "Retry-After": String(Math.ceil(retryAfterMs / 1000)) } }
         );
       }
 
       // 3. ── RESOURCE FETCH (Targeted Loading) ──
-      const resourceId = (await context?.params)?.id;
       let resource = null;
       if (resourceId && resourceLoader) {
         resource = await resourceLoader(resourceId);
