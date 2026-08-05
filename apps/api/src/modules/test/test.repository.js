@@ -6,7 +6,7 @@ export async function findLeadByEmail(db, email) {
   console.log("Finding lead by email:", email);
 
   return db.query.testLeads.findFirst({
-    where: (t, { eq }) => eq(t.email, email),
+    where: (t, { eq, and, isNull }) => and(eq(t.email, email), isNull(t.archivedAt)),
   });
 }
 
@@ -45,7 +45,7 @@ export async function getLatestSessionByLeadId(db, leadId) {
 
 export async function getLeadById(db, leadId) {
   return db.query.testLeads.findFirst({
-    where: (t, { eq }) => eq(t.id, leadId),
+    where: (t, { eq, and, isNull }) => and(eq(t.id, leadId), isNull(t.archivedAt)),
   });
 }
 

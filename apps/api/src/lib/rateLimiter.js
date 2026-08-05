@@ -34,11 +34,13 @@ export function getRedisClient() {
 
   if (!url || !token) {
     redisClient = null;
+    console.log("[RATE_LIMITER] backend: memory");
     return null;
   }
 
   try {
     redisClient = new Redis({ url, token });
+    console.log("[RATE_LIMITER] backend: upstash");
   } catch (err) {
     console.error("[RATE_LIMITER] Failed to initialize Upstash Redis:", err.message);
     redisClient = null;
