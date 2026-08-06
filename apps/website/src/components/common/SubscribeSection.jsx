@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -11,23 +10,12 @@ export default function NewsletterSection() {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState("");
     const [error, setError] = useState("");
-    const recaptchaRef = useRef(null);
-    const [captchaError, setCaptchaError] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setSuccess("");
         setError("");
-        setCaptchaError("");
-
-        const token = recaptchaRef.current?.getValue();
-
-        if (!token) {
-            setCaptchaError("Please verify that you are not a robot.");
-            setLoading(false);
-            return;
-        }
 
         try {
             setSuccess("You have been subscribed! (Demo mode)");
@@ -36,7 +24,6 @@ export default function NewsletterSection() {
             setError(err.message || "Subscription failed.");
         } finally {
             setLoading(false);
-            recaptchaRef.current?.reset();
         }
     };
 
@@ -99,23 +86,6 @@ export default function NewsletterSection() {
                                     {loading ? "Subscribing..." : "Subscribe"}
                                 </Button>
                             </form>
-
-                            {/* reCAPTCHA */}
-                            <div className="mt-4 flex justify-center lg:justify-end scale-90 sm:scale-100 origin-center lg:origin-right flex-col items-center lg:items-end">
-                                <ReCAPTCHA
-                                    ref={recaptchaRef}
-                                    sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-                                    onExpired={() =>
-                                        setCaptchaError("reCAPTCHA expired. Please verify again.")
-                                    }
-                                />
-
-                                {captchaError && (
-                                    <p className="mt-2 text-sm text-red-500 font-medium animate-in fade-in slide-in-from-top-2">
-                                        {captchaError}
-                                    </p>
-                                )}
-                            </div>
 
                             {/* Feedback Messages */}
                             {success && <p className="text-green-600 font-medium mt-3 text-center lg:text-right animate-in fade-in">{success}</p>}

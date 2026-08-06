@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "@/app/styles/globals.css";
 
 import { ThemeProvider } from "@/app/context/ThemeContext";
+import ReCaptchaProvider from "@/components/providers/ReCaptchaProvider";
 import BackToTop from "@/components/BackToTop";
 import JsonLd from "@/components/JsonLd";
 import Header from "@/components/Header";
@@ -73,14 +74,16 @@ export default function RootLayout({ children }) {
                     defaultTheme="system"
                     enableSystem
                 >
-                    <div className="min-h-screen bg-background">
-                        <Header />
+                    <ReCaptchaProvider>
+                        <div className="min-h-screen bg-background">
+                            <Header />
 
-                        <main className="relative z-10">{children}</main>
+                            <main className="relative z-10">{children}</main>
 
-                        <Footer />
-                        <BackToTop />
-                    </div>
+                            <Footer />
+                            <BackToTop />
+                        </div>
+                    </ReCaptchaProvider>
                     <Analytics />
                     <SpeedInsights />
 

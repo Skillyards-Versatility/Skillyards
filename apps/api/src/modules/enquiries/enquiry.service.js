@@ -11,7 +11,7 @@ export async function createEnquiryService(enquiryData) {
   try {
     const { captchaToken, ...dbData } = enquiryData;
 
-    const isValidCaptcha = await verifyCaptcha(captchaToken);
+    const isValidCaptcha = await verifyCaptcha(captchaToken, { action: "contact_form" });
 
     if (!isValidCaptcha) {
       throw new Error("Captcha verification failed");

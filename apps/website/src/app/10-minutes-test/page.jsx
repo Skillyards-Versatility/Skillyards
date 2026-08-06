@@ -12,6 +12,8 @@ import CertificateSection from "@/components/testpage/CertificateSection";
 import TestRegistrationForm from "@/components/testpage/TestRegistrationForm";
 import TestFAQ from "@/components/testpage/TestFAQ";
 
+export const revalidate = 3600;
+
 export const metadata = buildSEO({
     title: "Free 10-Minute Skill Test | HTML, CSS, JS & SEO Certificate — SkillYards",
     description:

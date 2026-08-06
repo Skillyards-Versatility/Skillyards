@@ -1,15 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
+import { useState } from "react";
 import { Upload, CheckCircle } from "lucide-react";
 
 export default function ApplyForm({ job }) {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [errors, setErrors] = useState({});
-    const recaptchaRef = useRef(null);
-    const [captchaError, setCaptchaError] = useState("");
     const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3 MB
 
 
@@ -53,28 +50,18 @@ export default function ApplyForm({ job }) {
             return;
         }
 
-        const token = recaptchaRef.current?.getValue();
-
-        if (!token) {
-            setCaptchaError("Please verify that you are not a robot.");
-            return;
-        }
-
-        setCaptchaError("");
         setErrors({});
         setLoading(true);
 
         try {
             const formData = new FormData(form);
             formData.append("job_role_id", job.id);
-            formData.append("g-recaptcha-response", token);
             setSuccess(true);
             form.reset();
         } catch (error) {
             alert(error.message);
         } finally {
             setLoading(false);
-            recaptchaRef.current?.reset();
         }
     }
 
@@ -189,21 +176,6 @@ export default function ApplyForm({ job }) {
                             placeholder="Why do you want to join SkillYards?"
                             className="sm:col-span-2 rounded-lg border px-4 py-3 text-sm dark:bg-neutral-900"
                         />
-
-                        {/* reCAPTCHA */}
-                        <div className="sm:col-span-2">
-                            <ReCAPTCHA
-                                ref={recaptchaRef}
-                                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-                                onExpired={() =>
-                                    setCaptchaError("reCAPTCHA expired. Please verify again.")
-                                }
-                            />
-
-                            {captchaError && (
-                                <p className="mt-2 text-xs text-red-500">{captchaError}</p>
-                            )}
-                        </div>
 
                         {/* Sticky Submit */}
                         <div className="fixed bottom-0 left-0 right-0 sm:static sm:col-span-2 bg-white dark:bg-neutral-950 p-4 sm:p-0 border-t sm:border-0">

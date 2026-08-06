@@ -62,6 +62,7 @@ export function createProtectedRoute(handler, { policy, resourceLoader, isPublic
         burst: limits.burst,
         hourly: limits.hourly,
         daily: limits.daily,
+        global: limits.global,
       });
       
       if (limited) {
