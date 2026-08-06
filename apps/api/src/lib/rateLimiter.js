@@ -70,9 +70,11 @@ function yyyymmddHH(date) {
  * @param {{limit:number,windowMs:number}} [options.burst]
  * @param {{limit:number}} [options.hourly]
  * @param {{limit:number}} [options.daily]
+ * @param {{limit:number,windowMs:number}} [options.global] identity-independent cap;
+ *        all requests share one counter so IP rotation cannot bypass it
  * @returns {Promise<{limited:boolean,retryAfterMs?:number}>}
  */
-export async function checkRateLimit({ prefix, identity, burst, hourly, daily }) {
+export async function checkRateLimit({ prefix, identity, burst, hourly, daily, global: globalCap }) {
   const now = new Date();
   const layers = [];
 
@@ -83,6 +85,16 @@ export async function checkRateLimit({ prefix, identity, burst, hourly, daily })
       limit: burst.limit,
       ttlSeconds: Math.max(1, Math.ceil(burst.windowMs / 1000)),
       retryAfterMs: burst.windowMs - (now.getTime() % burst.windowMs),
+    });
+  }
+
+  if (globalCap && globalCap.limit > 0) {
+    const bucket = Math.floor(now.getTime() / globalCap.windowMs);
+    layers.push({
+      key: `rl:${prefix}:global:b:${bucket}`,
+      limit: globalCap.limit,
+      ttlSeconds: Math.max(1, Math.ceil(globalCap.windowMs / 1000)),
+      retryAfterMs: globalCap.windowMs - (now.getTime() % globalCap.windowMs),
     });
   }
 

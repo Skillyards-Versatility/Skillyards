@@ -3,6 +3,13 @@ import { getSessionById } from "@/modules/test/test.repository";
 import { createProtectedRoute } from "@/lib/middleware";
 import { publicAllow } from "@/lib/permissions";
 
+const TEST_RESULT_RATE_LIMIT = {
+  prefix: "test-result",
+  burst: { limit: 30, windowMs: 60000 },
+  hourly: { limit: 300 },
+  daily: { limit: 1000 },
+};
+
 /**
  * PUBLIC ASSESSMENT RESULT HANDLER
  */
@@ -39,5 +46,6 @@ async function getHandler(req, { ctx }) {
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
   policy: publicAllow,
-  isPublic: true
+  isPublic: true,
+  rateLimit: TEST_RESULT_RATE_LIMIT,
 });

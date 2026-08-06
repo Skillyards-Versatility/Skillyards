@@ -11,6 +11,7 @@ const ENQUIRY_POST_RATE_LIMIT = {
   burst: { limit: 10, windowMs: 60000 },
   hourly: { limit: 60 },
   daily: { limit: 300 },
+  global: { limit: 2000, windowMs: 3600000 },
 };
 
 /**

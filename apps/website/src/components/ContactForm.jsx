@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
@@ -9,8 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { User, Mail, Phone, MessageSquare, Send, Lightbulb } from "lucide-react";
-
-import ReCaptchaProvider from "@/components/providers/ReCaptchaProvider";
 
 function ContactFormContent() {
     const [loading, setLoading] = useState(false);
@@ -199,7 +197,7 @@ function ContactFormContent() {
             <div className="mt-8 pt-8 border-t border-primary flex flex-col items-center text-center">
                 <Lightbulb className="w-6 h-6 text-accent-foreground mb-3" />
                 <p className="text-lg sm:text-xl text-primary italic font-bold">
-                    "The capacity to learn is a gift; the ability to learn is a skill; the willingness to learn is a choice."
+                    &quot;The capacity to learn is a gift; the ability to learn is a skill; the willingness to learn is a choice.&quot;
                 </p>
             </div>
         </form>
@@ -207,33 +205,5 @@ function ContactFormContent() {
 }
 
 export default function ContactForm() {
-    const sentinelRef = useRef(null);
-    const [shouldLoad, setShouldLoad] = useState(false);
-
-    useEffect(() => {
-        if (!sentinelRef.current) return;
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setShouldLoad(true);
-                    observer.disconnect();
-                }
-            },
-            { rootMargin: "200px" }
-        );
-        observer.observe(sentinelRef.current);
-        return () => observer.disconnect();
-    }, []);
-
-    return (
-        <div ref={sentinelRef}>
-            {shouldLoad ? (
-                <ReCaptchaProvider>
-                    <ContactFormContent />
-                </ReCaptchaProvider>
-            ) : (
-                <ContactFormContent />
-            )}
-        </div>
-    );
+    return <ContactFormContent />;
 }

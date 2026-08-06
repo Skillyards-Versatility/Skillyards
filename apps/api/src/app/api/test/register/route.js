@@ -26,6 +26,7 @@ const REGISTER_RATE_LIMIT = {
   burst: { limit: 5, windowMs: 60000 },
   hourly: { limit: 20 },
   daily: { limit: 100 },
+  global: { limit: 1000, windowMs: 3600000 },
 };
 
 function getClientInfo(req) {
@@ -74,7 +75,7 @@ async function postHandler(req, { ctx }) {
   const emailHash = hashEmail(email);
 
   // ── CAPTCHA ──
-  const isValidCaptcha = await verifyCaptcha(captchaToken);
+  const isValidCaptcha = await verifyCaptcha(captchaToken, { action: "test_register" });
   if (!isValidCaptcha) {
     ctx.warn("ASSESSMENT_REG_CAPTCHA_FAILURE", {
       ip,

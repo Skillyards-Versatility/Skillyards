@@ -3,6 +3,13 @@ import { eq } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
 import { publicAllow } from "@/lib/permissions";
 
+const TEST_VALIDATE_RATE_LIMIT = {
+  prefix: "test-validate",
+  burst: { limit: 30, windowMs: 60000 },
+  hourly: { limit: 300 },
+  daily: { limit: 1000 },
+};
+
 /**
  * PUBLIC ASSESSMENT VALIDATION HANDLER
  */
@@ -33,5 +40,6 @@ async function getHandler(req, { ctx }) {
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
   policy: publicAllow,
-  isPublic: true
+  isPublic: true,
+  rateLimit: TEST_VALIDATE_RATE_LIMIT,
 });

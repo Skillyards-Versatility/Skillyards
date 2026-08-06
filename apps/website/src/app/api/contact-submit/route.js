@@ -21,12 +21,22 @@ export async function POST(request) {
   let enquiryResponse;
 
   try {
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+
+    // Preserve the real client IP so the backend's per-IP rate limiter sees
+    // individual visitors instead of lumping everyone behind this server.
+    // Proxies append to x-forwarded-for, so the last entry is the real client;
+    // earlier entries are client-controlled and spoofable.
+    const forwardedFor = request.headers.get("x-forwarded-for");
+    const clientIp = (forwardedFor?.split(",").pop() || request.headers.get("x-real-ip") || "").trim();
+    if (clientIp) headers["x-forwarded-for"] = clientIp;
+
     enquiryResponse = await fetch(`${ENQUIRY_API_URL}/api/enquiries`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers,
       body: JSON.stringify(payload),
       cache: "no-store",
     });
