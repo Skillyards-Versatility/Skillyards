@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { X, Loader2 } from "lucide-react";
 import { updateStudent } from "@/actions/student";
+import { LaptopOptedToggle } from "@/components/ui/LaptopOptedToggle";
 
 const COURSES = [
   "OJT (Full Stack Development)",
@@ -152,17 +153,12 @@ export function EditStudentModal({ isOpen, onClose, student, batches = [], onSuc
                 <input type="number" min="0" className="input w-full" value={form.finalFee} onChange={(e) => setForm({ ...form, finalFee: e.target.value })} />
               </div>
             </div>
-            <div className="flex items-center gap-2 pt-2">
-              <input
-                type="checkbox"
+            <div className="pt-2">
+              <LaptopOptedToggle
                 id="editLaptopOpted"
-                checked={form.laptopOpted || false}
-                onChange={(e) => setForm({ ...form, laptopOpted: e.target.checked })}
-                className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 bg-background cursor-pointer"
+                value={form.laptopOpted || false}
+                onChange={(v) => setForm({ ...form, laptopOpted: v })}
               />
-              <label htmlFor="editLaptopOpted" className="text-sm font-semibold text-muted-foreground select-none cursor-pointer">
-                Laptop Opted
-              </label>
             </div>
           </div>
 

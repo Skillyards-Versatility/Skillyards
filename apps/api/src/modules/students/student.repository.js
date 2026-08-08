@@ -73,6 +73,10 @@ export async function getStudentsWithPayments(db, limit = 100, offset = 0, filte
     }
   }
 
+  if (filters.laptopOpted !== undefined && filters.laptopOpted !== null) {
+    conditions.push(eq(students.laptopOpted, Boolean(filters.laptopOpted)));
+  }
+
   if (conditions.length > 0) {
     query = query.where(and(...conditions));
   }

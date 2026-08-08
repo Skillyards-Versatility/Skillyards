@@ -40,6 +40,7 @@ export const createStudentSchema = z
             .positive("Final fee must be a positive integer"),
 
         laptopOpted: z.boolean().default(false),
+        laptopOptedAt: z.string().datetime().nullable().optional(),
     })
     .refine((data) => data.finalFee <= data.totalFee, {
         message: "Final fee cannot exceed total fee",

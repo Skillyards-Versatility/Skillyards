@@ -15,6 +15,7 @@ export const students = pgTable("students", {
   batchName: text("batch_name"),
 
   laptopOpted: boolean("laptop_opted").default(false).notNull(),
+  laptopOptedAt: timestamp("laptop_opted_at"),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

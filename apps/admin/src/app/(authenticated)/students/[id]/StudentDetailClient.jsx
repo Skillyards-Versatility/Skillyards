@@ -263,7 +263,7 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
               <p className="font-semibold text-foreground">
                 {student.laptopOpted ? (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/60 text-xs font-bold">
-                    Opted
+                    Opted{student.laptopOptedAt ? ` · ${new Date(student.laptopOptedAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}` : ""}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-gray-100 text-gray-700 dark:bg-gray-850 dark:text-gray-400 border border-gray-200 dark:border-gray-800 text-xs font-semibold">

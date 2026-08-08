@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 import { API } from "@/lib/api";
 import { getAuthHeaders } from "@/lib/auth";
 
-async function getDashboardData(enrolledIn, startDate, endDate, limit = 10, offset = 0) {
+async function getDashboardData(enrolledIn, startDate, endDate, laptopOpted, limit = 10, offset = 0) {
   const headers = await getAuthHeaders();
   
   let latestUrl = `${API}/api/students?limit=${limit}&offset=${offset}&enrolledIn=${enrolledIn}`;
@@ -17,6 +17,9 @@ async function getDashboardData(enrolledIn, startDate, endDate, limit = 10, offs
     if (endDate) {
       latestUrl += `&endDate=${endDate}`;
     }
+  }
+  if (laptopOpted !== "all") {
+    latestUrl += `&laptopOpted=${laptopOpted === "opted"}`;
   }
 
   const [statsRes, outstandingRes, latestRes] = await Promise.all([
@@ -37,11 +40,12 @@ export default async function DashboardPage({ searchParams }) {
   const enrolledIn = params.enrolledIn || "current";
   const startDate = params.startDate || "";
   const endDate = params.endDate || "";
+  const laptopOpted = params.laptopOpted || "all";
   const page = parseInt(params.latestPage || "1");
   const limit = 5;
   const offset = (page - 1) * limit;
   
-  const { stats: dashStats, outstanding, latestStudents } = await getDashboardData(enrolledIn, startDate, endDate, limit + 1, offset);
+  const { stats: dashStats, outstanding, latestStudents } = await getDashboardData(enrolledIn, startDate, endDate, laptopOpted, limit + 1, offset);
 
   const hasNextPage = latestStudents.length > limit;
   const slicedStudents = latestStudents.slice(0, limit);
@@ -70,6 +74,7 @@ export default async function DashboardPage({ searchParams }) {
         <LatestStudentsTable 
           students={slicedStudents} 
           enrolledIn={enrolledIn} 
+          laptopOpted={laptopOpted}
           initialStartDate={startDate}
           initialEndDate={endDate}
           currentPage={page}
