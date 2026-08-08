@@ -4,7 +4,7 @@
  * Centralized logic for resource access control.
  * Rules:
  * - ADMIN, MANAGER: Full system access.
- * - SALES, HR, DEVELOPER: Scoped access.
+ * - SALES, HR, DEVELOPER, DIGITAL_MARKETER, EDITOR, OUTSIDE_SALES: Scoped access (Staff).
  * - STUDENT: Ownership-based access (Self only).
  */
 
@@ -26,7 +26,7 @@ export const ROLES = {
  * @param {Object} payment Payment record from DB
  * @returns {{ authorized: boolean, reason: string }}
  */
-export function canAccessReceipt(session, payment) {
+export function canAccessReceipt(session, payment, req) {
   const { role, userId } = session;
 
   // 1. ADMIN/MANAGER: Master override
@@ -40,9 +40,25 @@ export function canAccessReceipt(session, payment) {
     return { authorized: true, reason: "OWNERSHIP_ACCESS" };
   }
 
-  // 3. SALES: Explicitly restricted in V1 (until assignment logic is implemented)
-  if (role === ROLES.SALES) {
-    return { authorized: false, reason: "SALES_UNASSIGNED_DENY" };
+  // 3. STAFF / SALES SCOPE
+  const isStaff = [ROLES.SALES, ROLES.HR, ROLES.DEVELOPER, ROLES.DIGITAL_MARKETER, ROLES.EDITOR, ROLES.OUTSIDE_SALES].includes(role);
+  
+  if (isStaff) {
+    const action = req?.method === "GET" ? "READ" : "WRITE";
+
+    if (action === "READ") {
+      // Staff can read all receipts
+      return { authorized: true, reason: "STAFF_READ_ALLOW" };
+    } else {
+      // For write (e.g., generate PDF or send email), they must be assigned (if we had the data)
+      // Since receipt writes are mostly triggered by payment creation or admin, 
+      // we allow it if they are assigned, but since we don't load the student here easily,
+      // we will enforce that the route loader must attach `assignedTo` to the payment object if needed.
+      if (payment.studentAssignedTo && payment.studentAssignedTo === userId) {
+        return { authorized: true, reason: "STAFF_WRITE_ASSIGNED_ALLOW" };
+      }
+      return { authorized: false, reason: "STAFF_WRITE_DENY_UNASSIGNED" };
+    }
   }
 
   // 4. Default Deny
@@ -54,7 +70,7 @@ export function canAccessReceipt(session, payment) {
  * @param {Object} session User session
  * @param {Object} student Student record
  */
-export function canAccessStudent(session, student) {
+export function canAccessStudent(session, student, req) {
   const { role, userId } = session;
 
   if ([ROLES.ADMIN, ROLES.MANAGER].includes(role)) {
@@ -71,9 +87,22 @@ export function canAccessStudent(session, student) {
     return { authorized: true, reason: "OWNERSHIP_ACCESS" };
   }
 
-  // SALES: Explicitly restricted for now
-  if (role === ROLES.SALES) {
-    return { authorized: false, reason: "SALES_UNASSIGNED_DENY" };
+  // 3. STAFF / SALES SCOPE
+  const isStaff = [ROLES.SALES, ROLES.HR, ROLES.DEVELOPER, ROLES.DIGITAL_MARKETER, ROLES.EDITOR, ROLES.OUTSIDE_SALES].includes(role);
+
+  if (isStaff) {
+    const action = req?.method === "GET" ? "READ" : "WRITE";
+
+    if (action === "READ") {
+      // Staff can read all student records
+      return { authorized: true, reason: "STAFF_READ_ALLOW" };
+    } else {
+      // For writes (POST/PATCH/DELETE), they must be assigned to the student
+      if (student.assignedTo === userId) {
+        return { authorized: true, reason: "STAFF_WRITE_ASSIGNED_ALLOW" };
+      }
+      return { authorized: false, reason: "STAFF_WRITE_DENY_UNASSIGNED" };
+    }
   }
 
   return { authorized: false, reason: `ROLE_RESTRICTED_${role}` };
