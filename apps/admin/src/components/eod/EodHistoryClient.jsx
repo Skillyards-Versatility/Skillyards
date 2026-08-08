@@ -470,7 +470,6 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
             </div>
           </div>
         </div>
-        </div>
       )}
 
       {/* Confirm Bulk Emails */}
