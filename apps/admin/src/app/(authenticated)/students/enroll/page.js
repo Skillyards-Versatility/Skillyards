@@ -21,6 +21,7 @@ export default function EnrollStudentPage() {
     batchId: "",
     batchName: "",
     baseAmount: "",
+    laptopOpted: false,
   });
 
   const base = Number(formData.baseAmount) || 0;
@@ -49,6 +50,7 @@ export default function EnrollStudentPage() {
         batchName: formData.batchName || undefined,
         totalFee: base,
         finalFee: base,
+        laptopOpted: formData.laptopOpted,
       });
 
       toast.success("Student enrolled successfully.");

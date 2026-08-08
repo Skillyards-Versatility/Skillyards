@@ -4,6 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import { LedgerSection } from "./sections/LedgerSection";
 import { StudentDataSection } from "./sections/StudentDataSection";
 import { LedgerSkeleton, DetailsSkeleton } from "./sections/Skeletons";
+import { getBatches } from "@/actions/batch";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +21,10 @@ async function getMegaData(id) {
 }
 
 async function StudentDetailContent({ studentId }) {
-  const data = await getMegaData(studentId);
+  const [data, batches] = await Promise.all([
+    getMegaData(studentId),
+    getBatches()
+  ]);
   const session = await getSession();
   const canEdit = session?.role === "ADMIN";
 
@@ -59,7 +63,7 @@ async function StudentDetailContent({ studentId }) {
       </div>
 
       <LedgerSection ledger={ledger} />
-      <StudentDataSection student={student} plan={plan} payments={transactions} canEdit={canEdit} />
+      <StudentDataSection student={student} plan={plan} payments={transactions} canEdit={canEdit} batches={batches} />
     </div>
   );
 }

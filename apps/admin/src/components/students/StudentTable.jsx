@@ -276,7 +276,7 @@ export function StudentTable({
       )}
 
       {/* Edit Student Details Modal */}
-      {canEdit && (
+      {canEdit && editingDetailsStudent && (
         <EditStudentModal
           isOpen={!!editingDetailsStudent}
           onClose={() => setEditingDetailsStudent(null)}

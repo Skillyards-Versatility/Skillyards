@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getSettings } from "@/actions/settings";
-import { getCalls } from "@/actions/calls";
+import { getBDACallCounts } from "@/actions/calls";
 import { getUsers } from "@/actions/users";
 import { getSession } from "@/lib/auth";
 import { CallsClient } from "./calls-client";
@@ -21,7 +21,7 @@ export default async function CallsPage() {
     );
   }
 
-  const initialCalls = await getCalls();
+  const initialCounts = await getBDACallCounts();
   const allUsers = await getUsers();
   
   // Filter users to only show BDAs (SALES role)
@@ -30,7 +30,7 @@ export default async function CallsPage() {
 
   return (
     <div className="p-4 sm:p-6 max-w-7xl mx-auto space-y-8">
-      <CallsClient initialCalls={initialCalls} allUsers={bdaUsers} isAdmin={isAdmin} />
+      <CallsClient initialCounts={initialCounts} allUsers={bdaUsers} isAdmin={isAdmin} />
     </div>
   );
 }

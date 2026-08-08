@@ -42,8 +42,10 @@ export async function getStudentsWithPayments(db, limit = 100, offset = 0, filte
       courseName: students.courseName,
       batchId: students.batchId,
       batchName: students.batchName,
+      totalFee: students.totalFee,
       finalFee: students.finalFee,
       createdAt: students.createdAt,
+      laptopOpted: students.laptopOpted,
       totalPaid: sql`COALESCE(SUM(${payments.amount}), 0)`,
     })
     .from(students)

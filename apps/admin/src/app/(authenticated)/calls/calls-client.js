@@ -9,11 +9,12 @@ import {
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import { API } from "@/lib/api";
-import { refreshCall, getUploadPresignedUrlAction, finalizeCallUploadAction, updateCall, deleteCall } from "@/actions/calls";
+import { refreshCall, getUploadPresignedUrlAction, finalizeCallUploadAction, updateCall, deleteCall, getCalls } from "@/actions/calls";
 import { toast } from "sonner";
 
-export function CallsClient({ initialCalls, allUsers = [], isAdmin = false }) {
-  const [calls, setCalls] = useState(initialCalls);
+export function CallsClient({ initialCounts = [], allUsers = [], isAdmin = false }) {
+  const [calls, setCalls] = useState([]);
+  const [counts, setCounts] = useState(initialCounts);
   const [searchInput, setSearchInput] = useState("");
   const [outcomeFilter, setOutcomeFilter] = useState("");
   const [activeCall, setActiveCall] = useState(null);
@@ -24,6 +25,12 @@ export function CallsClient({ initialCalls, allUsers = [], isAdmin = false }) {
   const [activeTab, setActiveTab] = useState("overview");
   const [playbackRate, setPlaybackRate] = useState(1);
   const [selectedTelecallerId, setSelectedTelecallerId] = useState(null);
+
+  // Pagination states
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadingInitial, setLoadingInitial] = useState(false);
 
   // Manual Analyzer states
   const [isUploadOpen, setIsUploadOpen] = useState(false);
@@ -46,29 +53,72 @@ export function CallsClient({ initialCalls, allUsers = [], isAdmin = false }) {
   const [savingEdit, setSavingEdit] = useState(false);
   const [deletingIds, setDeletingIds] = useState([]);
 
-  const computedUsers = useMemo(() => {
-    const map = {};
-    allUsers.forEach((u) => {
-      map[u.id] = {
-        id: u.id,
-        name: u.name,
-        isTraining: u.isTraining,
-        totalCalls: 0,
-        reachedCalls: 0,
-        notReachedCalls: 0,
+  // Fetch initial call logs for selected BDA
+  useEffect(() => {
+    if (selectedTelecallerId) {
+      setCalls([]);
+      setOffset(0);
+      setHasMore(true);
+      
+      const fetchInitial = async () => {
+        setLoadingInitial(true);
+        try {
+          const firstCalls = await getCalls(selectedTelecallerId, 30, 0);
+          setCalls(firstCalls);
+          setOffset(firstCalls.length);
+          if (firstCalls.length < 30) {
+            setHasMore(false);
+          }
+        } catch (err) {
+          toast.error("Failed to load calls");
+        } finally {
+          setLoadingInitial(false);
+        }
       };
-    });
-    calls.forEach((c) => {
-      if (!c.telecallerId || !map[c.telecallerId]) return;
-      map[c.telecallerId].totalCalls++;
-      if (c.outcome === "reached") {
-        map[c.telecallerId].reachedCalls++;
+      
+      fetchInitial();
+    } else {
+      setCalls([]);
+      setOffset(0);
+      setHasMore(false);
+    }
+  }, [selectedTelecallerId]);
+
+  // Load more handler
+  const handleLoadMore = async () => {
+    if (loadingMore || !hasMore || !selectedTelecallerId) return;
+    
+    setLoadingMore(true);
+    try {
+      const nextCalls = await getCalls(selectedTelecallerId, 30, offset);
+      if (nextCalls && nextCalls.length > 0) {
+        setCalls((prev) => [...prev, ...nextCalls]);
+        setOffset((prev) => prev + nextCalls.length);
+        if (nextCalls.length < 30) {
+          setHasMore(false);
+        }
       } else {
-        map[c.telecallerId].notReachedCalls++;
+        setHasMore(false);
       }
+    } catch (err) {
+      toast.error("Failed to load more calls");
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+
+  const computedUsers = useMemo(() => {
+    const countsMap = {};
+    counts.forEach((c) => {
+      countsMap[c.telecallerId] = c.count;
     });
-    return Object.values(map);
-  }, [allUsers, calls]);
+    return allUsers.map((u) => ({
+      id: u.id,
+      name: u.name,
+      isTraining: u.isTraining,
+      totalCalls: countsMap[u.id] || 0,
+    }));
+  }, [allUsers, counts]);
 
   const traineeUsers = useMemo(() => computedUsers.filter(u => u.isTraining), [computedUsers]);
   const regularUsers = useMemo(() => computedUsers.filter(u => !u.isTraining), [computedUsers]);
@@ -285,6 +335,13 @@ export function CallsClient({ initialCalls, allUsers = [], isAdmin = false }) {
       if (res.success) {
         setCalls(prev => prev.filter(c => c.id !== call.id));
         if (activeCall?.id === call.id) setActiveCall(null);
+        setCounts((prevCounts) =>
+          prevCounts.map((item) =>
+            item.telecallerId === call.telecallerId
+              ? { ...item, count: Math.max(0, item.count - 1) }
+              : item
+          )
+        );
         toast.success("Call deleted");
       } else {
         toast.error(res.error || "Failed to delete call");
@@ -470,6 +527,18 @@ export function CallsClient({ initialCalls, allUsers = [], isAdmin = false }) {
 
       if (finalizeResult.success && finalizeResult.call) {
         setCalls((prev) => [finalizeResult.call, ...prev]);
+        setCounts((prevCounts) => {
+          const exists = prevCounts.some((item) => item.telecallerId === selectedUserForUpload);
+          if (exists) {
+            return prevCounts.map((item) =>
+              item.telecallerId === selectedUserForUpload
+                ? { ...item, count: item.count + 1 }
+                : item
+            );
+          } else {
+            return [...prevCounts, { telecallerId: selectedUserForUpload, count: 1 }];
+          }
+        });
         setIsUploadOpen(false);
         setUploadFile(null);
         setSelectedUserForUpload("");
@@ -737,17 +806,25 @@ export function CallsClient({ initialCalls, allUsers = [], isAdmin = false }) {
         </div>
       ) : (
         <div className="card overflow-hidden">
-          {filteredCalls.length === 0 ? (
-          <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
-            <PhoneCall className="mb-4 h-10 w-10 text-muted-foreground/40 animate-bounce" />
-            <h2 className="text-base font-semibold text-foreground">No call logs found</h2>
-            <p className="mt-1 max-w-sm text-sm text-muted-foreground">
-              {searchInput || outcomeFilter
-                ? "No call logs match your filter criteria. Try adjusting your search."
-                : "Outbound call logs from the Android tele-calling app will appear here."}
-            </p>
-          </div>
-        ) : (
+          {loadingInitial ? (
+            <div className="flex flex-col items-center justify-center px-6 py-24 text-center">
+              <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+              <h2 className="text-base font-semibold text-foreground">Fetching call logs...</h2>
+              <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+                Connecting to cloud storage to load audio records and AI transcriptions.
+              </p>
+            </div>
+          ) : filteredCalls.length === 0 ? (
+            <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
+              <PhoneCall className="mb-4 h-10 w-10 text-muted-foreground/40 animate-bounce" />
+              <h2 className="text-base font-semibold text-foreground">No call logs found</h2>
+              <p className="mt-1 max-w-sm text-sm text-muted-foreground">
+                {searchInput || outcomeFilter
+                  ? "No call logs match your filter criteria. Try adjusting your search."
+                  : "Outbound call logs from the Android tele-calling app will appear here."}
+              </p>
+            </div>
+          ) : (
           <>
             {/* Mobile/Tablet Card View */}
             <div className="md:hidden divide-y divide-border">
@@ -1127,6 +1204,28 @@ export function CallsClient({ initialCalls, allUsers = [], isAdmin = false }) {
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination Controls */}
+            {hasMore && (
+              <div className="flex justify-center p-6 border-t border-border bg-card">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={loadingMore}
+                  className="flex items-center gap-2 px-6 py-2.5 text-xs font-bold text-primary hover:bg-primary/[0.04] active:bg-primary/[0.08] border border-primary/25 rounded-xl transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+                >
+                  {loadingMore ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                      Loading more...
+                    </>
+                  ) : (
+                    <>
+                      Load More Calls (30)
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </>
         )}
       </div>

@@ -1,4 +1,4 @@
-import {pgTable, uuid, text, integer, timestamp} from "drizzle-orm/pg-core";
+import {pgTable, uuid, text, integer, timestamp, boolean} from "drizzle-orm/pg-core";
 import { batches } from "./batches.js";
 
 export const students = pgTable("students", {
@@ -13,6 +13,8 @@ export const students = pgTable("students", {
   courseName: text("course_name"),
   batchId: uuid("batch_id").references(() => batches.id),
   batchName: text("batch_name"),
+
+  laptopOpted: boolean("laptop_opted").default(false).notNull(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),

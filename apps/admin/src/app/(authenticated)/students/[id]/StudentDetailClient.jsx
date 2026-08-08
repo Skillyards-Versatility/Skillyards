@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Plus, Loader2 } from "lucide-react";
+import { Plus, Loader2, Pencil } from "lucide-react";
 import { addStudentPayment, addFlexibleInstallment, updateStudentPlan, updateInstallment } from "@/actions/student";
 import { formatDate } from "@/lib/format";
+import { EditStudentModal } from "@/components/students/EditStudentModal";
 
 import { PlanSection } from "@/components/students/PlanSection";
 import { InstallmentsTable } from "@/components/students/InstallmentsTable";
@@ -14,10 +15,11 @@ import { AddPaymentForm } from "@/components/students/AddPaymentForm";
 import { AddInstallmentForm } from "@/components/students/AddInstallmentForm";
 import { AssignPlanWizard } from "@/components/students/AssignPlanWizard";
 
-export function StudentDetailClient({ student, initialTransactions, initialPlan, initialInstallments, canEdit = false }) {
+export function StudentDetailClient({ student, initialTransactions, initialPlan, initialInstallments, canEdit = false, batches = [] }) {
   const router = useRouter();
 
   const [plan, setPlan] = useState(initialPlan ?? null);
+  const [editDetailsOpen, setEditDetailsOpen] = useState(false);
   const [installments, setInstallments] = useState(initialInstallments ?? []);
   const [transactions, setTransactions] = useState(initialTransactions);
 
@@ -213,7 +215,68 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
         </button>
       </div>
 
-      <PlanSection plan={plan} onAssignPlan={() => setWizardOpen(true)} onEditPlan={canEdit ? openPlanEdit : undefined} canEdit={canEdit} />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Student Details Card */}
+        <div className="card p-5 sm:p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-semibold text-foreground">
+              Student Details
+            </h3>
+            {canEdit && (
+              <button
+                onClick={() => setEditDetailsOpen(true)}
+                className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/10 border border-border rounded-lg transition-colors cursor-pointer"
+                title="Edit Details"
+              >
+                <Pencil className="w-3 h-3" /> Edit
+              </button>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-sm">
+            <div>
+              <p className="text-muted-foreground text-xs mb-1">Phone Number</p>
+              <p className="font-semibold text-foreground">
+                {student.phone || "—"}
+              </p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs mb-1">Email Address</p>
+              <p className="font-semibold text-foreground truncate">
+                {student.email || "—"}
+              </p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs mb-1">Assigned Batch</p>
+              <p className="font-semibold text-foreground">
+                {student.batchName ? (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 text-xs font-semibold">
+                    {student.batchName}
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground italic font-normal">Unassigned</span>
+                )}
+              </p>
+            </div>
+            <div>
+              <p className="text-muted-foreground text-xs mb-1">Laptop Option</p>
+              <p className="font-semibold text-foreground">
+                {student.laptopOpted ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/60 text-xs font-bold">
+                    Opted
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-gray-100 text-gray-700 dark:bg-gray-850 dark:text-gray-400 border border-gray-200 dark:border-gray-800 text-xs font-semibold">
+                    Not Opted
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <PlanSection plan={plan} onAssignPlan={() => setWizardOpen(true)} onEditPlan={canEdit ? openPlanEdit : undefined} canEdit={canEdit} />
+      </div>
 
       <InstallmentsTable
         installments={installments}
@@ -339,6 +402,18 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
             </div>
           </form>
         </div>
+      )}
+
+      {editDetailsOpen && (
+        <EditStudentModal
+          isOpen={editDetailsOpen}
+          onClose={() => setEditDetailsOpen(false)}
+          student={student}
+          batches={batches}
+          onSuccess={() => {
+            router.refresh();
+          }}
+        />
       )}
 
     </div>

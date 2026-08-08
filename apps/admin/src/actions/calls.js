@@ -82,7 +82,23 @@ export async function deleteCall(callId) {
   }
 }
 
-export async function getCalls() {
+export async function getBDACallCounts() {
+  try {
+    const counts = await db
+      .select({
+        telecallerId: followUps.telecallerId,
+        count: sql`COUNT(*)::int`,
+      })
+      .from(followUps)
+      .groupBy(followUps.telecallerId);
+    return counts;
+  } catch (error) {
+    console.error("Error fetching BDA call counts:", error);
+    return [];
+  }
+}
+
+export async function getCalls(telecallerId = null, limit = 30, offset = 0) {
   try {
     if (!migrated) {
       try {
@@ -99,7 +115,7 @@ export async function getCalls() {
       }
     }
 
-    return await db
+    let query = db
       .select({
         id: followUps.id,
         leadPhone: followUps.leadPhone,
@@ -118,8 +134,16 @@ export async function getCalls() {
       })
       .from(followUps)
       .innerJoin(users, eq(followUps.telecallerId, users.id))
-      .leftJoin(callAnalyses, eq(followUps.id, callAnalyses.followUpId))
-      .orderBy(desc(followUps.contactedAt));
+      .leftJoin(callAnalyses, eq(followUps.id, callAnalyses.followUpId));
+
+    if (telecallerId) {
+      query = query.where(eq(followUps.telecallerId, telecallerId));
+    }
+
+    return await query
+      .orderBy(desc(followUps.contactedAt))
+      .limit(limit)
+      .offset(offset);
   } catch (error) {
     console.error("Error fetching calls:", error);
     return [];
