@@ -2184,7 +2184,6 @@ export function CallsClient({ initialCounts = [], allUsers = [], isAdmin = false
             </div>
           </form>
         </div>
-        </div>
       )}
 
       {confirmDeleteCall && (
