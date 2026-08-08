@@ -176,6 +176,13 @@
       "when": 1785475464139,
       "tag": "0024_flowery_zaladane",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1786180012246,
+      "tag": "0025_powerful_mesmero",
+      "breakpoints": true
     }
   ]
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { X, Loader2 } from "lucide-react";
 import { updateStudent } from "@/actions/student";
@@ -21,7 +21,23 @@ export function EditStudentModal({ isOpen, onClose, student, batches = [], onSuc
     batchId: student?.batchId || "",
     totalFee: student?.totalFee ?? "",
     finalFee: student?.finalFee ?? "",
+    laptopOpted: student?.laptopOpted ?? false,
   }));
+
+  useEffect(() => {
+    if (student) {
+      setForm({
+        name: student.name || "",
+        phone: student.phone || "",
+        email: student.email || "",
+        courseName: student.courseName || "",
+        batchId: student.batchId || "",
+        totalFee: student.totalFee ?? "",
+        finalFee: student.finalFee ?? "",
+        laptopOpted: student.laptopOpted ?? false,
+      });
+    }
+  }, [student]);
   const [saving, setSaving] = useState(false);
 
   if (!isOpen || !student) return null;
@@ -59,6 +75,7 @@ export function EditStudentModal({ isOpen, onClose, student, batches = [], onSuc
         batchName: matchedBatch?.name || null,
         totalFee,
         finalFee,
+        laptopOpted: form.laptopOpted,
       });
       toast.success("Student updated");
       onClose();
@@ -134,6 +151,18 @@ export function EditStudentModal({ isOpen, onClose, student, batches = [], onSuc
                 <label className="text-xs font-medium block mb-1">Final Fee (₹)</label>
                 <input type="number" min="0" className="input w-full" value={form.finalFee} onChange={(e) => setForm({ ...form, finalFee: e.target.value })} />
               </div>
+            </div>
+            <div className="flex items-center gap-2 pt-2">
+              <input
+                type="checkbox"
+                id="editLaptopOpted"
+                checked={form.laptopOpted || false}
+                onChange={(e) => setForm({ ...form, laptopOpted: e.target.checked })}
+                className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 bg-background cursor-pointer"
+              />
+              <label htmlFor="editLaptopOpted" className="text-sm font-semibold text-muted-foreground select-none cursor-pointer">
+                Laptop Opted
+              </label>
             </div>
           </div>
 

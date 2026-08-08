@@ -1,0 +1,1 @@
+ALTER TABLE "students" ADD COLUMN "laptop_opted" boolean DEFAULT false NOT NULL;

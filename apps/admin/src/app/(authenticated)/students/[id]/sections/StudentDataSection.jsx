@@ -17,7 +17,7 @@ async function fetchPayments(studentId) {
 }
 
 
-export async function StudentDataSection({ student, plan, payments = [], canEdit = false }) {
+export async function StudentDataSection({ student, plan, payments = [], canEdit = false, batches = [] }) {
   const studentId = student.id;
 
   const allocationMap = {};
@@ -75,6 +75,7 @@ export async function StudentDataSection({ student, plan, payments = [], canEdit
       initialInstallments={initialInstallments}
       initialTransactions={initialTransactions}
       canEdit={canEdit}
+      batches={batches}
     />
   );
 }
