@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Users, Search, Filter, Edit2, Layers, Pencil, Trash2, Loader2, Laptop } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { deleteStudent } from "@/actions/student";
 import { AssignBatchModal } from "./AssignBatchModal";
 import { EditStudentModal } from "./EditStudentModal";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 const COURSES = [
   "OJT (Full Stack Development)",
@@ -24,25 +26,21 @@ export function StudentTable({
   setSelectedBatchId,
   onStudentUpdated,
   canEdit = false,
+  totalStudents = 0,
+  limit = 100,
+  offset = 0
 }) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [laptopFilter, setLaptopFilter] = useState("");
   const [editingStudent, setEditingStudent] = useState(null);
   const [editingDetailsStudent, setEditingDetailsStudent] = useState(null);
   const [deletingIds, setDeletingIds] = useState([]);
 
-  const handleDeleteStudent = async (student) => {
-    if (!window.confirm(`Delete ${student.name}? This permanently removes their plan, installments and payment history. This cannot be undone.`)) return;
-    setDeletingIds((prev) => [...prev, student.id]);
-    try {
-      await deleteStudent(student.id);
-      toast.success("Student deleted");
-      if (onStudentUpdated) onStudentUpdated();
-    } catch (err) {
-      toast.error(err.message || "Failed to delete student");
-    } finally {
-      setDeletingIds((prev) => prev.filter((id) => id !== student.id));
-    }
+  const [confirmDeleteStudent, setConfirmDeleteStudent] = useState(null);
+
+  const handleDeleteStudent = (student) => {
+    setConfirmDeleteStudent(student);
   };
 
   // Available batches for selected course dropdown
@@ -297,6 +295,37 @@ export function StudentTable({
         </table>
       </div>
 
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-between px-4 py-3 bg-muted/20 border-t border-border">
+        <div className="flex items-center gap-2">
+          <p className="text-xs text-muted-foreground">
+            Showing <span className="font-medium text-foreground">{filtered.length > 0 ? offset + 1 : 0}</span> to <span className="font-medium text-foreground">{Math.min(offset + limit, totalStudents)}</span> of <span className="font-medium text-foreground">{totalStudents}</span> students
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              const newOffset = Math.max(0, offset - limit);
+              router.push(`?limit=${limit}&offset=${newOffset}`);
+            }}
+            disabled={offset === 0}
+            className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Previous
+          </button>
+          <button
+            onClick={() => {
+              const newOffset = offset + limit;
+              router.push(`?limit=${limit}&offset=${newOffset}`);
+            }}
+            disabled={offset + limit >= totalStudents}
+            className="px-3 py-1.5 rounded-lg border border-border text-xs font-semibold text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+
       {/* Assign Batch Modal */}
       {editingStudent && (
         <AssignBatchModal
@@ -320,6 +349,31 @@ export function StudentTable({
           onSuccess={() => {
             if (onStudentUpdated) onStudentUpdated();
           }}
+        />
+      )}
+
+      {/* Confirm Delete Dialog */}
+      {confirmDeleteStudent && (
+        <ConfirmDialog
+          title="Delete Student"
+          message={`Delete ${confirmDeleteStudent.name}? This permanently removes their plan, installments and payment history. This cannot be undone.`}
+          confirmLabel="Delete"
+          variant="danger"
+          onConfirm={async () => {
+            const student = confirmDeleteStudent;
+            setConfirmDeleteStudent(null);
+            setDeletingIds((prev) => [...prev, student.id]);
+            try {
+              await deleteStudent(student.id);
+              toast.success("Student deleted");
+              if (onStudentUpdated) onStudentUpdated();
+            } catch (err) {
+              toast.error(err.message || "Failed to delete student");
+            } finally {
+              setDeletingIds((prev) => prev.filter((id) => id !== student.id));
+            }
+          }}
+          onCancel={() => setConfirmDeleteStudent(null)}
         />
       )}
     </div>

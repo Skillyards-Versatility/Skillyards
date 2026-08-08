@@ -11,6 +11,7 @@ import { formatDate } from "@/lib/format";
 import { API } from "@/lib/api";
 import { refreshCall, getUploadPresignedUrlAction, finalizeCallUploadAction, updateCall, deleteCall, getCalls } from "@/actions/calls";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 export function CallsClient({ initialCounts = [], allUsers = [], isAdmin = false }) {
   const [calls, setCalls] = useState([]);
@@ -52,6 +53,7 @@ export function CallsClient({ initialCounts = [], allUsers = [], isAdmin = false
   const [editForm, setEditForm] = useState(null);
   const [savingEdit, setSavingEdit] = useState(false);
   const [deletingIds, setDeletingIds] = useState([]);
+  const [confirmDeleteCall, setConfirmDeleteCall] = useState(null);
 
   // Fetch initial call logs for selected BDA
   useEffect(() => {
@@ -327,8 +329,11 @@ export function CallsClient({ initialCounts = [], allUsers = [], isAdmin = false
     }
   };
 
-  const handleDeleteCall = async (call) => {
-    if (!window.confirm(`Delete call log for ${call.telecallerName} (${call.leadPhone})? This cannot be undone.`)) return;
+  const handleDeleteCall = (call) => {
+    setConfirmDeleteCall(call);
+  };
+
+  const executeDeleteCall = async (call) => {
     setDeletingIds(prev => [...prev, call.id]);
     try {
       const res = await deleteCall(call.id);
@@ -2179,6 +2184,21 @@ export function CallsClient({ initialCounts = [], allUsers = [], isAdmin = false
             </div>
           </form>
         </div>
+        </div>
+      )}
+
+      {confirmDeleteCall && (
+        <ConfirmDialog
+          title="Delete Call Log"
+          message={`Delete call log for ${confirmDeleteCall.telecallerName} (${confirmDeleteCall.leadPhone})? This cannot be undone.`}
+          confirmLabel="Delete"
+          variant="danger"
+          onConfirm={() => {
+            executeDeleteCall(confirmDeleteCall);
+            setConfirmDeleteCall(null);
+          }}
+          onCancel={() => setConfirmDeleteCall(null)}
+        />
       )}
     </div>
   );

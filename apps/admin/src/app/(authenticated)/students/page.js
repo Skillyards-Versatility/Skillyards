@@ -54,10 +54,14 @@ export default async function StudentsListPage({ searchParams }) {
   if (settings.students_feature === false) redirect("/dashboard");
 
   const { limit = 100, offset = 0 } = await searchParams;
-  const [students, batches] = await Promise.all([
+  const [students, batches, statsRes] = await Promise.all([
     getStudents(limit, offset),
-    getBatches()
+    getBatches(),
+    fetch(`${API}/api/students/stats`, { headers: await getAuthHeaders(), cache: "no-store" })
   ]);
+  const stats = statsRes.ok ? await statsRes.json() : { totalStudents: 0 };
+  const totalStudents = stats.totalStudents;
+  
   const session = await getSession();
   const canEdit = session?.role === "ADMIN";
 
@@ -78,7 +82,14 @@ export default async function StudentsListPage({ searchParams }) {
         </Link>
       </div>
 
-      <StudentsDirectoryClient initialStudents={students} initialBatches={batches} canEdit={canEdit} />
+      <StudentsDirectoryClient 
+        initialStudents={students} 
+        initialBatches={batches} 
+        canEdit={canEdit} 
+        totalStudents={totalStudents}
+        limit={limit}
+        offset={offset}
+      />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { CalendarRange, Check, X, Clock, Calendar as CalendarIcon, Info, LayoutL
 import { toast } from "sonner";
 import { applyLeave, getLeaves, updateLeaveStatus } from "@/actions/leaves";
 import { LeaveCalendar } from "./LeaveCalendar";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 export function LeavesHubClient({ userRole }) {
   const [leaves, setLeaves] = useState([]);
@@ -22,6 +23,7 @@ export function LeavesHubClient({ userRole }) {
   const [reason, setReason] = useState("");
   const [isHalfDay, setIsHalfDay] = useState(false);
   const [halfDayPeriod, setHalfDayPeriod] = useState("MORNING");
+  const [rejectingLeave, setRejectingLeave] = useState(null);
 
   const isManagerOrAdmin = userRole === "ADMIN" || userRole === "MANAGER";
 
@@ -101,18 +103,32 @@ export function LeavesHubClient({ userRole }) {
   const handleStatusUpdate = async (id, status) => {
     try {
       let rejectionReason = undefined;
-      
       if (status === "REJECTED") {
-        const reason = window.prompt("Please provide a reason for rejection (optional):");
-        if (reason === null) return; // User clicked Cancel
-        rejectionReason = reason;
+        setRejectingLeave(id);
+        return;
       }
       
-      const res = await updateLeaveStatus(id, status, rejectionReason);
+      const res = await updateLeaveStatus(id, status);
       if (res.success) {
         toast.success(`Leave ${status.toLowerCase()}`);
         setLeaves((prev) =>
           prev.map((l) => (l.id === id ? { ...l, status } : l))
+        );
+      } else {
+        toast.error(res.message || "Failed to update status");
+      }
+    } catch (err) {
+      toast.error("An error occurred");
+    }
+  };
+
+  const executeRejectLeave = async (id, reason) => {
+    try {
+      const res = await updateLeaveStatus(id, "REJECTED", reason);
+      if (res.success) {
+        toast.success(`Leave rejected`);
+        setLeaves((prev) =>
+          prev.map((l) => (l.id === id ? { ...l, status: "REJECTED" } : l))
         );
       } else {
         toast.error(res.message || "Failed to update status");
@@ -348,6 +364,21 @@ export function LeavesHubClient({ userRole }) {
           )}
         </div>
       </div>
+
+      {rejectingLeave && (
+        <ConfirmDialog
+          title="Reject Leave"
+          message={`Please provide a reason for rejecting this leave request.`}
+          confirmLabel="Reject Leave"
+          variant="danger"
+          requireInput={true}
+          onConfirm={(reason) => {
+            executeRejectLeave(rejectingLeave, reason);
+            setRejectingLeave(null);
+          }}
+          onCancel={() => setRejectingLeave(null)}
+        />
+      )}
     </div>
   );
 }

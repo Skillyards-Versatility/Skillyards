@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/Dialog";
 import { StatusBadge, StatusSelect, STATUS_OPTIONS } from "@/components/ui/Select";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 const SOURCE_OPTIONS = [
   { value: "website", label: "Website", color: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800" },
@@ -63,6 +64,8 @@ export function EnquiriesClient({
   const [savingEdit, setSavingEdit] = useState(false);
   const [editingStatusId, setEditingStatusId] = useState(null);
   const [busy, setBusy] = useState(null);
+  const [confirmBulkStatus, setConfirmBulkStatus] = useState(null);
+  const [confirmDeleteEnquiry, setConfirmDeleteEnquiry] = useState(null);
   const tableRef = useRef(null);
 
   const debouncedSearch = useDebounce(searchInput, 350);
@@ -107,7 +110,11 @@ export function EnquiriesClient({
     });
   }
 
-  async function handleBulkStatus(status) {
+  function handleBulkStatus(status) {
+    setConfirmBulkStatus(status);
+  }
+
+  async function executeBulkStatus(status) {
     const ids = Array.from(selectedIds);
     const actionKey = `status:${status}`;
     const label = STATUS_OPTIONS.find((o) => o.value === status)?.label || status;
@@ -214,8 +221,11 @@ export function EnquiriesClient({
     }
   }
 
-  async function handleDelete(enquiry) {
-    if (!window.confirm(`Delete enquiry from ${enquiry.firstName || "this contact"}? This cannot be undone.`)) return;
+  function handleDelete(enquiry) {
+    setConfirmDeleteEnquiry(enquiry);
+  }
+
+  async function executeDelete(enquiry) {
     const toastId = toast.loading("Deleting enquiry...");
     try {
       const res = await fetch(`/api/enquiries?id=${enquiry.id}`, { method: "DELETE" });
@@ -952,6 +962,35 @@ export function EnquiriesClient({
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Confirm Bulk Status */}
+      {confirmBulkStatus && (
+        <ConfirmDialog
+          title="Update Status"
+          message={`Are you sure you want to mark ${selectedIds.size} enquiry${selectedIds.size > 1 ? "ies" : "y"} as ${STATUS_OPTIONS.find((o) => o.value === confirmBulkStatus)?.label.toLowerCase()}?`}
+          confirmLabel="Update"
+          onConfirm={() => {
+            executeBulkStatus(confirmBulkStatus);
+            setConfirmBulkStatus(null);
+          }}
+          onCancel={() => setConfirmBulkStatus(null)}
+        />
+      )}
+
+      {/* Confirm Delete */}
+      {confirmDeleteEnquiry && (
+        <ConfirmDialog
+          title="Delete Enquiry"
+          message={`Delete enquiry from ${confirmDeleteEnquiry.firstName || "this contact"}? This cannot be undone.`}
+          confirmLabel="Delete"
+          variant="danger"
+          onConfirm={() => {
+            executeDelete(confirmDeleteEnquiry);
+            setConfirmDeleteEnquiry(null);
+          }}
+          onCancel={() => setConfirmDeleteEnquiry(null)}
+        />
+      )}
     </div>
   );
 }
