@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { UserPlus, Layers } from "lucide-react";
 import { getBatches } from "@/actions/batch";
+import { LaptopOptedToggle } from "@/components/ui/LaptopOptedToggle";
 
 const COURSES = [
   "OJT (Full Stack Development)",
@@ -144,17 +145,12 @@ export function IdentityForm({ formData, setFormData }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 pt-2">
-          <input
-            type="checkbox"
+        <div className="pt-2">
+          <LaptopOptedToggle
             id="laptopOpted"
-            checked={formData.laptopOpted || false}
-            onChange={(e) => setFormData({ ...formData, laptopOpted: e.target.checked })}
-            className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 bg-background cursor-pointer"
+            value={formData.laptopOpted || false}
+            onChange={(v) => setFormData({ ...formData, laptopOpted: v })}
           />
-          <label htmlFor="laptopOpted" className="text-sm font-semibold text-muted-foreground select-none cursor-pointer">
-            Laptop Opted
-          </label>
         </div>
       </div>
     </div>

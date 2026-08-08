@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Users, Search, Filter, Edit2, Layers, Pencil, Trash2, Loader2 } from "lucide-react";
+import { Users, Search, Filter, Edit2, Layers, Pencil, Trash2, Loader2, Laptop } from "lucide-react";
 import { toast } from "sonner";
 import { deleteStudent } from "@/actions/student";
 import { AssignBatchModal } from "./AssignBatchModal";
@@ -26,6 +26,7 @@ export function StudentTable({
   canEdit = false,
 }) {
   const [query, setQuery] = useState("");
+  const [laptopFilter, setLaptopFilter] = useState("");
   const [editingStudent, setEditingStudent] = useState(null);
   const [editingDetailsStudent, setEditingDetailsStudent] = useState(null);
   const [deletingIds, setDeletingIds] = useState([]);
@@ -70,6 +71,11 @@ export function StudentTable({
       } else if (s.batchId !== selectedBatchId) {
         return false;
       }
+    }
+
+    if (laptopFilter) {
+      if (laptopFilter === "opted" && !s.laptopOpted) return false;
+      if (laptopFilter === "not_opted" && s.laptopOpted) return false;
     }
 
     return true;
@@ -129,11 +135,26 @@ export function StudentTable({
             </select>
           </div>
 
-          {(selectedCourse || selectedBatchId || query) && (
+          {/* Laptop Filter Dropdown */}
+          <div className="flex items-center gap-1.5 bg-background border border-border rounded-lg px-2.5 py-1.5 text-xs font-semibold text-foreground">
+            <Laptop className="w-3.5 h-3.5 text-primary" />
+            <select
+              value={laptopFilter}
+              onChange={(e) => setLaptopFilter(e.target.value)}
+              className="bg-transparent border-none outline-none cursor-pointer pr-2 font-medium"
+            >
+              <option value="">All Laptops</option>
+              <option value="opted">Opted</option>
+              <option value="not_opted">Not Opted</option>
+            </select>
+          </div>
+
+          {(selectedCourse || selectedBatchId || laptopFilter || query) && (
             <button
               onClick={() => {
                 setSelectedCourse("");
                 setSelectedBatchId("");
+                setLaptopFilter("");
                 setQuery("");
               }}
               className="text-xs text-primary font-bold hover:underline px-2"
@@ -152,6 +173,7 @@ export function StudentTable({
               <th className="px-4 sm:px-6 py-4 font-semibold">Student</th>
               <th className="px-4 sm:px-6 py-4 font-semibold">Course</th>
               <th className="px-4 sm:px-6 py-4 font-semibold">Batch</th>
+              <th className="px-4 sm:px-6 py-4 font-semibold">Laptop</th>
               <th className="px-4 sm:px-6 py-4 font-semibold text-right">Net Payable</th>
               <th className="px-4 sm:px-6 py-4 font-semibold text-right">Balance</th>
               <th className="px-4 sm:px-6 py-4 font-semibold text-center">Action</th>
@@ -160,7 +182,7 @@ export function StudentTable({
           <tbody className="divide-y divide-border">
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-6 py-12 text-center text-sm text-muted-foreground">
+                <td colSpan={7} className="px-6 py-12 text-center text-sm text-muted-foreground">
                   No students match the selected filter criteria.
                 </td>
               </tr>
@@ -195,6 +217,19 @@ export function StudentTable({
                     ) : (
                       <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-muted text-muted-foreground">
                         Unassigned
+                      </span>
+                    )}
+                  </td>
+
+                  {/* Laptop Badge */}
+                  <td className="px-4 sm:px-6 py-4 text-xs">
+                    {student.laptopOpted ? (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/60">
+                        Opted
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-muted text-muted-foreground">
+                        Not Opted
                       </span>
                     )}
                   </td>

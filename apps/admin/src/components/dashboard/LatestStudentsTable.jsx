@@ -8,6 +8,7 @@ import { UserCheck, ChevronLeft, ChevronRight } from "lucide-react";
 export function LatestStudentsTable({
   students,
   enrolledIn,
+  laptopOpted = "all",
   initialStartDate = "",
   initialEndDate = "",
   currentPage = 1,
@@ -86,6 +87,28 @@ export function LatestStudentsTable({
         </div>
       </div>
 
+      <div className="px-4 sm:px-6 py-2.5 border-b border-border bg-muted/20 flex flex-wrap items-center gap-1.5 text-xs">
+        <span className="text-muted-foreground font-semibold mr-1">Laptop:</span>
+        {[
+          { value: "all", label: "All" },
+          { value: "opted", label: "Opted" },
+          { value: "not_opted", label: "Not Opted" },
+        ].map((opt) => (
+          <Link
+            key={opt.value}
+            href={`/dashboard?enrolledIn=${enrolledIn}&startDate=${startDate}&endDate=${endDate}&laptopOpted=${opt.value}&latestPage=1`}
+            scroll={false}
+            className={`px-3 py-1 rounded-md font-bold transition-all ${
+              laptopOpted === opt.value
+                ? "bg-primary text-primary-foreground"
+                : "bg-background text-muted-foreground border border-border hover:bg-muted"
+            }`}
+          >
+            {opt.label}
+          </Link>
+        ))}
+      </div>
+
       {enrolledIn === "custom" && (
         <form onSubmit={handleApply} className="p-4 border-b border-border bg-muted/20 flex flex-wrap items-end gap-3 text-xs">
           <div className="flex flex-col gap-1.5">
@@ -124,6 +147,7 @@ export function LatestStudentsTable({
                 <tr>
                   <th className="px-4 sm:px-6 py-3 font-semibold">Student</th>
                   <th className="px-4 sm:px-6 py-3 font-semibold">Course</th>
+                  <th className="px-4 sm:px-6 py-3 font-semibold">Laptop</th>
                   <th className="px-4 sm:px-6 py-3 font-semibold">Enrolled On</th>
                   <th className="px-4 sm:px-6 py-3 font-semibold text-right">Fee</th>
                 </tr>
@@ -137,6 +161,17 @@ export function LatestStudentsTable({
                       </Link>
                     </td>
                     <td className="px-4 sm:px-6 py-4 text-muted-foreground">{s.courseName || "—"}</td>
+                    <td className="px-4 sm:px-6 py-4">
+                      {s.laptopOpted ? (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/60 text-xs font-bold">
+                          Opted
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-gray-100 text-gray-700 dark:bg-gray-850 dark:text-gray-400 border border-gray-200 dark:border-gray-800 text-xs font-semibold">
+                          Not Opted
+                        </span>
+                      )}
+                    </td>
                     <td className="px-4 sm:px-6 py-4 text-muted-foreground">{formatDate(s.createdAt)}</td>
                     <td className="px-4 sm:px-6 py-4 text-right font-medium text-primary">
                       ₹{(s.finalFee || 0).toLocaleString()}
@@ -154,7 +189,7 @@ export function LatestStudentsTable({
             </span>
             <div className="flex gap-2">
               <Link
-                href={`/dashboard?enrolledIn=${enrolledIn}&startDate=${startDate}&endDate=${endDate}&latestPage=${currentPage - 1}`}
+                href={`/dashboard?enrolledIn=${enrolledIn}&startDate=${startDate}&endDate=${endDate}&laptopOpted=${laptopOpted}&latestPage=${currentPage - 1}`}
                 scroll={false}
                 className={`px-3 py-1.5 border border-border rounded-lg text-xs font-bold transition-all flex items-center gap-1 hover:bg-muted text-foreground ${
                   currentPage <= 1 ? "pointer-events-none opacity-40" : ""
@@ -163,7 +198,7 @@ export function LatestStudentsTable({
                 <ChevronLeft className="w-3.5 h-3.5" /> Previous
               </Link>
               <Link
-                href={`/dashboard?enrolledIn=${enrolledIn}&startDate=${startDate}&endDate=${endDate}&latestPage=${currentPage + 1}`}
+                href={`/dashboard?enrolledIn=${enrolledIn}&startDate=${startDate}&endDate=${endDate}&laptopOpted=${laptopOpted}&latestPage=${currentPage + 1}`}
                 scroll={false}
                 className={`px-3 py-1.5 border border-border rounded-lg text-xs font-bold transition-all flex items-center gap-1 hover:bg-muted text-foreground ${
                   !hasNextPage ? "pointer-events-none opacity-40" : ""

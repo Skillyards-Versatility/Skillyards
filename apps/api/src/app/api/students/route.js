@@ -17,8 +17,10 @@ async function getHandler(req) {
   const enrolledIn = searchParams.get("enrolledIn");
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
+  const laptopOptedParam = searchParams.get("laptopOpted");
+  const laptopOpted = laptopOptedParam === "true" ? true : laptopOptedParam === "false" ? false : undefined;
 
-  const data = await getStudentList(db, limit, offset, { courseName, batchId, enrolledIn, startDate, endDate });
+  const data = await getStudentList(db, limit, offset, { courseName, batchId, enrolledIn, startDate, endDate, laptopOpted });
   return Response.json(data);
 }
 
@@ -39,7 +41,10 @@ async function postHandler(req, { ctx }) {
 
   const created = await db
     .insert(students)
-    .values(result.data)
+    .values({
+      ...result.data,
+      laptopOptedAt: result.data.laptopOpted ? new Date() : null,
+    })
     .returning();
 
   ctx.log("STUDENT_CREATED", { studentId: created[0].id });

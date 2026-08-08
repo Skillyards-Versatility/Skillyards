@@ -43,12 +43,21 @@ async function patchHandler(req, { context, ctx, resource: student }) {
     );
   }
 
+  const laptopStatusChanged = Boolean(student.laptopOpted) !== Boolean(result.data.laptopOpted);
+  const setValues = {
+    ...result.data,
+    updatedAt: new Date(),
+  };
+
+  if (laptopStatusChanged) {
+    setValues.laptopOptedAt = result.data.laptopOpted ? new Date() : null;
+  } else if (result.data.laptopOpted && !student.laptopOptedAt) {
+    setValues.laptopOptedAt = new Date();
+  }
+
   const [updated] = await db
     .update(students)
-    .set({
-      ...result.data,
-      updatedAt: new Date(),
-    })
+    .set(setValues)
     .where(eq(students.id, studentId))
     .returning();
 
