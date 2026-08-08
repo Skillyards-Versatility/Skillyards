@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, Send, Hash, Users, X, Check, Plus, Search, MessageSquare, Smile, Loader2, Paperclip, Image, FileText } from "lucide-react";
 import { toast } from "sonner";
 import EmojiPicker, { Theme } from "emoji-picker-react";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import {
   getMessages,
   sendMessage,
@@ -120,30 +121,7 @@ function EmojiPickerPanel({ onSelect, onClose }) {
   );
 }
 
-function ConfirmDialog({ title, message, confirmLabel, onConfirm, onCancel }) {
-  return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
-        <h3 className="text-sm font-semibold mb-2">{title}</h3>
-        <p className="text-sm text-gray-500 mb-5">{message}</p>
-        <div className="flex gap-2 justify-end">
-          <button
-            onClick={onCancel}
-            className="px-4 py-2 text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            className="px-4 py-2 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer"
-          >
-            {confirmLabel}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
+
 
 export function ChatThreadClient({
   conversationId,
@@ -633,6 +611,7 @@ export function ChatThreadClient({
       title: "Delete message",
       message: "Are you sure you want to delete this message?",
       confirmLabel: "Delete",
+      variant: "danger",
       onConfirm: async () => {
         setShowConfirm(null);
         const result = await deleteMessage(messageId);
@@ -1300,6 +1279,7 @@ export function ChatThreadClient({
           title={showConfirm.title}
           message={showConfirm.message}
           confirmLabel={showConfirm.confirmLabel}
+          variant={showConfirm.variant}
           onConfirm={showConfirm.onConfirm}
           onCancel={() => setShowConfirm(null)}
         />

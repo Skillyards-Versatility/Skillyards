@@ -8,6 +8,7 @@ import { getIstDate } from "@/lib/ist";
 import { subscribeToPushNotifications } from "@/lib/push";
 import { Bell } from "lucide-react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 const PRIVILEGED_ROLES = ["ADMIN", "HR", "MANAGER"];
 
@@ -552,6 +553,7 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
   const [editingBreak, setEditingBreak] = useState(null);
   const [editBreakForm, setEditBreakForm] = useState(null);
   const [savingBreak, setSavingBreak] = useState(false);
+  const [confirmDeleteBreak, setConfirmDeleteBreak] = useState(null);
 
   const fetchData = useCallback(async () => {
     try {
@@ -609,8 +611,11 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
     }
   };
 
-  const handleBreakDelete = async (b) => {
-    if (!window.confirm(`Delete this break for ${b.userName} (${formatTime(b.startedAt)})? This cannot be undone.`)) return;
+  const handleBreakDelete = (b) => {
+    setConfirmDeleteBreak(b);
+  };
+
+  const executeBreakDelete = async (b) => {
     try {
       const res = await deleteBreak(b.id);
       if (res.success) {
@@ -975,6 +980,21 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
             </form>
           </div>
         </div>
+      )}
+
+      {/* Confirm Delete Break Dialog */}
+      {confirmDeleteBreak && (
+        <ConfirmDialog
+          title="Delete Break"
+          message={`Delete this break for ${confirmDeleteBreak.userName} (${confirmDeleteBreak.startedAt ? new Date(confirmDeleteBreak.startedAt).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }) : ""})? This cannot be undone.`}
+          confirmLabel="Delete"
+          variant="danger"
+          onConfirm={() => {
+            executeBreakDelete(confirmDeleteBreak);
+            setConfirmDeleteBreak(null);
+          }}
+          onCancel={() => setConfirmDeleteBreak(null)}
+        />
       )}
     </div>
   );

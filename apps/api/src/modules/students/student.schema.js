@@ -28,6 +28,7 @@ export const createStudentSchema = z
 
         batchId: z.string().uuid("Invalid batch ID").optional().nullable(),
         batchName: z.string().trim().optional().nullable(),
+        assignedTo: z.string().uuid("Invalid user ID").optional().nullable(),
 
         totalFee: z
             .number()

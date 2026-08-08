@@ -4,6 +4,7 @@ import { useState } from "react";
 import { updateSetting } from "@/actions/settings";
 import { Settings2, Loader2, MessageCircle, Users, Inbox, PhoneCall, ClipboardList, BarChart3, MessageSquare, CalendarRange, Coffee, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 const FEATURE_FLAGS = [
   {
@@ -77,8 +78,17 @@ const FEATURE_FLAGS = [
 export function SettingsClient({ initialSettings }) {
   const [settings, setSettings] = useState(initialSettings || {});
   const [updating, setUpdating] = useState(null);
+  const [confirmDisableFeature, setConfirmDisableFeature] = useState(null);
 
-  const handleToggle = async (key, currentValue) => {
+  const handleToggle = (key, currentValue) => {
+    if (currentValue) {
+      setConfirmDisableFeature(key);
+    } else {
+      executeToggle(key, currentValue);
+    }
+  };
+
+  const executeToggle = async (key, currentValue) => {
     const newValue = !currentValue;
     setUpdating(key);
     
@@ -168,6 +178,24 @@ export function SettingsClient({ initialSettings }) {
           })}
         </div>
       </div>
+
+      {confirmDisableFeature && (
+        <ConfirmDialog
+          title={`Disable ${FEATURE_FLAGS.find((f) => f.id === confirmDisableFeature)?.title}?`}
+          message={
+            confirmDisableFeature === "users_feature"
+              ? "WARNING: Disabling User Management might lock administrators out of configuring roles or recovering access. Are you absolutely sure?"
+              : "Are you sure you want to disable this feature? Users will lose access to this module immediately."
+          }
+          confirmLabel="Disable Feature"
+          variant="danger"
+          onConfirm={() => {
+            executeToggle(confirmDisableFeature, true);
+            setConfirmDisableFeature(null);
+          }}
+          onCancel={() => setConfirmDisableFeature(null)}
+        />
+      )}
     </div>
   );
 }

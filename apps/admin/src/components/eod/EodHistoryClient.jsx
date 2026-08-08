@@ -6,6 +6,7 @@ import { Calendar, Users, FileText, Clock, CheckCircle2, Filter, Send, Mail, Loa
 import { getEodHistory, triggerEodEmails } from "@/actions/eod";
 import { formatIstDate, getIstDate } from "@/lib/ist";
 import { DatePresetSelector } from "./DatePresetSelector";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 const TEAM_LABELS = {
   sales: "Sales",
@@ -39,8 +40,14 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
   const [sendingUserId, setSendingUserId] = useState(null);
   const [selectedReport, setSelectedReport] = useState(null);
 
-  const handleTriggerEmails = async (targetDate) => {
-    if (!window.confirm(`Send bulk EOD emails for ${targetDate}?`)) return;
+  const [confirmBulkEmail, setConfirmBulkEmail] = useState(null);
+  const [confirmIndividualEmail, setConfirmIndividualEmail] = useState(null);
+
+  const handleTriggerEmails = (targetDate) => {
+    setConfirmBulkEmail(targetDate);
+  };
+
+  const executeTriggerEmails = async (targetDate) => {
     setTriggering(targetDate);
     try {
       const res = await triggerEodEmails({ date: targetDate });
@@ -57,10 +64,11 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
     }
   };
 
-  const handleSendIndividual = async (userId, userName, date, type = "warning") => {
-    const actionName = type === "warning" ? "missing EOD warning" : "EOD team report";
-    if (!window.confirm(`Send ${actionName} for ${userName} on ${formatIstDate(date)}?`)) return;
-    
+  const handleSendIndividual = (userId, userName, date, type = "warning") => {
+    setConfirmIndividualEmail({ userId, userName, date, type });
+  };
+
+  const executeSendIndividual = async ({ userId, userName, date, type }) => {
     setSendingUserId(userId);
     try {
       const res = await triggerEodEmails({ date, userId });
@@ -462,6 +470,35 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
             </div>
           </div>
         </div>
+        </div>
+      )}
+
+      {/* Confirm Bulk Emails */}
+      {confirmBulkEmail && (
+        <ConfirmDialog
+          title="Send Bulk Emails"
+          message={`Send bulk EOD emails for ${confirmBulkEmail}?`}
+          confirmLabel="Send Emails"
+          onConfirm={() => {
+            executeTriggerEmails(confirmBulkEmail);
+            setConfirmBulkEmail(null);
+          }}
+          onCancel={() => setConfirmBulkEmail(null)}
+        />
+      )}
+
+      {/* Confirm Individual Email */}
+      {confirmIndividualEmail && (
+        <ConfirmDialog
+          title="Send Email"
+          message={`Send ${confirmIndividualEmail.type === "warning" ? "missing EOD warning" : "EOD team report"} for ${confirmIndividualEmail.userName} on ${formatIstDate(confirmIndividualEmail.date)}?`}
+          confirmLabel="Send Email"
+          onConfirm={() => {
+            executeSendIndividual(confirmIndividualEmail);
+            setConfirmIndividualEmail(null);
+          }}
+          onCancel={() => setConfirmIndividualEmail(null)}
+        />
       )}
     </div>
   );
