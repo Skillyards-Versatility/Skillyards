@@ -18,7 +18,7 @@ export const plans = pgTable('plans', {
         { onDelete: "set null" }
     ),
 
-    createdId: timestamp('created_at').defaultNow().notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
 
 }, (table) => ({
     

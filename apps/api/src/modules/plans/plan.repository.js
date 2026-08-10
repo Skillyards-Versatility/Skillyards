@@ -24,7 +24,7 @@ export async function getPlanByStudentId(db, studentId) {
     .select()
     .from(plans)
     .where(eq(plans.studentId, studentId))
-    .orderBy(desc(plans.createdId))
+    .orderBy(desc(plans.createdAt))
     .limit(1);
 
   return result[0];
