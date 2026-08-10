@@ -112,7 +112,7 @@ export async function getTotalDueForStudent(db, studentId) {
     .select()
     .from(plans)
     .where(eq(plans.studentId, studentId))
-    .orderBy(desc(plans.createdId))
+    .orderBy(desc(plans.createdAt))
     .limit(1);
 
   const plan = result[0];

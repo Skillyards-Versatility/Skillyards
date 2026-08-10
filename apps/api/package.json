@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1032.0",
+    "@repo/db": "*",
     "@google/genai": "^2.13.0",
     "@neondatabase/serverless": "^1.0.2",
     "@sanity/client": "^7.17.0",
