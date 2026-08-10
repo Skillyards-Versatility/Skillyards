@@ -2,7 +2,10 @@
 import { ArrowUpRight, ArrowDownRight, Wallet, IndianRupee } from "lucide-react";
 
 export function LedgerCards({ ledger }) {
-  const format = (num) => `₹${(num || 0).toLocaleString()}`;
+  const format = (num) => {
+    if (num === undefined || num === null) return "N/A";
+    return `₹${num.toLocaleString()}`;
+  };
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
