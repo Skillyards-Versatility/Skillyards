@@ -1,6 +1,6 @@
 import { db, eodReports, users, eodWarnings } from "@repo/db";
 import { eq, isNotNull, inArray, and } from "drizzle-orm";
-import { sendEodReportEmail, sendEodWarningEmail } from "@/modules/notifications/email.service";
+import { sendEodReportEmail, sendEodWarningEmail, isEmailEnabled } from "@/modules/notifications/email.service";
 
 const TEAM_LEADS = {
   sales: { name: "Rahul Singh", email: "sskillyards@gmail.com" },
@@ -18,6 +18,15 @@ const ADMIN_URL = process.env.ADMIN_URL || "https://admin.skillyards.in";
 const delay = (ms) => new Promise(r => setTimeout(r, ms));
 
 export async function processEodEmails(date, targetUserId = null) {
+  const [emailsEnabled, eodEmailsEnabled] = await Promise.all([
+    isEmailEnabled("emails_feature"),
+    isEmailEnabled("eod_emails_feature"),
+  ]);
+
+  if (!emailsEnabled || !eodEmailsEnabled) {
+    return { success: true, message: "EOD email sending disabled via feature flag", date, reportsSent: 0, warningsSent: 0, warningsSkipped: 0, failed: [] };
+  }
+
   // Fetch all users who belong to a team
   let allUsers = await db
     .select({ id: users.id, name: users.name, email: users.email, team: users.team })

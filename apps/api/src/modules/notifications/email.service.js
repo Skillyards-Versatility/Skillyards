@@ -1,4 +1,6 @@
 import { getResend } from "./resend.client";
+import { db, settings } from "@repo/db";
+import { eq } from "drizzle-orm";
 import {
   adminEnquiryTemplate,
   userConfirmationTemplate,
@@ -11,8 +13,29 @@ import {
   leaveStatusTemplate,
 } from "./email.template.js";
 
+export async function isEmailEnabled(key) {
+  try {
+    const [row] = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
+    return row ? row.value !== false : true;
+  } catch (error) {
+    console.error("Failed to read email feature flag:", error);
+    return true;
+  }
+}
+
+async function isFeatureEnabled(...keys) {
+  for (const key of keys) {
+    if (!(await isEmailEnabled(key))) return false;
+  }
+  return true;
+}
+
 function withResend(fn) {
   return async (...args) => {
+    if (!(await isFeatureEnabled("emails_feature"))) {
+      console.warn("Skipping email — emails_feature is disabled");
+      return;
+    }
     const resend = getResend();
     if (!resend) {
       console.warn("Skipping email — Resend not configured");
@@ -113,7 +136,11 @@ export const sendReceiptEmail = withResend((resend, { to, studentName, receiptNu
 /**
  * Send EOD report email to a specific recipient
  */
-export const sendEodReportEmail = withResend((resend, { to, bcc, team, date, reports, missingUsers, adminUrl }) => {
+export const sendEodReportEmail = withResend(async (resend, { to, bcc, team, date, reports, missingUsers, adminUrl }) => {
+  if (!(await isFeatureEnabled("eod_emails_feature"))) {
+    console.warn("Skipping EOD email — eod_emails_feature is disabled");
+    return;
+  }
   const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
   const TEAM_LABELS = {
     sales: "Sales",
@@ -140,7 +167,11 @@ export const sendEodReportEmail = withResend((resend, { to, bcc, team, date, rep
 /**
  * Send EOD missing warning email to user
  */
-export const sendEodWarningEmail = withResend((resend, { to, userName, date, adminUrl }) => {
+export const sendEodWarningEmail = withResend(async (resend, { to, userName, date, adminUrl }) => {
+  if (!(await isFeatureEnabled("eod_emails_feature"))) {
+    console.warn("Skipping EOD email — eod_emails_feature is disabled");
+    return;
+  }
   const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
   
   return resend.emails.send({
@@ -154,7 +185,11 @@ export const sendEodWarningEmail = withResend((resend, { to, userName, date, adm
 /**
  * Send combined EOD report (all teams) to a single recipient
  */
-export const sendEodAllTeamsEmail = withResend((resend, { to, date, teamSummaries, adminUrl }) => {
+export const sendEodAllTeamsEmail = withResend(async (resend, { to, date, teamSummaries, adminUrl }) => {
+  if (!(await isFeatureEnabled("eod_emails_feature"))) {
+    console.warn("Skipping EOD email — eod_emails_feature is disabled");
+    return;
+  }
   const from = process.env.EMAIL_FROM || "Skillyards <admin@skillyards.in>";
   const subject = `All Teams EOD Report — ${date}`;
 
