@@ -38,7 +38,7 @@ export default async function AuthenticatedLayout({ children }) {
   return (
     <SidebarProvider>
       <LayoutContent user={user} settings={settings}>{children}</LayoutContent>
-      {session && <BreakWidget />}
+      {session && settings.breaks_feature !== false && <BreakWidget />}
     </SidebarProvider>
   );
 }
