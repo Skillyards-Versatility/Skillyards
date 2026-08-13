@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { updateSetting } from "@/actions/settings";
-import { Settings2, Loader2, MessageCircle, Users, Inbox, PhoneCall, ClipboardList, BarChart3, MessageSquare, CalendarRange, Coffee, ShieldCheck } from "lucide-react";
+import { Settings2, Loader2, MessageCircle, Users, Inbox, PhoneCall, ClipboardList, BarChart3, MessageSquare, CalendarRange, Coffee, ShieldCheck, Mail, MailWarning } from "lucide-react";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
@@ -66,6 +66,18 @@ const FEATURE_FLAGS = [
     title: "Break Management",
     description: "Track and limit employee breaks during shifts.",
     icon: Coffee,
+  },
+  {
+    id: "emails_feature",
+    title: "Email Notifications",
+    description: "Global switch to pause ALL outgoing emails (EOD reports, enquiry alerts, receipts, password resets, leave notifications).",
+    icon: Mail,
+  },
+  {
+    id: "eod_emails_feature",
+    title: "EOD Email Reports",
+    description: "Send bulk EOD report and missing-report warning emails. Disabling this only stops EOD emails.",
+    icon: MailWarning,
   },
   {
     id: "users_feature",

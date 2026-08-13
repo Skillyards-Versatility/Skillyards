@@ -29,7 +29,7 @@ const TEAM_OPTIONS = [
   { value: "outside_sales", label: "Outside Sales" },
 ];
 
-export function EodHistoryClient({ isAdmin = false, isManager = false }) {
+export function EodHistoryClient({ isAdmin = false, isManager = false, settings = {} }) {
   const [reports, setReports] = useState([]);
   const [activeUsers, setActiveUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -39,6 +39,10 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
   const [triggering, setTriggering] = useState(null);
   const [sendingUserId, setSendingUserId] = useState(null);
   const [selectedReport, setSelectedReport] = useState(null);
+
+  const emailsEnabled = settings?.emails_feature !== false;
+  const eodEmailsEnabled = settings?.eod_emails_feature !== false;
+  const canSendEmails = emailsEnabled && eodEmailsEnabled;
 
   const [confirmBulkEmail, setConfirmBulkEmail] = useState(null);
   const [confirmIndividualEmail, setConfirmIndividualEmail] = useState(null);
@@ -200,7 +204,7 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
             </div>
           )}
 
-          {(isAdmin || isManager) && (
+          {canSendEmails && (isAdmin || isManager) && (
             <button 
               onClick={() => handleTriggerEmails(endDate)} 
               disabled={!!triggering}
@@ -236,7 +240,7 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
                   <h3 className="text-lg font-medium tracking-tight whitespace-nowrap">
                     {formatIstDate(date)}
                   </h3>
-                  {(isAdmin || isManager) && (
+                  {(canSendEmails && (isAdmin || isManager)) && (
                     <button 
                       onClick={() => handleTriggerEmails(date)}
                       disabled={triggering === date}
@@ -274,7 +278,7 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
                               <span className="text-xs text-muted-foreground">{TEAM_LABELS[u.team] || u.team}</span>
                             </div>
                           </div>
-                          {(isAdmin || isManager) && (
+                          {canSendEmails && (isAdmin || isManager) && (
                             <button
                               onClick={() => handleSendIndividual(u.id, u.name, date, "warning")}
                               disabled={sendingUserId === u.id}
@@ -367,7 +371,7 @@ export function EodHistoryClient({ isAdmin = false, isManager = false }) {
                           )}
                         </div>
 
-                        {(isAdmin || isManager) && (
+                        {canSendEmails && (isAdmin || isManager) && (
                           <div className="bg-slate-50 dark:bg-slate-900/50 px-4 py-3 border-t border-border/60 flex justify-end">
                             <button
                               onClick={() => handleSendIndividual(report.userId, report.userName, date, "report")}
