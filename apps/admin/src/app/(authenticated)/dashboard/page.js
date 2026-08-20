@@ -11,34 +11,39 @@ import { API } from "@/lib/api";
 import { getAuthHeaders } from "@/lib/auth";
 
 async function getDashboardData(enrolledIn, startDate, endDate, laptopOpted, limit = 10, offset = 0) {
-  const headers = await getAuthHeaders();
-  
-  let latestUrl = `${API}/api/students?limit=${limit}&offset=${offset}&enrolledIn=${enrolledIn}`;
-  if (enrolledIn === "custom" && startDate) {
-    latestUrl += `&startDate=${startDate}`;
-    if (endDate) {
-      latestUrl += `&endDate=${endDate}`;
-    }
-  }
-  if (laptopOpted !== "all") {
-    latestUrl += `&laptopOpted=${laptopOpted === "opted"}`;
-  }
+  try {
+    const headers = await getAuthHeaders();
 
-  const [statsRes, outstandingRes, latestRes] = await Promise.all([
-    fetch(`${API}/api/students/stats`, { headers, cache: "no-store" }),
-    fetch(`${API}/api/students?limit=5`, { headers, cache: "no-store" }),
-    fetch(latestUrl, { headers, cache: "no-store" })
-  ]);
-  
-  if (!statsRes.ok || !outstandingRes.ok || !latestRes.ok) {
+    let latestUrl = `${API}/api/students?limit=${limit}&offset=${offset}&enrolledIn=${enrolledIn}`;
+    if (enrolledIn === "custom" && startDate) {
+      latestUrl += `&startDate=${startDate}`;
+      if (endDate) {
+        latestUrl += `&endDate=${endDate}`;
+      }
+    }
+    if (laptopOpted !== "all") {
+      latestUrl += `&laptopOpted=${laptopOpted === "opted"}`;
+    }
+
+    const [statsRes, outstandingRes, latestRes] = await Promise.all([
+      fetch(`${API}/api/students/stats`, { headers, cache: "no-store" }),
+      fetch(`${API}/api/students?limit=5`, { headers, cache: "no-store" }),
+      fetch(latestUrl, { headers, cache: "no-store" })
+    ]);
+
+    if (!statsRes.ok || !outstandingRes.ok || !latestRes.ok) {
+      return { error: true };
+    }
+
+    const stats = await statsRes.json();
+    const outstanding = await outstandingRes.json();
+    const latestStudents = await latestRes.json();
+
+    return { stats, outstanding, latestStudents };
+  } catch (err) {
+    console.error("[ADMIN][ERROR] getDashboardData:", err.message);
     return { error: true };
   }
-
-  const stats = await statsRes.json();
-  const outstanding = await outstandingRes.json();
-  const latestStudents = await latestRes.json();
-
-  return { stats, outstanding, latestStudents };
 }
 
 export default async function DashboardPage({ searchParams }) {

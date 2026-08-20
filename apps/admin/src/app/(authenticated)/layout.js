@@ -30,8 +30,8 @@ export default async function AuthenticatedLayout({ children }) {
       }
       
       settings = await getSettings();
-    } catch {
-      // ignore
+    } catch (err) {
+      console.error("[ADMIN][ERROR] Authenticated layout:", err.message);
     }
   }
 

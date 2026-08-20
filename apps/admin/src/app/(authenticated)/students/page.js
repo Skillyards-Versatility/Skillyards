@@ -54,12 +54,19 @@ export default async function StudentsListPage({ searchParams }) {
   if (settings.students_feature === false) redirect("/dashboard");
 
   const { limit = 100, offset = 0 } = await searchParams;
-  const [students, batches, statsRes] = await Promise.all([
+  const [students, batches, stats] = await Promise.all([
     getStudents(limit, offset),
     getBatches(),
-    fetch(`${API}/api/students/stats`, { headers: await getAuthHeaders(), cache: "no-store" })
+    (async () => {
+      try {
+        const statsRes = await fetch(`${API}/api/students/stats`, { headers: await getAuthHeaders(), cache: "no-store" });
+        return statsRes.ok ? await statsRes.json() : { totalStudents: 0 };
+      } catch (err) {
+        console.error("[ADMIN][ERROR] Failed to fetch students stats:", err.message);
+        return { totalStudents: 0 };
+      }
+    })(),
   ]);
-  const stats = statsRes.ok ? await statsRes.json() : { totalStudents: 0 };
   const totalStudents = stats.totalStudents;
   
   const session = await getSession();

@@ -1,21 +1,5 @@
 import { StudentDetailClient } from "../StudentDetailClient";
-import { API } from "@/lib/api";
 import { formatDate } from "@/lib/format";
-
-async function fetchPlan(studentId) {
-  const res = await fetch(`${API}/api/students/${studentId}/plan`, { cache: "no-store" });
-  if (!res.ok) return null;
-  const json = await res.json();
-  return json.data ?? null;
-}
-
-async function fetchPayments(studentId) {
-  const res = await fetch(`${API}/api/students/${studentId}/payments`, { cache: "no-store" });
-  if (!res.ok) return [];
-  const json = await res.json();
-  return json.data ?? [];
-}
-
 
 export async function StudentDataSection({ student, plan, payments = [], canEdit = false, batches = [] }) {
   const studentId = student.id;
