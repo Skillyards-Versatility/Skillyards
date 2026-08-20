@@ -10,25 +10,35 @@ async function authHeaders() {
 }
 
 export async function updateStatus({ statusEmoji, statusText, statusClearAt }) {
-  const res = await fetch(`${API}/api/users/status`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json", ...(await authHeaders()) },
-    body: JSON.stringify({ statusEmoji, statusText, statusClearAt }),
-  });
-  
-  const result = await res.json();
-  
-  if (result.success) {
-    revalidatePath("/team"); // or wherever the team directory is
+  try {
+    const res = await fetch(`${API}/api/users/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...(await authHeaders()) },
+      body: JSON.stringify({ statusEmoji, statusText, statusClearAt }),
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      revalidatePath("/team");
+    }
+
+    return result;
+  } catch (err) {
+    console.error("[ADMIN][ERROR] updateStatus:", err.message);
+    return { success: false, message: err.message };
   }
-  
-  return result;
 }
 
 export async function getTeamStatuses() {
-  const res = await fetch(`${API}/api/users/status`, {
-    headers: await authHeaders(),
-    cache: "no-store",
-  });
-  return res.json();
+  try {
+    const res = await fetch(`${API}/api/users/status`, {
+      headers: await authHeaders(),
+      cache: "no-store",
+    });
+    return res.json();
+  } catch (err) {
+    console.error("[ADMIN][ERROR] getTeamStatuses:", err.message);
+    return { success: false, message: err.message };
+  }
 }

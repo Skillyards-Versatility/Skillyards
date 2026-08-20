@@ -12,12 +12,17 @@ import { API } from "@/lib/api";
 import { getAuthHeaders, getSession } from "@/lib/auth";
 
 async function getMegaData(id) {
-  const res = await fetch(`${API}/api/students/${id}`, {
-    headers: await getAuthHeaders(),
-    cache: "no-store",
-  });
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const res = await fetch(`${API}/api/students/${id}`, {
+      headers: await getAuthHeaders(),
+      cache: "no-store",
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch (err) {
+    console.error("[ADMIN][ERROR] getMegaData:", err.message);
+    return null;
+  }
 }
 
 async function StudentDetailContent({ studentId }) {

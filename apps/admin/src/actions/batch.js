@@ -30,44 +30,54 @@ export async function getBatches(courseName = "") {
 }
 
 export async function createBatch(batchData) {
-  const res = await fetch(`${API}/api/batches`, {
-    method: "POST",
-    headers: await getAuthHeaders(),
-    body: JSON.stringify(batchData),
-  });
+  try {
+    const res = await fetch(`${API}/api/batches`, {
+      method: "POST",
+      headers: await getAuthHeaders(),
+      body: JSON.stringify(batchData),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(
-      data?.error?.fieldErrors
-        ? Object.values(data.error.fieldErrors).flat().join(", ")
-        : data?.error || "Failed to create batch"
-    );
+    if (!res.ok) {
+      throw new Error(
+        data?.error?.fieldErrors
+          ? Object.values(data.error.fieldErrors).flat().join(", ")
+          : data?.error || "Failed to create batch"
+      );
+    }
+
+    revalidateTag("batches");
+    revalidatePath("/students");
+    return data;
+  } catch (err) {
+    console.error("[ADMIN][ERROR] createBatch:", err.message);
+    throw err;
   }
-
-  revalidateTag("batches");
-  revalidatePath("/students");
-  return data;
 }
 
 export async function assignStudentBatch(studentId, batchId, batchName) {
-  const res = await fetch(`${API}/api/students/${studentId}/batch`, {
-    method: "PATCH",
-    headers: await getAuthHeaders(),
-    body: JSON.stringify({ batchId, batchName }),
-  });
+  try {
+    const res = await fetch(`${API}/api/students/${studentId}/batch`, {
+      method: "PATCH",
+      headers: await getAuthHeaders(),
+      body: JSON.stringify({ batchId, batchName }),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(data.error || "Failed to assign batch to student");
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to assign batch to student");
+    }
+
+    revalidateTag("batches");
+    revalidateTag("students");
+    revalidateTag(`student-${studentId}`);
+    revalidatePath("/students");
+    revalidatePath(`/students/${studentId}`);
+    return data;
+  } catch (err) {
+    console.error("[ADMIN][ERROR] assignStudentBatch:", err.message);
+    throw err;
   }
-
-  revalidateTag("batches");
-  revalidateTag("students");
-  revalidateTag(`student-${studentId}`);
-  revalidatePath("/students");
-  revalidatePath(`/students/${studentId}`);
-  return data;
 }

@@ -14,170 +14,210 @@ async function requireAdmin() {
 }
 
 export async function updateStudent(studentId, studentData) {
-  await requireAdmin();
+  try {
+    await requireAdmin();
 
-  const res = await fetch(`${API}/api/students/${studentId}`, {
-    method: "PATCH",
-    headers: await getAuthHeaders(),
-    body: JSON.stringify(studentData),
-  });
+    const res = await fetch(`${API}/api/students/${studentId}`, {
+      method: "PATCH",
+      headers: await getAuthHeaders(),
+      body: JSON.stringify(studentData),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(
-      data?.error?.fieldErrors
-        ? Object.values(data.error.fieldErrors).flat().join(", ")
-        : data?.error || "Failed to update student"
-    );
+    if (!res.ok) {
+      throw new Error(
+        data?.error?.fieldErrors
+          ? Object.values(data.error.fieldErrors).flat().join(", ")
+          : data?.error || "Failed to update student"
+      );
+    }
+
+    revalidateTag("students");
+    revalidateTag(`student-${studentId}`);
+    revalidatePath(`/students/${studentId}`);
+    return data;
+  } catch (err) {
+    console.error("[ADMIN][ERROR] updateStudent:", err.message);
+    throw err;
   }
-
-  revalidateTag("students");
-  revalidateTag(`student-${studentId}`);
-  revalidatePath(`/students/${studentId}`);
-  return data;
 }
 
 export async function deleteStudent(studentId) {
-  await requireAdmin();
+  try {
+    await requireAdmin();
 
-  const res = await fetch(`${API}/api/students/${studentId}`, {
-    method: "DELETE",
-    headers: await getAuthHeaders(),
-  });
+    const res = await fetch(`${API}/api/students/${studentId}`, {
+      method: "DELETE",
+      headers: await getAuthHeaders(),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(data?.error || "Failed to delete student");
+    if (!res.ok) {
+      throw new Error(data?.error || "Failed to delete student");
+    }
+
+    revalidateTag("students");
+    revalidatePath("/students");
+    return data;
+  } catch (err) {
+    console.error("[ADMIN][ERROR] deleteStudent:", err.message);
+    throw err;
   }
-
-  revalidateTag("students");
-  revalidatePath("/students");
-  return data;
 }
 
 export async function updateStudentPlan(studentId, planData) {
-  await requireAdmin();
+  try {
+    await requireAdmin();
 
-  const res = await fetch(`${API}/api/students/${studentId}/plan`, {
-    method: "PATCH",
-    headers: await getAuthHeaders(),
-    body: JSON.stringify(planData),
-  });
+    const res = await fetch(`${API}/api/students/${studentId}/plan`, {
+      method: "PATCH",
+      headers: await getAuthHeaders(),
+      body: JSON.stringify(planData),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(data.error || "Failed to update plan");
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to update plan");
+    }
+
+    revalidateTag(`student-${studentId}`);
+    revalidateTag("students");
+    revalidatePath(`/students/${studentId}`);
+    return data;
+  } catch (err) {
+    console.error("[ADMIN][ERROR] updateStudentPlan:", err.message);
+    throw err;
   }
-
-  revalidateTag(`student-${studentId}`);
-  revalidateTag("students");
-  revalidatePath(`/students/${studentId}`);
-  return data;
 }
 
 export async function updateInstallment(studentId, installmentId, installmentData) {
-  await requireAdmin();
+  try {
+    await requireAdmin();
 
-  const res = await fetch(`${API}/api/students/${studentId}/plan/installments/${installmentId}`, {
-    method: "PATCH",
-    headers: await getAuthHeaders(),
-    body: JSON.stringify(installmentData),
-  });
+    const res = await fetch(`${API}/api/students/${studentId}/plan/installments/${installmentId}`, {
+      method: "PATCH",
+      headers: await getAuthHeaders(),
+      body: JSON.stringify(installmentData),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(data.error || "Failed to update installment");
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to update installment");
+    }
+
+    revalidateTag(`student-${studentId}`);
+    revalidatePath(`/students/${studentId}`);
+    return data;
+  } catch (err) {
+    console.error("[ADMIN][ERROR] updateInstallment:", err.message);
+    throw err;
   }
-
-  revalidateTag(`student-${studentId}`);
-  revalidatePath(`/students/${studentId}`);
-  return data;
 }
 
 export async function createStudent(studentData) {
-  const res = await fetch(`${API}/api/students`, {
-    method: "POST",
-    headers: await getAuthHeaders(),
-    body: JSON.stringify(studentData),
-  });
+  try {
+    const res = await fetch(`${API}/api/students`, {
+      method: "POST",
+      headers: await getAuthHeaders(),
+      body: JSON.stringify(studentData),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(
-      data?.error?.fieldErrors
-        ? Object.values(data.error.fieldErrors).flat().join(", ")
-        : data?.error || "Something went wrong"
-    );
+    if (!res.ok) {
+      throw new Error(
+        data?.error?.fieldErrors
+          ? Object.values(data.error.fieldErrors).flat().join(", ")
+          : data?.error || "Something went wrong"
+      );
+    }
+
+    revalidateTag("students");
+    return data;
+  } catch (err) {
+    console.error("[ADMIN][ERROR] createStudent:", err.message);
+    throw err;
   }
-
-  revalidateTag("students");
-  return data;
 }
 
 export async function createStudentPlan(studentId, planData) {
-  const res = await fetch(`${API}/api/students/${studentId}/plan`, {
-    method: "POST",
-    headers: await getAuthHeaders(),
-    body: JSON.stringify(planData),
-  });
+  try {
+    const res = await fetch(`${API}/api/students/${studentId}/plan`, {
+      method: "POST",
+      headers: await getAuthHeaders(),
+      body: JSON.stringify(planData),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(data.message || "Failed to create plan");
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to create plan");
+    }
+
+    revalidateTag(`student-${studentId}`);
+    revalidateTag("students");
+    revalidatePath(`/students/${studentId}`);
+    return data;
+  } catch (err) {
+    console.error("[ADMIN][ERROR] createStudentPlan:", err.message);
+    throw err;
   }
-
-  revalidateTag(`student-${studentId}`);
-  revalidateTag("students");
-  revalidatePath(`/students/${studentId}`);
-  return data;
 }
 
 export async function addFlexibleInstallment(studentId, installmentData) {
-  const res = await fetch(`${API}/api/students/${studentId}/plan/installments`, {
-    method: "POST",
-    headers: await getAuthHeaders(),
-    body: JSON.stringify(installmentData),
-  });
+  try {
+    const res = await fetch(`${API}/api/students/${studentId}/plan/installments`, {
+      method: "POST",
+      headers: await getAuthHeaders(),
+      body: JSON.stringify(installmentData),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    throw new Error(data.message || "Failed to add installment");
+    if (!res.ok) {
+      throw new Error(data.message || "Failed to add installment");
+    }
+
+    revalidatePath(`/students/${studentId}`);
+    return data.data;
+  } catch (err) {
+    console.error("[ADMIN][ERROR] addFlexibleInstallment:", err.message);
+    throw err;
   }
-
-  revalidatePath(`/students/${studentId}`);
-  return data.data;
 }
 
 export async function addStudentPayment(studentId, paymentData) {
-  const res = await fetch(`${API}/api/students/${studentId}/payments`, {
-    method: "POST",
-    headers: await getAuthHeaders(),
-    body: JSON.stringify(paymentData),
-  });
+  try {
+    const res = await fetch(`${API}/api/students/${studentId}/payments`, {
+      method: "POST",
+      headers: await getAuthHeaders(),
+      body: JSON.stringify(paymentData),
+    });
 
-  const data = await res.json();
+    const data = await res.json();
 
-  if (!res.ok) {
-    const errMsg =
-      typeof data.error === "string"
-        ? data.error
-        : data.error?.fieldErrors
-          ? Object.values(data.error.fieldErrors).flat().join(", ")
-          : data.error?.formErrors?.join(", ")
-          || data.message
-          || "Failed to record payment";
-    throw new Error(errMsg);
+    if (!res.ok) {
+      const errMsg =
+        typeof data.error === "string"
+          ? data.error
+          : data.error?.fieldErrors
+            ? Object.values(data.error.fieldErrors).flat().join(", ")
+            : data.error?.formErrors?.join(", ")
+            || data.message
+            || "Failed to record payment";
+      throw new Error(errMsg);
+    }
+
+    revalidateTag(`student-${studentId}`);
+    revalidateTag("students");
+    revalidatePath(`/students/${studentId}`);
+    return data;
+  } catch (err) {
+    console.error("[ADMIN][ERROR] addStudentPayment:", err.message);
+    throw err;
   }
-
-  revalidateTag(`student-${studentId}`);
-  revalidateTag("students");
-  revalidatePath(`/students/${studentId}`);
-  return data;
 }

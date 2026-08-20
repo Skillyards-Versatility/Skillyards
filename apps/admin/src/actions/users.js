@@ -81,16 +81,21 @@ export async function getUsers() {
             console.error("Migration runner failed in getUsers:", migError);
         }
     }
-    return await db.select({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        role: users.role,
-        team: users.team,
-        isTraining: users.isTraining,
-        createdAt: users.createdAt,
-        profileImageKey: users.profileImageKey
-    }).from(users).orderBy(desc(users.createdAt));
+    try {
+        return await db.select({
+            id: users.id,
+            name: users.name,
+            email: users.email,
+            role: users.role,
+            team: users.team,
+            isTraining: users.isTraining,
+            createdAt: users.createdAt,
+            profileImageKey: users.profileImageKey
+        }).from(users).orderBy(desc(users.createdAt));
+    } catch (err) {
+        console.error("[ADMIN][ERROR] getUsers:", err.message);
+        return [];
+    }
 }
 
 export async function createUser(_prevState, formData) {
