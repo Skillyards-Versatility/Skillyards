@@ -14,5 +14,17 @@
     "drizzle-orm": "^0.45.1",
     "express": "^4.19.2",
     "dotenv": "^17.3.1"
+  },
+  "x-team": {
+    "seniorDeveloper": {
+      "name": "Mrigesh Deshpande",
+      "email": "mrigeshdeshpande246+code@gmail.com",
+      "url": "https://github.com/MrigeshDeshpande"
+    },
+    "juniorDeveloper": {
+      "name": "Chakresh Chakshu",
+      "email": "sharma.ankush9193@gmail.com",
+      "url": "https://github.com/ChakreshChakshu"
+    }
   }
 }

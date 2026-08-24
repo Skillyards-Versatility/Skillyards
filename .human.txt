@@ -1,0 +1,21 @@
+/* TEAM */
+
+Senior Developer: Mrigesh Deshpande
+Contact: mrigeshdeshpande246+code@gmail.com [email]
+GitHub: @MrigeshDeshpande [https://github.com/MrigeshDeshpande]
+Location: India
+
+Junior Developer: Chakresh Chakshu
+Contact: sharma.ankush9193@gmail.com [email]
+GitHub: @ChakreshChakshu [https://github.com/ChakreshChakshu]
+Location: India
+
+/* THANKS */
+All Skillyards contributors past and present.
+
+/* SITE */
+
+Name: Skillyards
+Doctype: HTML5 / Next.js
+Components: Next.js, Express, Drizzle ORM, Sanity CMS, Neon Postgres
+Language: English

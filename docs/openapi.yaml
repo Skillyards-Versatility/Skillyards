@@ -3,6 +3,10 @@ info:
   title: SkillYards API
   description: API for Student Management, Fee Ledgers, and Testing Sessions.
   version: 1.0.0
+  contact:
+    name: Mrigesh Deshpande (Senior Developer)
+    email: mrigeshdeshpande246+code@gmail.com
+    url: https://github.com/MrigeshDeshpande
 
 servers:
   - url: http://localhost:3000
