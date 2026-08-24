@@ -46,6 +46,13 @@ export default function RootLayout({ children }) {
             <head>
                 <script dangerouslySetInnerHTML={{ __html: themeScript }} />
 
+                <link
+                    rel="author"
+                    href="/human.txt"
+                    type="text/plain"
+                />
+                <link rel="author" href="/humans.txt" type="text/plain" />
+
                 <JsonLd data={organizationSchema} id="organization-schema" />
                 <JsonLd data={primaryLocationSchema} id="primary-location-schema" />
                 <JsonLd data={websiteSchema} id="website-schema" />

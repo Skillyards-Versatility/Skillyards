@@ -34,5 +34,17 @@
     "printWidth": 100,
     "semi": false,
     "singleQuote": true
+  },
+  "x-team": {
+    "seniorDeveloper": {
+      "name": "Mrigesh Deshpande",
+      "email": "mrigeshdeshpande246+code@gmail.com",
+      "url": "https://github.com/MrigeshDeshpande"
+    },
+    "juniorDeveloper": {
+      "name": "Chakresh Chakshu",
+      "email": "sharma.ankush9193@gmail.com",
+      "url": "https://github.com/ChakreshChakshu"
+    }
   }
 }

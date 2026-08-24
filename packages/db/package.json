@@ -8,5 +8,17 @@
     "@neondatabase/serverless": "^0.10.0",
     "drizzle-orm": "^0.36.0",
     "ws": "^8.21.1"
+  },
+  "x-team": {
+    "seniorDeveloper": {
+      "name": "Mrigesh Deshpande",
+      "email": "mrigeshdeshpande246+code@gmail.com",
+      "url": "https://github.com/MrigeshDeshpande"
+    },
+    "juniorDeveloper": {
+      "name": "Chakresh Chakshu",
+      "email": "sharma.ankush9193@gmail.com",
+      "url": "https://github.com/ChakreshChakshu"
+    }
   }
 }
