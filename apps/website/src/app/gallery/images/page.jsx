@@ -27,12 +27,18 @@ export const metadata = buildSEO({
 
 export default async function GalleryImagesPage() {
     const images = await getGalleryImages();
+    const indexableImages = images.filter((img) => !img.noindex && img.src);
 
     const gallerySchema = getImageGallerySchema({
         url: "/gallery/images",
         name: "SkillYards Image Gallery",
         description: "Explore the SkillYards image gallery featuring campus life, training sessions, and events.",
-        keywords: galleryImageKeywords
+        keywords: galleryImageKeywords,
+        images: indexableImages.map((img) => ({
+            url: img.src,
+            name: img.title,
+            caption: img.title,
+        })),
     });
 
     const breadcrumbSchema = getBreadcrumbSchema([

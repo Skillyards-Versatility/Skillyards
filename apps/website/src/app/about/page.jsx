@@ -68,7 +68,7 @@ export default async function AboutPage() {
   const combinedSchema = [aboutPageSchema, breadcrumbSchema, faqSchema].filter(Boolean);
   const carouselTeam = await getTeamMembersByGroup("carousel");
   const galleryImages = await getGalleryImages();
-  const domeImages = galleryImages.filter((img) => img.showInDome);
+  const domeImages = galleryImages.filter((img) => img.showInDome && !img.noindex);
 
   return (
     <>

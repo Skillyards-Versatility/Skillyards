@@ -48,9 +48,25 @@ export const getImageGallerySchema = (page) => {
   if (!page) return null;
   return {
     ...getWebPageSchema(page),
-    "@type": ["WebPage", "ImageGallery"]
+    "@type": ["WebPage", "ImageGallery"],
+    ...(page.images && page.images.length
+      ? buildImageObjects(page.images, absoluteUrl(page.url))
+      : {}),
   };
 };
+
+const buildImageObjects = (images, pageAbsUrl) => ({
+  hasPart: images.map((img, i) => ({
+    "@type": "ImageObject",
+    "@id": `${pageAbsUrl}#image-${i}`,
+    contentUrl: img.contentUrl || img.url || img.loc,
+    ...(img.name && { name: img.name }),
+    ...(img.title && { name: img.title }),
+    ...(img.caption && { caption: img.caption }),
+    ...(img.thumbnailUrl && { thumbnailUrl: img.thumbnailUrl }),
+    ...(i === 0 ? { representativeOfPage: true } : {}),
+  })),
+});
 
 export const getVideoGallerySchema = (page) => {
   if (!page) return null;
