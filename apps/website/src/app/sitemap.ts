@@ -108,6 +108,17 @@ function listPhotoFiles(dir: string): string[] {
 // Note: In this Next.js version, sitemap `images` are plain URL strings.
 // Metadata (title/caption/alt) is carried via ImageObject JSON-LD on the page instead.
 
+// Next's sitemap serializer writes <image:loc> unescaped, so image URLs containing
+// query-string ampersands (e.g. ?w=600&h=750) break XML well-formedness. Escape them.
+function escapeXml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const appDir = join(process.cwd(), 'src', 'app');
   const routes = walkAppDir(appDir);
@@ -144,11 +155,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Collect each post's indexable image URLs
     for (const post of posts) {
       const imgs: string[] = [];
-      if (post.coverImage) imgs.push(post.coverImage);
+      if (post.coverImage) imgs.push(escapeXml(post.coverImage));
       for (const imgUrl of post.bodyImages || []) {
-        if (imgUrl) imgs.push(imgUrl);
+        if (imgUrl) imgs.push(escapeXml(imgUrl));
       }
-      if (post.clippingImage) imgs.push(post.clippingImage);
+      if (post.clippingImage) imgs.push(escapeXml(post.clippingImage));
       if (imgs.length) blogImages[post.slug] = imgs;
     }
   } catch (error) {
@@ -169,10 +180,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const gallery = await getGalleryImages();
     galleryEntry = gallery
       .filter((g: any) => !g.noindex && g.src)
-      .map((g: any) => g.src);
+      .map((g: any) => escapeXml(g.src));
     domeImages = gallery
       .filter((g: any) => !g.noindex && g.showInDome && g.src)
-      .map((g: any) => g.src);
+      .map((g: any) => escapeXml(g.src));
   } catch (error) {
     console.error("Failed to fetch gallery images for sitemap:", error);
   }
@@ -183,7 +194,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const team = await getAllTeamMembers();
     sanityTeamImages = (team || [])
       .filter((m: any) => !m.noindex && m.image)
-      .map((m: any) => m.image);
+      .map((m: any) => escapeXml(m.image));
   } catch (error) {
     console.error("Failed to fetch team members for sitemap:", error);
   }
@@ -193,7 +204,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPhotos: Record<string, string[]> = {};
   for (const dir of PHOTO_DIRS) {
     staticPhotos[dir] = listPhotoFiles(join(photoDir, dir)).map(
-      (f) => `${BASE_URL}/images/${dir}/${f}`
+      (f) => escapeXml(`${BASE_URL}/images/${dir}/${f}`)
     );
   }
 
