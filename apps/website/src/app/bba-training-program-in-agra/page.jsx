@@ -4,6 +4,8 @@ import { absoluteUrl, withFragment, absoluteAssetUrl } from "@/lib/seo/core/url"
 import { ORGANIZATION_ID, PRIMARY_LOCATION_ID, WEBSITE_ID } from "@/lib/seo/schema/global";
 
 export const revalidate = 86400;
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 const BBALandingPage = dynamic(() => import("@/components/landingPageBBA/LandingPage").then(m => m.LandingPage));
 import JsonLd from "@/components/JsonLd";
 import { courses } from "@/data/courses";
@@ -12,10 +14,14 @@ import { getPageFaqs } from "@/lib/seo/getFaqs";
 
 const course = courses.bba;
 
-export const metadata = buildSEO({
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
   ...course.seo,
   path: "/bba-training-program-in-agra",
+  ogImage: resolveOgImage(ogImages, "bba", course.seo.ogImage),
 });
+}
 
 function buildCourseSchema(course) {
   return {

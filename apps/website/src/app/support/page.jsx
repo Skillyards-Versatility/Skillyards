@@ -1,4 +1,6 @@
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 
 export const revalidate = 86400;
 import SupportHero from "@/components/supportpage/SupportHero";
@@ -11,21 +13,24 @@ import { getFAQSchema } from "@/lib/seo/schema/faqSchema";
 import { getPageFaqs, getAllFaqCategories } from "@/lib/seo/getFaqs";
 import { absoluteUrl } from "@/lib/seo/core/url";
 
-export const metadata = buildSEO({
-    title: "Support Center | SkillYards Agra",
-    description:
-        "Get help with admissions, fees, placement, technical issues, and more. SkillYards support is available via WhatsApp, phone, and email.",
-    path: "/support",
-    keywords: [
-        "SkillYards support",
-        "SkillYards help center",
-        "student support SkillYards",
-        "IT training support Agra",
-        "course enrollment assistance",
-        "SkillYards contact support",
-    ],
-    ogImage: "/images/opengraph/support-og.jpg",
-});
+export async function generateMetadata() {
+    const ogImages = await getAllOgImages();
+    return buildSEO({
+        title: "Support Center | SkillYards Agra",
+        description:
+            "Get help with admissions, fees, placement, technical issues, and more. SkillYards support is available via WhatsApp, phone, and email.",
+        path: "/support",
+        keywords: [
+            "SkillYards support",
+            "SkillYards help center",
+            "student support SkillYards",
+            "IT training support Agra",
+            "course enrollment assistance",
+            "SkillYards contact support",
+        ],
+        ogImage: resolveOgImage(ogImages, "support", "/images/opengraph/support-og.jpg"),
+    });
+}
 
 export default async function SupportPage() {
     const supportPageSchema = getContactPageSchema({

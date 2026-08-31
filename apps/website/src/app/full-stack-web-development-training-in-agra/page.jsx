@@ -2,6 +2,8 @@ import dynamic from "next/dynamic";
 import { buildSEO } from "@/lib/seo/buildSEO";
 
 export const revalidate = 86400;
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 const FSDLandingPage = dynamic(() => import("@/components/landingPageFSD/LandingPage").then(m => m.FSDLandingPage));
 import JsonLd from "@/components/JsonLd";
 import { getCourseSchema } from "@/lib/seo/schema/courseSchema";
@@ -13,10 +15,14 @@ import { getWebPageSchema } from "@/lib/seo/schema/webPageSchema";
 import { absoluteUrl } from "@/lib/seo/core/url";
 import { getTeamMembersByGroup } from "@/lib/sanity/getTeamMembers";
 
-export const metadata = buildSEO({
-  ...courses.fullstack.seo,
-  path: "/full-stack-web-development-training-in-agra",
-});
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
+    ...courses.fullstack.seo,
+    path: "/full-stack-web-development-training-in-agra",
+    ogImage: resolveOgImage(ogImages, "fullstack", courses.fullstack.seo.ogImage),
+  });
+}
 
 export default async function FullStackPage() {
   const course = courses.fullstack;

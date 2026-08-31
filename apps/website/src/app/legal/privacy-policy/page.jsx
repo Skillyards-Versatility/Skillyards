@@ -1,4 +1,6 @@
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 
 export const revalidate = 86400;
 import PageHero from "@/components/PageHero";
@@ -7,21 +9,24 @@ import { Shield, Eye, Cookie, Share2, Lock, UserCheck, ExternalLink, RefreshCw, 
 import JsonLd from "@/components/JsonLd";
 import { getWebPageSchema } from "@/lib/seo/schema/webPageSchema";
 
-export const metadata = buildSEO({
-    title: "Privacy Policy",
-    description:
-        "Read SkillYards' Privacy Policy to understand how we collect, use, protect, and manage your personal information when you use our website and services.",
-    path: "/privacy-policy",
-    keywords: [
-        "SkillYards Privacy Policy",
-        "Privacy Policy SkillYards",
-        "Data protection policy",
-        "User data privacy India",
-        "EdTech privacy policy",
-        "GDPR compliance India",
-    ],
-    ogImage: "/images/opengraph/privacy-policy-og.jpg",
-});
+export async function generateMetadata() {
+    const ogImages = await getAllOgImages();
+    return buildSEO({
+        title: "Privacy Policy",
+        description:
+            "Read SkillYards' Privacy Policy to understand how we collect, use, protect, and manage your personal information when you use our website and services.",
+        path: "/privacy-policy",
+        keywords: [
+            "SkillYards Privacy Policy",
+            "Privacy Policy SkillYards",
+            "Data protection policy",
+            "User data privacy India",
+            "EdTech privacy policy",
+            "GDPR compliance India",
+        ],
+        ogImage: resolveOgImage(ogImages, "privacy", "/images/opengraph/privacy-policy-og.jpg"),
+    });
+}
 
 const sections = [
     {

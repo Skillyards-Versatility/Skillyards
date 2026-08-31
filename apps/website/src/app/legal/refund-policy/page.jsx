@@ -1,4 +1,6 @@
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 
 export const revalidate = 86400;
 import PageHero from "@/components/PageHero";
@@ -7,21 +9,24 @@ import { FileText, BookOpen, CheckCircle, XCircle, AlertTriangle, Clock, Message
 import JsonLd from "@/components/JsonLd";
 import { getWebPageSchema } from "@/lib/seo/schema/webPageSchema";
 
-export const metadata = buildSEO({
-    title: "Refund Policy",
-    description:
-        "Review SkillYards' Refund Policy to understand eligibility, timelines, and conditions for refunds on courses, subscriptions, and training programs.",
-    path: "/refund-policy",
-    keywords: [
-        "SkillYards Refund Policy",
-        "Refund Policy SkillYards",
-        "Course refund terms",
-        "Training refunds",
-        "EdTech refund policy India",
-        "SkillYards cancellations",
-    ],
-    ogImage: "/images/opengraph/refund-policy-og.jpg",
-});
+export async function generateMetadata() {
+    const ogImages = await getAllOgImages();
+    return buildSEO({
+        title: "Refund Policy",
+        description:
+            "Review SkillYards' Refund Policy to understand eligibility, timelines, and conditions for refunds on courses, subscriptions, and training programs.",
+        path: "/refund-policy",
+        keywords: [
+            "SkillYards Refund Policy",
+            "Refund Policy SkillYards",
+            "Course refund terms",
+            "Training refunds",
+            "EdTech refund policy India",
+            "SkillYards cancellations",
+        ],
+        ogImage: resolveOgImage(ogImages, "refund", "/images/opengraph/refund-policy-og.jpg"),
+    });
+}
 
 const sections = [
     {

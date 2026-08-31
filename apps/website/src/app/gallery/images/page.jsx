@@ -1,4 +1,6 @@
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 import JsonLd from "@/components/JsonLd";
 import { getImageGallerySchema } from "@/lib/seo/schema/webPageSchema";
 import { getBreadcrumbSchema } from "@/lib/seo/schema/breadcrumbSchema";
@@ -16,14 +18,17 @@ const galleryImageKeywords = [
     "SkillYards events gallery",
 ];
 
-export const metadata = buildSEO({
-    title: "SkillYards Image Gallery | Campus Life & Classroom Photos",
-    description:
-        "Explore the SkillYards image gallery featuring campus life, training sessions, workshops, events, and memorable moments from our learning community.",
-    path: "/gallery/images",
-    keywords: galleryImageKeywords,
-    ogImage: "/images/opengraph/gallery-og.jpg",
-});
+export async function generateMetadata() {
+    const ogImages = await getAllOgImages();
+    return buildSEO({
+        title: "SkillYards Image Gallery | Campus Life & Classroom Photos",
+        description:
+            "Explore the SkillYards image gallery featuring campus life, training sessions, workshops, events, and memorable moments from our learning community.",
+        path: "/gallery/images",
+        keywords: galleryImageKeywords,
+        ogImage: resolveOgImage(ogImages, "gallery", "/images/opengraph/gallery-og.jpg"),
+    });
+}
 
 export default async function GalleryImagesPage() {
     const images = await getGalleryImages();
