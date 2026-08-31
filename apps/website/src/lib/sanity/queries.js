@@ -203,3 +203,27 @@ export const GALLERY_IMAGES_QUERY = `
   order
 }
 `;
+
+export const POSTS_WITH_IMAGES_QUERY = `
+*[_type == "post" && !noIndex && defined(slug.current)] | order(publishedAt desc){
+  _id,
+  _updatedAt,
+  title,
+  "slug": slug.current,
+  noIndex,
+  "coverImage": coverImage.asset->url,
+  "bodyImages": content[_type == "image"].asset->url,
+  "clippingImage": clippingImage.asset->url
+}
+`;
+
+export const TEAM_MEMBERS_WITH_IMAGES_QUERY = `
+*[_type == "teamMember" && !noindex && defined(image.asset)] | order(order asc){
+  _id,
+  name,
+  "slug": slug.current,
+  role,
+  image,
+  noindex
+}
+`;
