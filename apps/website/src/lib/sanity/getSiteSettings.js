@@ -15,8 +15,8 @@ export const getAllOgImages = cache(async () => {
     const ogImages = settings?.ogImages || {};
     const result = {};
     for (const [key, value] of Object.entries(ogImages)) {
-      if (value && value.image) {
-        result[key] = urlFor(value.image).width(1200).url();
+      if (value && value.asset) {
+        result[key] = urlFor(value).width(1200).url();
       }
     }
     return result;

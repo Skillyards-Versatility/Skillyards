@@ -35,7 +35,7 @@ async function getJob(slug) {
    SEO Metadata (Dynamic – Single Job)
 ----------------------------------------- */
 export async function generateMetadata({ params }) {
-    const { slug } = params;
+    const { slug } = await params;
 
     const ogImages = await getAllOgImages();
 
