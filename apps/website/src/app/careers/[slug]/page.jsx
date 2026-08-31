@@ -71,7 +71,7 @@ export async function generateMetadata({ params }) {
         ].filter(Boolean),
 
         // Separate OG images if you want
-        ogImage: resolveOgImage(ogImages, 'careers', '/images/opengraph/skillyards-careers-og.webp'),
+        ogImage: resolveOgImage(ogImages, 'careers', '/images/opengraph/careers-og.jpg'),
     });
 }
 

@@ -53,6 +53,10 @@ const OG_MAP = [
   { key: "privacy", file: "privacy-policy-og.jpg" },
   { key: "refund", file: "refund-policy-og.jpg" },
   { key: "terms", file: "terms-of-service-og.jpg" },
+  { key: "fullstack", file: "fullstack-og.jpg" },
+  { key: "digitalmarketing", file: "programs-og.jpg" },
+  { key: "bca", file: "bca-og.jpg" },
+  { key: "bba", file: "bba-og.jpg" },
 ];
 
 async function uploadImage(file) {
