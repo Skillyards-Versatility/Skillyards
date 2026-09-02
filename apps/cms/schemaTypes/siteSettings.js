@@ -53,6 +53,36 @@ export default defineType({
         { ...ogImageField('BBA Program'), name: 'bba' },
       ],
     }),
+    defineField({
+      name: 'blogOgImages',
+      title: 'Blog Post OG Images',
+      description:
+        'Optional per-post social share preview images. If a post has no OG image here, its cover image is used instead.',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'blogOgImage',
+          title: 'Blog Post OG Image',
+          fields: [
+            defineField({
+              name: 'post',
+              title: 'Blog Post',
+              type: 'reference',
+              to: [{ type: 'post' }],
+              validation: (Rule) => Rule.required(),
+            }),
+            {
+              ...ogImageField('OG Image'),
+              name: 'ogImage',
+            },
+          ],
+          preview: {
+            select: { title: 'post.title', media: 'ogImage' },
+          },
+        },
+      ],
+    }),
   ],
   preview: {
     select: { title: 'title' },
