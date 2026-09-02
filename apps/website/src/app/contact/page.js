@@ -7,6 +7,8 @@ import { GoogleMapEmbed } from "@/components/ui/GoogleMapEmbed";
 const ContactPageInfoCard = dynamic(() => import("@/components/ContactPageInfoCard"));
 
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 
 export const revalidate = 86400;
 
@@ -17,7 +19,9 @@ const contactPageSchema = getContactPageSchema({
   name: "Contact SkillYards",
   description: "Contact SkillYards for course inquiries, training support, partnerships, or general questions. We’re here to help you grow your skills and career."
 });
-export const metadata = buildSEO({
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
   title: "Contact SkillYards",
   description:
     "Contact SkillYards for course inquiries, training support, partnerships, or general questions. We’re here to help you grow your skills and career.",
@@ -30,8 +34,9 @@ export const metadata = buildSEO({
     "SkillYards India",
     "EdTech support India",
   ],
-  ogImage: "/images/opengraph/contact-og.jpg",
+  ogImage: resolveOgImage(ogImages, "contact", "/images/opengraph/contact-og.jpg"),
 });
+}
 
 export default function ContactPage() {
   return (

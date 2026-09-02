@@ -2,6 +2,8 @@ import dynamic from "next/dynamic";
 import { buildSEO } from "@/lib/seo/buildSEO";
 
 export const revalidate = 86400;
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 const BCALandingPage = dynamic(() => import("@/components/landingPageBCA/LandingPage").then(m => m.BCALandingPage));
 import JsonLd from "@/components/JsonLd";
 import { getCourseSchema } from "@/lib/seo/schema/courseSchema";
@@ -15,10 +17,14 @@ import { absoluteUrl } from "@/lib/seo/core/url";
 const course = courses.bca;
 const courseSchema = getCourseSchema(course);
 
-export const metadata = buildSEO({
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
   ...course.seo,
-  path: "/bca-training-program-in-agra"
+  path: "/bca-training-program-in-agra",
+  ogImage: resolveOgImage(ogImages, "bca", course.seo.ogImage),
 });
+}
 
 const breadcrumbSchema = getBreadcrumbSchema([
     { name: "Home", url: "/" },

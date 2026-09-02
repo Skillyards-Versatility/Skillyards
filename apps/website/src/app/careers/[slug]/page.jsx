@@ -4,6 +4,8 @@ export const revalidate = 86400;
 import ApplyForm from "@/components/careerspage/ApplyForm";
 import Image from "next/image";
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 import { getJobPostingSchema } from "@/lib/seo/schema/jobPostingSchema";
 
 
@@ -33,7 +35,9 @@ async function getJob(slug) {
    SEO Metadata (Dynamic – Single Job)
 ----------------------------------------- */
 export async function generateMetadata({ params }) {
-    const { slug } = params;
+    const { slug } = await params;
+
+    const ogImages = await getAllOgImages();
 
     const job = await getJob(slug);
 
@@ -43,7 +47,7 @@ export async function generateMetadata({ params }) {
             description: 'The job you are looking for does not exist or has been closed.',
             path: '/careers',
             keywords: ['SkillYards careers', 'jobs at SkillYards'],
-            ogImage: '/images/opengraph/careers-og.jpg',
+            ogImage: resolveOgImage(ogImages, 'careers', '/images/opengraph/careers-og.jpg'),
         });
     }
 
@@ -67,7 +71,7 @@ export async function generateMetadata({ params }) {
         ].filter(Boolean),
 
         // Separate OG images if you want
-        ogImage: '/images/opengraph/skillyards-careers-og.webp',
+        ogImage: resolveOgImage(ogImages, 'careers', '/images/opengraph/careers-og.jpg'),
     });
 }
 

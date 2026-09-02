@@ -11,22 +11,27 @@ import PageHero from "@/components/PageHero";
 import { getJobPostingSchema } from "@/lib/seo/schema/jobPostingSchema";
 import { getCollectionPageSchema } from "@/lib/seo/schema/webPageSchema";
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 
-export const metadata = buildSEO({
-  title: "Careers at SkillYards",
-  description:
-    "Explore career opportunities at SkillYards. Join our team of educators, engineers, and professionals shaping the future of skill-based learning in India.",
-  path: "/careers",
-  keywords: [
-    "SkillYards careers",
-    "Jobs at SkillYards",
-    "EdTech jobs India",
-    "Teaching jobs",
-    "IT trainer jobs",
-    "SkillYards hiring",
-  ],
-  ogImage: "/images/opengraph/careers-og.jpg",
-});
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
+    title: "Careers at SkillYards",
+    description:
+      "Explore career opportunities at SkillYards. Join our team of educators, engineers, and professionals shaping the future of skill-based learning in India.",
+    path: "/careers",
+    keywords: [
+      "SkillYards careers",
+      "Jobs at SkillYards",
+      "EdTech jobs India",
+      "Teaching jobs",
+      "IT trainer jobs",
+      "SkillYards hiring",
+    ],
+    ogImage: resolveOgImage(ogImages, "careers", "/images/opengraph/careers-og.jpg"),
+  });
+}
 
 export default async function CareersPage() {
   const roles = [];

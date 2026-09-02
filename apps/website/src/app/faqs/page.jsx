@@ -1,4 +1,6 @@
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 
 export const revalidate = 86400;
 import PageHero from "@/components/PageHero";
@@ -18,14 +20,17 @@ const faqKeywords = [
     "SkillYards placement FAQ",
 ];
 
-export const metadata = buildSEO({
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
     title: "Frequently Asked Questions | SkillYards Agra",
     description:
         "Find clear answers to questions about SkillYards programs, admissions, fees, placement, BCA, BBA, Full-Stack Development, Digital Marketing, and more.",
     path: "/faqs",
     keywords: faqKeywords,
-    ogImage: "/images/opengraph/faqs-og.jpg",
-});
+    ogImage: resolveOgImage(ogImages, "faqs", "/images/opengraph/faqs-og.jpg"),
+  });
+}
 
 // Schema ownership map — each FAQ category gets FAQPage schema on exactly one page.
 // Google's guidelines say if the same Q&A appears on multiple pages, mark up only one instance.

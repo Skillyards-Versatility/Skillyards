@@ -2,6 +2,8 @@ import Link from "next/link";
 import BlogSearch from "@/components/blog/BlogSearch";
 import JsonLd from "@/components/JsonLd";
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 import { getBlogSchema } from "@/lib/seo/schema/blogPostingSchema";
 import { sanityClient } from "@/lib/sanity/client";
 import {
@@ -11,7 +13,9 @@ import {
 
 export const revalidate = 3600;
 
-export const metadata = buildSEO({
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
   title: "SkillYards Blog",
   description:
     "Explore the SkillYards Blog for expert insights, practical tutorials, learning resources, and career guidance in IT and emerging technologies.",
@@ -24,8 +28,9 @@ export const metadata = buildSEO({
     "Skill development articles",
     "Technology education insights",
   ],
-  ogImage: "/images/opengraph/blog-og.jpg",
+  ogImage: resolveOgImage(ogImages, "blog", "/images/opengraph/blog-og.jpg"),
 });
+}
 
 const CONTENT_TYPE_LABELS = {
   "pillar-brand": "Guide",

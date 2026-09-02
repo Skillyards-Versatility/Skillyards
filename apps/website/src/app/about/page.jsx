@@ -22,6 +22,8 @@ const LeadersSection=dynamic(()=>import("@/components/common/LeadersSection"));
 const AboutLocalSEO = dynamic(() => import("@/components/aboutpage/AboutLocalSEO"));
 
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 import { getFAQSchema } from "@/lib/seo/schema/faqSchema";
 import { getBreadcrumbSchema } from "@/lib/seo/schema/breadcrumbSchema";
 import { getPageFaqs } from "@/lib/seo/getFaqs";
@@ -29,7 +31,9 @@ import { absoluteUrl } from "@/lib/seo/core/url";
 import { getTeamMembersByGroup } from "@/lib/sanity/getTeamMembers";
 import { getGalleryImages } from "@/lib/sanity/getGalleryImages";
 
-export const metadata = buildSEO({
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
   title: "About SkillYards | AI-Integrated Career-Building Institute in Agra",
   description:
     "Learn about SkillYards - an AI-integrated career-building institute in Agra focused on practical learning, mentorship, industry-focused training, OJD degree pathways, OJT programs, and job-ready skill development for students after 12th and graduates.",
@@ -45,8 +49,9 @@ export const metadata = buildSEO({
     "Digital marketing institute in Agra",
     "Offline training institute in Agra",
   ],
-  ogImage: "/images/opengraph/about-og.jpg",
+  ogImage: resolveOgImage(ogImages, "about", "/images/opengraph/about-og.jpg"),
 });
+}
 
 import { getAboutPageSchema } from "@/lib/seo/schema/webPageSchema";
 

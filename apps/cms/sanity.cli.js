@@ -7,9 +7,10 @@ export default defineCliConfig({
   },
   deployment: {
     /**
-     * Enable auto-updates for studios.
-     * Learn more at https://www.sanity.io/docs/studio/latest-version-of-sanity#k47faf43faf56
+     * Auto-updates are disabled because they pulled an incompatible @sanity/cli
+     * (6.7.2) that broke `sanity dev` ("Cannot find renderDocument.worker.js").
+     * Sanity/runtime versions are pinned in package.json instead.
      */
-    autoUpdates: true,
+    autoUpdates: false,
   }
 })

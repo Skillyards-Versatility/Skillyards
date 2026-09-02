@@ -1,4 +1,6 @@
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 
 export const revalidate = 86400;
 import PageHero from "@/components/PageHero";
@@ -7,21 +9,24 @@ import { HandshakeIcon, UserCheck, UserCog, BookOpen, CreditCard, Copyright, Shi
 import JsonLd from "@/components/JsonLd";
 import { getWebPageSchema } from "@/lib/seo/schema/webPageSchema";
 
-export const metadata = buildSEO({
-    title: "Terms of Service",
-    description:
-        "Read SkillYards' Terms of Service to understand the rules, responsibilities, and conditions for using our website, courses, and training programs.",
-    path: "/terms-of-service",
-    keywords: [
-        "SkillYards Terms of Service",
-        "SkillYards Terms and Conditions",
-        "User agreement SkillYards",
-        "Learning terms",
-        "EdTech terms India",
-        "Course usage policy",
-    ],
-    ogImage: "/images/opengraph/terms-of-service-og.jpg",
-});
+export async function generateMetadata() {
+    const ogImages = await getAllOgImages();
+    return buildSEO({
+        title: "Terms of Service",
+        description:
+            "Read SkillYards' Terms of Service to understand the rules, responsibilities, and conditions for using our website, courses, and training programs.",
+        path: "/terms-of-service",
+        keywords: [
+            "SkillYards Terms of Service",
+            "SkillYards Terms and Conditions",
+            "User agreement SkillYards",
+            "Learning terms",
+            "EdTech terms India",
+            "Course usage policy",
+        ],
+        ogImage: resolveOgImage(ogImages, "terms", "/images/opengraph/terms-of-service-og.jpg"),
+    });
+}
 
 const sections = [
     {

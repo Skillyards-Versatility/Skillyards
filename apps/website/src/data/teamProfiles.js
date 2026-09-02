@@ -72,7 +72,7 @@ export const TEAM_PROFILES = {
         "EdTech entrepreneur",
         "employability-focused education",
       ],
-      ogImage: "/images/team/suryanshSir.webp",
+      ogImage: "/images/opengraph/suryansh-upadhyay-og.jpg",
     },
   },
   rahulsingh: {
@@ -161,7 +161,7 @@ export const TEAM_PROFILES = {
         "EPO leadership",
         "growth enablement",
       ],
-      ogImage: "/images/team/rahul-singh.webp",
+      ogImage: "/images/opengraph/rahul-singh-og.jpg",
     },
   },
 };

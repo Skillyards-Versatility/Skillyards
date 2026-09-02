@@ -3,6 +3,8 @@ import OnJobHero from "@/components/onJobDegreePage/OnJobHero";
 import WhatIsOJD from "@/components/onJobDegreePage/WhatIsOJD";
 import WhyOnJobDegree from "@/components/onJobDegreePage/WhyOnJobDegree";
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 import JsonLd from "@/components/JsonLd";
 import { getBreadcrumbSchema } from "@/lib/seo/schema/breadcrumbSchema";
 import { getFAQSchema } from "@/lib/seo/schema/faqSchema";
@@ -17,21 +19,24 @@ const FinalCTA = dynamic(() => import("@/components/onJobDegreePage/FinalCTA"));
 
 export const revalidate = 86400;
 
-export const metadata = buildSEO({
-  title: "BCA & BBA Degree Programs in Agra with Practical Training | SkillYards",
-  description:
-    "Earn a recognised BCA or BBA degree in Agra while learning MERN stack development or Digital Marketing hands-on. 3 hrs practical + 2 hrs theory daily. Batch starts August. 35 seats.",
-  path: "/programs/on-job-degree",
-  keywords: [
-    "BCA degree Agra",
-    "BBA degree Agra",
-    "BCA with practical training Agra",
-    "BBA with digital marketing Agra",
-    "on job degree Agra",
-    "degree with skill training Agra",
-  ],
-  ogImage: "/images/opengraph/programs-og.jpg",
-});
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
+    title: "BCA & BBA Degree Programs in Agra with Practical Training | SkillYards",
+    description:
+      "Earn a recognised BCA or BBA degree in Agra while learning MERN stack development or Digital Marketing hands-on. 3 hrs practical + 2 hrs theory daily. Batch starts August. 35 seats.",
+    path: "/programs/on-job-degree",
+    keywords: [
+      "BCA degree Agra",
+      "BBA degree Agra",
+      "BCA with practical training Agra",
+      "BBA with digital marketing Agra",
+      "on job degree Agra",
+      "degree with skill training Agra",
+    ],
+    ogImage: resolveOgImage(ogImages, "programs", "/images/opengraph/programs-og.jpg"),
+  });
+}
 
 const courseSchema = {
   "@context": "https://schema.org",

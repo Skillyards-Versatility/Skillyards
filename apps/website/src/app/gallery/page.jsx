@@ -1,4 +1,6 @@
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 import Link from "next/link";
 import { Image, Video, ArrowRight } from "lucide-react";
 import PageHero from "@/components/PageHero";
@@ -17,14 +19,17 @@ const galleryKeywords = [
   "SkillYards classroom gallery",
 ];
 
-export const metadata = buildSEO({
-  title: "SkillYards Gallery | Campus & Learning Showcase",
-  description:
-    "Explore the SkillYards gallery featuring photos and videos from our campus, training sessions, workshops, events, and student learning experiences.",
-  path: "/gallery",
-  keywords: galleryKeywords,
-  ogImage: "/images/opengraph/gallery-og.jpg",
-});
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
+    title: "SkillYards Gallery | Campus & Learning Showcase",
+    description:
+      "Explore the SkillYards gallery featuring photos and videos from our campus, training sessions, workshops, events, and student learning experiences.",
+    path: "/gallery",
+    keywords: galleryKeywords,
+    ogImage: resolveOgImage(ogImages, "gallery", "/images/opengraph/gallery-og.jpg"),
+  });
+}
 
 export default function GalleryPage() {
   const collectionSchema = getCollectionPageSchema({

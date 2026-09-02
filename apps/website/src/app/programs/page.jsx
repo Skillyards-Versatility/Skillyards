@@ -7,6 +7,8 @@ import ProgramsFAQ from "@/components/programspage/ProgramsFAQ";
 import FinalCTA from "@/components/programspage/FinalCTA";
 import BatchFeeInfo from "@/components/programspage/BatchFeeInfo";
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 import JsonLd from "@/components/JsonLd";
 import { getCollectionPageSchema } from "@/lib/seo/schema/webPageSchema";
 import { getBreadcrumbSchema } from "@/lib/seo/schema/breadcrumbSchema";
@@ -18,21 +20,24 @@ import { BATCHES_QUERY } from "@/lib/sanity/queries";
 
 export const revalidate = 86400;
 
-export const metadata = buildSEO({
-  title: "SkillYards Programs | OJD & OJT IT Training in Agra",
-  description:
-    "Explore SkillYards On Job Degree and On Job Training programs in Agra, including BCA, BBA, Full-Stack Development and Digital Marketing with practical projects and 100% placement assistance.",
-  path: "/programs",
-  keywords: [
-    "IT training programs in Agra",
-    "IT courses in Agra",
-    "On Job Degree in Agra",
-    "On Job Training in Agra",
-    "Career courses after 12th in Agra",
-    "SkillYards programs",
-  ],
-  ogImage: "/images/opengraph/programs-og.jpg",
-});
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
+    title: "SkillYards Programs | OJD & OJT IT Training in Agra",
+    description:
+      "Explore SkillYards On Job Degree and On Job Training programs in Agra, including BCA, BBA, Full-Stack Development and Digital Marketing with practical projects and 100% placement assistance.",
+    path: "/programs",
+    keywords: [
+      "IT training programs in Agra",
+      "IT courses in Agra",
+      "On Job Degree in Agra",
+      "On Job Training in Agra",
+      "Career courses after 12th in Agra",
+      "SkillYards programs",
+    ],
+    ogImage: resolveOgImage(ogImages, "programs", "/images/opengraph/programs-og.jpg"),
+  });
+}
 
 export default async function ProgramsPage() {
   const batches = await sanityClient.fetch(BATCHES_QUERY);

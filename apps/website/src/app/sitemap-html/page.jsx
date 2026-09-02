@@ -3,6 +3,8 @@ import Link from "next/link";
 export const revalidate = 86400;
 import Breadcrumbs from "@/components/Breadcrumbs";
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 const BASE_URL = "https://www.skillyards.in";
 
 const STATIC_SITEMAP_ROUTES = [
@@ -38,19 +40,22 @@ const LEADERS = [
     { path: "/rahulsingh", name: "Rahul Singh" },
 ];
 
-export const metadata = buildSEO({
-  title: "HTML Sitemap | SkillYards",
-  description:
-    "Browse the complete HTML sitemap of SkillYards with quick access to all important pages.",
-  path: "/sitemap",
-  keywords: [
-    "SkillYards sitemap",
-    "HTML sitemap SkillYards",
-    "website structure SkillYards",
-    "all pages SkillYards",
-  ],
-  ogImage: "/images/opengraph/sitemap-og.jpg",
-});
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
+    title: "HTML Sitemap | SkillYards",
+    description:
+      "Browse the complete HTML sitemap of SkillYards with quick access to all important pages.",
+    path: "/sitemap",
+    keywords: [
+      "SkillYards sitemap",
+      "HTML sitemap SkillYards",
+      "website structure SkillYards",
+      "all pages SkillYards",
+    ],
+    ogImage: resolveOgImage(ogImages, "sitemapHtml", "/images/opengraph/sitemap-og.jpg"),
+  });
+}
 
 export default function SitemapPage() {
   const lastUpdated = new Date().toLocaleDateString("en-IN", {

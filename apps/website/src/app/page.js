@@ -16,6 +16,8 @@ const FeaturedRoles = dynamic(() => import("@/components/homepage/FeaturedRoles"
 const SkillTestSection = dynamic(() => import("@/components/homepage/SkillTestSection"));
 
 import { buildSEO } from "@/lib/seo/buildSEO";
+import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
+import { resolveOgImage } from "@/lib/seo/og";
 import JsonLd from "@/components/JsonLd";
 
 import { getFAQSchema } from "@/lib/seo/schema/faqSchema";
@@ -40,14 +42,17 @@ const homeKeywords = [
   "on job degree program Agra",
 ];
 
-export const metadata = buildSEO({
-  title: "SkillYards | IT Training With Degree & Placement in Agra",
-  description:
-    "Get BCA, BBA, full-stack & digital marketing training with DBRAU degree and 100% placement support. Book your free career counselling today!",
-  path: "/",
-  keywords: homeKeywords,
-  ogImage: "/images/opengraph/home-og.jpg",
-});
+export async function generateMetadata() {
+  const ogImages = await getAllOgImages();
+  return buildSEO({
+    title: "SkillYards | IT Training With Degree & Placement in Agra",
+    description:
+      "Get BCA, BBA, full-stack & digital marketing training with DBRAU degree and 100% placement support. Book your free career counselling today!",
+    path: "/",
+    keywords: homeKeywords,
+    ogImage: resolveOgImage(ogImages, "home", "/images/opengraph/home-og.jpg"),
+  });
+}
 
 export default async function Home() {
   const batches = await sanityClient.fetch(BATCHES_QUERY);
