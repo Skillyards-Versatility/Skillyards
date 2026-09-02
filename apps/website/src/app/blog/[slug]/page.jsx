@@ -16,7 +16,6 @@ import RelatedMoneyPages from "@/components/blog/RelatedMoneyPages";
 import SiblingArticles from "@/components/blog/SiblingArticles";
 import TableOfContents from "@/components/TableOfContents";
 import { buildSEO } from "@/lib/seo/buildSEO";
-import { getBlogOgImages } from "@/lib/sanity/getSiteSettings";
 import { urlFor } from "@/lib/sanity/image";
 import { extractHeadings } from "@/lib/sanity/slugifyHeading";
 import { portableTextComponents } from "@/lib/sanity/portableTextComponents";
@@ -59,7 +58,7 @@ const getPost = cache(async (slug) =>
   sanityClient.fetch(POST_BY_SLUG_QUERY, { slug }, { next: { revalidate: 3600 } })
 );
 
-function buildMetadataForPost(post, slug, blogOgMap = {}) {
+function buildMetadataForPost(post, slug) {
   if (!post) {
     return buildSEO({
       title: "Blog Not Found",
@@ -72,9 +71,9 @@ function buildMetadataForPost(post, slug, blogOgMap = {}) {
     post.excerpt?.replace(/<[^>]+>/g, "").slice(0, 160) ||
     "Read this article on SkillYards.";
 
-  const imageUrl =
-    blogOgMap[post.slug?.current || slug] ||
-    (post.coverImage ? urlFor(post.coverImage).width(1200).url() : undefined);
+  const imageUrl = post.coverImage
+    ? urlFor(post.coverImage).width(1200).url()
+    : undefined;
 
   const metadata = buildSEO({
     title: post.seoTitle || post.title,
@@ -103,11 +102,8 @@ function buildMetadataForPost(post, slug, blogOgMap = {}) {
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const [post, blogOgMap] = await Promise.all([
-    getPost(slug),
-    getBlogOgImages(),
-  ]);
-  return buildMetadataForPost(post, slug, blogOgMap);
+  const post = await getPost(slug);
+  return buildMetadataForPost(post, slug);
 }
 
 function MetaRow({ post, readingTime }) {
