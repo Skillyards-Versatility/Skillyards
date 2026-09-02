@@ -68,11 +68,17 @@ function buildMetadataForPost(post, slug) {
   }
 
   const cleanDescription =
-    post.excerpt?.replace(/<[^>]+>/g, "").slice(0, 160) ||
+    post.excerpt?.replace(/<[^>]+>/g, "").slice(0, 125) ||
     "Read this article on SkillYards.";
 
   const imageUrl = post.coverImage
-    ? urlFor(post.coverImage).width(1200).url()
+    ? urlFor(post.coverImage)
+        .width(1200)
+        .height(630)
+        .fit("crop")
+        .format("jpg")
+        .quality(72)
+        .url()
     : undefined;
 
   const metadata = buildSEO({
@@ -138,7 +144,13 @@ export default async function BlogPostPage({ params }) {
   const readingTime = calculateReadingTime(post.content);
   const headings = extractHeadings(post.content);
   const resolvedImageUrl = post.coverImage
-    ? urlFor(post.coverImage).width(1200).height(630).url()
+    ? urlFor(post.coverImage)
+        .width(1200)
+        .height(630)
+        .fit("crop")
+        .format("jpg")
+        .quality(72)
+        .url()
     : undefined;
 
   if (post.contentType === "news") {
