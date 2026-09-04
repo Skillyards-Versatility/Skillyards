@@ -5,8 +5,6 @@ Built with **Next.js 15**, **Tailwind CSS**, and **TypeScript**, it delivers a f
 
 ---
 
-## Getting Started
-
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/skillyards/skillyards-next-app.git
