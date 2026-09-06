@@ -6,7 +6,11 @@ import { HelpCircle, Plus, Minus } from "lucide-react";
 import Link from "next/link";
 import { getFaqAnchorId } from "@/lib/seo/faqUtils";
 
-export default function ProgramsFAQ({ faqs = [] }) {
+export default function ProgramsFAQ({
+  faqs = [],
+  title = "Questions About",
+  highlightTitle = "SkillYards Programs",
+}) {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
@@ -25,8 +29,8 @@ export default function ProgramsFAQ({ faqs = [] }) {
             FAQ
           </motion.div>
           <h2 className="font-serif text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Questions About{" "}
-            <span className="italic text-primary">SkillYards OJT</span>
+            {title}{" "}
+            <span className="italic text-primary">{highlightTitle}</span>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
             Answered clearly so students and parents can understand how these programs work.

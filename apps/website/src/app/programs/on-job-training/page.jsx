@@ -73,7 +73,13 @@ export default async function OnJobTrainingPage() {
       <OJTPracticalLearning />
       <OJTCareerSupport />
       <OJTLocalSEO />
-      {faqs.length > 0 && <ProgramsFAQ faqs={faqs} />}
+      {faqs.length > 0 && (
+        <ProgramsFAQ
+          faqs={faqs}
+          title="Questions About"
+          highlightTitle="SkillYards OJT"
+        />
+      )}
       <OJTFinalCTA />
     </main>
   );

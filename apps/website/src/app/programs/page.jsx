@@ -68,7 +68,11 @@ export default async function ProgramsPage() {
       <ProgramCards />
       <AdmissionProcess />
       <BatchFeeInfo batches={batches} />
-      <ProgramsFAQ faqs={faqs} />
+      <ProgramsFAQ
+        faqs={faqs}
+        title="Questions About"
+        highlightTitle="SkillYards Programs"
+      />
       <FinalCTA />
     </main>
   );
