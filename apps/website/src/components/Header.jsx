@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "@/components/logo";
 import { useTheme } from "@/app/context/ThemeContext";
-import { Menu, X, Sun, Moon, Laptop, ChevronDown } from "lucide-react";
+import { Menu, X, Sun, Moon, Laptop, Phone, Mail } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 
 import DesktopNav from "./DesktopNav";
@@ -31,16 +31,15 @@ export default function Header() {
 
     return (
         <header
-            className={`fixed inset-x-0 top-0 md:top-4 z-50 flex justify-center px-4 sm:px-6 transition-all duration-300`}
+            className={`fixed inset-x-0 top-0 md:top-3 z-50 flex flex-col items-center px-4 sm:px-6 transition-all duration-300 pointer-events-none`}
         >
-            <nav className={`w-full max-w-[1100px] flex items-center justify-between p-2 sm:p-2.5 rounded-full border border-border/80 bg-background/80 backdrop-blur-md shadow-sm transition-all duration-300`}>
+            <nav className={`w-full max-w-[1100px] flex items-center justify-between p-2 sm:p-2.5 rounded-full border border-border/80 bg-background/80 backdrop-blur-md shadow-sm transition-all duration-300 pointer-events-auto`}>
 
                 {/* Left Side: Logo & Version */}
-                <div className="flex items-center gap-2  md:pl-2">
+                <div className="flex items-center gap-2 md:pl-2">
                     <Link href="/" className="flex items-center shrink-0">
                         <Logo />
                     </Link>
-
                 </div>
 
                 {/* Desktop Nav Items */}
@@ -61,6 +60,27 @@ export default function Header() {
                     </button>
                 </div>
             </nav>
+
+            {/* Top Contact Strip Just Below Navbar */}
+            <div className="mt-1.5 flex items-center justify-center gap-3 sm:gap-6 px-4 py-1.5 rounded-full border border-border bg-card/95 backdrop-blur-md shadow-xs text-xs font-bold transition-all pointer-events-auto">
+                <a
+                    href="tel:+917060100562"
+                    className="flex items-center gap-1.5 text-primary hover:opacity-80 transition-opacity group"
+                    title="Call Skillyards"
+                >
+                    <Phone className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform" />
+                    <span className="font-bold">070601 00562</span>
+                </a>
+                <span className="h-3 w-px bg-border" />
+                <a
+                    href="mailto:info@skillyards.in"
+                    className="flex items-center gap-1.5 text-primary hover:opacity-80 transition-opacity group"
+                    title="Email Skillyards"
+                >
+                    <Mail className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform" />
+                    <span className="font-bold">info@skillyards.in</span>
+                </a>
+            </div>
 
             {/* Mobile Menu */}
             <AnimatePresence>
