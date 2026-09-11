@@ -24,27 +24,27 @@ const BUSINESS = {
 const SLIDES = [
   {
     id: 1,
-    src: "/carousel/InfoCarousal1.webp",
+    src: "/images/carousel/InfoCarousal1.webp",
     alt: "BCA & BBA programs with live project training",
   },
   {
     id: 2,
-    src: "/carousel/InfoCarousal2.webp",
+    src: "/images/carousel/InfoCarousal2.webp",
     alt: "100% Placement Support - Get interview-ready",
   },
   {
     id: 3,
-    src: "/carousel/InfoCarousal3.webp",
+    src: "/images/carousel/InfoCarousal3.webp",
     alt: "Full-Stack Development - Hands-on projects",
   },
   {
     id: 4,
-    src: "/carousel/InfoCarousal4.webp",
+    src: "/images/carousel/InfoCarousal4.webp",
     alt: "Full-Stack Development - Hands-on projects",
   },
   {
     id: 5,
-    src: "/carousel/InfoCarousal5.webp",
+    src: "/images/carousel/InfoCarousal5.webp",
     alt: "Full-Stack Development - Hands-on projects",
   }
 ];
