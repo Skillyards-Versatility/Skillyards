@@ -38,9 +38,9 @@ export default function MobileNav({ onClose, theme, toggleTheme }) {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 right-0 mt-2 lg:hidden w-[calc(100%-2rem)] mx-auto max-w-[1100px]"
+            className="absolute top-full left-0 right-0 mt-2 desk:hidden w-[calc(100%-2rem)] mx-auto max-w-[1100px] pointer-events-auto z-20"
         >
-            <Card className="rounded-2xl p-4 shadow-lg border border-border/60 bg-background/95 backdrop-blur-md">
+            <Card className="rounded-2xl p-4 shadow-lg border border-border/60 bg-background/95 backdrop-blur-md max-h-[calc(100vh-7rem)] overflow-y-auto pointer-events-auto">
                 <div className="flex flex-col gap-1">
                     <MobileLink href="/" onClick={onClose}>Home</MobileLink>
 
@@ -93,7 +93,7 @@ export default function MobileNav({ onClose, theme, toggleTheme }) {
 
                     <div className="border-t border-border/60 mt-2 pt-3">
                         <Link
-                            href={`tel:${process.env.NEXT_PUBLIC_PHONE}`}
+                            href={process.env.NEXT_PUBLIC_PHONE ? `tel:${process.env.NEXT_PUBLIC_PHONE}` : "/contact"}
                             onClick={onClose}
                             className="flex items-center justify-center w-[200px] text-sm font-bold text-primary-foreground bg-primary hover:bg-primary/90 transition py-2.5 px-4 mx-auto rounded-xl mb-2"
                         >
