@@ -8,13 +8,14 @@ import Link from "next/link";
 
 export const BBAHero = () => {
   return (
-    <section id="hero" className="w-full relative bg-background overflow-hidden py-8 sm:py-10 md:py-12 lg:py-16">
+    <section
+      id="hero"
+      className="w-full relative bg-background overflow-hidden py-8 sm:py-10 md:py-12 lg:py-16"
+    >
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 z-10 relative mt-10 sm:mt-12 md:mt-14 lg:mt-20">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 w-full items-center">
-
           {/* Left Column: Content */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-
             {/* Breadcrumbs */}
             <div className="w-full mb-4 flex justify-center lg:justify-start">
               <Breadcrumbs
@@ -37,14 +38,17 @@ export const BBAHero = () => {
             <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl leading-[1.1] tracking-tighter text-foreground dark:text-neutral-50 font-extrabold">
               BBA in Agra.
               <br />
-              <span className="text-primary italic">Learn Business by Doing Business.</span>
+              <span className="text-primary italic">
+                Learn Business by Doing Business.
+              </span>
             </h1>
 
             {/* Body */}
             <p className="mt-4 md:mt-6 text-sm sm:text-base md:text-lg text-muted-foreground dark:text-neutral-400 max-w-xl leading-relaxed">
-               This program is for students who want a BBA degree with practical digital
-               marketing skills. SEO, Google Ads, Meta Ads. You learn them hands-on
-               alongside your degree subjects, every day. No prior business knowledge needed.
+              This program is for students who want a BBA degree with practical
+              digital marketing skills. SEO, Google Ads, Meta Ads. You learn
+              them hands-on alongside your degree subjects, every day. No prior
+              business knowledge needed.
             </p>
 
             {/* CTAs */}
@@ -54,7 +58,8 @@ export const BBAHero = () => {
                   size="lg"
                   className="w-full rounded-full bg-primary text-primary-foreground px-6 md:px-8 py-5 md:py-6 text-sm md:text-base font-extrabold hover:bg-primary/90 hover:scale-105 shadow-xl shadow-primary/20 transition-all"
                 >
-                  See the Curriculum <ArrowRight size={18} className="ml-2 shrink-0" />
+                  See the Curriculum{" "}
+                  <ArrowRight size={18} className="ml-2 shrink-0" />
                 </Button>
               </Link>
               <Link href="/contact" className="w-full sm:w-auto">
@@ -96,7 +101,6 @@ export const BBAHero = () => {
             />
             <div className="absolute inset-0 bg-linear-to-t from-background/80 dark:from-neutral-950/90 via-background/10 to-transparent" />
           </div>
-
         </div>
       </div>
     </section>

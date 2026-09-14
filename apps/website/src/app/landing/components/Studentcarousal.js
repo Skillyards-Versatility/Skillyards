@@ -145,7 +145,9 @@ export default function StudentCarousel() {
             onClick={() => scrollToIndex(i)}
             aria-label={`Go to slide ${i + 1}`}
             className={`h-2.5 rounded-full transition-all ${
-              activeIndex === i ? "w-8 bg-[#030e5a] dark:bg-[#d4c2fc]" : "w-2.5 bg-gray-300 dark:bg-gray-600"
+              activeIndex === i
+                ? "w-8 bg-[#030e5a] dark:bg-[#d4c2fc]"
+                : "w-2.5 bg-gray-300 dark:bg-gray-600"
             }`}
           />
         ))}

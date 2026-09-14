@@ -1,7 +1,9 @@
 const API_URL = "http://localhost:3002/api/enquiries";
 
 async function testPublicEnquiry() {
-  console.log("🚀 Testing Public Enquiry POST (Structural Fix Verification)...");
+  console.log(
+    "🚀 Testing Public Enquiry POST (Structural Fix Verification)...",
+  );
 
   const payload = {
     firstName: "Test",
@@ -9,14 +11,14 @@ async function testPublicEnquiry() {
     email: "test@example.com",
     phone: "9876543210",
     message: "Structural enforcement testing.",
-    captchaToken: "test-token"
+    captchaToken: "test-token",
   };
 
   try {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
     });
 
     const data = await response.json();

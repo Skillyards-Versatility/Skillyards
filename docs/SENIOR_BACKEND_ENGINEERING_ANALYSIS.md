@@ -2,11 +2,6 @@
 
 ---
 
-
-
-
-
-
 ## 1. MONOREPO ARCHITECTURE
 
 ### What problem it solves
@@ -58,8 +53,8 @@ createProtectedRoute(handler, {
   policy: permissions.canAccessReceipt,
   resourceLoader: loadPaymentById,
   isPublic: false,
-  internalServiceOnly: false
-})
+  internalServiceOnly: false,
+});
 ```
 
 This single call handles: CORS preflight → internal key validation → authentication → rate limiting → resource pre-loading → authorization policy evaluation → request correlation. The handler never runs security logic directly.
@@ -81,8 +76,8 @@ The enquiry endpoint does synchronous reCAPTCHA verification before touching the
 ### Defensive signal: non-blocking email
 
 ```js
-sendAdminEnquiryNotification(enquiry)  // fire and forget
-sendUserConfirmation(enquiry)          // fire and forget
+sendAdminEnquiryNotification(enquiry); // fire and forget
+sendUserConfirmation(enquiry); // fire and forget
 ```
 
 Email delivery is not awaited. If Resend is down, the lead is still captured. This is the correct operational decision — your lead pipeline's success rate should not be coupled to your email provider's uptime.
@@ -356,17 +351,17 @@ Rewritten bullets positioned for backend/platform engineering roles:
 
 ### What signals strong engineering maturity
 
-| Signal | Why it matters |
-|---|---|
-| State machine on `receiptStatus` | Forces reasoning about all transitions including failure and recovery |
-| CAS operations for job claiming | You understand race conditions in concurrent systems |
-| Stale lock recovery after 60s | You understand distributed partial failure modes |
-| Non-blocking email delivery | You understand failure isolation across service boundaries |
-| JSONB snapshots for test sessions | You understand audit trail and immutability requirements |
-| Shared `packages/db` as contract layer | You understand dependency ownership at the organizational level |
-| PDF service isolated from serverless | You understand infrastructure execution model constraints |
-| `payment_allocations` junction table | You don't shortcut financial data models |
-| R2 over S3 for egress cost | You think about operational costs, not just implementation costs |
+| Signal                                 | Why it matters                                                        |
+| -------------------------------------- | --------------------------------------------------------------------- |
+| State machine on `receiptStatus`       | Forces reasoning about all transitions including failure and recovery |
+| CAS operations for job claiming        | You understand race conditions in concurrent systems                  |
+| Stale lock recovery after 60s          | You understand distributed partial failure modes                      |
+| Non-blocking email delivery            | You understand failure isolation across service boundaries            |
+| JSONB snapshots for test sessions      | You understand audit trail and immutability requirements              |
+| Shared `packages/db` as contract layer | You understand dependency ownership at the organizational level       |
+| PDF service isolated from serverless   | You understand infrastructure execution model constraints             |
+| `payment_allocations` junction table   | You don't shortcut financial data models                              |
+| R2 over S3 for egress cost             | You think about operational costs, not just implementation costs      |
 
 ### What still looks junior (honest)
 

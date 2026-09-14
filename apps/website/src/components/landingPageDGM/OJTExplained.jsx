@@ -1,7 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BarChart2, CheckCircle, FileBarChart, Lightbulb, PenSquare, Search, Target } from "lucide-react";
+import {
+  BarChart2,
+  CheckCircle,
+  FileBarChart,
+  Lightbulb,
+  PenSquare,
+  Search,
+  Target,
+} from "lucide-react";
 
 const practicePoints = [
   { icon: Search, text: "SEO audit and keyword research reports" },
@@ -33,7 +41,10 @@ export function DGMOJTExplained() {
             <span className="text-primary">Not Just Theory</span>
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-muted-foreground">
-            At SkillYards, students work on mentor-guided practical projects, SEO audits, ad campaign planning, reporting exercises, and portfolio-ready case work. Selected students may also get exposure to live business campaigns where available.
+            At SkillYards, students work on mentor-guided practical projects,
+            SEO audits, ad campaign planning, reporting exercises, and
+            portfolio-ready case work. Selected students may also get exposure
+            to live business campaigns where available.
           </p>
         </div>
 
@@ -52,7 +63,9 @@ export function DGMOJTExplained() {
                 <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
                   <Icon size={18} className="text-primary" />
                 </div>
-                <p className="text-sm font-medium leading-relaxed text-foreground">{item.text}</p>
+                <p className="text-sm font-medium leading-relaxed text-foreground">
+                  {item.text}
+                </p>
               </motion.div>
             );
           })}
@@ -64,7 +77,9 @@ export function DGMOJTExplained() {
           viewport={{ once: true }}
           className="mt-10 rounded-3xl border border-border bg-card p-6 shadow-sm"
         >
-          <h3 className="mb-5 font-serif text-xl font-extrabold text-foreground">What students actually practice:</h3>
+          <h3 className="mb-5 font-serif text-xl font-extrabold text-foreground">
+            What students actually practice:
+          </h3>
           <div className="grid gap-2 sm:grid-cols-2">
             {[
               "Mentor-guided project execution",
@@ -76,7 +91,9 @@ export function DGMOJTExplained() {
             ].map((item) => (
               <div key={item} className="flex items-center gap-3">
                 <CheckCircle size={16} className="shrink-0 text-green-500" />
-                <span className="text-sm font-medium text-foreground">{item}</span>
+                <span className="text-sm font-medium text-foreground">
+                  {item}
+                </span>
               </div>
             ))}
           </div>

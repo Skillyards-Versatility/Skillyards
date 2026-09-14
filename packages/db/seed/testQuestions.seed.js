@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { db } from "../src/client.js"; 
+import { db } from "../src/client.js";
 import { testQuestions } from "../src/schema/testQuestions.js";
 import { TEST_QUESTIONS } from "./questions.data.js";
 
@@ -16,10 +16,7 @@ async function seedTestQuestions() {
       isActive: true,
     }));
 
-    await db
-      .insert(testQuestions)
-      .values(data)
-      .onConflictDoNothing();
+    await db.insert(testQuestions).values(data).onConflictDoNothing();
 
     console.log(`Seeded ${data.length} questions`);
   } catch (err) {

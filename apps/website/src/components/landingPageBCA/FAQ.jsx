@@ -9,43 +9,53 @@ import { getFaqAnchorId } from "@/lib/seo/faqUtils";
 const defaultFaqs = [
   {
     question: "What is the eligibility for BCA at SkillYards?",
-    answer: "BCA requires 12th pass from a Science stream with a minimum of 50% aggregate marks. There is no entrance exam, just a counselling session to confirm the program is the right fit.",
+    answer:
+      "BCA requires 12th pass from a Science stream with a minimum of 50% aggregate marks. There is no entrance exam, just a counselling session to confirm the program is the right fit.",
   },
   {
     question: "Do I need prior coding experience to join?",
-    answer: "No. The curriculum starts from fundamentals, computer basics, networking, mathematics and C/C++, before moving into full-stack development. You don't need to know how to code before joining.",
+    answer:
+      "No. The curriculum starts from fundamentals, computer basics, networking, mathematics and C/C++, before moving into full-stack development. You don't need to know how to code before joining.",
   },
   {
     question: "Is the BCA degree from a recognised university?",
-    answer: "Yes. The BCA is university-affiliated. Details of the affiliated university are shared during your free counselling session.",
+    answer:
+      "Yes. The BCA is university-affiliated. Details of the affiliated university are shared during your free counselling session.",
   },
   {
     question: "What is the fee for the BCA program?",
-    answer: "The program starts from Rs 5,000 per month. EMI and instalment options are available. The exact fee depends on applicable scholarships and discounts, our counsellors walk you through the full breakdown. There are no hidden fees.",
+    answer:
+      "The program starts from Rs 5,000 per month. EMI and instalment options are available. The exact fee depends on applicable scholarships and discounts, our counsellors walk you through the full breakdown. There are no hidden fees.",
   },
   {
     question: "What technologies will I learn?",
-    answer: "You'll learn the MERN stack, MongoDB, Express.js, React and Node.js, along with HTML, CSS, JavaScript, Data Structures, Algorithms, Database Management and deployment. The full semester-by-semester breakdown is in the curriculum section above.",
+    answer:
+      "You'll learn the MERN stack, MongoDB, Express.js, React and Node.js, along with HTML, CSS, JavaScript, Data Structures, Algorithms, Database Management and deployment. The full semester-by-semester breakdown is in the curriculum section above.",
   },
   {
     question: "How is this different from a regular BCA college?",
-    answer: "A regular BCA college focuses on theory and exams. At SkillYards, you spend the majority of each day writing code alongside your degree subjects. You graduate with a BCA degree and a portfolio of real projects, not just a certificate.",
+    answer:
+      "A regular BCA college focuses on theory and exams. At SkillYards, you spend the majority of each day writing code alongside your degree subjects. You graduate with a BCA degree and a portfolio of real projects, not just a certificate.",
   },
   {
     question: "Are there placements for BCA students?",
-    answer: "Yes. 15 students from our first batch are already placed at SN Digitech and 7th Triangle as Frontend and Full-Stack Developers at an average package of Rs 5.5 LPA. We're a young institute and we share real numbers, not inflated ones.",
+    answer:
+      "Yes. 15 students from our first batch are already placed at SN Digitech and 7th Triangle as Frontend and Full-Stack Developers at an average package of Rs 5.5 LPA. We're a young institute and we share real numbers, not inflated ones.",
   },
   {
     question: "What if I fail a university exam?",
-    answer: "We support you through re-attempts. Your coding training continues regardless, one exam setback doesn't stop your progress with us.",
+    answer:
+      "We support you through re-attempts. Your coding training continues regardless, one exam setback doesn't stop your progress with us.",
   },
   {
     question: "When does the next batch start?",
-    answer: "August 2026. Each batch is limited to 35 seats. Once seats are filled, the next intake is a full year away.",
+    answer:
+      "August 2026. Each batch is limited to 35 seats. Once seats are filled, the next intake is a full year away.",
   },
   {
     question: "I'm not from a Science background, can I still join?",
-    answer: "BCA requires a Science background at 12th level. If you're from Commerce or Arts, our BBA with Digital Marketing program is open to any stream. <a href='/programs/on-job-degree' class='font-bold text-primary underline underline-offset-4 hover:opacity-80'>Compare both programs</a>.",
+    answer:
+      "BCA requires a Science background at 12th level. If you're from Commerce or Arts, our BBA with Digital Marketing program is open to any stream. <a href='/programs/on-job-degree' class='font-bold text-primary underline underline-offset-4 hover:opacity-80'>Compare both programs</a>.",
   },
 ];
 
@@ -99,10 +109,14 @@ export function BCAFAQ({ faqs: faqsProp }) {
                     onClick={() => setOpenIndex(isOpen ? null : idx)}
                     className="flex w-full items-center justify-between p-5 text-left"
                   >
-                    <span className={`text-sm font-bold transition-colors sm:text-base ${isOpen ? "text-primary" : "text-foreground"}`}>
+                    <span
+                      className={`text-sm font-bold transition-colors sm:text-base ${isOpen ? "text-primary" : "text-foreground"}`}
+                    >
                       {faq.question}
                     </span>
-                    <span className={`ml-4 shrink-0 rounded-full p-1.5 transition-all ${isOpen ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                    <span
+                      className={`ml-4 shrink-0 rounded-full p-1.5 transition-all ${isOpen ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                    >
                       {isOpen ? <Minus size={14} /> : <Plus size={14} />}
                     </span>
                   </button>
@@ -115,7 +129,7 @@ export function BCAFAQ({ faqs: faqsProp }) {
                   initial={false}
                   animate={{
                     height: isOpen ? "auto" : 0,
-                    opacity: isOpen ? 1 : 0
+                    opacity: isOpen ? 1 : 0,
                   }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                   className="overflow-hidden"
@@ -131,7 +145,10 @@ export function BCAFAQ({ faqs: faqsProp }) {
 
         <p className="mt-8 text-center text-sm text-muted-foreground">
           Still have questions?{" "}
-          <Link href="/contact" className="font-bold text-primary underline underline-offset-4 hover:opacity-80">
+          <Link
+            href="/contact"
+            className="font-bold text-primary underline underline-offset-4 hover:opacity-80"
+          >
             Talk to our team
           </Link>
         </p>

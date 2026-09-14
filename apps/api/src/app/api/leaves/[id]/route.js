@@ -11,7 +11,7 @@ async function patchHandler(req, { context, ctx, resource }) {
     if (!status || !["APPROVED", "REJECTED"].includes(status)) {
       return Response.json(
         { success: false, message: "Invalid status" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -25,7 +25,7 @@ async function patchHandler(req, { context, ctx, resource }) {
     if (user.role !== "ADMIN" && user.role !== "MANAGER") {
       return Response.json(
         { success: false, message: "Unauthorized to update leave status" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -39,21 +39,24 @@ async function patchHandler(req, { context, ctx, resource }) {
     if (!leaveRecord) {
       return Response.json(
         { success: false, message: "Leave not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (leaveRecord.userId === ctx.session.userId) {
       return Response.json(
-        { success: false, message: "You cannot approve or reject your own leave" },
-        { status: 403 }
+        {
+          success: false,
+          message: "You cannot approve or reject your own leave",
+        },
+        { status: 403 },
       );
     }
 
     const updateData = {
       status,
       approvedById: ctx.session.userId,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     if (status === "REJECTED" && rejectionReason) {
@@ -66,7 +69,11 @@ async function patchHandler(req, { context, ctx, resource }) {
       .where(eq(leaves.id, id))
       .returning();
 
-    ctx.log("LEAVE_STATUS_UPDATED", { userId: ctx.session.userId, leaveId: id, status });
+    ctx.log("LEAVE_STATUS_UPDATED", {
+      userId: ctx.session.userId,
+      leaveId: id,
+      status,
+    });
 
     // Notify applicant
     try {
@@ -89,7 +96,7 @@ async function patchHandler(req, { context, ctx, resource }) {
           approvedByName: user.name,
           rejectionReason: result.rejectionReason,
         }).catch((err) =>
-          ctx.error("LEAVE_STATUS_NOTIFICATION_FAILED", { error: err.message })
+          ctx.error("LEAVE_STATUS_NOTIFICATION_FAILED", { error: err.message }),
         );
       }
     } catch (notifErr) {
@@ -101,7 +108,7 @@ async function patchHandler(req, { context, ctx, resource }) {
     ctx.error("LEAVE_UPDATE_FAILED", { error: error.message });
     return Response.json(
       { success: false, message: "Failed to update leave" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -109,7 +116,11 @@ async function patchHandler(req, { context, ctx, resource }) {
 export const PATCH = createProtectedRoute(patchHandler, {
   isPublic: false,
   resourceLoader: async (id) => {
-    const [leave] = await db.select().from(leaves).where(eq(leaves.id, id)).limit(1);
+    const [leave] = await db
+      .select()
+      .from(leaves)
+      .where(eq(leaves.id, id))
+      .limit(1);
     return leave || null;
   },
   policy: (session, resource) => ({

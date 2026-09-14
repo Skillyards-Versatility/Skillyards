@@ -3,7 +3,15 @@ import { eq, and, gte, lte, desc } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
 import { getIstDate, isIstBeforeCutoff, isIstSunday } from "@/lib/ist.js";
 
-const VALID_TEAMS = ["sales", "tech", "hr", "ceo_office", "admin_head", "marketing", "outside_sales"];
+const VALID_TEAMS = [
+  "sales",
+  "tech",
+  "hr",
+  "ceo_office",
+  "admin_head",
+  "marketing",
+  "outside_sales",
+];
 
 async function postHandler(req, { ctx }) {
   try {
@@ -12,7 +20,7 @@ async function postHandler(req, { ctx }) {
     if (!date || !data) {
       return Response.json(
         { success: false, message: "date and data are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -20,15 +28,18 @@ async function postHandler(req, { ctx }) {
     if (isIstSunday() || new Date(date).getDay() === 0) {
       return Response.json(
         { success: false, message: "Submissions are closed on Sundays" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Cutoff check
     if (!isIstBeforeCutoff()) {
       return Response.json(
-        { success: false, message: "Submission cutoff (7:30 PM IST) has passed" },
-        { status: 400 }
+        {
+          success: false,
+          message: "Submission cutoff (7:30 PM IST) has passed",
+        },
+        { status: 400 },
       );
     }
 
@@ -42,7 +53,7 @@ async function postHandler(req, { ctx }) {
     if (!user?.team) {
       return Response.json(
         { success: false, message: "You are not assigned to a team" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -53,8 +64,8 @@ async function postHandler(req, { ctx }) {
       .where(
         and(
           eq(eodReports.userId, ctx.session.userId),
-          eq(eodReports.date, date)
-        )
+          eq(eodReports.date, date),
+        ),
       )
       .limit(1);
 
@@ -78,14 +89,18 @@ async function postHandler(req, { ctx }) {
         .returning();
     }
 
-    ctx.log("EOD_REPORT_SAVED", { userId: ctx.session.userId, date, team: user.team });
+    ctx.log("EOD_REPORT_SAVED", {
+      userId: ctx.session.userId,
+      date,
+      team: user.team,
+    });
 
     return Response.json({ success: true, report: result });
   } catch (error) {
     ctx.error("EOD_REPORT_SAVE_FAILED", { error: error.message });
     return Response.json(
       { success: false, message: "Failed to save report" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -122,7 +137,7 @@ async function getHandler(req, { ctx }) {
     ctx.error("EOD_REPORTS_FETCH_FAILED", { error: error.message });
     return Response.json(
       { success: false, message: "Failed to fetch reports" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -134,7 +149,7 @@ async function putHandler(req, { ctx }) {
     if (!id || !data) {
       return Response.json(
         { success: false, message: "id and data are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -148,14 +163,14 @@ async function putHandler(req, { ctx }) {
     if (!existing) {
       return Response.json(
         { success: false, message: "Report not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
     if (existing.userId !== ctx.session.userId) {
       return Response.json(
         { success: false, message: "Cannot edit another user's report" },
-        { status: 403 }
+        { status: 403 },
       );
     }
 
@@ -163,7 +178,7 @@ async function putHandler(req, { ctx }) {
     if (!isIstBeforeCutoff()) {
       return Response.json(
         { success: false, message: "Cannot edit after 7:30 PM IST cutoff" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -180,7 +195,7 @@ async function putHandler(req, { ctx }) {
     ctx.error("EOD_REPORT_UPDATE_FAILED", { error: error.message });
     return Response.json(
       { success: false, message: "Failed to update report" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

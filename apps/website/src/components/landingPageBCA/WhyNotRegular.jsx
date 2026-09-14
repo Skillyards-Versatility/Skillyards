@@ -37,11 +37,12 @@ export function WhyNotRegular() {
             Why not just do a regular BCA?
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Every BCA college in Agra teaches you the university syllabus. You study theory, sit
-            exams and graduate with a degree. Then you sit in an interview and the employer says:
-            &quot;Can you show me something you built?&quot; Most BCA graduates from regular
-            colleges can&apos;t. SkillYards fixes that. Not by replacing the degree, but by making
-            sure you write code every single day of it.
+            Every BCA college in Agra teaches you the university syllabus. You
+            study theory, sit exams and graduate with a degree. Then you sit in
+            an interview and the employer says: &quot;Can you show me something
+            you built?&quot; Most BCA graduates from regular colleges
+            can&apos;t. SkillYards fixes that. Not by replacing the degree, but
+            by making sure you write code every single day of it.
           </p>
         </div>
 
@@ -52,11 +53,18 @@ export function WhyNotRegular() {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}                    className="flex flex-col rounded-2xl border border-border/50 bg-card p-5 sm:p-6 shadow-sm"
+              transition={{ delay: i * 0.1 }}
+              className="flex flex-col rounded-2xl border border-border/50 bg-card p-5 sm:p-6 shadow-sm"
             >
-              <span className="mb-4 text-5xl font-black text-primary/15">{card.number}</span>
-              <h3 className="mb-3 font-serif text-lg font-extrabold text-foreground">{card.title}</h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">{card.body}</p>
+              <span className="mb-4 text-5xl font-black text-primary/15">
+                {card.number}
+              </span>
+              <h3 className="mb-3 font-serif text-lg font-extrabold text-foreground">
+                {card.title}
+              </h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
+                {card.body}
+              </p>
             </motion.div>
           ))}
         </div>

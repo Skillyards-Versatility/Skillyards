@@ -30,9 +30,10 @@ export default function FinalCTA() {
           transition={{ delay: 0.1 }}
           className="mx-auto mt-5 max-w-xl text-base text-primary-foreground/75"
         >
-          Talk to our counselling team. They&apos;ll ask you a few questions about your interests and
-          background and give you an honest recommendation, not a sales pitch. The call is free
-          and takes about 15 minutes.
+          Talk to our counselling team. They&apos;ll ask you a few questions
+          about your interests and background and give you an honest
+          recommendation, not a sales pitch. The call is free and takes about 15
+          minutes.
         </motion.p>
 
         <motion.div

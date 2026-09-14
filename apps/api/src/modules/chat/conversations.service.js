@@ -9,7 +9,11 @@ export async function getConversation(db, conversationId) {
 }
 
 export async function createDirectConversation(db, userId, otherUserId) {
-  const existing = await convRepo.findDirectConversation(db, userId, otherUserId);
+  const existing = await convRepo.findDirectConversation(
+    db,
+    userId,
+    otherUserId,
+  );
   if (existing) return existing;
   const conv = await convRepo.createConversationRecord(db, {
     type: "direct",
@@ -20,7 +24,10 @@ export async function createDirectConversation(db, userId, otherUserId) {
 }
 
 export async function createGroupConversation(db, data, userId) {
-  const allParticipants = [userId, ...data.participantIds.filter((id) => id !== userId)];
+  const allParticipants = [
+    userId,
+    ...data.participantIds.filter((id) => id !== userId),
+  ];
   const conv = await convRepo.createConversationRecord(db, {
     type: "group",
     name: data.name || null,

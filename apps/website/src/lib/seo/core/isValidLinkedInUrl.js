@@ -41,4 +41,3 @@ export function isValidLinkedInUrl(url) {
 
   return true;
 }
-

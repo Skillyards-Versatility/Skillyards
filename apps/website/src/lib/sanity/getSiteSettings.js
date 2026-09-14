@@ -9,7 +9,7 @@ export const getAllOgImages = cache(async () => {
         ogImages
       }`,
       {},
-      { next: { revalidate: 3600 } }
+      { next: { revalidate: 3600 } },
     );
 
     const ogImages = settings?.ogImages || {};

@@ -85,12 +85,12 @@ apps/website/src/lib/sanity/
 
 Groups FAQs by topic. There are 7 categories in production.
 
-| Field | Type | Notes |
-|---|---|---|
-| `title` | string | Display name — "Full-Stack Dev", "General", etc. |
-| `slug` | slug | Auto from title. Used as the lookup key in GROQ queries. |
-| `description` | text | Shown as subtitle in the FAQ accordion |
-| `order` | number | Lower = appears first in sidebar |
+| Field         | Type   | Notes                                                    |
+| ------------- | ------ | -------------------------------------------------------- |
+| `title`       | string | Display name — "Full-Stack Dev", "General", etc.         |
+| `slug`        | slug   | Auto from title. Used as the lookup key in GROQ queries. |
+| `description` | text   | Shown as subtitle in the FAQ accordion                   |
+| `order`       | number | Lower = appears first in sidebar                         |
 
 **Current slugs:** `homepage`, `general`, `fullstack`, `digitalmarketing`, `degrees`, `support`, `test`
 
@@ -100,16 +100,16 @@ Groups FAQs by topic. There are 7 categories in production.
 
 Individual FAQ question/answer pair.
 
-| Field | Type | Notes |
-|---|---|---|
-| `question` | string | 10–200 chars. Required. |
-| `answer` | text | Min 20 chars. Can include basic HTML (links, `<strong>`). Required. |
-| `category` | reference → faqCategory | Required. Determines which page group this belongs to. |
-| `slug` | slug | Auto from question. Used for future individual FAQ pages. |
-| `order` | number | Lower = appears first within the category. |
-| `focusKeyphrase` | string | SEO: the primary keyword this FAQ should rank for. |
-| `targetPages` | array of strings | Which pages display this FAQ. e.g. `["/", "/programs"]` |
-| `isActive` | boolean | Default true. Uncheck to hide without deleting. |
+| Field            | Type                    | Notes                                                               |
+| ---------------- | ----------------------- | ------------------------------------------------------------------- |
+| `question`       | string                  | 10–200 chars. Required.                                             |
+| `answer`         | text                    | Min 20 chars. Can include basic HTML (links, `<strong>`). Required. |
+| `category`       | reference → faqCategory | Required. Determines which page group this belongs to.              |
+| `slug`           | slug                    | Auto from question. Used for future individual FAQ pages.           |
+| `order`          | number                  | Lower = appears first within the category.                          |
+| `focusKeyphrase` | string                  | SEO: the primary keyword this FAQ should rank for.                  |
+| `targetPages`    | array of strings        | Which pages display this FAQ. e.g. `["/", "/programs"]`             |
+| `isActive`       | boolean                 | Default true. Uncheck to hide without deleting.                     |
 
 **To hide an FAQ without deleting it:** set `isActive` to false in Sanity Studio.
 
@@ -119,17 +119,17 @@ Individual FAQ question/answer pair.
 
 Training program batch info shown on the homepage and programs page.
 
-| Field | Type | Notes |
-|---|---|---|
-| `program` | string | e.g. "Full-Stack Development", "BCA" |
-| `nextBatch` | string | e.g. "July 2026" |
-| `duration` | string | e.g. "6 Months" |
-| `fee` | string | e.g. "Starting ₹25,000" |
-| `image` | image | Batch card thumbnail |
-| `emiAvailable` | boolean | Shows EMI badge if true |
-| `seatsLeft` | number | Shown as urgency indicator |
-| `ctaLink` | string | Default `/contact` |
-| `order` | number | Display order |
+| Field          | Type    | Notes                                |
+| -------------- | ------- | ------------------------------------ |
+| `program`      | string  | e.g. "Full-Stack Development", "BCA" |
+| `nextBatch`    | string  | e.g. "July 2026"                     |
+| `duration`     | string  | e.g. "6 Months"                      |
+| `fee`          | string  | e.g. "Starting ₹25,000"              |
+| `image`        | image   | Batch card thumbnail                 |
+| `emiAvailable` | boolean | Shows EMI badge if true              |
+| `seatsLeft`    | number  | Shown as urgency indicator           |
+| `ctaLink`      | string  | Default `/contact`                   |
+| `order`        | number  | Display order                        |
 
 ---
 
@@ -137,33 +137,33 @@ Training program batch info shown on the homepage and programs page.
 
 Blog content. Supports 5 content types via the `contentType` field.
 
-| `contentType` value | Purpose | Length |
-|---|---|---|
-| `pillar-brand` | Main topic authority page | 2500–4000 words |
-| `pillar-sub` | Sub-topic under a pillar | — |
-| `cluster` | Supporting article | 800–1800 words |
-| `comparison` | Comparison piece | — |
-| `news` | Media coverage / SkillYards Times | — |
+| `contentType` value | Purpose                           | Length          |
+| ------------------- | --------------------------------- | --------------- |
+| `pillar-brand`      | Main topic authority page         | 2500–4000 words |
+| `pillar-sub`        | Sub-topic under a pillar          | —               |
+| `cluster`           | Supporting article                | 800–1800 words  |
+| `comparison`        | Comparison piece                  | —               |
+| `news`              | Media coverage / SkillYards Times | —               |
 
 **Key fields:**
 
-| Field | Notes |
-|---|---|
-| `title` | 20–120 chars. Appears as H1. |
-| `slug` | Auto from title. Forms the URL `/blog/[slug]`. |
-| `excerpt` | 80–160 chars. Becomes meta description. |
-| `coverImage` | Required. Shown in blog card and post header. |
-| `publishedAt` | Datetime. Controls order and sitemap `lastmod`. |
-| `content` | Portable Text (rich text, images, code blocks). |
-| `author` | Reference to author document. |
-| `contentType` | Determines layout and pillar relationships. |
-| `parentPillar` | Reference to parent post (for clusters/sub-pillars). |
-| `tags` | 2–8 tag references. Used for filtering and related articles. |
-| `category` | Enum: `full-stack`, `digital-marketing`, `career-guidance`, `industry-news`, etc. |
-| `relatedMoneyPages` | Internal CTA links to conversion pages (max 5). |
-| `siblingArticles` | Related posts shown at bottom (max 4). |
-| `seoTitle` | Optional override for `<title>` tag (max 60 chars). |
-| `noIndex` | Boolean. Set true to exclude from search engines. |
+| Field               | Notes                                                                             |
+| ------------------- | --------------------------------------------------------------------------------- |
+| `title`             | 20–120 chars. Appears as H1.                                                      |
+| `slug`              | Auto from title. Forms the URL `/blog/[slug]`.                                    |
+| `excerpt`           | 80–160 chars. Becomes meta description.                                           |
+| `coverImage`        | Required. Shown in blog card and post header.                                     |
+| `publishedAt`       | Datetime. Controls order and sitemap `lastmod`.                                   |
+| `content`           | Portable Text (rich text, images, code blocks).                                   |
+| `author`            | Reference to author document.                                                     |
+| `contentType`       | Determines layout and pillar relationships.                                       |
+| `parentPillar`      | Reference to parent post (for clusters/sub-pillars).                              |
+| `tags`              | 2–8 tag references. Used for filtering and related articles.                      |
+| `category`          | Enum: `full-stack`, `digital-marketing`, `career-guidance`, `industry-news`, etc. |
+| `relatedMoneyPages` | Internal CTA links to conversion pages (max 5).                                   |
+| `siblingArticles`   | Related posts shown at bottom (max 4).                                            |
+| `seoTitle`          | Optional override for `<title>` tag (max 60 chars).                               |
+| `noIndex`           | Boolean. Set true to exclude from search engines.                                 |
 
 **News-only fields:** `sourceName`, `sourceLanguage`, `sourceDate`, `sourceUrl`, `clippingImage`, `englishSummary`
 
@@ -171,15 +171,15 @@ Blog content. Supports 5 content types via the `contentType` field.
 
 ### `author`
 
-| Field | Notes |
-|---|---|
-| `name` | Display name |
-| `slug` | Auto from name |
-| `image` | Author photo (shown on blog cards + post header) |
-| `role` | e.g. "CEO", "Full Stack Developer" |
-| `shortBio` | Shown on post byline |
-| `linkedinUrl` | Must be a real LinkedIn URL |
-| `expertise` | Array of topic strings (React, SEO, etc.) |
+| Field         | Notes                                            |
+| ------------- | ------------------------------------------------ |
+| `name`        | Display name                                     |
+| `slug`        | Auto from name                                   |
+| `image`       | Author photo (shown on blog cards + post header) |
+| `role`        | e.g. "CEO", "Full Stack Developer"               |
+| `shortBio`    | Shown on post byline                             |
+| `linkedinUrl` | Must be a real LinkedIn URL                      |
+| `expertise`   | Array of topic strings (React, SEO, etc.)        |
 
 ---
 
@@ -187,10 +187,10 @@ Blog content. Supports 5 content types via the `contentType` field.
 
 Simple label used on blog posts for taxonomy.
 
-| Field | Notes |
-|---|---|
-| `title` | 2–40 chars. Use kebab-case. |
-| `slug` | Auto from title (max 50 chars). |
+| Field   | Notes                           |
+| ------- | ------------------------------- |
+| `title` | 2–40 chars. Use kebab-case.     |
+| `slug`  | Auto from title (max 50 chars). |
 
 ---
 
@@ -205,7 +205,7 @@ export const sanityClient = createClient({
   projectId: "2it7abok",
   dataset: "production",
   apiVersion: "2024-01-01",
-  useCdn: true,        // reads from CDN cache — fast, slightly stale
+  useCdn: true, // reads from CDN cache — fast, slightly stale
 });
 ```
 
@@ -215,17 +215,17 @@ export const sanityClient = createClient({
 
 All queries are in `apps/website/src/lib/sanity/queries.js`.
 
-| Export Name | What It Fetches | Used By |
-|---|---|---|
-| `POSTS_QUERY` | All blog posts (desc by date) | Blog list page |
-| `HOMEPAGE_POSTS_QUERY` | Latest 3 blog posts | Homepage blog section |
-| `POST_BY_SLUG_QUERY` | Single post by slug (full content) | Blog `[slug]` page |
-| `PILLAR_CHILDREN_QUERY` | Posts under a parent pillar | Blog pillar pages |
-| `FEATURED_PILLARS_QUERY` | Top 4 pillar posts | Blog list featured section |
-| `NEWS_POSTS_QUERY` | Top 4 news posts | Blog list news section |
-| `BATCHES_QUERY` | All batch documents (asc by order) | Homepage, Programs page |
-| `FAQS_BY_CATEGORY_QUERY` | FAQs for one category slug | Individual pages |
-| `ALL_FAQ_CATEGORIES_QUERY` | All categories + nested FAQs | `/faqs` page |
+| Export Name                | What It Fetches                    | Used By                    |
+| -------------------------- | ---------------------------------- | -------------------------- |
+| `POSTS_QUERY`              | All blog posts (desc by date)      | Blog list page             |
+| `HOMEPAGE_POSTS_QUERY`     | Latest 3 blog posts                | Homepage blog section      |
+| `POST_BY_SLUG_QUERY`       | Single post by slug (full content) | Blog `[slug]` page         |
+| `PILLAR_CHILDREN_QUERY`    | Posts under a parent pillar        | Blog pillar pages          |
+| `FEATURED_PILLARS_QUERY`   | Top 4 pillar posts                 | Blog list featured section |
+| `NEWS_POSTS_QUERY`         | Top 4 news posts                   | Blog list news section     |
+| `BATCHES_QUERY`            | All batch documents (asc by order) | Homepage, Programs page    |
+| `FAQS_BY_CATEGORY_QUERY`   | FAQs for one category slug         | Individual pages           |
+| `ALL_FAQ_CATEGORIES_QUERY` | All categories + nested FAQs       | `/faqs` page               |
 
 ### Image URLs
 
@@ -234,28 +234,28 @@ To generate image URLs from Sanity image references:
 ```js
 import { urlFor } from "@/lib/sanity/image";
 
-<Image src={urlFor(post.coverImage).width(800).url()} />
+<Image src={urlFor(post.coverImage).width(800).url()} />;
 ```
 
 ---
 
 ## 5. Data Flow: Page by Page
 
-| Page | Sanity Data Used | Query / Function | Revalidate |
-|---|---|---|---|
-| `/` (Homepage) | Batch info, 4 homepage FAQs | `BATCHES_QUERY`, `getPageFaqs("homepage", 4)` | 24h |
-| `/programs` | Batch info, 5 general FAQs | `BATCHES_QUERY`, `getPageFaqs("general", 5)` | 24h |
-| `/programs/on-job-degree` | 6 degree FAQs | `getPageFaqs("degrees", 6)` | 24h |
-| `/programs/on-job-training` | 6 general FAQs | `getPageFaqs("general", 6)` | 24h |
-| `/faqs` | All categories + all FAQs | `getAllFaqCategories()` | 24h |
-| `/about` | 4 homepage FAQs | `getPageFaqs("homepage", 4)` | 24h |
-| `/support` | All support FAQs (multi-tab) | `getAllFaqCategories()` → filtered | 24h |
-| `/10-minutes-test` | Test FAQs | `getPageFaqs("test")` | 24h |
-| `/full-stack-web-development-training-in-agra` | Fullstack FAQs | `getPageFaqs("fullstack")` | 24h |
-| `/digital-marketing-course-in-agra` | DGM FAQs | `getPageFaqs("digitalmarketing")` | 24h |
-| `/blog` | All posts, featured pillars | `POSTS_QUERY`, `FEATURED_PILLARS_QUERY` | 1h |
-| `/blog/[slug]` | Single post (full content) | `POST_BY_SLUG_QUERY` | 1h |
-| `/sitemap.xml` | All post slugs + dates | Custom query | 1h |
+| Page                                           | Sanity Data Used             | Query / Function                              | Revalidate |
+| ---------------------------------------------- | ---------------------------- | --------------------------------------------- | ---------- |
+| `/` (Homepage)                                 | Batch info, 4 homepage FAQs  | `BATCHES_QUERY`, `getPageFaqs("homepage", 4)` | 24h        |
+| `/programs`                                    | Batch info, 5 general FAQs   | `BATCHES_QUERY`, `getPageFaqs("general", 5)`  | 24h        |
+| `/programs/on-job-degree`                      | 6 degree FAQs                | `getPageFaqs("degrees", 6)`                   | 24h        |
+| `/programs/on-job-training`                    | 6 general FAQs               | `getPageFaqs("general", 6)`                   | 24h        |
+| `/faqs`                                        | All categories + all FAQs    | `getAllFaqCategories()`                       | 24h        |
+| `/about`                                       | 4 homepage FAQs              | `getPageFaqs("homepage", 4)`                  | 24h        |
+| `/support`                                     | All support FAQs (multi-tab) | `getAllFaqCategories()` → filtered            | 24h        |
+| `/10-minutes-test`                             | Test FAQs                    | `getPageFaqs("test")`                         | 24h        |
+| `/full-stack-web-development-training-in-agra` | Fullstack FAQs               | `getPageFaqs("fullstack")`                    | 24h        |
+| `/digital-marketing-course-in-agra`            | DGM FAQs                     | `getPageFaqs("digitalmarketing")`             | 24h        |
+| `/blog`                                        | All posts, featured pillars  | `POSTS_QUERY`, `FEATURED_PILLARS_QUERY`       | 1h         |
+| `/blog/[slug]`                                 | Single post (full content)   | `POST_BY_SLUG_QUERY`                          | 1h         |
+| `/sitemap.xml`                                 | All post slugs + dates       | Custom query                                  | 1h         |
 
 ---
 
@@ -315,7 +315,10 @@ getMergedFaqsForSchema(categorySlugs: string[]): Promise<FAQ[]>
 ```js
 const categoryMeta = {
   // ... existing entries
-  "your-new-slug": { icon: <SomeIcon size={18} />, color: "bg-purple-100 text-purple-700 ..." },
+  "your-new-slug": {
+    icon: <SomeIcon size={18} />,
+    color: "bg-purple-100 text-purple-700 ...",
+  },
 };
 ```
 
@@ -323,15 +326,15 @@ Without this, the category will still display but will use a grey fallback icon/
 
 ### FAQ Components
 
-| Component | Location | Props | Used On |
-|---|---|---|---|
-| `FAQsAccordion` | `components/faqspage/` | `categories` (full object) | `/faqs` |
-| `FAQSection` | `components/common/` | `faqs` (array) | Homepage, About |
-| `ProgramsFAQ` | `components/programspage/` | `faqs` (array) | Programs pages |
-| `SupportFAQ` | `components/supportpage/` | `faqsByCategory` (array of category objects) | `/support` |
-| `TestFAQ` | `components/testpage/` | `faqs` (array) | `/10-minutes-test` |
-| `FSDFAQ` | `components/landingPageFSD/` | `faqs` (array) | FSD landing page |
-| `DGMFAQ` | `components/landingPageDGM/` | `faqs` (array) | DGM landing page |
+| Component       | Location                     | Props                                        | Used On            |
+| --------------- | ---------------------------- | -------------------------------------------- | ------------------ |
+| `FAQsAccordion` | `components/faqspage/`       | `categories` (full object)                   | `/faqs`            |
+| `FAQSection`    | `components/common/`         | `faqs` (array)                               | Homepage, About    |
+| `ProgramsFAQ`   | `components/programspage/`   | `faqs` (array)                               | Programs pages     |
+| `SupportFAQ`    | `components/supportpage/`    | `faqsByCategory` (array of category objects) | `/support`         |
+| `TestFAQ`       | `components/testpage/`       | `faqs` (array)                               | `/10-minutes-test` |
+| `FSDFAQ`        | `components/landingPageFSD/` | `faqs` (array)                               | FSD landing page   |
+| `DGMFAQ`        | `components/landingPageDGM/` | `faqs` (array)                               | DGM landing page   |
 
 ---
 
@@ -353,6 +356,7 @@ pillar-brand (e.g. "Complete Guide to Full-Stack Development")
 Each `post` has two link fields:
 
 **`relatedMoneyPages`** — Internal CTAs to conversion pages. Each entry has:
+
 - `title` — link text
 - `path` — e.g. `/full-stack-web-development-training-in-agra`
 - `linkContext` — how it renders:
@@ -385,9 +389,9 @@ For news posts, additionally fill: `sourceName`, `sourceDate`, `clippingImage`, 
 
 ### Revalidation Intervals
 
-| Content Type | Interval | Reason |
-|---|---|---|
-| Blog posts, sitemap | 3600s (1h) | Fresh content should appear quickly |
+| Content Type             | Interval     | Reason                                |
+| ------------------------ | ------------ | ------------------------------------- |
+| Blog posts, sitemap      | 3600s (1h)   | Fresh content should appear quickly   |
 | Homepage, programs, FAQs | 86400s (24h) | Stable content, less frequent changes |
 
 ### Tag-Based Revalidation (FAQs Only)
@@ -403,6 +407,7 @@ Sanity Studio → Publish FAQ
 ```
 
 **Webhook configuration in Sanity Dashboard:**
+
 - URL: `https://yourdomain.com/api/revalidate`
 - Filter: `_type in ["faq", "faqCategory"]`
 - Header: `Authorization: Bearer <SANITY_WEBHOOK_SECRET>`
@@ -411,8 +416,8 @@ Sanity Studio → Publish FAQ
 
 ### Cache Tags Used
 
-| Tag | Applied To | Invalidated When |
-|---|---|---|
+| Tag    | Applied To      | Invalidated When                            |
+| ------ | --------------- | ------------------------------------------- |
 | `faqs` | All FAQ fetches | Any `faq` or `faqCategory` document changes |
 
 Blog posts do not currently use tag-based invalidation — they rely on the 1h interval.
@@ -506,7 +511,11 @@ import { YOUR_QUERY } from "@/lib/sanity/queries";
 export const revalidate = 86400;
 
 export default async function YourPage() {
-  const data = await sanityClient.fetch(YOUR_QUERY, {}, { next: { tags: ["your-tag"] } });
+  const data = await sanityClient.fetch(
+    YOUR_QUERY,
+    {},
+    { next: { tags: ["your-tag"] } },
+  );
   return <YourComponent data={data} />;
 }
 ```
@@ -529,26 +538,33 @@ if (docType === "yourType") {
 ## 12. Common Tasks
 
 ### Update a FAQ answer
+
 Sanity Studio → FAQ → find by question → edit answer → Publish. Live within seconds if webhook is configured, otherwise within 24h.
 
 ### Add a new batch / update seats left
+
 Sanity Studio → Batch → find program → update `seatsLeft` or `nextBatch` → Publish. Live within 24h (or on next build).
 
 ### Publish a blog post
+
 Sanity Studio → Post → New → fill all required fields → Publish. Appears on site within 1h.
 
 ### Deploy Studio after schema changes
+
 ```bash
 cd apps/cms && npx sanity deploy
 ```
 
 ### Verify FAQPage JSON-LD on a page
+
 Right-click → View Page Source → Ctrl+F → search `"FAQPage"`. Should return a JSON-LD block with `mainEntity` array.
 
 ### Check what data a page gets from Sanity
+
 See the [Data Flow table](#5-data-flow-page-by-page) above, or look at the `export default async function` in the page file — every `sanityClient.fetch()` or `getPageFaqs()` call is a Sanity data dependency.
 
 ### Run the FAQ migration (first-time setup)
+
 ```bash
 # 1. Get an editor token from sanity.io/manage → API → Tokens
 # 2. Run:

@@ -24,17 +24,20 @@ export async function verifyCaptcha(token, { action, minScore = 0.5 } = {}) {
     {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      body
-    }
+      body,
+    },
   );
 
   const data = await response.json();
 
   if (!data.success) return false;
   if (action && data.action !== action) return false;
-  if (ALLOWED_HOSTNAMES.length > 0 && !ALLOWED_HOSTNAMES.includes(data.hostname)) {
+  if (
+    ALLOWED_HOSTNAMES.length > 0 &&
+    !ALLOWED_HOSTNAMES.includes(data.hostname)
+  ) {
     return false;
   }
   if (typeof data.score === "number" && data.score < minScore) return false;

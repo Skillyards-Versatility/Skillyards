@@ -12,8 +12,12 @@ export const conversations = pgTable("conversations", {
 
 export const conversationParticipants = pgTable("conversation_participants", {
   id: uuid("id").defaultRandom().primaryKey(),
-  conversationId: uuid("conversation_id").notNull().references(() => conversations.id, { onDelete: "cascade" }),
-  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  conversationId: uuid("conversation_id")
+    .notNull()
+    .references(() => conversations.id, { onDelete: "cascade" }),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   role: text("role").default("member"),
   lastReadAt: timestamp("last_read_at"),
   joinedAt: timestamp("joined_at").defaultNow().notNull(),
@@ -21,10 +25,16 @@ export const conversationParticipants = pgTable("conversation_participants", {
 
 export const messages = pgTable("messages", {
   id: uuid("id").defaultRandom().primaryKey(),
-  conversationId: uuid("conversation_id").notNull().references(() => conversations.id, { onDelete: "cascade" }),
-  senderId: uuid("sender_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  conversationId: uuid("conversation_id")
+    .notNull()
+    .references(() => conversations.id, { onDelete: "cascade" }),
+  senderId: uuid("sender_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
   content: text("content").notNull(),
-  parentId: uuid("parent_id").references(() => messages.id, { onDelete: "cascade" }),
+  parentId: uuid("parent_id").references(() => messages.id, {
+    onDelete: "cascade",
+  }),
   fileKey: text("file_key"),
   fileType: text("file_type"),
   fileName: text("file_name"),
@@ -33,12 +43,20 @@ export const messages = pgTable("messages", {
   deletedAt: timestamp("deleted_at"),
 });
 
-export const messageReactions = pgTable("message_reactions", {
-  id: uuid("id").defaultRandom().primaryKey(),
-  messageId: uuid("message_id").notNull().references(() => messages.id, { onDelete: "cascade" }),
-  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
-  emoji: text("emoji").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-}, (t) => ({
-  uniq: unique().on(t.messageId, t.userId, t.emoji),
-}));
+export const messageReactions = pgTable(
+  "message_reactions",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    messageId: uuid("message_id")
+      .notNull()
+      .references(() => messages.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    emoji: text("emoji").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (t) => ({
+    uniq: unique().on(t.messageId, t.userId, t.emoji),
+  }),
+);

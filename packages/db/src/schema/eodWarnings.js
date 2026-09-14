@@ -1,4 +1,10 @@
-import { pgTable, uuid, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 
 export const eodWarnings = pgTable(
@@ -12,6 +18,9 @@ export const eodWarnings = pgTable(
     sentAt: timestamp("sent_at").defaultNow().notNull(),
   },
   (table) => ({
-    userDateIdx: uniqueIndex("eod_warnings_user_date_idx").on(table.userId, table.date),
-  })
+    userDateIdx: uniqueIndex("eod_warnings_user_date_idx").on(
+      table.userId,
+      table.date,
+    ),
+  }),
 );

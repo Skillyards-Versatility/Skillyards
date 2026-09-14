@@ -31,17 +31,20 @@ const groups = [
       {
         icon: Wifi,
         label: "Free Wi-Fi",
-        description: "Research, upload portfolios and push code without burning your mobile data.",
+        description:
+          "Research, upload portfolios and push code without burning your mobile data.",
       },
       {
         icon: Car,
         label: "Student & Visitor Parking",
-        description: "Two-wheeler and car parking on-site — arrive, park, get to class.",
+        description:
+          "Two-wheeler and car parking on-site — arrive, park, get to class.",
       },
       {
         icon: Zap,
         label: "Power Backup",
-        description: "	Inverter backup means a power cut never ends a lab session mid-project.",
+        description:
+          "	Inverter backup means a power cut never ends a lab session mid-project.",
       },
       {
         icon: Camera,
@@ -63,27 +66,32 @@ const groups = [
       {
         icon: Snowflake,
         label: "Air-Conditioned Classrooms",
-        description: "Comfortable rooms for long practical sessions, year-round.",
+        description:
+          "Comfortable rooms for long practical sessions, year-round.",
       },
       {
         icon: Monitor,
         label: "Computer & Dev Lab",
-        description: "	Development machines for coding, design, campaign work and live client projects.",
+        description:
+          "	Development machines for coding, design, campaign work and live client projects.",
       },
       {
         icon: Projector,
         label: "Projector & Smart Classes",
-        description: "VWatch a campaign or a codebase get built on screen, step by step.",
+        description:
+          "VWatch a campaign or a codebase get built on screen, step by step.",
       },
       {
         icon: BookOpen,
         label: "Library & Reading Room",
-        description: "Quiet space for revision, self-study and semester prep between practicals.",
+        description:
+          "Quiet space for revision, self-study and semester prep between practicals.",
       },
       {
         icon: FileText,
         label: "Free Study Material",
-        description: "Notes, resources and project briefs included across our programs",
+        description:
+          "Notes, resources and project briefs included across our programs",
       },
     ],
   },
@@ -100,17 +108,20 @@ const groups = [
       {
         icon: Briefcase,
         label: "Placement Cell",
-        description: "A dedicated team preparing you for interviews and connecting you to hiring companies.",
+        description:
+          "A dedicated team preparing you for interviews and connecting you to hiring companies.",
       },
       {
         icon: Compass,
         label: "Free Career Counselling",
-        description: "Free one-on-one guidance before you commit to any program — no obligation.",
+        description:
+          "Free one-on-one guidance before you commit to any program — no obligation.",
       },
       {
         icon: HelpCircle,
         label: "Doubt-Clearing Support",
-        description: "	Trainers stay available after class to work through what didn't land.",
+        description:
+          "	Trainers stay available after class to work through what didn't land.",
       },
     ],
   },
@@ -123,7 +134,7 @@ export const facilitiesAmenityFeature = groups.flatMap((group) =>
     "@type": "LocationFeatureSpecification",
     name: item.label,
     value: true,
-  }))
+  })),
 );
 
 /**
@@ -137,7 +148,10 @@ export const facilitiesAmenityFeature = groups.flatMap((group) =>
  */
 export function FacilitiesSection({ renderSchema = true } = {}) {
   return (
-    <section id="facilities" className="bg-background py-16 sm:py-24 transition-colors duration-300">
+    <section
+      id="facilities"
+      className="bg-background py-16 sm:py-24 transition-colors duration-300"
+    >
       {renderSchema && (
         <script
           type="application/ld+json"
@@ -163,7 +177,11 @@ export function FacilitiesSection({ renderSchema = true } = {}) {
             Everything You Need on Campus, So Nothing Slows Down Your Learning
           </h2>
           <p className="mt-4 text-base sm:text-lg leading-relaxed text-muted-foreground">
-            Whether you're here for a three-year degree, a short skill program, or a weekend AI bootcamp, you're learning by building - writing code, running live campaigns, shipping real work. That takes proper labs, reliable power, quiet study space and mentors you can actually reach. Here's what our Agra campus gives every student who walks in.
+            Whether you're here for a three-year degree, a short skill program,
+            or a weekend AI bootcamp, you're learning by building - writing
+            code, running live campaigns, shipping real work. That takes proper
+            labs, reliable power, quiet study space and mentors you can actually
+            reach. Here's what our Agra campus gives every student who walks in.
           </p>
         </div>
 
@@ -188,7 +206,11 @@ export function FacilitiesSection({ renderSchema = true } = {}) {
                       className="flex h-10 w-10 items-center justify-center rounded-xl"
                       style={{ backgroundColor: `${color}14`, color }}
                     >
-                      <GroupIcon className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                      <GroupIcon
+                        className="h-5 w-5"
+                        strokeWidth={1.75}
+                        aria-hidden="true"
+                      />
                     </div>
                     <h3 className="text-lg font-bold text-foreground">
                       {group.title}
@@ -204,7 +226,11 @@ export function FacilitiesSection({ renderSchema = true } = {}) {
                             className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl"
                             style={{ backgroundColor: `${color}0d`, color }}
                           >
-                            <ItemIcon className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+                            <ItemIcon
+                              className="h-4 w-4"
+                              strokeWidth={1.75}
+                              aria-hidden="true"
+                            />
                           </div>
                           <div>
                             <p className="text-sm font-semibold text-foreground">

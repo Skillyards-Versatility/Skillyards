@@ -65,12 +65,16 @@ export function IdentityForm({ formData, setFormData }) {
 
       <div className="space-y-4">
         <div>
-          <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Full Name</label>
+          <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+            Full Name
+          </label>
           <input
             type="text"
             required
             value={formData.fullName}
-            onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, fullName: e.target.value })
+            }
             className="input"
             placeholder="e.g. Aditi Patil"
           />
@@ -78,7 +82,9 @@ export function IdentityForm({ formData, setFormData }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Course</label>
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+              Course
+            </label>
             <select
               value={formData.course}
               onChange={handleCourseChange}
@@ -108,8 +114,8 @@ export function IdentityForm({ formData, setFormData }) {
                 {!formData.course
                   ? "Select a course first"
                   : isLoadingBatches
-                  ? "Loading batches..."
-                  : "-- Assign Later (Unassigned) --"}
+                    ? "Loading batches..."
+                    : "-- Assign Later (Unassigned) --"}
               </option>
               {batches.map((b) => (
                 <option key={b.id} value={b.id}>
@@ -122,23 +128,31 @@ export function IdentityForm({ formData, setFormData }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Phone Number</label>
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+              Phone Number
+            </label>
             <input
               type="tel"
               required
               value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, phone: e.target.value })
+              }
               className="input"
               placeholder="10-digit mobile number"
             />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Email Address</label>
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+              Email Address
+            </label>
             <input
               type="email"
               required
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
               className="input"
               placeholder="student@example.com"
             />

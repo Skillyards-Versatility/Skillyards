@@ -13,7 +13,7 @@ export const getCourseSchema = (course) => ({
     "industrial training",
     "On Job Training",
     "professional certification",
-    course.title
+    course.title,
   ],
 
   provider: {
@@ -25,10 +25,11 @@ export const getCourseSchema = (course) => ({
     name: course.title,
     description: course.description,
     occupationalCategory: course.category || "Information Technology",
-    educationalCredentialAwarded: course.certification || "Certificate of Completion",
+    educationalCredentialAwarded:
+      course.certification || "Certificate of Completion",
     provider: {
       "@id": ORGANIZATION_ID,
-    }
+    },
   },
 
   image: course.seo?.ogImage
@@ -38,11 +39,13 @@ export const getCourseSchema = (course) => ({
   educationalLevel: "Undergraduate",
   inLanguage: "en",
   ...(course.certification && {
-    educationalCredentialAwarded: [{
-      "@type": "EducationalOccupationalCredential",
-      name: course.certification,
-      credentialCategory: "Certificate"
-    }]
+    educationalCredentialAwarded: [
+      {
+        "@type": "EducationalOccupationalCredential",
+        name: course.certification,
+        credentialCategory: "Certificate",
+      },
+    ],
   }),
 
   hasCourseInstance: {
@@ -58,5 +61,4 @@ export const getCourseSchema = (course) => ({
       startDate: new Date(course.startDate).toISOString().split("T")[0],
     }),
   },
-
 });

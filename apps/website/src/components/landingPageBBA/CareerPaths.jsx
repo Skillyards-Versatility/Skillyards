@@ -43,9 +43,9 @@ export function CareerPaths() {
             Where BBA graduates go
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Our first BBA batch is still ongoing. No placements to report yet. What we can tell you
-            is the roles this program prepares you for, and the tools you&apos;ll know how to use
-            when you get there.
+            Our first BBA batch is still ongoing. No placements to report yet.
+            What we can tell you is the roles this program prepares you for, and
+            the tools you&apos;ll know how to use when you get there.
           </p>
         </div>
 
@@ -77,8 +77,9 @@ export function CareerPaths() {
         </div>
 
         <p className="mt-8 text-center text-xs text-muted-foreground">
-          These are the roles the curriculum prepares you for. Placement support begins from your
-          second year, resume building, mock interviews and direct referrals when you&apos;re ready.
+          These are the roles the curriculum prepares you for. Placement support
+          begins from your second year, resume building, mock interviews and
+          direct referrals when you&apos;re ready.
         </p>
       </div>
     </section>

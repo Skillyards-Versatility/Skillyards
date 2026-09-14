@@ -9,5 +9,15 @@ import testQuestion from './testQuestion'
 import galleryImage from './galleryImage'
 import siteSettings from './siteSettings'
 
-
-export const schemaTypes = [post, author, tag, batch, faqCategory, faq, teamMember, testQuestion, galleryImage, siteSettings]
+export const schemaTypes = [
+  post,
+  author,
+  tag,
+  batch,
+  faqCategory,
+  faq,
+  teamMember,
+  testQuestion,
+  galleryImage,
+  siteSettings,
+]

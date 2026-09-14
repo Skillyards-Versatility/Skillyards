@@ -36,11 +36,14 @@ export function validatePressMentions(pressMentions) {
       throw new Error(`press[${index}].url must be an absolute http(s) URL`);
     }
     if (mention.publishedAt != null && !isIsoDate(mention.publishedAt)) {
-      throw new Error(`press[${index}].publishedAt must be YYYY-MM-DD if provided`);
+      throw new Error(
+        `press[${index}].publishedAt must be YYYY-MM-DD if provided`,
+      );
     }
     if (mention.type != null && !isNonEmptyString(mention.type)) {
-      throw new Error(`press[${index}].type must be a non-empty string if provided`);
+      throw new Error(
+        `press[${index}].type must be a non-empty string if provided`,
+      );
     }
   });
 }
-

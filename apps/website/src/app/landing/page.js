@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
 
 export default function LandingRedirect() {
-    redirect("/branch/agra");
+  redirect("/branch/agra");
 }

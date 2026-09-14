@@ -36,9 +36,7 @@ export async function createPlanWithInstallments(db, studentId, input) {
         dueDate: new Date(),
       },
     ];
-  }
-
-  else if (type === "emi") {
+  } else if (type === "emi") {
     if (!installments || installments.length === 0) {
       throw new Error("Installments required for EMI plan");
     }
@@ -54,9 +52,7 @@ export async function createPlanWithInstallments(db, studentId, input) {
           : emiAmount,
       dueDate: new Date(inst.dueDate),
     }));
-  }
-
-  else if (type === "custom") {
+  } else if (type === "custom") {
     if (!installments || installments.length === 0) {
       throw new Error("Installments required for custom plan");
     }
@@ -73,9 +69,7 @@ export async function createPlanWithInstallments(db, studentId, input) {
       amountDue: inst.amount,
       dueDate: new Date(inst.dueDate),
     }));
-  }
-  
-  else if (type === "flexible") {
+  } else if (type === "flexible") {
     if (!installments || installments.length === 0) {
       throw new Error("At least one installment is required for flexible plan");
     }
@@ -92,16 +86,13 @@ export async function createPlanWithInstallments(db, studentId, input) {
       amountDue: inst.amount,
       dueDate: new Date(inst.dueDate),
     }));
-  }
-
-  else {
+  } else {
     throw new Error("Invalid plan type");
   }
 
   await planRepo.createInstallments(db, installmentData);
 
   return plan;
-
 }
 
 export async function addFlexibleInstallment(db, studentId, input) {
@@ -112,7 +103,8 @@ export async function addFlexibleInstallment(db, studentId, input) {
 
   const plan = await planRepo.getPlanByStudentId(db, studentId);
   if (!plan) throw new Error("No plan found for student");
-  if (plan.type !== "flexible") throw new Error("Installments can only be added to flexible plans");
+  if (plan.type !== "flexible")
+    throw new Error("Installments can only be added to flexible plans");
 
   const existing = await planRepo.getInstallmentsByPlanId(db, plan.id);
   const totalScheduled = existing.reduce((sum, i) => sum + i.amountDue, 0);
@@ -139,10 +131,7 @@ export async function getPlanWithInstallments(db, studentId) {
 
   if (!plan) return null;
 
-  const installments = await planRepo.getInstallmentsByPlanId(
-    db,
-    plan.id
-  );
+  const installments = await planRepo.getInstallmentsByPlanId(db, plan.id);
 
   return {
     ...plan,

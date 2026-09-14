@@ -8,7 +8,7 @@ import { canAccessStudent } from "@/lib/permissions";
 
 /**
  * SECURED STUDENT DETAIL HANDLER
- * 
+ *
  * Structural enforcement ensures:
  * - Session is valid
  * - Student record is pre-loaded (req.resource)
@@ -27,7 +27,10 @@ async function getHandler(req, { context, ctx, resource: student }) {
  */
 async function patchHandler(req, { context, ctx, resource: student }) {
   if (ctx.session.role !== "ADMIN") {
-    return Response.json({ error: "Admin access required to edit students" }, { status: 403 });
+    return Response.json(
+      { error: "Admin access required to edit students" },
+      { status: 403 },
+    );
   }
 
   const { id: studentId } = await context.params;
@@ -36,14 +39,14 @@ async function patchHandler(req, { context, ctx, resource: student }) {
   const result = validateCreateStudent({ ...student, ...body });
 
   if (!result.success) {
-    ctx.warn("STUDENT_UPDATE_VALIDATION_FAILURE", { errors: result.error.flatten() });
-    return Response.json(
-      { error: result.error.flatten() },
-      { status: 400 }
-    );
+    ctx.warn("STUDENT_UPDATE_VALIDATION_FAILURE", {
+      errors: result.error.flatten(),
+    });
+    return Response.json({ error: result.error.flatten() }, { status: 400 });
   }
 
-  const laptopStatusChanged = Boolean(student.laptopOpted) !== Boolean(result.data.laptopOpted);
+  const laptopStatusChanged =
+    Boolean(student.laptopOpted) !== Boolean(result.data.laptopOpted);
   const setValues = {
     ...result.data,
     updatedAt: new Date(),
@@ -73,7 +76,10 @@ async function patchHandler(req, { context, ctx, resource: student }) {
  */
 async function deleteHandler(req, { context, ctx, resource: student }) {
   if (ctx.session.role !== "ADMIN") {
-    return Response.json({ error: "Admin access required to delete students" }, { status: 403 });
+    return Response.json(
+      { error: "Admin access required to delete students" },
+      { status: 403 },
+    );
   }
 
   const { id: studentId } = await context.params;
@@ -88,15 +94,15 @@ async function deleteHandler(req, { context, ctx, resource: student }) {
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
   policy: canAccessStudent,
-  resourceLoader: (id) => getStudentById(db, id)
+  resourceLoader: (id) => getStudentById(db, id),
 });
 
 export const PATCH = createProtectedRoute(patchHandler, {
   policy: canAccessStudent,
-  resourceLoader: (id) => getStudentById(db, id)
+  resourceLoader: (id) => getStudentById(db, id),
 });
 
 export const DELETE = createProtectedRoute(deleteHandler, {
   policy: canAccessStudent,
-  resourceLoader: (id) => getStudentById(db, id)
+  resourceLoader: (id) => getStudentById(db, id),
 });

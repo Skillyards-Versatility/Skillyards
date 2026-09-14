@@ -16,47 +16,56 @@ import {
 const coreValues = [
   {
     title: "1:1 Mentorship",
-    description: "Tailored advice from experienced instructors who have walked your desired path.",
+    description:
+      "Tailored advice from experienced instructors who have walked your desired path.",
     icon: UserCheck,
   },
   {
     title: "Real-World Projects",
-    description: "Tackle real challenges and industry scenarios to build a standout portfolio.",
+    description:
+      "Tackle real challenges and industry scenarios to build a standout portfolio.",
     icon: Briefcase,
   },
   {
     title: "Career Support",
-    description: "From resume crafting to strategic career planning we've got you covered.",
+    description:
+      "From resume crafting to strategic career planning we've got you covered.",
     icon: Target,
   },
   {
     title: "Placement Guarantee",
-    description: "Secure your dream career with confidence through our robust hiring network.",
+    description:
+      "Secure your dream career with confidence through our robust hiring network.",
     icon: ShieldCheck,
   },
   {
     title: "In-Person Interactive Classes",
-    description: "Participate in classroom sessions with experts, ask questions, and gain insights.",
+    description:
+      "Participate in classroom sessions with experts, ask questions, and gain insights.",
     icon: Video,
   },
   {
     title: "Customized Content",
-    description: "Courses aligned with your goals and customized to your preferences.",
+    description:
+      "Courses aligned with your goals and customized to your preferences.",
     icon: Sliders,
   },
   {
     title: "Elite Hiring Partners",
-    description: "Connect with leading MNCs eager to hire skilled professionals from SkillYards.",
+    description:
+      "Connect with leading MNCs eager to hire skilled professionals from SkillYards.",
     icon: Building2,
   },
   {
     title: "Top-Tier Instructors",
-    description: "Industry experts who bring real value and practical knowledge to every class.",
+    description:
+      "Industry experts who bring real value and practical knowledge to every class.",
     icon: GraduationCap,
   },
   {
     title: "Industry Immersion",
-    description: "Hands-on workshops and guest lectures that prepare you for the real world.",
+    description:
+      "Hands-on workshops and guest lectures that prepare you for the real world.",
     icon: Activity,
   },
 ];

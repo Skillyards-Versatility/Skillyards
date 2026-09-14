@@ -12,7 +12,12 @@ const COURSES = [
   "OJD (Bachelor of Business Administration)",
 ];
 
-export function CreateBatchModal({ isOpen, onClose, onSuccess, initialCourse = "" }) {
+export function CreateBatchModal({
+  isOpen,
+  onClose,
+  onSuccess,
+  initialCourse = "",
+}) {
   const [courseName, setCourseName] = useState(initialCourse || COURSES[0]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -63,14 +68,20 @@ export function CreateBatchModal({ isOpen, onClose, onSuccess, initialCourse = "
             <Layers className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-foreground">Create New Batch</h2>
-            <p className="text-xs text-muted-foreground">Add a new cohort/batch for student enrollment.</p>
+            <h2 className="text-lg font-bold text-foreground">
+              Create New Batch
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Add a new cohort/batch for student enrollment.
+            </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Select Course</label>
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+              Select Course
+            </label>
             <select
               value={courseName}
               onChange={(e) => setCourseName(e.target.value)}
@@ -78,13 +89,17 @@ export function CreateBatchModal({ isOpen, onClose, onSuccess, initialCourse = "
               required
             >
               {COURSES.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Batch Name</label>
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+              Batch Name
+            </label>
             <input
               type="text"
               required
@@ -96,7 +111,9 @@ export function CreateBatchModal({ isOpen, onClose, onSuccess, initialCourse = "
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Description (Optional)</label>
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+              Description (Optional)
+            </label>
             <textarea
               rows={2}
               value={description}
@@ -107,7 +124,9 @@ export function CreateBatchModal({ isOpen, onClose, onSuccess, initialCourse = "
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Status</label>
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+              Status
+            </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
@@ -133,7 +152,9 @@ export function CreateBatchModal({ isOpen, onClose, onSuccess, initialCourse = "
               className="flex items-center justify-center min-w-[120px] px-4 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {isSubmitting ? (
-                <><Loader2 className="animate-spin mr-2 h-4 w-4" /> Creating...</>
+                <>
+                  <Loader2 className="animate-spin mr-2 h-4 w-4" /> Creating...
+                </>
               ) : (
                 "Create Batch"
               )}

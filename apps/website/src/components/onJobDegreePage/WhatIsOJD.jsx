@@ -7,7 +7,6 @@ export default function WhatIsOJD() {
   return (
     <section className="bg-background py-20">
       <div className="mx-auto max-w-4xl px-6">
-
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -18,10 +17,12 @@ export default function WhatIsOJD() {
           </h2>
 
           <p className="mt-6 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            The On Job Degree (OJD) at SkillYards is a university-affiliated 3-year bachelor&apos;s degree -
-            BCA or BBA, that integrates daily hands-on skill training with academic coursework. Students
-            learn MERN stack development (BCA) or Digital Marketing (BBA) for the majority of each day alongside
-            their degree subjects, at SkillYards&apos; Agra campus.
+            The On Job Degree (OJD) at SkillYards is a university-affiliated
+            3-year bachelor&apos;s degree - BCA or BBA, that integrates daily
+            hands-on skill training with academic coursework. Students learn
+            MERN stack development (BCA) or Digital Marketing (BBA) for the
+            majority of each day alongside their degree subjects, at
+            SkillYards&apos; Agra campus.
           </p>
         </motion.div>
 
@@ -36,8 +37,12 @@ export default function WhatIsOJD() {
             <thead>
               <tr className="border-b border-border bg-muted/50">
                 <th className="px-5 py-3 text-left font-bold text-foreground"></th>
-                <th className="px-5 py-3 text-left font-bold text-foreground">Regular College BCA/BBA</th>
-                <th className="px-5 py-3 text-left font-bold text-primary">SkillYards OJD</th>
+                <th className="px-5 py-3 text-left font-bold text-foreground">
+                  Regular College BCA/BBA
+                </th>
+                <th className="px-5 py-3 text-left font-bold text-primary">
+                  SkillYards OJD
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -67,9 +72,15 @@ export default function WhatIsOJD() {
                   key={row.label}
                   className={`border-t border-border ${i % 2 === 0 ? "bg-background" : "bg-muted/20"}`}
                 >
-                  <td className="px-5 py-3 font-semibold text-foreground">{row.label}</td>
-                  <td className="px-5 py-3 text-muted-foreground">{row.regular}</td>
-                  <td className="px-5 py-3 font-medium text-foreground">{row.ojd}</td>
+                  <td className="px-5 py-3 font-semibold text-foreground">
+                    {row.label}
+                  </td>
+                  <td className="px-5 py-3 text-muted-foreground">
+                    {row.regular}
+                  </td>
+                  <td className="px-5 py-3 font-medium text-foreground">
+                    {row.ojd}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -83,8 +94,8 @@ export default function WhatIsOJD() {
           transition={{ delay: 0.15 }}
           className="mt-8 rounded-xl border border-border bg-muted/30 px-5 py-4 text-sm leading-relaxed text-muted-foreground"
         >
-          Not looking for a degree? If you already have a graduation or want a faster route,
-          see our{" "}
+          Not looking for a degree? If you already have a graduation or want a
+          faster route, see our{" "}
           <Link
             href="/programs/on-job-training"
             className="font-semibold text-primary underline underline-offset-4 hover:opacity-80"
@@ -93,7 +104,6 @@ export default function WhatIsOJD() {
           </Link>
           .
         </motion.div>
-
       </div>
     </section>
   );

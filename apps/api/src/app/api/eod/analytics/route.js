@@ -10,11 +10,14 @@ async function getHandler(req, { ctx }) {
     const team = url.searchParams.get("team");
 
     if (!ctx.session || !ctx.session.userId) {
-      return Response.json({ success: false, message: "Unauthorized access" }, { status: 403 });
+      return Response.json(
+        { success: false, message: "Unauthorized access" },
+        { status: 403 },
+      );
     }
 
     const conditions = [];
-    
+
     // Security: If not Admin or Manager, force filtering to their own userId
     if (ctx.session.role !== "ADMIN" && ctx.session.role !== "MANAGER") {
       conditions.push(eq(eodReports.userId, ctx.session.userId));
@@ -50,7 +53,7 @@ async function getHandler(req, { ctx }) {
       const teamName = report.team;
       const userName = report.userName;
       const profileImageKey = report.profileImageKey;
-      
+
       // Mutate data to map old keys for backward compatibility in both aggregates and drill-downs
       const data = report.data || {};
       if (data.counsellingVirtual !== undefined) {
@@ -82,44 +85,57 @@ async function getHandler(req, { ctx }) {
       Object.entries(data).forEach(([key, value]) => {
         // Only aggregate numeric fields
         const numValue = Number(value);
-        if (!isNaN(numValue) && typeof value !== 'boolean' && key !== "notes") {
+        if (!isNaN(numValue) && typeof value !== "boolean" && key !== "notes") {
           // Overall Time series
-          timeSeriesData[date][key] = (timeSeriesData[date][key] || 0) + numValue;
-          
+          timeSeriesData[date][key] =
+            (timeSeriesData[date][key] || 0) + numValue;
+
           // Team Time series
-          teamTimeSeries[date][teamName][key] = (teamTimeSeries[date][teamName][key] || 0) + numValue;
+          teamTimeSeries[date][teamName][key] =
+            (teamTimeSeries[date][teamName][key] || 0) + numValue;
 
           // Team agg
-          teamAggregates[teamName][key] = (teamAggregates[teamName][key] || 0) + numValue;
+          teamAggregates[teamName][key] =
+            (teamAggregates[teamName][key] || 0) + numValue;
           // User agg
-          userAggregates[userName][key] = (userAggregates[userName][key] || 0) + numValue;
+          userAggregates[userName][key] =
+            (userAggregates[userName][key] || 0) + numValue;
         }
       });
     });
 
-    const formattedTeamAggregates = Object.entries(teamAggregates).map(([team, metrics]) => {
-      const { _members, _reportCount, ...restMetrics } = metrics;
-      return {
-        team,
-        memberCount: _members ? _members.size : 0,
-        reportCount: _reportCount || 0,
-        ...restMetrics,
-      };
-    });
+    const formattedTeamAggregates = Object.entries(teamAggregates).map(
+      ([team, metrics]) => {
+        const { _members, _reportCount, ...restMetrics } = metrics;
+        return {
+          team,
+          memberCount: _members ? _members.size : 0,
+          reportCount: _reportCount || 0,
+          ...restMetrics,
+        };
+      },
+    );
 
     return Response.json({
       success: true,
-      timeSeries: Object.values(timeSeriesData).sort((a, b) => a.date.localeCompare(b.date)),
-      teamTimeSeries: Object.values(teamTimeSeries).sort((a, b) => a.date.localeCompare(b.date)),
+      timeSeries: Object.values(timeSeriesData).sort((a, b) =>
+        a.date.localeCompare(b.date),
+      ),
+      teamTimeSeries: Object.values(teamTimeSeries).sort((a, b) =>
+        a.date.localeCompare(b.date),
+      ),
       teamAggregates: formattedTeamAggregates,
-      userAggregates: Object.entries(userAggregates).map(([user, metrics]) => ({ user, ...metrics })),
+      userAggregates: Object.entries(userAggregates).map(([user, metrics]) => ({
+        user,
+        ...metrics,
+      })),
       reports: reports, // Send raw reports to allow frontend drill-down
     });
   } catch (error) {
     ctx.error("EOD_ANALYTICS_FETCH_FAILED", { error: error.message });
     return Response.json(
       { success: false, message: "Failed to fetch analytics" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

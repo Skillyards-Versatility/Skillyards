@@ -2,8 +2,8 @@ export function calculateReadingTime(blocks) {
   if (!blocks) return 1;
 
   const words = blocks
-    .filter(block => block._type === "block")
-    .map(block => block.children.map(child => child.text).join(" "))
+    .filter((block) => block._type === "block")
+    .map((block) => block.children.map((child) => child.text).join(" "))
     .join(" ")
     .split(/\s+/).length;
 

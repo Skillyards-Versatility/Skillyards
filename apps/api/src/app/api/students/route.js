@@ -1,5 +1,5 @@
 import { db } from "@repo/db";
-import { students } from "@repo/db"; 
+import { students } from "@repo/db";
 import { validateCreateStudent } from "@/modules/students/student.schema";
 import { getStudentList } from "@/modules/students/student.service";
 import { createProtectedRoute } from "@/lib/middleware";
@@ -18,9 +18,21 @@ async function getHandler(req) {
   const startDate = searchParams.get("startDate");
   const endDate = searchParams.get("endDate");
   const laptopOptedParam = searchParams.get("laptopOpted");
-  const laptopOpted = laptopOptedParam === "true" ? true : laptopOptedParam === "false" ? false : undefined;
+  const laptopOpted =
+    laptopOptedParam === "true"
+      ? true
+      : laptopOptedParam === "false"
+        ? false
+        : undefined;
 
-  const data = await getStudentList(db, limit, offset, { courseName, batchId, enrolledIn, startDate, endDate, laptopOpted });
+  const data = await getStudentList(db, limit, offset, {
+    courseName,
+    batchId,
+    enrolledIn,
+    startDate,
+    endDate,
+    laptopOpted,
+  });
   return Response.json(data);
 }
 
@@ -33,10 +45,7 @@ async function postHandler(req, { ctx }) {
 
   if (!result.success) {
     ctx.warn("VALIDATION_FAILURE", { errors: result.error.flatten() });
-    return Response.json(
-      { error: result.error.flatten() },
-      { status: 400 }
-    );
+    return Response.json({ error: result.error.flatten() }, { status: 400 });
   }
 
   const created = await db
@@ -53,9 +62,9 @@ async function postHandler(req, { ctx }) {
 
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
-  policy: canAccessStudent
+  policy: canAccessStudent,
 });
 
 export const POST = createProtectedRoute(postHandler, {
-  policy: canAccessStudent
+  policy: canAccessStudent,
 });

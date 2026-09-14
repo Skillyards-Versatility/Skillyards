@@ -1,7 +1,6 @@
 export default function StudentsLoading() {
   return (
     <div className="space-y-6 animate-pulse">
-
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-2">
@@ -27,7 +26,10 @@ export default function StudentsLoading() {
         {/* Table rows */}
         <div className="divide-y divide-border">
           {[...Array(8)].map((_, i) => (
-            <div key={i} className="px-4 sm:px-6 py-4 sm:py-5 grid grid-cols-5 gap-4 items-center">
+            <div
+              key={i}
+              className="px-4 sm:px-6 py-4 sm:py-5 grid grid-cols-5 gap-4 items-center"
+            >
               <div className="h-4 w-36 bg-muted rounded" />
               <div className="h-4 w-44 bg-muted rounded" />
               <div className="h-4 w-20 bg-muted rounded ml-auto" />
@@ -37,7 +39,6 @@ export default function StudentsLoading() {
           ))}
         </div>
       </div>
-
     </div>
   );
 }

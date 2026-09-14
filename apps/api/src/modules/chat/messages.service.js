@@ -19,7 +19,11 @@ export async function sendMessage(db, data, userId) {
     const isMember = await channelRepo.isChannelMember(db, convId, userId);
     if (!isMember) throw new Error("NOT_CHANNEL_MEMBER");
   }
-  return msgRepo.createMessageRecord(db, { ...data, conversationId: convId, senderId: userId });
+  return msgRepo.createMessageRecord(db, {
+    ...data,
+    conversationId: convId,
+    senderId: userId,
+  });
 }
 
 export async function editMessage(db, messageId, content, userId) {

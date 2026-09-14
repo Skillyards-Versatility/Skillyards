@@ -5,7 +5,9 @@ export function FeeBreakdown({ baseFee, scholarship, netPayable }) {
       <div className="space-y-3 text-sm">
         <div className="flex justify-between text-muted-foreground">
           <span>Base Course Fee</span>
-          <span className="font-medium text-foreground">₹{baseFee.toLocaleString()}</span>
+          <span className="font-medium text-foreground">
+            ₹{baseFee.toLocaleString()}
+          </span>
         </div>
         <div className="flex justify-between text-primary">
           <span>Applied Scholarship</span>

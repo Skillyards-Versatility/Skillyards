@@ -136,7 +136,7 @@
 97. What is the `matcher` config in middleware? What pattern does it use?
 98. How does the middleware in the admin app protect routes? What does it check?
 99. What is ISR fallback behavior? (`blocking` vs `true` vs `false`)
-100. What is `generateStaticParams`? When would you use it?
+100.  What is `generateStaticParams`? When would you use it?
 
 ---
 
@@ -501,5 +501,5 @@
 
 ---
 
-*Total: **365 questions** across 11 sections.*
-*Every question maps to a real implementation decision in `apps/website` or `apps/admin`.*
+_Total: **365 questions** across 11 sections._
+_Every question maps to a real implementation decision in `apps/website` or `apps/admin`._

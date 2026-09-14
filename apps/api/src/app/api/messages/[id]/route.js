@@ -1,6 +1,10 @@
 import { db } from "@repo/db";
 import { validateEditMessage } from "@/modules/chat/chat.schema";
-import { editMessage, deleteMessage, getMessage } from "@/modules/chat/messages.service";
+import {
+  editMessage,
+  deleteMessage,
+  getMessage,
+} from "@/modules/chat/messages.service";
 import { createProtectedRoute } from "@/lib/middleware";
 
 async function getHandler(req, { ctx, context }) {
@@ -20,14 +24,22 @@ async function putHandler(req, { ctx, context }) {
     return Response.json({ error: result.error.flatten() }, { status: 400 });
   }
   try {
-    const updated = await editMessage(db, id, result.data.content, ctx.session.userId);
+    const updated = await editMessage(
+      db,
+      id,
+      result.data.content,
+      ctx.session.userId,
+    );
     return Response.json(updated);
   } catch (err) {
     if (err.message === "MESSAGE_NOT_FOUND") {
       return Response.json({ error: "Message not found" }, { status: 404 });
     }
     if (err.message === "NOT_MESSAGE_AUTHOR") {
-      return Response.json({ error: "You can only edit your own messages" }, { status: 403 });
+      return Response.json(
+        { error: "You can only edit your own messages" },
+        { status: 403 },
+      );
     }
     throw err;
   }
@@ -43,7 +55,10 @@ async function deleteHandler(req, { ctx, context }) {
       return Response.json({ error: "Message not found" }, { status: 404 });
     }
     if (err.message === "NOT_MESSAGE_AUTHOR") {
-      return Response.json({ error: "You can only delete your own messages" }, { status: 403 });
+      return Response.json(
+        { error: "You can only delete your own messages" },
+        { status: 403 },
+      );
     }
     throw err;
   }

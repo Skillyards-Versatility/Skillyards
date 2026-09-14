@@ -19,9 +19,12 @@ export function validateOrgData(orgData) {
     throw new Error("orgData must be an object");
   }
 
-  if (!isNonEmptyString(orgData.name)) throw new Error("orgData.name is required");
-  if (!isAbsoluteHttpUrl(orgData.url)) throw new Error("orgData.url must be absolute http(s)");
-  if (!isNonEmptyString(orgData.description)) throw new Error("orgData.description is required");
+  if (!isNonEmptyString(orgData.name))
+    throw new Error("orgData.name is required");
+  if (!isAbsoluteHttpUrl(orgData.url))
+    throw new Error("orgData.url must be absolute http(s)");
+  if (!isNonEmptyString(orgData.description))
+    throw new Error("orgData.description is required");
 
   if (orgData.founders && !Array.isArray(orgData.founders)) {
     throw new Error("orgData.founders must be an array if provided");
@@ -44,7 +47,9 @@ export function validateOrgData(orgData) {
     orgData.media?.defaultOgImage?.url &&
     !isAbsoluteHttpUrl(orgData.media.defaultOgImage.url)
   ) {
-    throw new Error("orgData.media.defaultOgImage.url must be absolute http(s)");
+    throw new Error(
+      "orgData.media.defaultOgImage.url must be absolute http(s)",
+    );
   }
 
   if (orgData.press) validatePressMentions(orgData.press);

@@ -16,7 +16,6 @@ export async function getNextReceiptNumber(db) {
   return `${startsWith}${String(nextSequence).padStart(4, "0")}`;
 }
 
-
 export async function getPaymentsByStudentId(db, studentId) {
   return db
     .select()
@@ -26,10 +25,7 @@ export async function getPaymentsByStudentId(db, studentId) {
 }
 
 export async function createPayment(db, data) {
-  const result = await db
-    .insert(payments)
-    .values(data)
-    .returning();
+  const result = await db.insert(payments).values(data).returning();
 
   return result[0];
 }
@@ -41,8 +37,8 @@ export async function getUnpaidInstallments(db, studentId) {
     .where(
       and(
         eq(installments.studentId, studentId),
-        ne(installments.status, "paid")
-      )
+        ne(installments.status, "paid"),
+      ),
     )
     .orderBy(asc(installments.dueDate));
 }
@@ -88,10 +84,7 @@ export async function updateInstallmentStatus(db, installmentId) {
 }
 
 export async function createPaymentAllocation(db, data) {
-  const result = await db
-    .insert(paymentAllocations)
-    .values(data)
-    .returning();
+  const result = await db.insert(paymentAllocations).values(data).returning();
 
   return result[0];
 }
@@ -156,19 +149,16 @@ export async function getAllocationsByPaymentId(db, paymentId) {
 
 export async function claimPaymentForGeneration(db, paymentId, jobId) {
   console.log("[DB][CLAIM]", { paymentId, jobId });
-  
+
   const result = await db
     .update(payments)
-    .set({ 
-      receiptStatus: "generating", 
+    .set({
+      receiptStatus: "generating",
       receiptJobId: jobId,
-      receiptRequestedAt: new Date()
+      receiptRequestedAt: new Date(),
     })
     .where(
-      and(
-        eq(payments.id, paymentId),
-        ne(payments.receiptStatus, "generating")
-      )
+      and(eq(payments.id, paymentId), ne(payments.receiptStatus, "generating")),
     )
     .returning();
 
@@ -177,7 +167,7 @@ export async function claimPaymentForGeneration(db, paymentId, jobId) {
 
 export async function resetStaleLock(db, paymentId) {
   console.log("[DB][RESET_STALE]", { paymentId });
-  
+
   return db
     .update(payments)
     .set({ receiptStatus: "failed" })
@@ -186,7 +176,11 @@ export async function resetStaleLock(db, paymentId) {
 }
 
 export async function completePaymentGeneration(db, paymentId, jobId, data) {
-  console.log("[DB][COMPLETE]", { paymentId, jobId, status: data.receiptStatus });
+  console.log("[DB][COMPLETE]", {
+    paymentId,
+    jobId,
+    status: data.receiptStatus,
+  });
 
   const result = await db
     .update(payments)
@@ -194,13 +188,16 @@ export async function completePaymentGeneration(db, paymentId, jobId, data) {
     .where(
       and(
         eq(payments.id, paymentId),
-        eq(payments.receiptJobId, jobId) // Ownership validation
-      )
+        eq(payments.receiptJobId, jobId), // Ownership validation
+      ),
     )
     .returning();
 
   if (result.length === 0) {
-    console.warn("[DB][COMPLETE][IGNORE] Stale or invalid jobId", { paymentId, jobId });
+    console.warn("[DB][COMPLETE][IGNORE] Stale or invalid jobId", {
+      paymentId,
+      jobId,
+    });
   }
 
   return result[0];

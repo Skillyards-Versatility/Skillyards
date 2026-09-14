@@ -57,30 +57,30 @@ Skillyards is an IT training institute competing in a crowded local + national m
 
 ### What's Already Good
 
-| Feature | Status |
-|---------|--------|
+| Feature                 | Status                                                                                                         |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------- |
 | JSON-LD Structured Data | 9 schema types (Organization, WebSite, BlogPosting, Course, FAQPage, BreadcrumbList, Person, JobPosting, Quiz) |
-| Dynamic XML Sitemap | Auto-discovers routes + fetches Sanity slugs |
-| Dynamic robots.txt | Allows crawlers, excludes private paths |
-| Per-page Meta Tags | Title, description, OG/Twitter, canonical, keywords |
-| Redirects | 301 redirects for legacy URLs, host canonicalization |
-| Performance | ISR (revalidate), CSP headers, font-display swap |
-| SEO Validation | Runtime warnings for missing title/description/path |
-| Schema Ownership Map | Prevents duplicate FAQPage markup across pages |
-| Accessibility | WAI-ARIA accordions, anchor IDs for FAQ jumps |
+| Dynamic XML Sitemap     | Auto-discovers routes + fetches Sanity slugs                                                                   |
+| Dynamic robots.txt      | Allows crawlers, excludes private paths                                                                        |
+| Per-page Meta Tags      | Title, description, OG/Twitter, canonical, keywords                                                            |
+| Redirects               | 301 redirects for legacy URLs, host canonicalization                                                           |
+| Performance             | ISR (revalidate), CSP headers, font-display swap                                                               |
+| SEO Validation          | Runtime warnings for missing title/description/path                                                            |
+| Schema Ownership Map    | Prevents duplicate FAQPage markup across pages                                                                 |
+| Accessibility           | WAI-ARIA accordions, anchor IDs for FAQ jumps                                                                  |
 
 ### What's Missing (Opportunity for Agents)
 
-| Gap | Agent Solution |
-|-----|---------------|
-| Meta tags are static — never optimized post-creation | Meta Optimization Agent |
-| No validation that schema *content* matches page content | Schema Validation Agent |
-| Internal links are hand-placed, no systematic coverage | Internal Linking Agent |
-| No tracking of stale/outdated content | Content Freshness Agent |
-| No keyword gap analysis vs competitors | Keyword Gap Agent |
-| No monitoring of AI search engine citations | AI Visibility (GEO) Agent |
-| No automated technical SEO audit pipeline | Technical Crawler Agent |
-| No centralized SEO performance dashboard | Admin dashboard (Phase 4) |
+| Gap                                                      | Agent Solution            |
+| -------------------------------------------------------- | ------------------------- |
+| Meta tags are static — never optimized post-creation     | Meta Optimization Agent   |
+| No validation that schema _content_ matches page content | Schema Validation Agent   |
+| Internal links are hand-placed, no systematic coverage   | Internal Linking Agent    |
+| No tracking of stale/outdated content                    | Content Freshness Agent   |
+| No keyword gap analysis vs competitors                   | Keyword Gap Agent         |
+| No monitoring of AI search engine citations              | AI Visibility (GEO) Agent |
+| No automated technical SEO audit pipeline                | Technical Crawler Agent   |
+| No centralized SEO performance dashboard                 | Admin dashboard (Phase 4) |
 
 ---
 
@@ -120,14 +120,14 @@ Skillyards is an IT training institute competing in a crowded local + national m
 
 ### Free-Tier Stack
 
-| Component | Choice | Free Tier Limit | Why |
-|-----------|--------|----------------|-----|
-| **Scheduler** | GitHub Actions (cron) | 2,000 min/month | Already on GitHub; no server needed |
-| **AI Model** | Google Gemini 2.5 Flash | 1M tokens/day, 1,500 RPM | Generous free tier covers entire workload |
-| **Content Store** | Sanity CMS | Existing free plan | Agents read/write content + metadata |
-| **Agent Logs** | Neon PostgreSQL | Existing free plan | Store run history, actions, metrics |
-| **Code** | Node.js scripts in `apps/website/src/agents/` | — | Runs in GitHub Actions runtime |
-| **Web App** | Vercel Free (unchanged) | Existing free plan | Agents don't run here; only serve the built site |
+| Component         | Choice                                        | Free Tier Limit          | Why                                              |
+| ----------------- | --------------------------------------------- | ------------------------ | ------------------------------------------------ |
+| **Scheduler**     | GitHub Actions (cron)                         | 2,000 min/month          | Already on GitHub; no server needed              |
+| **AI Model**      | Google Gemini 2.5 Flash                       | 1M tokens/day, 1,500 RPM | Generous free tier covers entire workload        |
+| **Content Store** | Sanity CMS                                    | Existing free plan       | Agents read/write content + metadata             |
+| **Agent Logs**    | Neon PostgreSQL                               | Existing free plan       | Store run history, actions, metrics              |
+| **Code**          | Node.js scripts in `apps/website/src/agents/` | —                        | Runs in GitHub Actions runtime                   |
+| **Web App**       | Vercel Free (unchanged)                       | Existing free plan       | Agents don't run here; only serve the built site |
 
 ### Agent Script Structure (per agent)
 
@@ -178,82 +178,82 @@ apps/website/src/agents/
 
 #### 6.1 Meta Content Optimization Agent
 
-| Aspect | Detail |
-|--------|--------|
-| **Purpose** | Scan all pages for weak/empty meta titles and descriptions, generate improved versions |
-| **Input** | List of all page URLs + their current title/description from Sanity or routes |
-| **AI Task** | Analyze page content, suggest SEO-optimized title (<60 chars) and description (<160 chars) with keywords |
-| **Action** | Write optimized meta to Sanity SEO fields; if none exist, create draft suggestions |
-| **Human Oversight** | Changes create a Sanity draft (not published) — human reviews and publishes |
-| **Schedule** | Weekly + on new blog post publish (via Sanity webhook) |
-| **Token Cost** | ~11K tokens/run → ~$0.00 (within Gemini free tier) |
+| Aspect              | Detail                                                                                                   |
+| ------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Purpose**         | Scan all pages for weak/empty meta titles and descriptions, generate improved versions                   |
+| **Input**           | List of all page URLs + their current title/description from Sanity or routes                            |
+| **AI Task**         | Analyze page content, suggest SEO-optimized title (<60 chars) and description (<160 chars) with keywords |
+| **Action**          | Write optimized meta to Sanity SEO fields; if none exist, create draft suggestions                       |
+| **Human Oversight** | Changes create a Sanity draft (not published) — human reviews and publishes                              |
+| **Schedule**        | Weekly + on new blog post publish (via Sanity webhook)                                                   |
+| **Token Cost**      | ~11K tokens/run → ~$0.00 (within Gemini free tier)                                                       |
 
 #### 6.2 Schema Validation & Enhancement Agent
 
-| Aspect | Detail |
-|--------|--------|
-| **Purpose** | Validate all JSON-LD schemas across the site for correctness and completeness |
-| **Input** | App Router page list + current schema output |
-| **AI Task** | For each page, check: Is the right schema present? Are required fields populated? Does content match schema? |
-| **Action** | Fix missing schemas (e.g., a blog missing `BlogPosting`) by updating the page's schema component; flag inconsistencies |
-| **Human Oversight** | Fixes are PR'd to GitHub for review before deploy |
-| **Schedule** | Daily |
-| **Token Cost** | ~32K tokens/run → ~$0.00 (within Gemini free tier) |
+| Aspect              | Detail                                                                                                                 |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **Purpose**         | Validate all JSON-LD schemas across the site for correctness and completeness                                          |
+| **Input**           | App Router page list + current schema output                                                                           |
+| **AI Task**         | For each page, check: Is the right schema present? Are required fields populated? Does content match schema?           |
+| **Action**          | Fix missing schemas (e.g., a blog missing `BlogPosting`) by updating the page's schema component; flag inconsistencies |
+| **Human Oversight** | Fixes are PR'd to GitHub for review before deploy                                                                      |
+| **Schedule**        | Daily                                                                                                                  |
+| **Token Cost**      | ~32K tokens/run → ~$0.00 (within Gemini free tier)                                                                     |
 
 #### 6.3 Internal Linking Agent
 
-| Aspect | Detail |
-|--------|--------|
-| **Purpose** | Build content graph, identify orphan pages, suggest and insert contextual internal links |
-| **Input** | All page content (Sanity + static routes) |
-| **AI Task** | For each page, identify 2-3 other pages with topical relevance; suggest link anchor text |
-| **Action** | Insert links into Sanity blog post body content as suggested edits |
-| **Human Oversight** | Edits are created as Sanity drafts (not auto-published) |
-| **Schedule** | Weekly |
-| **Token Cost** | ~128K tokens/run → ~$0.00 (within Gemini free tier) |
+| Aspect              | Detail                                                                                   |
+| ------------------- | ---------------------------------------------------------------------------------------- |
+| **Purpose**         | Build content graph, identify orphan pages, suggest and insert contextual internal links |
+| **Input**           | All page content (Sanity + static routes)                                                |
+| **AI Task**         | For each page, identify 2-3 other pages with topical relevance; suggest link anchor text |
+| **Action**          | Insert links into Sanity blog post body content as suggested edits                       |
+| **Human Oversight** | Edits are created as Sanity drafts (not auto-published)                                  |
+| **Schedule**        | Weekly                                                                                   |
+| **Token Cost**      | ~128K tokens/run → ~$0.00 (within Gemini free tier)                                      |
 
 #### 6.4 Content Freshness Agent
 
-| Aspect | Detail |
-|--------|--------|
-| **Purpose** | Detect stale content (>90 days without update) and suggest refreshes |
-| **Input** | Sanity `_updatedAt` timestamps for all documents |
-| **AI Task** | For stale items, generate a brief summary of what should be updated (statistics, new programs, recent info) |
-| **Action** | Create a Sanity draft with "stale review" note; post to a dedicated `#seo-alerts` GitHub issue |
-| **Human Oversight** | Content team reviews suggestions weekly |
-| **Schedule** | Weekly |
-| **Token Cost** | ~16K tokens/run → ~$0.00 (within Gemini free tier) |
+| Aspect              | Detail                                                                                                      |
+| ------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Purpose**         | Detect stale content (>90 days without update) and suggest refreshes                                        |
+| **Input**           | Sanity `_updatedAt` timestamps for all documents                                                            |
+| **AI Task**         | For stale items, generate a brief summary of what should be updated (statistics, new programs, recent info) |
+| **Action**          | Create a Sanity draft with "stale review" note; post to a dedicated `#seo-alerts` GitHub issue              |
+| **Human Oversight** | Content team reviews suggestions weekly                                                                     |
+| **Schedule**        | Weekly                                                                                                      |
+| **Token Cost**      | ~16K tokens/run → ~$0.00 (within Gemini free tier)                                                          |
 
 ### Phase 2 — Advanced Agents (P1)
 
 #### 6.5 Keyword Gap & Content Opportunity Agent
 
-| Aspect | Detail |
-|--------|--------|
-| **Purpose** | Identify keywords competitors rank for that Skillyards doesn't, generate content briefs |
-| **Input** | Google Search Console data (free API) + competitor URLs |
-| **Action** | Generate blog post briefs in Sanity as drafts with title, outline, target keywords |
-| **Schedule** | Weekly |
-| **Prerequisite** | Google Search Console access + API enabled |
+| Aspect           | Detail                                                                                  |
+| ---------------- | --------------------------------------------------------------------------------------- |
+| **Purpose**      | Identify keywords competitors rank for that Skillyards doesn't, generate content briefs |
+| **Input**        | Google Search Console data (free API) + competitor URLs                                 |
+| **Action**       | Generate blog post briefs in Sanity as drafts with title, outline, target keywords      |
+| **Schedule**     | Weekly                                                                                  |
+| **Prerequisite** | Google Search Console access + API enabled                                              |
 
 #### 6.6 AI Visibility / GEO Agent
 
-| Aspect | Detail |
-|--------|--------|
-| **Purpose** | Monitor how Skillyards appears in AI search engines (Gemini, ChatGPT, Perplexity, AI Overviews) |
-| **Method** | Run prompt-based queries ("best BCA course in Agra with job training") and check if Skillyards is cited |
-| **Action** | If missing from citations, flag content/schema changes needed; log citation status over time |
-| **Schedule** | Daily |
-| **Note** | Uses Gemini's own API to check visibility in AI search — no external API cost |
+| Aspect       | Detail                                                                                                  |
+| ------------ | ------------------------------------------------------------------------------------------------------- |
+| **Purpose**  | Monitor how Skillyards appears in AI search engines (Gemini, ChatGPT, Perplexity, AI Overviews)         |
+| **Method**   | Run prompt-based queries ("best BCA course in Agra with job training") and check if Skillyards is cited |
+| **Action**   | If missing from citations, flag content/schema changes needed; log citation status over time            |
+| **Schedule** | Daily                                                                                                   |
+| **Note**     | Uses Gemini's own API to check visibility in AI search — no external API cost                           |
 
 #### 6.7 Technical SEO Crawler Agent
 
-| Aspect | Detail |
-|--------|--------|
-| **Purpose** | Crawl the live site and detect broken links, missing alt text, slow pages, large images |
-| **Method** | Simple HTTP crawler (no headless browser needed for basic checks) |
-| **Action** | Create GitHub issues for each problem found, prioritized by severity |
-| **Schedule** | Daily |
+| Aspect       | Detail                                                                                  |
+| ------------ | --------------------------------------------------------------------------------------- |
+| **Purpose**  | Crawl the live site and detect broken links, missing alt text, slow pages, large images |
+| **Method**   | Simple HTTP crawler (no headless browser needed for basic checks)                       |
+| **Action**   | Create GitHub issues for each problem found, prioritized by severity                    |
+| **Schedule** | Daily                                                                                   |
 
 ---
 
@@ -261,46 +261,46 @@ apps/website/src/agents/
 
 ### Phase 1 — Foundation (Week 1)
 
-| Task | Est. Hours | Deliverable |
-|------|-----------|-------------|
-| Create `apps/website/src/agents/` directory structure | 1 | Folder scaffold |
-| Build `core/llm-client.js` (Gemini API wrapper) | 3 | Reusable LLM client with retry, rate-limit, token tracking |
-| Build `core/sanity-client.js` (Sanity read/write helpers) | 2 | Agent-friendly CRUD for Sanity documents |
-| Build `core/logger.js` (Neon logging) + create `agent_logs` DB table | 3 | Every agent action is logged |
-| Build `core/agent-runner.js` (base class) | 3 | Standard run/validate/rollback pattern |
-| Set up GitHub Actions workflow skeleton | 2 | Workflow templates, secret references, cron setup |
-| **Total** | **14** | **Foundation complete** |
+| Task                                                                 | Est. Hours | Deliverable                                                |
+| -------------------------------------------------------------------- | ---------- | ---------------------------------------------------------- |
+| Create `apps/website/src/agents/` directory structure                | 1          | Folder scaffold                                            |
+| Build `core/llm-client.js` (Gemini API wrapper)                      | 3          | Reusable LLM client with retry, rate-limit, token tracking |
+| Build `core/sanity-client.js` (Sanity read/write helpers)            | 2          | Agent-friendly CRUD for Sanity documents                   |
+| Build `core/logger.js` (Neon logging) + create `agent_logs` DB table | 3          | Every agent action is logged                               |
+| Build `core/agent-runner.js` (base class)                            | 3          | Standard run/validate/rollback pattern                     |
+| Set up GitHub Actions workflow skeleton                              | 2          | Workflow templates, secret references, cron setup          |
+| **Total**                                                            | **14**     | **Foundation complete**                                    |
 
 ### Phase 2 — Core Agents (Week 2–3)
 
-| Task | Est. Hours | Deliverable |
-|------|-----------|-------------|
-| Build Meta Optimization Agent | 10 | Scans + generates + writes drafts to Sanity |
-| Build Schema Validation Agent | 12 | Crawls schemas + validates + creates PRs |
-| Build Internal Linking Agent | 10 | Content graph + link suggestions in Sanity |
-| Build Content Freshness Agent | 6 | Stale detection + GitHub issues |
-| Integration test all 4 agents | 4 | Run against production data in dry-run mode |
-| **Total** | **42** | **4 agents operational** |
+| Task                          | Est. Hours | Deliverable                                 |
+| ----------------------------- | ---------- | ------------------------------------------- |
+| Build Meta Optimization Agent | 10         | Scans + generates + writes drafts to Sanity |
+| Build Schema Validation Agent | 12         | Crawls schemas + validates + creates PRs    |
+| Build Internal Linking Agent  | 10         | Content graph + link suggestions in Sanity  |
+| Build Content Freshness Agent | 6          | Stale detection + GitHub issues             |
+| Integration test all 4 agents | 4          | Run against production data in dry-run mode |
+| **Total**                     | **42**     | **4 agents operational**                    |
 
 ### Phase 3 — Advanced Agents (Week 4–5)
 
-| Task | Est. Hours | Deliverable |
-|------|-----------|-------------|
-| Build Keyword Gap Agent | 10 | GSC API integration + content brief generation |
-| Build AI Visibility (GEO) Agent | 12 | Prompt-based citation checker + logging |
-| Build Technical SEO Crawler | 10 | Crawl + issue generation |
-| Integration test all 3 | 4 | Dry-run against production |
-| **Total** | **36** | **7 agents operational** |
+| Task                            | Est. Hours | Deliverable                                    |
+| ------------------------------- | ---------- | ---------------------------------------------- |
+| Build Keyword Gap Agent         | 10         | GSC API integration + content brief generation |
+| Build AI Visibility (GEO) Agent | 12         | Prompt-based citation checker + logging        |
+| Build Technical SEO Crawler     | 10         | Crawl + issue generation                       |
+| Integration test all 3          | 4          | Dry-run against production                     |
+| **Total**                       | **36**     | **7 agents operational**                       |
 
 ### Phase 4 — Dashboard & Polish (Week 6)
 
-| Task | Est. Hours | Deliverable |
-|------|-----------|-------------|
-| Add admin dashboard page for agent logs + metrics | 8 | Viewable in `/admin` |
-| Build alert system (agent failure notifications) | 4 | GitHub issue on failure |
-| Add kill-switch / pause per agent | 3 | Disable any agent via DB flag |
-| Documentation + runbooks | 4 | How to monitor, rollback, extend |
-| **Total** | **19** | **Production-ready** |
+| Task                                              | Est. Hours | Deliverable                      |
+| ------------------------------------------------- | ---------- | -------------------------------- |
+| Add admin dashboard page for agent logs + metrics | 8          | Viewable in `/admin`             |
+| Build alert system (agent failure notifications)  | 4          | GitHub issue on failure          |
+| Add kill-switch / pause per agent                 | 3          | Disable any agent via DB flag    |
+| Documentation + runbooks                          | 4          | How to monitor, rollback, extend |
+| **Total**                                         | **19**     | **Production-ready**             |
 
 ### Total Investment: ~111 engineering hours (~3-4 weeks)
 
@@ -310,15 +310,15 @@ apps/website/src/agents/
 
 ### Monthly Operating Cost: **$0.00**
 
-| Item | Free Tier Limits | Skillyards Monthly Usage | Cost |
-|------|-----------------|------------------------|------|
-| **Gemini 2.5 Flash API** | 1M tokens/day, 1,500 RPM | ~300K tokens/month (all 7 agents) | **$0** |
-| **GitHub Actions** | 2,000 min/month | ~30-60 min/month | **$0** |
-| **Neon PostgreSQL** | Already on free plan | Negligible additional storage | **$0** |
-| **Sanity CMS** | Already on free plan | Negligible additional API calls | **$0** |
-| **Vercel** | Already on free plan | Unchanged — agents don't run here | **$0** |
-| **Google Search Console API** | Unlimited (free) | ~1,000 queries/month | **$0** |
-| **Total** | | | **$0.00/mo** |
+| Item                          | Free Tier Limits         | Skillyards Monthly Usage          | Cost         |
+| ----------------------------- | ------------------------ | --------------------------------- | ------------ |
+| **Gemini 2.5 Flash API**      | 1M tokens/day, 1,500 RPM | ~300K tokens/month (all 7 agents) | **$0**       |
+| **GitHub Actions**            | 2,000 min/month          | ~30-60 min/month                  | **$0**       |
+| **Neon PostgreSQL**           | Already on free plan     | Negligible additional storage     | **$0**       |
+| **Sanity CMS**                | Already on free plan     | Negligible additional API calls   | **$0**       |
+| **Vercel**                    | Already on free plan     | Unchanged — agents don't run here | **$0**       |
+| **Google Search Console API** | Unlimited (free)         | ~1,000 queries/month              | **$0**       |
+| **Total**                     |                          |                                   | **$0.00/mo** |
 
 ### Why Gemini 2.5 Flash Is the Right Choice
 
@@ -333,13 +333,13 @@ apps/website/src/agents/
 
 ### 9.1 API Keys (Set as GitHub Secrets)
 
-| Secret Name | What It Is | Where to Get It |
-|-------------|-----------|-----------------|
-| `GEMINI_API_KEY` | Google AI API key | https://aistudio.google.com → Get API key (free, no credit card) |
-| `SANITY_API_TOKEN` | Sanity API token with write access | Sanity dashboard → API → Tokens → "Editor" token |
-| `DATABASE_URL` | Neon PostgreSQL connection string | Already in your `.env` — `postgresql://...` |
-| `SANITY_PROJECT_ID` | Your Sanity project ID | Already in your `.env` or Sanity dashboard |
-| `SANITY_DATASET` | Usually `production` or `development` | Already in your `.env` |
+| Secret Name         | What It Is                            | Where to Get It                                                  |
+| ------------------- | ------------------------------------- | ---------------------------------------------------------------- |
+| `GEMINI_API_KEY`    | Google AI API key                     | https://aistudio.google.com → Get API key (free, no credit card) |
+| `SANITY_API_TOKEN`  | Sanity API token with write access    | Sanity dashboard → API → Tokens → "Editor" token                 |
+| `DATABASE_URL`      | Neon PostgreSQL connection string     | Already in your `.env` — `postgresql://...`                      |
+| `SANITY_PROJECT_ID` | Your Sanity project ID                | Already in your `.env` or Sanity dashboard                       |
+| `SANITY_DATASET`    | Usually `production` or `development` | Already in your `.env`                                           |
 
 ### 9.2 Google Search Console (Only for Keyword Gap Agent — Phase 3)
 
@@ -350,12 +350,12 @@ apps/website/src/agents/
 
 ### 9.3 Decisions to Make
 
-| Decision | Options | Our Recommendation |
-|----------|---------|-------------------|
-| **First agent to build** | Meta / Schema / Both | **Meta Optimization** — highest ROI, simplest to build |
-| **Human oversight model** | Draft-only vs auto-publish | **Draft-only** — agents create Sanity drafts, you review weekly |
-| **Error handling** | Slack/Discord alert vs GitHub Issue | **GitHub Issue** — simplest, no additional API needed |
-| **GitHub repo** | Current repo | ✅ We're here |
+| Decision                  | Options                             | Our Recommendation                                              |
+| ------------------------- | ----------------------------------- | --------------------------------------------------------------- |
+| **First agent to build**  | Meta / Schema / Both                | **Meta Optimization** — highest ROI, simplest to build          |
+| **Human oversight model** | Draft-only vs auto-publish          | **Draft-only** — agents create Sanity drafts, you review weekly |
+| **Error handling**        | Slack/Discord alert vs GitHub Issue | **GitHub Issue** — simplest, no additional API needed           |
+| **GitHub repo**           | Current repo                        | ✅ We're here                                                   |
 
 ### 9.4 Permission
 
@@ -394,8 +394,8 @@ name: "Agent: Meta Optimization"
 
 on:
   schedule:
-    - cron: "0 6 * * 1"   # Every Monday at 6 AM UTC
-  workflow_dispatch:        # Manual trigger
+    - cron: "0 6 * * 1" # Every Monday at 6 AM UTC
+  workflow_dispatch: # Manual trigger
 
 jobs:
   meta-optimizer:
@@ -420,9 +420,9 @@ jobs:
           SANITY_PROJECT_ID: ${{ secrets.SANITY_PROJECT_ID }}
           SANITY_DATASET: ${{ secrets.SANITY_DATASET }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          RUN_MODE: "draft"   # draft = creates Sanity drafts, not publish
+          RUN_MODE: "draft" # draft = creates Sanity drafts, not publish
 ```
 
 ---
 
-*This document captures the discussion from June 18, 2026. It is a living document — update it as priorities shift or decisions are made.*
+_This document captures the discussion from June 18, 2026. It is a living document — update it as priorities shift or decisions are made._

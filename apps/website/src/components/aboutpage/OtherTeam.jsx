@@ -47,11 +47,12 @@ const TeamCarousel = ({
     (newDirection) => {
       if (totalMembers === 0) return;
       setDirection(newDirection);
-      const nextIndex = (currentIndex + newDirection + totalMembers) % totalMembers;
+      const nextIndex =
+        (currentIndex + newDirection + totalMembers) % totalMembers;
       setCurrentIndex(nextIndex);
       if (onMemberChange) onMemberChange(members[nextIndex], nextIndex);
     },
-    [currentIndex, totalMembers, members, onMemberChange]
+    [currentIndex, totalMembers, members, onMemberChange],
   );
 
   const wrapIndex = (index) => {
@@ -64,7 +65,8 @@ const TeamCarousel = ({
 
     if (diff === 0) return "center";
     if (diff <= visibleCards) return `right-${diff}`;
-    if (diff >= totalMembers - visibleCards) return `left-${totalMembers - diff}`;
+    if (diff >= totalMembers - visibleCards)
+      return `left-${totalMembers - diff}`;
     return "hidden";
   };
 
@@ -130,9 +132,10 @@ const TeamCarousel = ({
           zIndex: 0,
           opacity: 0,
           scale: 0.8,
-          x: direction > 0
-            ? cardWidth * (visibleCards + 1)
-            : -cardWidth * (visibleCards + 1),
+          x:
+            direction > 0
+              ? cardWidth * (visibleCards + 1)
+              : -cardWidth * (visibleCards + 1),
           pointerEvents: "none",
           filter: grayscaleEffect ? "grayscale(100%)" : "grayscale(0%)",
           transition,
@@ -148,7 +151,9 @@ const TeamCarousel = ({
       }, autoPlay);
     }
 
-    const carouselContainer = document.getElementById("team-carousel-container");
+    const carouselContainer = document.getElementById(
+      "team-carousel-container",
+    );
 
     const handleMouseEnter = () => {
       if (pauseOnHover && autoPlay > 0) clearInterval(interval);
@@ -215,7 +220,7 @@ const TeamCarousel = ({
         paginate(-1);
       }
     }
-    
+
     setTouchEnd(null);
   };
 
@@ -234,7 +239,7 @@ const TeamCarousel = ({
       id="team-carousel-container"
       className={cn(
         "flex flex-col items-center justify-center overflow-hidden relative w-full py-20 min-h-screen",
-        className
+        className,
       )}
       style={{ background: background }}
       onTouchStart={handleTouchStart}
@@ -247,7 +252,7 @@ const TeamCarousel = ({
           className={cn(
             "font-black uppercase tracking-tight absolute top-12 left-1/2 transform -translate-x-1/2 pointer-events-none whitespace-nowrap z-10",
             titleSizeClasses[titleSize],
-            titleClassName
+            titleClassName,
           )}
           style={{
             color: titleColor,
@@ -302,7 +307,7 @@ const TeamCarousel = ({
                   key={member.id}
                   className={cn(
                     "absolute bg-white overflow-hidden shadow-2xl cursor-pointer",
-                    cardClassName
+                    cardClassName,
                   )}
                   style={{
                     width: cardWidth,
@@ -406,7 +411,7 @@ const TeamCarousel = ({
               }}
               className={cn(
                 "w-3 h-3 rounded-full transition-all duration-300",
-                index === currentIndex ? "scale-125" : "hover:scale-110"
+                index === currentIndex ? "scale-125" : "hover:scale-110",
               )}
               style={{
                 background:
@@ -438,11 +443,7 @@ export default function OtherTeam({ members: initialMembers = [] }) {
 
   return (
     <section className="relative bg-background overflow-hidden border-t">
-      <TeamCarousel
-        members={members}
-        title="Our Team"
-        titleSize="lg"
-      />
+      <TeamCarousel members={members} title="Our Team" titleSize="lg" />
     </section>
   );
 }

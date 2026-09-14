@@ -6,30 +6,27 @@ import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
 import { resolveOgImage } from "@/lib/seo/og";
 import { getBlogSchema } from "@/lib/seo/schema/blogPostingSchema";
 import { sanityClient } from "@/lib/sanity/client";
-import {
-  FEATURED_PILLARS_QUERY,
-  POSTS_QUERY,
-} from "@/lib/sanity/queries";
+import { FEATURED_PILLARS_QUERY, POSTS_QUERY } from "@/lib/sanity/queries";
 
 export const revalidate = 3600;
 
 export async function generateMetadata() {
   const ogImages = await getAllOgImages();
   return buildSEO({
-  title: "SkillYards Blog",
-  description:
-    "Explore the SkillYards Blog for expert insights, practical tutorials, learning resources, and career guidance in IT and emerging technologies.",
-  path: "/blog",
-  keywords: [
-    "SkillYards blog",
-    "IT learning blog",
-    "Programming tutorials",
-    "Career guidance blog",
-    "Skill development articles",
-    "Technology education insights",
-  ],
-  ogImage: resolveOgImage(ogImages, "blog", "/images/opengraph/blog-og.jpg"),
-});
+    title: "SkillYards Blog",
+    description:
+      "Explore the SkillYards Blog for expert insights, practical tutorials, learning resources, and career guidance in IT and emerging technologies.",
+    path: "/blog",
+    keywords: [
+      "SkillYards blog",
+      "IT learning blog",
+      "Programming tutorials",
+      "Career guidance blog",
+      "Skill development articles",
+      "Technology education insights",
+    ],
+    ogImage: resolveOgImage(ogImages, "blog", "/images/opengraph/blog-og.jpg"),
+  });
 }
 
 const CONTENT_TYPE_LABELS = {
@@ -81,11 +78,18 @@ function FeaturedPillars({ posts }) {
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">
             <span>{formatDate(posts[0].publishedAt)}</span>
-            {posts[0].parentPillar?.title && <span>{posts[0].parentPillar.title}</span>}
+            {posts[0].parentPillar?.title && (
+              <span>{posts[0].parentPillar.title}</span>
+            )}
           </div>
           <div className="mt-6 flex items-center gap-2 text-sm font-bold text-primary">
             <span>Read Complete Guide</span>
-            <span aria-hidden="true" className="transition-transform group-hover:translate-x-1">&rarr;</span>
+            <span
+              aria-hidden="true"
+              className="transition-transform group-hover:translate-x-1"
+            >
+              &rarr;
+            </span>
           </div>
         </Link>
 
@@ -116,7 +120,11 @@ function FeaturedPillars({ posts }) {
 export default async function BlogPage() {
   const [posts, featuredPillars] = await Promise.all([
     sanityClient.fetch(POSTS_QUERY, {}, { next: { revalidate: 3600 } }),
-    sanityClient.fetch(FEATURED_PILLARS_QUERY, {}, { next: { revalidate: 3600 } }),
+    sanityClient.fetch(
+      FEATURED_PILLARS_QUERY,
+      {},
+      { next: { revalidate: 3600 } },
+    ),
   ]);
 
   const blogSchema = getBlogSchema(posts);
@@ -154,6 +162,5 @@ export default async function BlogPage() {
         </div>
       </section>
     </div>
-    
   );
 }

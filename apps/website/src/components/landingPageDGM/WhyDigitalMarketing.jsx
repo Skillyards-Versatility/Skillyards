@@ -2,23 +2,47 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FileText, Lightbulb, LineChart, Megaphone, Search, Sparkles, Users } from "lucide-react";
+import {
+  FileText,
+  Lightbulb,
+  LineChart,
+  Megaphone,
+  Search,
+  Sparkles,
+  Users,
+} from "lucide-react";
 
 const aiUses = [
   {
     icon: Search,
     title: "SEO",
-    items: ["Keyword ideas", "Content briefs", "Meta titles", "Topic clusters", "SEO audit support"],
+    items: [
+      "Keyword ideas",
+      "Content briefs",
+      "Meta titles",
+      "Topic clusters",
+      "SEO audit support",
+    ],
   },
   {
     icon: FileText,
     title: "Content Marketing",
-    items: ["Blog outlines", "Captions", "Hooks", "Ad copy drafts", "Content calendars"],
+    items: [
+      "Blog outlines",
+      "Captions",
+      "Hooks",
+      "Ad copy drafts",
+      "Content calendars",
+    ],
   },
   {
     icon: Megaphone,
     title: "Google Ads",
-    items: ["Ad copy variations", "Keyword grouping", "Landing page suggestions"],
+    items: [
+      "Ad copy variations",
+      "Keyword grouping",
+      "Landing page suggestions",
+    ],
   },
   {
     icon: Users,
@@ -28,12 +52,23 @@ const aiUses = [
   {
     icon: Lightbulb,
     title: "Social Media",
-    items: ["Post ideas", "Reel hooks", "Calendar planning", "Caption improvement"],
+    items: [
+      "Post ideas",
+      "Reel hooks",
+      "Calendar planning",
+      "Caption improvement",
+    ],
   },
   {
     icon: LineChart,
     title: "Analytics & Portfolio",
-    items: ["Report summaries", "Insight generation", "Performance explanation", "Case study formatting", "Presentation support"],
+    items: [
+      "Report summaries",
+      "Insight generation",
+      "Performance explanation",
+      "Case study formatting",
+      "Presentation support",
+    ],
   },
 ];
 
@@ -57,10 +92,14 @@ export function DGMWhyDigitalMarketing() {
             <span className="text-primary">With AI</span>
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-sm text-muted-foreground sm:text-base">
-            Digital marketing is changing fast. Today, marketers use AI to research faster, write better drafts, plan campaigns, understand data, and create sharper reports.
+            Digital marketing is changing fast. Today, marketers use AI to
+            research faster, write better drafts, plan campaigns, understand
+            data, and create sharper reports.
           </p>
           <p className="mx-auto mt-3 max-w-3xl text-sm text-muted-foreground sm:text-base">
-            SkillYards&apos; Digital Marketing OJT includes practical AI usage across key marketing tasks, so students do not just learn old-school digital marketing, they learn how modern marketers actually work.
+            SkillYards&apos; Digital Marketing OJT includes practical AI usage
+            across key marketing tasks, so students do not just learn old-school
+            digital marketing, they learn how modern marketers actually work.
           </p>
         </div>
 
@@ -79,10 +118,15 @@ export function DGMWhyDigitalMarketing() {
                 <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 sm:h-11 sm:w-11">
                   <Icon size={18} className="text-primary sm:h-5 sm:w-5" />
                 </div>
-                <h3 className="mb-3 font-serif text-lg font-extrabold text-foreground sm:text-xl">{useCase.title}</h3>
+                <h3 className="mb-3 font-serif text-lg font-extrabold text-foreground sm:text-xl">
+                  {useCase.title}
+                </h3>
                 <ul className="space-y-2">
                   {useCase.items.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-sm text-muted-foreground">
+                    <li
+                      key={item}
+                      className="flex items-start gap-2 text-sm text-muted-foreground"
+                    >
                       <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                       {item}
                     </li>
@@ -112,7 +156,8 @@ export function DGMWhyDigitalMarketing() {
           className="mx-auto mt-8 max-w-3xl rounded-3xl border border-primary/15 bg-primary/5 p-4 text-center sm:p-5"
         >
           <p className="text-sm font-semibold text-foreground">
-            AI is taught as a marketing assistant, not as a replacement for fundamentals, strategy, creativity, or human judgement.
+            AI is taught as a marketing assistant, not as a replacement for
+            fundamentals, strategy, creativity, or human judgement.
           </p>
         </motion.div>
       </div>

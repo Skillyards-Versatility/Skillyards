@@ -15,7 +15,8 @@ export const TEAM_PROFILES = {
     experienceLabel: "Entrepreneurship and EdTech leadership",
     company: "SkillYards Versatility Pvt. Ltd.",
     linkedin: "https://www.linkedin.com/in/suryansh-upadhyay-346a22347/",
-    instagram: "https://www.instagram.com/suryanshupadhyay_official?igsh=MTZnaDg2Z2JyMWNneg==",
+    instagram:
+      "https://www.instagram.com/suryanshupadhyay_official?igsh=MTZnaDg2Z2JyMWNneg==",
     twitter: "https://x.com/SuryanshUpad",
     mission:
       "To build a unified platform where degree-pursuing students, working professionals, and 12th-pass learners can learn, grow, and advance professionally through affordable, outcome-driven education.",
@@ -58,8 +59,7 @@ export const TEAM_PROFILES = {
           "Building partnerships, managing teams, and scaling programs.",
           "Driving the vision of affordable and outcome-driven quality education.",
         ],
-      }
-      
+      },
     ],
     seo: {
       title: "Suryansh Upadhyay – Founder & CEO",
@@ -91,7 +91,8 @@ export const TEAM_PROFILES = {
     experienceLabel: "Operations, growth, and commercial leadership",
     company: "Skillyards Versatility Pvt. Ltd.",
     linkedin: "https://www.linkedin.com/in/rahul-singh-a90ab630/",
-    instagram: "https://www.instagram.com/rahul_rs0310?igsh=bmpqejlqZXdsbHN5&utm_source=qr",
+    instagram:
+      "https://www.instagram.com/rahul_rs0310?igsh=bmpqejlqZXdsbHN5&utm_source=qr",
     twitter: "https://x.com/rsrsrahul444?s=11",
     mission:
       "To scale SkillYards through strong operations, measurable governance, profitable growth, and technology-enabled service delivery.",

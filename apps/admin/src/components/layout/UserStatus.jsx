@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { updateStatus } from "@/actions/status";
 import { toast } from "sonner";
 import { SmilePlus, X } from "lucide-react";
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker from "emoji-picker-react";
 
 const PRESETS = [
   { emoji: "__available__", text: "Available" },
@@ -35,11 +35,11 @@ export function UserStatus({ initialEmoji, initialText }) {
         setShowEmojiPicker(false);
       }
     }
-    
+
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
     }
-    
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -55,10 +55,14 @@ export function UserStatus({ initialEmoji, initialText }) {
     setIsSaving(true);
     setCurrentEmoji(selectedEmoji);
     setCurrentText(selectedText);
-    
+
     try {
       const statusClearAt = selectedEmoji ? getEndOfDay() : null;
-      const res = await updateStatus({ statusEmoji: selectedEmoji, statusText: selectedText, statusClearAt });
+      const res = await updateStatus({
+        statusEmoji: selectedEmoji,
+        statusText: selectedText,
+        statusClearAt,
+      });
       if (res.success) {
         setIsOpen(false);
         toast.success("Status updated");
@@ -111,15 +115,17 @@ export function UserStatus({ initialEmoji, initialText }) {
 
       {isOpen && (
         <>
-          <div 
+          <div
             className="fixed inset-0 z-[90] sm:hidden bg-background/20 backdrop-blur-sm"
             onClick={() => setIsOpen(false)}
           />
           <div className="fixed left-4 right-4 top-20 sm:absolute sm:left-auto sm:right-0 sm:top-[calc(100%+0.5rem)] sm:w-[320px] bg-background/70 backdrop-blur-2xl border border-white/10 dark:border-white/5 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] p-4 z-[100] animate-in fade-in zoom-in-95 slide-in-from-top-4 sm:origin-top-right duration-200">
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-sm font-semibold tracking-tight">Update Status</h4>
-              <button 
-                onClick={() => setIsOpen(false)} 
+              <h4 className="text-sm font-semibold tracking-tight">
+                Update Status
+              </h4>
+              <button
+                onClick={() => setIsOpen(false)}
                 className="p-1 rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
               >
                 <X className="w-4 h-4" />
@@ -138,7 +144,7 @@ export function UserStatus({ initialEmoji, initialText }) {
                     emoji || "😊"
                   )}
                 </button>
-                
+
                 <input
                   type="text"
                   placeholder="What's your status?"
@@ -166,22 +172,24 @@ export function UserStatus({ initialEmoji, initialText }) {
 
             <div className="space-y-1 mb-5">
               {PRESETS.map((preset) => (
-                  <button
-                    key={preset.text}
-                    onClick={() => {
-                      setEmoji(preset.emoji);
-                      setText(preset.text);
-                      handleSave(preset.emoji, preset.text);
-                    }}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/50 text-sm text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
-                  >
-                    {preset.emoji === "__available__" ? (
-                      <span className="w-4 h-4 rounded-full bg-emerald-500" />
-                    ) : (
-                      <span className="text-lg">{preset.emoji}</span>
-                    )}
-                    <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors">{preset.text}</span>
-                  </button>
+                <button
+                  key={preset.text}
+                  onClick={() => {
+                    setEmoji(preset.emoji);
+                    setText(preset.text);
+                    handleSave(preset.emoji, preset.text);
+                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-muted/50 text-sm text-left transition-all hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  {preset.emoji === "__available__" ? (
+                    <span className="w-4 h-4 rounded-full bg-emerald-500" />
+                  ) : (
+                    <span className="text-lg">{preset.emoji}</span>
+                  )}
+                  <span className="font-medium text-muted-foreground group-hover:text-foreground transition-colors">
+                    {preset.text}
+                  </span>
+                </button>
               ))}
             </div>
 

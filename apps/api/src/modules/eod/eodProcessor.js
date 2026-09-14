@@ -1,6 +1,10 @@
 import { db, eodReports, users, eodWarnings } from "@repo/db";
 import { eq, isNotNull, inArray, and } from "drizzle-orm";
-import { sendEodReportEmail, sendEodWarningEmail, isEmailEnabled } from "@/modules/notifications/email.service";
+import {
+  sendEodReportEmail,
+  sendEodWarningEmail,
+  isEmailEnabled,
+} from "@/modules/notifications/email.service";
 
 const TEAM_LEADS = {
   sales: { name: "Rahul Singh", email: "sskillyards@gmail.com" },
@@ -10,12 +14,15 @@ const TEAM_LEADS = {
 
 const ADMIN_HEADS = [
   { name: "CEO", email: process.env.CEO_EMAIL || "ceo@skillyards.in" },
-  { name: "Admin Head", email: process.env.ADMIN_EMAIL || "admin@skillyards.in" },
+  {
+    name: "Admin Head",
+    email: process.env.ADMIN_EMAIL || "admin@skillyards.in",
+  },
 ];
 
 const ADMIN_URL = process.env.ADMIN_URL || "https://admin.skillyards.in";
 
-const delay = (ms) => new Promise(r => setTimeout(r, ms));
+const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
 export async function processEodEmails(date, targetUserId = null) {
   const [emailsEnabled, eodEmailsEnabled] = await Promise.all([
@@ -24,23 +31,44 @@ export async function processEodEmails(date, targetUserId = null) {
   ]);
 
   if (!emailsEnabled || !eodEmailsEnabled) {
-    return { success: true, message: "EOD email sending disabled via feature flag", date, reportsSent: 0, warningsSent: 0, warningsSkipped: 0, failed: [] };
+    return {
+      success: true,
+      message: "EOD email sending disabled via feature flag",
+      date,
+      reportsSent: 0,
+      warningsSent: 0,
+      warningsSkipped: 0,
+      failed: [],
+    };
   }
 
   // Fetch all users who belong to a team
   let allUsers = await db
-    .select({ id: users.id, name: users.name, email: users.email, team: users.team })
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      team: users.team,
+    })
     .from(users)
     .where(isNotNull(users.team));
 
   // If targeting a specific user, filter to only that user
   if (targetUserId) {
-    allUsers = allUsers.filter(u => u.id === targetUserId);
+    allUsers = allUsers.filter((u) => u.id === targetUserId);
     if (allUsers.length === 0) {
-      return { success: true, message: "User not found or has no team", date, reportsSent: 0, warningsSent: 0, warningsSkipped: 0, failed: [] };
+      return {
+        success: true,
+        message: "User not found or has no team",
+        date,
+        reportsSent: 0,
+        warningsSent: 0,
+        warningsSkipped: 0,
+        failed: [],
+      };
     }
   }
-  
+
   // Fetch all reports submitted for the date
   const reportConditions = [eq(eodReports.date, date)];
   if (targetUserId) {
@@ -69,8 +97,8 @@ export async function processEodEmails(date, targetUserId = null) {
     .select()
     .from(eodWarnings)
     .where(eq(eodWarnings.date, date));
-  
-  const warningsSentUserIds = new Set(warningsSentList.map(w => w.userId));
+
+  const warningsSentUserIds = new Set(warningsSentList.map((w) => w.userId));
 
   // Group users by team
   const usersByTeam = {};
@@ -87,10 +115,20 @@ export async function processEodEmails(date, targetUserId = null) {
     reportsByTeam[r.team].push(r);
   }
 
-  const teams = Array.from(new Set([...Object.keys(usersByTeam), ...Object.keys(reportsByTeam)]));
+  const teams = Array.from(
+    new Set([...Object.keys(usersByTeam), ...Object.keys(reportsByTeam)]),
+  );
 
   if (teams.length === 0) {
-    return { success: true, message: "No teams to process", date, reportsSent: 0, warningsSent: 0, warningsSkipped: 0, failed: [] };
+    return {
+      success: true,
+      message: "No teams to process",
+      date,
+      reportsSent: 0,
+      warningsSent: 0,
+      warningsSkipped: 0,
+      failed: [],
+    };
   }
 
   let reportsSent = 0;
@@ -100,16 +138,16 @@ export async function processEodEmails(date, targetUserId = null) {
   const results = [];
 
   const adminEmails = ADMIN_HEADS.map((a) => a.email).filter(Boolean);
-  
+
   // Build a queue of functions to run sequentially
   const emailTasks = [];
 
   for (const team of teams) {
     const teamReports = reportsByTeam[team] || [];
     const teamUsers = usersByTeam[team] || [];
-    
-    const submittedUserIds = new Set(teamReports.map(r => r.userId));
-    const missingUsers = teamUsers.filter(u => !submittedUserIds.has(u.id));
+
+    const submittedUserIds = new Set(teamReports.map((r) => r.userId));
+    const missingUsers = teamUsers.filter((u) => !submittedUserIds.has(u.id));
 
     let addedWarningsForTeam = false;
 
@@ -127,20 +165,39 @@ export async function processEodEmails(date, targetUserId = null) {
             to: missingUser.email,
             userName: missingUser.name,
             date: date,
-            adminUrl: ADMIN_URL
+            adminUrl: ADMIN_URL,
           });
           // Track it in DB immediately to prevent future runs from picking it up
-          await db.insert(eodWarnings).values({
-            userId: missingUser.id,
-            date: date
-          }).onConflictDoNothing();
+          await db
+            .insert(eodWarnings)
+            .values({
+              userId: missingUser.id,
+              date: date,
+            })
+            .onConflictDoNothing();
 
           warningsSent++;
-          results.push({ type: "warning", recipient: missingUser.email, status: "sent" });
+          results.push({
+            type: "warning",
+            recipient: missingUser.email,
+            status: "sent",
+          });
         } catch (err) {
-          console.error(`Failed to send warning email to ${missingUser.email}`, err);
-          failed.push({ type: "warning", recipient: missingUser.email, error: err.message });
-          results.push({ type: "warning", recipient: missingUser.email, status: "failed", error: err.message });
+          console.error(
+            `Failed to send warning email to ${missingUser.email}`,
+            err,
+          );
+          failed.push({
+            type: "warning",
+            recipient: missingUser.email,
+            error: err.message,
+          });
+          results.push({
+            type: "warning",
+            recipient: missingUser.email,
+            status: "failed",
+            error: err.message,
+          });
         }
       });
     }
@@ -153,11 +210,13 @@ export async function processEodEmails(date, targetUserId = null) {
     const lead = TEAM_LEADS[team];
     const to = lead?.email || adminEmails[0];
     const bcc = lead?.email ? adminEmails : adminEmails.slice(1);
-    
+
     // We send a team report if there are any unemailed reports OR if there are 0 reports but we just sent warnings
     // (This deduplicates the "0 submitted" emails by only sending them when the warnings for that day are being triggered)
-    const unemailedReports = teamReports.filter(r => !r.emailedAt);
-    const shouldSendReport = unemailedReports.length > 0 || (teamReports.length === 0 && addedWarningsForTeam);
+    const unemailedReports = teamReports.filter((r) => !r.emailedAt);
+    const shouldSendReport =
+      unemailedReports.length > 0 ||
+      (teamReports.length === 0 && addedWarningsForTeam);
 
     if (to && shouldSendReport) {
       emailTasks.push(async () => {
@@ -168,12 +227,15 @@ export async function processEodEmails(date, targetUserId = null) {
             team,
             date: date,
             reports: teamReports,
-            missingUsers: missingUsers.map(u => ({ name: u.name, email: u.email })),
+            missingUsers: missingUsers.map((u) => ({
+              name: u.name,
+              email: u.email,
+            })),
             adminUrl: ADMIN_URL,
           });
-          
+
           if (teamReports.length > 0) {
-            const reportIds = teamReports.map(r => r.id);
+            const reportIds = teamReports.map((r) => r.id);
             await db
               .update(eodReports)
               .set({ emailedAt: new Date() })
@@ -184,8 +246,19 @@ export async function processEodEmails(date, targetUserId = null) {
           results.push({ type: "report", team, recipient: to, status: "sent" });
         } catch (err) {
           console.error(`Failed to send EOD email for ${team}:`, err);
-          failed.push({ type: "report", team, recipient: to, error: err.message });
-          results.push({ type: "report", team, recipient: to, status: "failed", error: err.message });
+          failed.push({
+            type: "report",
+            team,
+            recipient: to,
+            error: err.message,
+          });
+          results.push({
+            type: "report",
+            team,
+            recipient: to,
+            status: "failed",
+            error: err.message,
+          });
         }
       });
     }
@@ -204,6 +277,6 @@ export async function processEodEmails(date, targetUserId = null) {
     warningsSent,
     warningsSkipped,
     failed,
-    results
+    results,
   };
 }

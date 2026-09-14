@@ -1,6 +1,6 @@
 /**
  * SKILLYARDS AUTHORIZATION POLICY ENGINE
- * 
+ *
  * Centralized logic for resource access control.
  * Rules:
  * - ADMIN, MANAGER: Full system access.
@@ -41,8 +41,15 @@ export function canAccessReceipt(session, payment, req) {
   }
 
   // 3. STAFF / SALES SCOPE
-  const isStaff = [ROLES.SALES, ROLES.HR, ROLES.DEVELOPER, ROLES.DIGITAL_MARKETER, ROLES.EDITOR, ROLES.OUTSIDE_SALES].includes(role);
-  
+  const isStaff = [
+    ROLES.SALES,
+    ROLES.HR,
+    ROLES.DEVELOPER,
+    ROLES.DIGITAL_MARKETER,
+    ROLES.EDITOR,
+    ROLES.OUTSIDE_SALES,
+  ].includes(role);
+
   if (isStaff) {
     const action = req?.method === "GET" ? "READ" : "WRITE";
 
@@ -51,7 +58,7 @@ export function canAccessReceipt(session, payment, req) {
       return { authorized: true, reason: "STAFF_READ_ALLOW" };
     } else {
       // For write (e.g., generate PDF or send email), they must be assigned (if we had the data)
-      // Since receipt writes are mostly triggered by payment creation or admin, 
+      // Since receipt writes are mostly triggered by payment creation or admin,
       // we allow it if they are assigned, but since we don't load the student here easily,
       // we will enforce that the route loader must attach `assignedTo` to the payment object if needed.
       if (payment.studentAssignedTo && payment.studentAssignedTo === userId) {
@@ -79,7 +86,8 @@ export function canAccessStudent(session, student, req) {
 
   // If no specific student (e.g. LIST or CREATE), check role only
   if (!student) {
-    if ([ROLES.ADMIN, ROLES.MANAGER].includes(role)) return { authorized: true, reason: "ADMIN_OVERRIDE" };
+    if ([ROLES.ADMIN, ROLES.MANAGER].includes(role))
+      return { authorized: true, reason: "ADMIN_OVERRIDE" };
     return { authorized: false, reason: `ROLE_RESTRICTED_LIST_${role}` };
   }
 
@@ -88,7 +96,14 @@ export function canAccessStudent(session, student, req) {
   }
 
   // 3. STAFF / SALES SCOPE
-  const isStaff = [ROLES.SALES, ROLES.HR, ROLES.DEVELOPER, ROLES.DIGITAL_MARKETER, ROLES.EDITOR, ROLES.OUTSIDE_SALES].includes(role);
+  const isStaff = [
+    ROLES.SALES,
+    ROLES.HR,
+    ROLES.DEVELOPER,
+    ROLES.DIGITAL_MARKETER,
+    ROLES.EDITOR,
+    ROLES.OUTSIDE_SALES,
+  ].includes(role);
 
   if (isStaff) {
     const action = req?.method === "GET" ? "READ" : "WRITE";
@@ -134,11 +149,11 @@ export function canAccessEnquiry(session) {
 export function internalServiceOnly(session, resource, req) {
   const authKey = req.headers.get("x-internal-key");
   const expectedKey = process.env.PDF_SERVICE_API_KEY;
-  
+
   if (authKey && authKey === expectedKey) {
     return { authorized: true, reason: "INTERNAL_KEY_VALID" };
   }
-  
+
   return { authorized: false, reason: "INTERNAL_KEY_INVALID" };
 }
 

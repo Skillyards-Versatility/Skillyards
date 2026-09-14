@@ -13,7 +13,13 @@ export default function SiblingArticles({ articles }) {
       excerpt: a?.excerpt,
       coverImage: a?.coverImage,
     }))
-    .filter((a) => typeof a.slug === "string" && a.slug && typeof a.title === "string" && a.title);
+    .filter(
+      (a) =>
+        typeof a.slug === "string" &&
+        a.slug &&
+        typeof a.title === "string" &&
+        a.title,
+    );
 
   if (normalized.length === 0) return null;
 
@@ -27,7 +33,9 @@ export default function SiblingArticles({ articles }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         {toShow.map((a) => {
-          const imgUrl = a.coverImage ? urlFor(a.coverImage).width(800).height(520).url() : null;
+          const imgUrl = a.coverImage
+            ? urlFor(a.coverImage).width(800).height(520).url()
+            : null;
           return (
             <article
               key={a._id || a.slug}

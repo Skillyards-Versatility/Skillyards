@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { XIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
+import * as DialogPrimitive from "@radix-ui/react-dialog";
+import { XIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function Dialog({ ...props }) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;
@@ -28,14 +28,19 @@ export function DialogOverlay({ className, ...props }) {
         "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm",
         "data-[state=open]:animate-in data-[state=closed]:animate-out",
         "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-        className
+        className,
       )}
       {...props}
     />
   );
 }
 
-export function DialogContent({ className, children, showCloseButton = true, ...props }) {
+export function DialogContent({
+  className,
+  children,
+  showCloseButton = true,
+  ...props
+}) {
   return (
     <DialogPortal data-slot="dialog-portal">
       <DialogOverlay />
@@ -53,7 +58,7 @@ export function DialogContent({ className, children, showCloseButton = true, ...
           "rounded-2xl overflow-hidden",
           "shadow-2xl shadow-black/15 dark:shadow-black/50",
           "grid gap-4 p-6 pt-7",
-          className
+          className,
         )}
         {...props}
       >
@@ -71,7 +76,7 @@ export function DialogContent({ className, children, showCloseButton = true, ...
               "opacity-75 transition-all duration-150",
               "hover:opacity-100 hover:bg-secondary hover:text-secondary-foreground",
               "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 focus:ring-offset-card",
-              "[&_svg]:pointer-events-none [&_svg]:shrink-0"
+              "[&_svg]:pointer-events-none [&_svg]:shrink-0",
             )}
           >
             <XIcon className="size-3.5" />
@@ -97,7 +102,10 @@ export function DialogFooter({ className, ...props }) {
   return (
     <div
       data-slot="dialog-footer"
-      className={cn("flex flex-col-reverse gap-2 sm:flex-row sm:justify-end", className)}
+      className={cn(
+        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        className,
+      )}
       {...props}
     />
   );
@@ -107,7 +115,10 @@ export function DialogTitle({ className, ...props }) {
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("text-lg leading-none font-semibold text-foreground", className)}
+      className={cn(
+        "text-lg leading-none font-semibold text-foreground",
+        className,
+      )}
       {...props}
     />
   );

@@ -17,7 +17,10 @@ export async function createChannel(db, data, userId) {
   if (existing) {
     throw new Error("CHANNEL_NAME_TAKEN");
   }
-  const channel = await channelRepo.createChannelRecord(db, { ...data, createdBy: userId });
+  const channel = await channelRepo.createChannelRecord(db, {
+    ...data,
+    createdBy: userId,
+  });
   await channelRepo.addChannelMember(db, channel.id, userId);
   return channel;
 }
@@ -37,7 +40,11 @@ export async function archiveChannel(db, channelId) {
 export async function joinChannel(db, channelId, userId) {
   const channel = await channelRepo.getChannelById(db, channelId);
   if (!channel) throw new Error("CHANNEL_NOT_FOUND");
-  const alreadyMember = await channelRepo.isChannelMember(db, channelId, userId);
+  const alreadyMember = await channelRepo.isChannelMember(
+    db,
+    channelId,
+    userId,
+  );
   if (alreadyMember) return { alreadyMember: true, channel };
   await channelRepo.addChannelMember(db, channelId, userId);
   return { alreadyMember: false, channel };

@@ -16,14 +16,18 @@ async function patchHandler(req, { ctx }) {
       .where(eq(users.id, ctx.session.userId))
       .returning();
 
-    ctx.log("USER_STATUS_UPDATED", { userId: ctx.session.userId, statusEmoji, statusText });
+    ctx.log("USER_STATUS_UPDATED", {
+      userId: ctx.session.userId,
+      statusEmoji,
+      statusText,
+    });
 
     return Response.json({ success: true, user: updatedUser });
   } catch (error) {
     ctx.error("USER_STATUS_UPDATE_FAILED", { error: error.message });
     return Response.json(
       { success: false, message: "Failed to update status" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -46,7 +50,7 @@ async function getHandler(req, { ctx }) {
         statusEmoji: users.statusEmoji,
         statusText: users.statusText,
         statusClearAt: users.statusClearAt,
-        profileImageKey: users.profileImageKey
+        profileImageKey: users.profileImageKey,
       })
       .from(users);
 
@@ -55,7 +59,7 @@ async function getHandler(req, { ctx }) {
     ctx.error("USER_STATUS_FETCH_FAILED", { error: error.message });
     return Response.json(
       { success: false, message: "Failed to fetch statuses" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

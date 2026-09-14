@@ -3,14 +3,9 @@ import { z } from "zod";
 export const PLAN_TYPES = ["full", "emi", "custom", "flexible"];
 
 const installmentSchema = z.object({
-  amount: z
-    .number()
-    .int()
-    .positive("Amount must be greater than 0"),
+  amount: z.number().int().positive("Amount must be greater than 0"),
 
-  dueDate: z
-    .string()
-    .min(1, "Due date is required"),
+  dueDate: z.string().min(1, "Due date is required"),
 });
 
 export const createPlanSchema = z

@@ -29,7 +29,8 @@ export default function ProgramsFAQ({ faqs = [] }) {
             <span className="italic text-primary">SkillYards OJT</span>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-            Answered clearly so students and parents can understand how these programs work.
+            Answered clearly so students and parents can understand how these
+            programs work.
           </p>
         </div>
 
@@ -60,12 +61,16 @@ export default function ProgramsFAQ({ faqs = [] }) {
                     onClick={() => setOpenIndex(isOpen ? null : idx)}
                     className="flex w-full items-center justify-between p-5 text-left"
                   >
-                    <span className={`text-base font-bold transition-colors ${isOpen ? "text-primary" : "text-foreground"}`}>
+                    <span
+                      className={`text-base font-bold transition-colors ${isOpen ? "text-primary" : "text-foreground"}`}
+                    >
                       {faq.question}
                     </span>
                     <span
                       className={`ml-4 shrink-0 rounded-full p-1.5 transition-all ${
-                        isOpen ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                        isOpen
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground"
                       }`}
                     >
                       {isOpen ? <Minus size={15} /> : <Plus size={15} />}
@@ -80,7 +85,7 @@ export default function ProgramsFAQ({ faqs = [] }) {
                   initial={false}
                   animate={{
                     height: isOpen ? "auto" : 0,
-                    opacity: isOpen ? 1 : 0
+                    opacity: isOpen ? 1 : 0,
                   }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                   className="overflow-hidden"
@@ -96,7 +101,10 @@ export default function ProgramsFAQ({ faqs = [] }) {
 
         <p className="mt-8 text-center text-sm text-muted-foreground">
           Still have questions?{" "}
-          <Link href="/contact" className="font-bold text-primary underline underline-offset-4 hover:opacity-80">
+          <Link
+            href="/contact"
+            className="font-bold text-primary underline underline-offset-4 hover:opacity-80"
+          >
             Talk to our team
           </Link>
         </p>

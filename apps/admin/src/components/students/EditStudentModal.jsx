@@ -13,7 +13,13 @@ const COURSES = [
   "OJD (Bachelor of Business Administration)",
 ];
 
-export function EditStudentModal({ isOpen, onClose, student, batches = [], onSuccess }) {
+export function EditStudentModal({
+  isOpen,
+  onClose,
+  student,
+  batches = [],
+  onSuccess,
+}) {
   const [form, setForm] = useState(() => ({
     name: student?.name || "",
     phone: student?.phone || "",
@@ -90,33 +96,58 @@ export function EditStudentModal({ isOpen, onClose, student, batches = [], onSuc
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-300"
+        onClick={onClose}
+      />
 
       <div className="relative w-full max-w-lg bg-card border border-border/60 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
         <form onSubmit={handleSubmit} className="flex flex-col max-h-full">
           <div className="flex items-center justify-between p-5 border-b border-border/50">
             <div>
               <h3 className="font-semibold text-lg">Edit Student</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">Admin correction of student details</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Admin correction of student details
+              </p>
             </div>
-            <button type="button" onClick={onClose} className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors">
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-full transition-colors"
+            >
               <X className="w-5 h-5" />
             </button>
           </div>
 
           <div className="p-5 space-y-4 overflow-y-auto">
             <div>
-              <label className="text-xs font-medium block mb-1">Full Name *</label>
-              <input className="input w-full" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+              <label className="text-xs font-medium block mb-1">
+                Full Name *
+              </label>
+              <input
+                className="input w-full"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-medium block mb-1">Phone</label>
-                <input className="input w-full" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="10-digit mobile" />
+                <input
+                  className="input w-full"
+                  value={form.phone}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  placeholder="10-digit mobile"
+                />
               </div>
               <div>
                 <label className="text-xs font-medium block mb-1">Email</label>
-                <input className="input w-full" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="student@example.com" />
+                <input
+                  className="input w-full"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  placeholder="student@example.com"
+                />
               </div>
             </div>
             <div>
@@ -130,27 +161,55 @@ export function EditStudentModal({ isOpen, onClose, student, batches = [], onSuc
               >
                 <option value="">Select Course</option>
                 {COURSES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
                 ))}
               </select>
             </div>
             <div>
               <label className="text-xs font-medium block mb-1">Batch</label>
-              <select className="input w-full" value={form.batchId} onChange={(e) => setForm({ ...form, batchId: e.target.value })}>
+              <select
+                className="input w-full"
+                value={form.batchId}
+                onChange={(e) => setForm({ ...form, batchId: e.target.value })}
+              >
                 <option value="">Unassigned</option>
                 {availableBatches.map((b) => (
-                  <option key={b.id} value={b.id}>{b.name}</option>
+                  <option key={b.id} value={b.id}>
+                    {b.name}
+                  </option>
                 ))}
               </select>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-medium block mb-1">Total Fee (₹)</label>
-                <input type="number" min="0" className="input w-full" value={form.totalFee} onChange={(e) => setForm({ ...form, totalFee: e.target.value })} />
+                <label className="text-xs font-medium block mb-1">
+                  Total Fee (₹)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  className="input w-full"
+                  value={form.totalFee}
+                  onChange={(e) =>
+                    setForm({ ...form, totalFee: e.target.value })
+                  }
+                />
               </div>
               <div>
-                <label className="text-xs font-medium block mb-1">Final Fee (₹)</label>
-                <input type="number" min="0" className="input w-full" value={form.finalFee} onChange={(e) => setForm({ ...form, finalFee: e.target.value })} />
+                <label className="text-xs font-medium block mb-1">
+                  Final Fee (₹)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  className="input w-full"
+                  value={form.finalFee}
+                  onChange={(e) =>
+                    setForm({ ...form, finalFee: e.target.value })
+                  }
+                />
               </div>
             </div>
             <div className="pt-2">

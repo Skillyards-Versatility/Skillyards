@@ -1,5 +1,8 @@
 import { db } from "@repo/db";
-import { addPayment, getPaymentsWithAllocations } from "@/modules/payments/payment.service";
+import {
+  addPayment,
+  getPaymentsWithAllocations,
+} from "@/modules/payments/payment.service";
 import { validateCreatePayment } from "@/modules/payments/payment.schema";
 import { getStudentById } from "@/modules/students/student.repository";
 import { createProtectedRoute } from "@/lib/middleware";
@@ -28,10 +31,7 @@ async function postHandler(req, { context, ctx, resource: student }) {
 
   if (!result.success) {
     ctx.warn("VALIDATION_FAILURE", { errors: result.error.flatten() });
-    return Response.json(
-      { error: result.error.flatten() },
-      { status: 400 }
-    );
+    return Response.json({ error: result.error.flatten() }, { status: 400 });
   }
 
   const payment = await addPayment(db, studentId, result.data);
@@ -43,10 +43,10 @@ async function postHandler(req, { context, ctx, resource: student }) {
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
   policy: canAccessStudent,
-  resourceLoader: (id) => getStudentById(db, id)
+  resourceLoader: (id) => getStudentById(db, id),
 });
 
 export const POST = createProtectedRoute(postHandler, {
   policy: canAccessStudent,
-  resourceLoader: (id) => getStudentById(db, id)
+  resourceLoader: (id) => getStudentById(db, id),
 });

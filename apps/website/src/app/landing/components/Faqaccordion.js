@@ -7,9 +7,7 @@ const FAQS = [
   {
     question: "Which is the best digital marketing institute in Agra?",
     answer:
-      "Choosing an institute in Agra comes down to whether you learn on live accounts or only from slides. At SkillYards, digital marketing students work on real SEO, Google Ads, Meta Ads and GA4 campaigns from early in the program. We run a DBRAU-affiliated BBA Digital Marketing On-Job Degree, a shorter On-Job Training program, and free AI bootcamps — so you can pick by how much time you have. Visit our Dayal Bagh campus and sit in on a session before deciding."
-
-
+      "Choosing an institute in Agra comes down to whether you learn on live accounts or only from slides. At SkillYards, digital marketing students work on real SEO, Google Ads, Meta Ads and GA4 campaigns from early in the program. We run a DBRAU-affiliated BBA Digital Marketing On-Job Degree, a shorter On-Job Training program, and free AI bootcamps — so you can pick by how much time you have. Visit our Dayal Bagh campus and sit in on a session before deciding.",
   },
   {
     question: "Is SkillYards a good institute for BBA and BCA in Agra?",
@@ -24,49 +22,60 @@ const FAQS = [
   {
     question: "Do you offer full-stack development courses near me in Agra?",
     answer:
-      "Yes. We run full-stack training at our Dayal Bagh campus in Agra, covering React, Next.js, Node.js, MongoDB, Git and deployment. You can take it as a 3-year DBRAU-affiliated BCA Full Stack On-Job Degree, or as a shorter 7–9 month On-Job Training program if you already have a degree."
+      "Yes. We run full-stack training at our Dayal Bagh campus in Agra, covering React, Next.js, Node.js, MongoDB, Git and deployment. You can take it as a 3-year DBRAU-affiliated BCA Full Stack On-Job Degree, or as a shorter 7–9 month On-Job Training program if you already have a degree.",
   },
 
   {
     question: "Can I do BBA with digital marketing in Agra?",
-    answer:"Yes. Our BBA Digital Marketing On-Job Degree is a 3-year, 6-semester program affiliated to DBRAU, Agra. Alongside your BBA subjects you work on SEO, paid ads, social media and analytics using live accounts — so you finish with a degree and a portfolio."
-       },
+    answer:
+      "Yes. Our BBA Digital Marketing On-Job Degree is a 3-year, 6-semester program affiliated to DBRAU, Agra. Alongside your BBA subjects you work on SEO, paid ads, social media and analytics using live accounts — so you finish with a degree and a portfolio.",
+  },
   {
     question: "Can I do BCA with full-stack development in Agra?",
-    answer:"Yes. Our BCA Full Stack On-Job Degree is a 3-year, 6-semester DBRAU-affiliated program. You cover the BCA syllabus while building real applications with React, Next.js, Node.js and MongoDB in our dev lab."
-       },
+    answer:
+      "Yes. Our BCA Full Stack On-Job Degree is a 3-year, 6-semester DBRAU-affiliated program. You cover the BCA syllabus while building real applications with React, Next.js, Node.js and MongoDB in our dev lab.",
+  },
   {
     question: "What is the On Job Degree (OJD) program?",
-    answer:"The On-Job Degree is a 3-year, DBRAU-affiliated BBA or BCA where classroom learning runs alongside live project work from year one, instead of a single internship at the end. You graduate with a recognised degree from Dr. Bhimrao Ambedkar University, Agra, plus a portfolio of real work."
-       },
+    answer:
+      "The On-Job Degree is a 3-year, DBRAU-affiliated BBA or BCA where classroom learning runs alongside live project work from year one, instead of a single internship at the end. You graduate with a recognised degree from Dr. Bhimrao Ambedkar University, Agra, plus a portfolio of real work.",
+  },
   {
-    question: "What's the difference between an On-Job Degree and a regular BBA or BCA?",
-    answer:"The university syllabus and the degree are the same. The difference is what happens outside the syllabus. In a regular program, practical exposure usually means one internship in the final year. In an On-Job Degree, you're working on live projects through all three years — so by the time you graduate you have a portfolio, not just a marksheet. The trade-off is that it's more demanding: you're doing coursework and project work at the same time."
-       },
+    question:
+      "What's the difference between an On-Job Degree and a regular BBA or BCA?",
+    answer:
+      "The university syllabus and the degree are the same. The difference is what happens outside the syllabus. In a regular program, practical exposure usually means one internship in the final year. In an On-Job Degree, you're working on live projects through all three years — so by the time you graduate you have a portfolio, not just a marksheet. The trade-off is that it's more demanding: you're doing coursework and project work at the same time.",
+  },
   {
     question: "What is On Job Training (OJT)?",
-    answer:"On Job Training is a 7–9 month program where you learn full-stack development or digital marketing through live projects and real work experience. You don't need a degree — complete the training, build your portfolio, and get placement support."
-       },
+    answer:
+      "On Job Training is a 7–9 month program where you learn full-stack development or digital marketing through live projects and real work experience. You don't need a degree — complete the training, build your portfolio, and get placement support.",
+  },
   {
     question: "Should I choose digital marketing or full-stack development?",
-    answer:"It depends on how you like to work. Digital marketing suits you if you enjoy strategy, writing, analysing numbers and seeing quick results — campaigns show performance within days. Full-stack development suits you if you like building things, solving logical problems and working on something over weeks. Both have hiring demand in Agra, Noida and Delhi NCR. Our free counselling session exists exactly for this question — come in and we'll walk you through both tracks."
-       },
+    answer:
+      "It depends on how you like to work. Digital marketing suits you if you enjoy strategy, writing, analysing numbers and seeing quick results — campaigns show performance within days. Full-stack development suits you if you like building things, solving logical problems and working on something over weeks. Both have hiring demand in Agra, Noida and Delhi NCR. Our free counselling session exists exactly for this question — come in and we'll walk you through both tracks.",
+  },
   {
     question: "Do I need a degree to join?",
-    answer:"Not for every program. On-Job Training and our free Quick Skill bootcamps are open to graduates, working professionals and anyone who wants the skills — no prior degree required. The On-Job Degree is different, since it is a degree: eligibility is 12th pass."
-       },
+    answer:
+      "Not for every program. On-Job Training and our free Quick Skill bootcamps are open to graduates, working professionals and anyone who wants the skills — no prior degree required. The On-Job Degree is different, since it is a degree: eligibility is 12th pass.",
+  },
   {
-    question:"Which technologies and tools do you train in?" ,
-    answer:"Full-stack students work with React, Next.js, Node.js, MongoDB, Git and deployment tooling. Digital marketing students work with Google Ads, Meta Ads Manager, Google Analytics 4, Search Console, SEO tools and content platforms. Tools are taught on live projects, not demo accounts."
-       },
+    question: "Which technologies and tools do you train in?",
+    answer:
+      "Full-stack students work with React, Next.js, Node.js, MongoDB, Git and deployment tooling. Digital marketing students work with Google Ads, Meta Ads Manager, Google Analytics 4, Search Console, SEO tools and content platforms. Tools are taught on live projects, not demo accounts.",
+  },
   {
     question: "Do you provide placement assistance?",
-    answer:"We have a dedicated placement cell that supports students with resume building, mock interviews, portfolio reviews and interview opportunities with hiring companies. We don't promise guaranteed jobs — what we commit to is preparation and access."
-       },
+    answer:
+      "We have a dedicated placement cell that supports students with resume building, mock interviews, portfolio reviews and interview opportunities with hiring companies. We don't promise guaranteed jobs — what we commit to is preparation and access.",
+  },
   {
     question: "Do you offer free courses or AI bootcamps in Agra?",
-    answer:"Yes — our Quick Skill Programs are free AI-focused bootcamps open to students and working professionals in Agra. They're short, practical, and there's no fee. Seats are limited per batch, so ask about the next one when you call."
-       },
+    answer:
+      "Yes — our Quick Skill Programs are free AI-focused bootcamps open to students and working professionals in Agra. They're short, practical, and there's no fee. Seats are limited per batch, so ask about the next one when you call.",
+  },
   // {
   //   question: ,
   //   answer:
@@ -85,10 +94,13 @@ export default function FaqAccordion() {
       <div className="max-w-3xl mx-auto text-center">
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight leading-tight">
           Frequently Asked{" "}
-          <span className="italic text-primary transition-colors duration-300">Questions</span>
+          <span className="italic text-primary transition-colors duration-300">
+            Questions
+          </span>
         </h2>
         <p className="mt-3 text-muted-foreground text-base sm:text-lg transition-colors duration-300">
-          Get answers about our programs, placements, fees, and how to get started.
+          Get answers about our programs, placements, fees, and how to get
+          started.
         </p>
 
         <div className="mt-10 flex flex-col gap-4 text-left">
@@ -108,16 +120,20 @@ export default function FaqAccordion() {
                     {faq.question}
                   </span>
                   <span
-                    className={`relative flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${isOpen ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
-                      }`}
+                    className={`relative flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-colors duration-300 ${
+                      isOpen
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-primary/10 text-primary"
+                    }`}
                     aria-hidden="true"
                   >
                     {/* horizontal bar - stays put, becomes the "minus" */}
                     <span className="absolute w-3 h-0.5 bg-current rounded-full transition-colors duration-300" />
                     {/* vertical bar - rotates 90deg onto the horizontal bar to "become" a minus, and back to reform the plus */}
                     <span
-                      className={`absolute w-0.5 h-3 bg-current rounded-full transition-transform duration-300 ease-in-out ${isOpen ? "rotate-90" : "rotate-0"
-                        }`}
+                      className={`absolute w-0.5 h-3 bg-current rounded-full transition-transform duration-300 ease-in-out ${
+                        isOpen ? "rotate-90" : "rotate-0"
+                      }`}
                     />
                   </span>
                 </button>

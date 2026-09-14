@@ -2,7 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Users, Search, Filter, Edit2, Layers, Pencil, Trash2, Loader2, Laptop } from "lucide-react";
+import {
+  Users,
+  Search,
+  Filter,
+  Edit2,
+  Layers,
+  Pencil,
+  Trash2,
+  Loader2,
+  Laptop,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { deleteStudent } from "@/actions/student";
@@ -28,7 +38,7 @@ export function StudentTable({
   canEdit = false,
   totalStudents = 0,
   limit = 100,
-  offset = 0
+  offset = 0,
 }) {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -172,22 +182,34 @@ export function StudentTable({
               <th className="px-4 sm:px-6 py-4 font-semibold">Course</th>
               <th className="px-4 sm:px-6 py-4 font-semibold">Batch</th>
               <th className="px-4 sm:px-6 py-4 font-semibold">Laptop</th>
-              <th className="px-4 sm:px-6 py-4 font-semibold text-right">Net Payable</th>
-              <th className="px-4 sm:px-6 py-4 font-semibold text-right">Balance</th>
-              <th className="px-4 sm:px-6 py-4 font-semibold text-center">Action</th>
+              <th className="px-4 sm:px-6 py-4 font-semibold text-right">
+                Net Payable
+              </th>
+              <th className="px-4 sm:px-6 py-4 font-semibold text-right">
+                Balance
+              </th>
+              <th className="px-4 sm:px-6 py-4 font-semibold text-center">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-sm text-muted-foreground">
+                <td
+                  colSpan={7}
+                  className="px-6 py-12 text-center text-sm text-muted-foreground"
+                >
                   No students match the selected filter criteria.
                 </td>
               </tr>
             )}
             {Array.isArray(filtered) &&
               filtered.map((student) => (
-                <tr key={student.id} className="hover:bg-muted/30 transition-colors group">
+                <tr
+                  key={student.id}
+                  className="hover:bg-muted/30 transition-colors group"
+                >
                   {/* Name & Contact */}
                   <td className="px-4 sm:px-6 py-4 font-semibold text-foreground">
                     <Link
@@ -233,7 +255,10 @@ export function StudentTable({
                   </td>
 
                   {/* Net Payable */}
-                  <td className="px-4 sm:px-6 py-4 text-right font-medium text-foreground" suppressHydrationWarning>
+                  <td
+                    className="px-4 sm:px-6 py-4 text-right font-medium text-foreground"
+                    suppressHydrationWarning
+                  >
                     ₹{(student.finalFee || 0).toLocaleString()}
                   </td>
 
@@ -299,7 +324,17 @@ export function StudentTable({
       <div className="flex items-center justify-between px-4 py-3 bg-muted/20 border-t border-border">
         <div className="flex items-center gap-2">
           <p className="text-xs text-muted-foreground">
-            Showing <span className="font-medium text-foreground">{filtered.length > 0 ? offset + 1 : 0}</span> to <span className="font-medium text-foreground">{Math.min(offset + limit, totalStudents)}</span> of <span className="font-medium text-foreground">{totalStudents}</span> students
+            Showing{" "}
+            <span className="font-medium text-foreground">
+              {filtered.length > 0 ? offset + 1 : 0}
+            </span>{" "}
+            to{" "}
+            <span className="font-medium text-foreground">
+              {Math.min(offset + limit, totalStudents)}
+            </span>{" "}
+            of{" "}
+            <span className="font-medium text-foreground">{totalStudents}</span>{" "}
+            students
           </p>
         </div>
         <div className="flex items-center gap-2">

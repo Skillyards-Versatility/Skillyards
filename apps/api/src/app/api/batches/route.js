@@ -18,10 +18,7 @@ async function postHandler(req, { ctx }) {
 
   if (!result.success) {
     ctx.warn("VALIDATION_FAILURE", { errors: result.error.flatten() });
-    return Response.json(
-      { error: result.error.flatten() },
-      { status: 400 }
-    );
+    return Response.json({ error: result.error.flatten() }, { status: 400 });
   }
 
   const created = await createBatch(db, result.data);

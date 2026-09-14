@@ -17,5 +17,5 @@ async function getHandler(req, { ctx }) {
 
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
-  policy: canAccessAssessment
+  policy: canAccessAssessment,
 });

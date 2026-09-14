@@ -16,7 +16,19 @@ async function requireAdmin() {
   return session;
 }
 
-export async function getCounsellingSessions({ startDate, endDate, source, outcome, counselorId, bookedById, search, limit, offset, showTodayFollowUps, followUpDate } = {}) {
+export async function getCounsellingSessions({
+  startDate,
+  endDate,
+  source,
+  outcome,
+  counselorId,
+  bookedById,
+  search,
+  limit,
+  offset,
+  showTodayFollowUps,
+  followUpDate,
+} = {}) {
   try {
     const params = new URLSearchParams();
     if (startDate) params.set("startDate", startDate);
@@ -33,7 +45,7 @@ export async function getCounsellingSessions({ startDate, endDate, source, outco
 
     const res = await fetch(`${API}/api/counselling-sessions?${params}`, {
       headers: await authHeaders(),
-      cache: "no-store"
+      cache: "no-store",
     });
     return res.json();
   } catch (err) {
@@ -42,12 +54,38 @@ export async function getCounsellingSessions({ startDate, endDate, source, outco
   }
 }
 
-export async function createCounsellingSession({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, bookedById, imageKey }) {
+export async function createCounsellingSession({
+  studentName,
+  phone,
+  ageOrClass,
+  courseInterest,
+  source,
+  outcome,
+  notes,
+  sessionDate,
+  nextFollowUpDate,
+  counselorId,
+  bookedById,
+  imageKey,
+}) {
   try {
     const res = await fetch(`${API}/api/counselling-sessions`, {
       method: "POST",
       headers: { "Content-Type": "application/json", ...(await authHeaders()) },
-      body: JSON.stringify({ studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, bookedById, imageKey }),
+      body: JSON.stringify({
+        studentName,
+        phone,
+        ageOrClass,
+        courseInterest,
+        source,
+        outcome,
+        notes,
+        sessionDate,
+        nextFollowUpDate,
+        counselorId,
+        bookedById,
+        imageKey,
+      }),
     });
     return res.json();
   } catch (err) {

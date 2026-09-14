@@ -23,14 +23,16 @@ async function backfill() {
 
   for (const p of allPayments) {
     const year = new Date(p.createdAt).getFullYear();
-    
+
     if (!yearlyCounts[year]) {
       // Get count of already numbered receipts for this year
       const existing = await db
         .select({ count: sql`count(*)` })
         .from(payments)
-        .where(sql`EXTRACT(YEAR FROM created_at) = ${year} AND receipt_number IS NOT NULL`);
-      
+        .where(
+          sql`EXTRACT(YEAR FROM created_at) = ${year} AND receipt_number IS NOT NULL`,
+        );
+
       yearlyCounts[year] = Number(existing[0]?.count || 0);
     }
 
@@ -38,7 +40,7 @@ async function backfill() {
     const receiptNumber = `SY-${year}-${String(yearlyCounts[year]).padStart(4, "0")}`;
 
     console.log(`Updating Payment ${p.id} -> ${receiptNumber}`);
-    
+
     await db
       .update(payments)
       .set({ receiptNumber })

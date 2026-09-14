@@ -1,6 +1,10 @@
 import { db } from "@repo/db";
 import { validateCreateConversation } from "@/modules/chat/chat.schema";
-import { listConversations, createDirectConversation, createGroupConversation } from "@/modules/chat/conversations.service";
+import {
+  listConversations,
+  createDirectConversation,
+  createGroupConversation,
+} from "@/modules/chat/conversations.service";
 import { createProtectedRoute } from "@/lib/middleware";
 
 async function getHandler(req, { ctx }) {
@@ -26,7 +30,11 @@ async function postHandler(req, { ctx }) {
   }
   const data = result.data;
   if (data.type === "direct" && data.participantIds.length === 1) {
-    const conv = await createDirectConversation(db, ctx.session.userId, data.participantIds[0]);
+    const conv = await createDirectConversation(
+      db,
+      ctx.session.userId,
+      data.participantIds[0],
+    );
     return Response.json(conv, { status: 201 });
   }
   const conv = await createGroupConversation(db, data, ctx.session.userId);

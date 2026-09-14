@@ -4,14 +4,16 @@ import { createEnquiry, getAllEnquiries } from "./enquiry.repository";
 import { verifyCaptcha } from "../../integrations/captcha/captcha";
 import {
   sendAdminEnquiryNotification,
-  sendUserConfirmation
+  sendUserConfirmation,
 } from "@/modules/notifications/email.service";
 
 export async function createEnquiryService(enquiryData) {
   try {
     const { captchaToken, ...dbData } = enquiryData;
 
-    const isValidCaptcha = await verifyCaptcha(captchaToken, { action: "contact_form" });
+    const isValidCaptcha = await verifyCaptcha(captchaToken, {
+      action: "contact_form",
+    });
 
     if (!isValidCaptcha) {
       throw new Error("Captcha verification failed");
@@ -29,7 +31,6 @@ export async function createEnquiryService(enquiryData) {
     }
 
     return newEnquiry;
-
   } catch (err) {
     console.error("Create enquiry service error:", err);
     throw new Error(`Create enquiry service failed: ${err.message}`);

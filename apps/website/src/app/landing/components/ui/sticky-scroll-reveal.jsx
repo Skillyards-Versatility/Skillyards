@@ -4,10 +4,7 @@ import { useMotionValueEvent, useScroll } from "motion/react";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 
-export const StickyScroll = ({
-  content,
-  contentClassName
-}) => {
+export const StickyScroll = ({ content, contentClassName }) => {
   const [activeCard, setActiveCard] = React.useState(0);
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
@@ -18,25 +15,31 @@ export const StickyScroll = ({
 
   useMotionValueEvent(scrollYProgress, "change", (latest) => {
     const cardsBreakpoints = content.map((_, index) => index / cardLength);
-    const closestBreakpointIndex = cardsBreakpoints.reduce((acc, breakpoint, index) => {
-      const distance = Math.abs(latest - breakpoint);
-      if (distance < Math.abs(latest - cardsBreakpoints[acc])) {
-        return index;
-      }
-      return acc;
-    }, 0);
+    const closestBreakpointIndex = cardsBreakpoints.reduce(
+      (acc, breakpoint, index) => {
+        const distance = Math.abs(latest - breakpoint);
+        if (distance < Math.abs(latest - cardsBreakpoints[acc])) {
+          return index;
+        }
+        return acc;
+      },
+      0,
+    );
     setActiveCard(closestBreakpointIndex);
   });
 
   return (
     <div
       className="relative w-full max-w-6xl mx-auto flex justify-between items-start px-6 lg:px-8 py-12"
-      ref={ref}>
-      
+      ref={ref}
+    >
       {/* Left Text Column */}
       <div className="w-1/2 flex flex-col justify-start pr-8">
         {content.map((item, index) => (
-          <div key={item.title + index} className="py-24 first:pt-0 last:pb-0 flex items-center min-h-[160px]">
+          <div
+            key={item.title + index}
+            className="py-24 first:pt-0 last:pb-0 flex items-center min-h-[160px]"
+          >
             <motion.h2
               animate={{
                 opacity: activeCard === index ? 1 : 0.25,
@@ -65,8 +68,9 @@ export const StickyScroll = ({
         <div
           className={cn(
             "relative h-[30rem] w-[24rem] overflow-hidden rounded-3xl bg-white shadow-2xl border border-gray-100 dark:border-white/10 dark:bg-card transition-all duration-300",
-            contentClassName
-          )}>
+            contentClassName,
+          )}
+        >
           {content.map((item, index) => (
             <motion.div
               key={index}

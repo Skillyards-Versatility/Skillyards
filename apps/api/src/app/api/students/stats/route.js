@@ -13,5 +13,5 @@ async function getHandler() {
 
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
-  policy: canAccessStudent // Using canAccessStudent with null resource for list/stats check
+  policy: canAccessStudent, // Using canAccessStudent with null resource for list/stats check
 });

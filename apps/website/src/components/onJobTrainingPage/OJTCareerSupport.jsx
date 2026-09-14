@@ -1,7 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Briefcase, FileText, Github, Linkedin, MessageSquare, SearchCheck, Send, UserRoundSearch } from "lucide-react";
+import {
+  Briefcase,
+  FileText,
+  Github,
+  Linkedin,
+  MessageSquare,
+  SearchCheck,
+  Send,
+  UserRoundSearch,
+} from "lucide-react";
 
 const supportItems = [
   { title: "Resume building", icon: FileText },
@@ -28,10 +37,13 @@ export default function OJTCareerSupport() {
             Placement Assistance
           </motion.div>
           <h2 className="font-serif text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Placement Assistance and <span className="italic text-primary">Career Support</span>
+            Placement Assistance and{" "}
+            <span className="italic text-primary">Career Support</span>
           </h2>
           <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            SkillYards provides placement assistance and career support to help students prepare for opportunities after completing their OJT program.
+            SkillYards provides placement assistance and career support to help
+            students prepare for opportunities after completing their OJT
+            program.
           </p>
         </div>
 
@@ -50,7 +62,9 @@ export default function OJTCareerSupport() {
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10">
                   <Icon size={18} className="text-primary" />
                 </div>
-                <h3 className="font-serif text-lg font-extrabold text-foreground">{item.title}</h3>
+                <h3 className="font-serif text-lg font-extrabold text-foreground">
+                  {item.title}
+                </h3>
               </motion.div>
             );
           })}

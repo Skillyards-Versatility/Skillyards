@@ -12,7 +12,10 @@ async function patchHandler(req, { context, ctx }) {
   const updated = await assignBatchToStudent(db, studentId, batchId, batchName);
 
   if (!updated) {
-    return Response.json({ error: "Student not found or failed to update" }, { status: 404 });
+    return Response.json(
+      { error: "Student not found or failed to update" },
+      { status: 404 },
+    );
   }
 
   ctx.log("STUDENT_BATCH_UPDATED", { studentId, batchId, batchName });

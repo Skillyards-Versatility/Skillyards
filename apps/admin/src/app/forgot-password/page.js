@@ -12,7 +12,6 @@ export default function ForgotPasswordPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md card p-8 shadow-2xl border-3 border-primary rounded-3xl">
-
         <div className="text-center mb-8 flex items-center justify-center">
           <Logo />
         </div>
@@ -23,9 +22,7 @@ export default function ForgotPasswordPage() {
               <Mail className="h-8 w-8 text-green-600 dark:text-green-400" />
             </div>
             <h1 className="text-xl font-semibold">Check your email</h1>
-            <p className="text-sm text-muted-foreground">
-              {state.message}
-            </p>
+            <p className="text-sm text-muted-foreground">{state.message}</p>
             <Link
               href="/login"
               className="inline-flex items-center gap-2 text-sm text-primary hover:underline mt-4"
@@ -54,7 +51,9 @@ export default function ForgotPasswordPage() {
                   className="input pl-10"
                 />
                 {state?.errors?.email && (
-                  <p className="text-xs text-red-500 mt-1">{state.errors.email}</p>
+                  <p className="text-xs text-red-500 mt-1">
+                    {state.errors.email}
+                  </p>
                 )}
               </div>
 

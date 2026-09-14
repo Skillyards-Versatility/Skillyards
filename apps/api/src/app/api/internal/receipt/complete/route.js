@@ -16,7 +16,9 @@ async function postHandler(req, { ctx }) {
   const { paymentId, jobId, status, key } = await req.json();
 
   if (!paymentId || !jobId || !status) {
-    return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400 });
+    return new Response(JSON.stringify({ error: "Missing required fields" }), {
+      status: 400,
+    });
   }
 
   // ── ATOMIC OWNERSHIP UPDATE ──
@@ -30,14 +32,17 @@ async function postHandler(req, { ctx }) {
     return new Response(JSON.stringify({ success: true }), { status: 200 });
   } else {
     ctx.warn("INTERNAL_COMPLETE_STALE_IGNORED", { paymentId, jobId });
-    return new Response(JSON.stringify({ success: true, message: "Ignored stale callback" }), { status: 200 });
+    return new Response(
+      JSON.stringify({ success: true, message: "Ignored stale callback" }),
+      { status: 200 },
+    );
   }
 }
 
 // ── STRUCTURAL ENFORCEMENT ──
 export const POST = createProtectedRoute(postHandler, {
   policy: internalServiceOnly,
-  internalServiceOnly: true 
+  internalServiceOnly: true,
 });
 
 export async function OPTIONS(req) {

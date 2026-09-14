@@ -1,3 +1,3 @@
 export default function LandingLayout({ children }) {
-    return <>{children}</>;
+  return <>{children}</>;
 }

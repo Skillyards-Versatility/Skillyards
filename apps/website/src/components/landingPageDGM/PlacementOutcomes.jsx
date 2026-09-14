@@ -17,15 +17,18 @@ const supportItems = [
 const outcomes = [
   {
     name: "Practical preparation",
-    quote: "Students get help in turning project work into something they can explain confidently during interviews and career discussions.",
+    quote:
+      "Students get help in turning project work into something they can explain confidently during interviews and career discussions.",
   },
   {
     name: "Interview readiness",
-    quote: "Mentor feedback, mock interviews, and portfolio review help students become more presentable and more confident.",
+    quote:
+      "Mentor feedback, mock interviews, and portfolio review help students become more presentable and more confident.",
   },
   {
     name: "Opportunity support",
-    quote: "Placement assistance means guidance and relevant opportunity referrals where available.",
+    quote:
+      "Placement assistance means guidance and relevant opportunity referrals where available.",
   },
 ];
 
@@ -47,10 +50,15 @@ export function DGMPlacementOutcomes() {
           </motion.div>
           <h2 className="font-serif text-2xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             Placement Assistance After{" "}
-            <span className="italic text-primary">Digital Marketing Training</span>
+            <span className="italic text-primary">
+              Digital Marketing Training
+            </span>
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-sm text-muted-foreground sm:text-base">
-            SkillYards provides placement assistance to help students prepare for digital marketing opportunities. It means we help students become more prepared, presentable, and confident for interviews and opportunities.
+            SkillYards provides placement assistance to help students prepare
+            for digital marketing opportunities. It means we help students
+            become more prepared, presentable, and confident for interviews and
+            opportunities.
           </p>
         </div>
 
@@ -95,7 +103,9 @@ export function DGMPlacementOutcomes() {
               className="flex flex-col rounded-3xl border border-border bg-card p-5 shadow-sm"
             >
               <Quote size={24} className="mb-3 text-primary/20" />
-              <p className="mb-4 flex-1 text-sm leading-relaxed text-muted-foreground">{item.quote}</p>
+              <p className="mb-4 flex-1 text-sm leading-relaxed text-muted-foreground">
+                {item.quote}
+              </p>
               <p className="text-sm font-bold text-foreground">{item.name}</p>
             </motion.div>
           ))}

@@ -24,10 +24,10 @@ const activeJobs = new Map();
 // SECURE CALLBACK HELPER
 async function notifyAPI(paymentId, jobId, result) {
   const CALLBACK_URL = `${process.env.API_URL || "https://api.skillyards.in"}/api/internal/receipt/complete`;
-  
+
   for (let i = 0; i < 3; i++) {
     try {
-      console.log(`[CALLBACK][ATTEMPT_${i+1}]`, { paymentId, jobId });
+      console.log(`[CALLBACK][ATTEMPT_${i + 1}]`, { paymentId, jobId });
       const res = await fetch(CALLBACK_URL, {
         method: "POST",
         headers: {
@@ -49,11 +49,14 @@ async function notifyAPI(paymentId, jobId, result) {
       }
       throw new Error(`Status ${res.status}`);
     } catch (err) {
-      console.warn(`[CALLBACK][FAILED] Attempt ${i+1}:`, err.message);
-      if (i < 2) await new Promise(r => setTimeout(r, 2000 * (i + 1))); // Linear backoff
+      console.warn(`[CALLBACK][FAILED] Attempt ${i + 1}:`, err.message);
+      if (i < 2) await new Promise((r) => setTimeout(r, 2000 * (i + 1))); // Linear backoff
     }
   }
-  console.error("[CALLBACK][FINAL_FAILURE] Could not notify API", { paymentId, jobId });
+  console.error("[CALLBACK][FINAL_FAILURE] Could not notify API", {
+    paymentId,
+    jobId,
+  });
 }
 
 app.post("/generate", authMiddleware, async (req, res) => {
@@ -92,16 +95,18 @@ app.post("/generate", authMiddleware, async (req, res) => {
 
       // GENERATE
       const pdfBuffer = await generatePdfFromHtml(html);
-      
+
       // UPLOAD
       await uploadToR2({ key, buffer: pdfBuffer });
 
       console.log("[JOB_SUCCESS]", { paymentId, jobId });
       await notifyAPI(paymentId, jobId, { status: "ready", key });
-
     } catch (err) {
       console.error("[JOB_FAILED]", { paymentId, jobId, error: err.message });
-      await notifyAPI(paymentId, jobId, { status: "failed", error: err.message });
+      await notifyAPI(paymentId, jobId, {
+        status: "failed",
+        error: err.message,
+      });
     } finally {
       activeJobs.delete(paymentId);
     }

@@ -30,7 +30,7 @@ async function seedAdmin() {
        ON CONFLICT (email) DO UPDATE 
        SET password = $3, role = $4
        RETURNING id;`,
-      [name, email, hashedPassword, role]
+      [name, email, hashedPassword, role],
     );
 
     console.log(`Admin user seeded/updated: ${email}`);

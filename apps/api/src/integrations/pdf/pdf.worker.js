@@ -1,7 +1,13 @@
 import { db } from "@repo/db";
-import { getPaymentReceipt, generateReceiptHTML } from "@/modules/payments/receipt.service";
+import {
+  getPaymentReceipt,
+  generateReceiptHTML,
+} from "@/modules/payments/receipt.service";
 import { generatePdf } from "./pdf.client";
-import { updatePayment, resetStaleLocks } from "@/modules/payments/payment.repository";
+import {
+  updatePayment,
+  resetStaleLocks,
+} from "@/modules/payments/payment.repository";
 import { logPdfFailure } from "@/modules/payments/pdfFailure.repository";
 
 // ── SINGLETON STATE (Survives Dev Reloads) ──
@@ -27,11 +33,11 @@ function ensureWorkerBooted() {
   state.booted = true;
 
   console.log("[WORKER][BOOT] Initializing background processes...");
-  
+
   // 1. Recovery
   resetStaleLocks(db, 10)
     .then(() => console.log("[WORKER][BOOT] Stale lock recovery finished"))
-    .catch(err => console.error("[WORKER][BOOT] Recovery error:", err));
+    .catch((err) => console.error("[WORKER][BOOT] Recovery error:", err));
 
   // 2. Starvation Guard
   setInterval(() => {
@@ -64,16 +70,25 @@ const MAX_RETRIES = 2;
 const JOB_TIMEOUT = 25000;
 
 // ── ENQUEUE ──
-export async function enqueuePdfGeneration(paymentId, key, version, attempt = 0) {
+export async function enqueuePdfGeneration(
+  paymentId,
+  key,
+  version,
+  attempt = 0,
+) {
   ensureWorkerBooted();
-  console.log("[TRACE][ENQUEUE][HIT]", { paymentId, currentQueue: state.queue.length, active: state.activeCount });
+  console.log("[TRACE][ENQUEUE][HIT]", {
+    paymentId,
+    currentQueue: state.queue.length,
+    active: state.activeCount,
+  });
 
   if (state.inProgress.has(paymentId)) {
     console.log("[TRACE][ENQUEUE][SKIP] Already in progress:", paymentId);
     return;
   }
 
-  if (state.queue.some(job => job.paymentId === paymentId)) {
+  if (state.queue.some((job) => job.paymentId === paymentId)) {
     console.log("[TRACE][ENQUEUE][SKIP] Already in queue:", paymentId);
     return;
   }
@@ -134,7 +149,10 @@ async function runJob({ paymentId, key, version, attempt }) {
     await Promise.race([
       generatePdf(receiptHTML, key),
       new Promise((_, reject) =>
-        setTimeout(() => reject(new Error("PDF Generation Timeout")), JOB_TIMEOUT)
+        setTimeout(
+          () => reject(new Error("PDF Generation Timeout")),
+          JOB_TIMEOUT,
+        ),
       ),
     ]);
 
@@ -150,7 +168,6 @@ async function runJob({ paymentId, key, version, attempt }) {
       paymentId,
       timeMs: Date.now() - startTime,
     });
-
   } catch (err) {
     console.error("[JOB][ERROR]", {
       paymentId,
@@ -168,7 +185,10 @@ async function runJob({ paymentId, key, version, attempt }) {
       });
 
       setTimeout(() => {
-        if (!state.inProgress.has(paymentId) && !state.queue.some(j => j.paymentId === paymentId)) {
+        if (
+          !state.inProgress.has(paymentId) &&
+          !state.queue.some((j) => j.paymentId === paymentId)
+        ) {
           state.queue.push({ paymentId, key, version, attempt: attempt + 1 });
 
           console.log("[REQUEUE]", {

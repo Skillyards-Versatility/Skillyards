@@ -9,25 +9,29 @@ export default function GalleryImagesContent({ initialImages = [] }) {
   const [activeImageIndex, setActiveImageIndex] = useState(null);
 
   // 1. Get unique categories
-  const categories = ["All", ...new Set(initialImages.map((img) => img.category).filter(Boolean))];
+  const categories = [
+    "All",
+    ...new Set(initialImages.map((img) => img.category).filter(Boolean)),
+  ];
 
   // 2. Filter images based on selected category
-  const filteredImages = selectedCategory === "All"
-    ? initialImages
-    : initialImages.filter((img) => img.category === selectedCategory);
+  const filteredImages =
+    selectedCategory === "All"
+      ? initialImages
+      : initialImages.filter((img) => img.category === selectedCategory);
 
   // 3. Handlers for Lightbox Navigation
   const handlePrev = useCallback(() => {
     if (activeImageIndex === null) return;
     setActiveImageIndex((prevIndex) =>
-      prevIndex === 0 ? filteredImages.length - 1 : prevIndex - 1
+      prevIndex === 0 ? filteredImages.length - 1 : prevIndex - 1,
     );
   }, [activeImageIndex, filteredImages.length]);
 
   const handleNext = useCallback(() => {
     if (activeImageIndex === null) return;
     setActiveImageIndex((prevIndex) =>
-      prevIndex === filteredImages.length - 1 ? 0 : prevIndex + 1
+      prevIndex === filteredImages.length - 1 ? 0 : prevIndex + 1,
     );
   }, [activeImageIndex, filteredImages.length]);
 
@@ -70,7 +74,6 @@ export default function GalleryImagesContent({ initialImages = [] }) {
 
       <div className="bg-background min-h-screen text-foreground transition-colors duration-500 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
           {/* Category Filter Tabs */}
           <div className="flex flex-wrap gap-2 justify-center mb-10">
             {categories.map((cat) => (
@@ -97,7 +100,9 @@ export default function GalleryImagesContent({ initialImages = [] }) {
               <div className="inline-flex items-center justify-center p-4 rounded-full bg-muted text-muted-foreground mb-4">
                 <ImageIcon className="h-8 w-8" />
               </div>
-              <p className="text-muted-foreground text-sm">No images found in this category.</p>
+              <p className="text-muted-foreground text-sm">
+                No images found in this category.
+              </p>
             </div>
           ) : (
             /* Gallery Cards Grid */
@@ -108,7 +113,7 @@ export default function GalleryImagesContent({ initialImages = [] }) {
                   className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200"
                 >
                   {/* Image wrapper with SEO Indexing handling */}
-                  <div 
+                  <div
                     className="relative aspect-video w-full overflow-hidden bg-muted cursor-pointer"
                     onClick={() => setActiveImageIndex(index)}
                   >
@@ -153,7 +158,6 @@ export default function GalleryImagesContent({ initialImages = [] }) {
       {/* Lightbox Overlay */}
       {activeImageIndex !== null && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-md transition-all duration-300">
-          
           {/* Top Info and Close */}
           <div className="absolute top-4 inset-x-6 flex items-center justify-between text-white/70 text-sm z-50">
             <span className="font-medium tracking-wide">

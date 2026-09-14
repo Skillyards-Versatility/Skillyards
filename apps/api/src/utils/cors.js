@@ -17,9 +17,10 @@ export function corsHeaders(request) {
   return {
     "Access-Control-Allow-Origin": isAllowed ? origin : "https://skillyards.in",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization, x-internal-key",
+    "Access-Control-Allow-Headers":
+      "Content-Type, Authorization, x-internal-key",
     "Access-Control-Allow-Credentials": "true",
     "Access-Control-Expose-Headers": "Content-Disposition",
-    "Vary": "Origin",
+    Vary: "Origin",
   };
 }

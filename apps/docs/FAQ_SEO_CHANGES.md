@@ -55,11 +55,11 @@ Historically, all FAQ content was hardcoded as `<span>` elements inside accordio
 
 ### What this means
 
-| Before May 7 | After May 7 |
-|---|---|
+| Before May 7                                                                              | After May 7                                                         |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | FAQPage structured data could produce visual accordion dropdowns in Google Search results | FAQPage structured data **no longer generates visual rich results** |
-| Search Console reported FAQ schema performance | Search Console reporting removed June 2026 |
-| Rich Results Test tool showed FAQ previews | Rich Results Test support removed June 2026 |
+| Search Console reported FAQ schema performance                                            | Search Console reporting removed June 2026                          |
+| Rich Results Test tool showed FAQ previews                                                | Rich Results Test support removed June 2026                         |
 
 ### Why we still keep FAQPage schema
 
@@ -109,9 +109,7 @@ Before the audit, each FAQ was rendered as:
 Every FAQ accordion container now renders with a unique `id` attribute generated from the FAQ question text (or Sanity slug if available).
 
 ```html
-<div id="faq-bca-eligibility-agra">
-  ...
-</div>
+<div id="faq-bca-eligibility-agra">...</div>
 ```
 
 ### Implementation
@@ -152,12 +150,12 @@ return (
 
 Each FAQ section is now a clearly identifiable part of the page, with a direct link target, semantic heading, and optional structured-data reference.
 
-| Before | After |
-|---|---|
-| No `id` on FAQ containers | `id="faq-bca-eligibility-agra"` on every FAQ |
-| `/faqs` page could only be linked as a whole | Specific FAQs can be linked: `/faqs#faq-bca-eligibility-agra` |
-| Blog posts, social media, and CTAs could only link to the top of the FAQ section | Direct linking to a specific answer |
-| Google could not associate a specific FAQ with a URL fragment | Google can see `#faq-*` fragments as section targets |
+| Before                                                                           | After                                                         |
+| -------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| No `id` on FAQ containers                                                        | `id="faq-bca-eligibility-agra"` on every FAQ                  |
+| `/faqs` page could only be linked as a whole                                     | Specific FAQs can be linked: `/faqs#faq-bca-eligibility-agra` |
+| Blog posts, social media, and CTAs could only link to the top of the FAQ section | Direct linking to a specific answer                           |
+| Google could not associate a specific FAQ with a URL fragment                    | Google can see `#faq-*` fragments as section targets          |
 
 > ⚠️ Anchor URLs are not the same as separate indexable pages. `/faqs#faq-bca-eligibility` is still the `/faqs` page — Google does not treat URL fragments as distinct indexed pages. However, they are useful for direct linking, navigation, and structured-data references.
 
@@ -177,6 +175,7 @@ Each FAQ section is now a clearly identifiable part of the page, with a direct l
 ### What Changed
 
 Before (invalid HTML):
+
 ```html
 <button>
   <h3 class="...">Question text</h3>
@@ -185,6 +184,7 @@ Before (invalid HTML):
 ```
 
 After (valid WAI-ARIA accordion pattern):
+
 ```html
 <h3 class="m-0">
   <button
@@ -220,24 +220,24 @@ Each FAQ section already has an `<h2>` for the section title (e.g., "Questions w
 
 The HTML `<button>` element permits **phrasing content only**, per the [MDN specification](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/button). Headings are not phrasing content. By placing a `<span>` (which is phrasing content) inside the `<button>`, and wrapping the entire `<button>` in an `<h3>`, we get:
 
-- ✅ Valid HTML 
+- ✅ Valid HTML
 - ✅ Proper heading hierarchy for SEO
 - ✅ Correct button semantics
 - ✅ Screen reader compatibility
 
 ### Components Updated (9 total)
 
-| Component | Page(s) | File |
-|---|---|---|
-| `FAQsAccordion` | `/faqs` | `apps/website/src/components/faqspage/FAQsAccordion.jsx` |
-| `BCAFAQ` | BCA landing page | `apps/website/src/components/landingPageBCA/FAQ.jsx` |
-| `BBAFAQ` | BBA landing page | `apps/website/src/components/landingPageBBA/FAQ.jsx` |
-| `FSDFAQ` | Full-Stack Dev landing page | `apps/website/src/components/landingPageFSD/FAQ.jsx` |
-| `DGMFAQ` | Digital Marketing landing page | `apps/website/src/components/landingPageDGM/FAQ.jsx` |
-| `FAQSection` | Homepage, About | `apps/website/src/components/common/FAQSection.jsx` |
-| `ProgramsFAQ` | Programs, OJD, OJT pages | `apps/website/src/components/programspage/ProgramsFAQ.jsx` |
-| `TestFAQ` | 10-minute test page | `apps/website/src/components/testpage/TestFAQ.jsx` |
-| `SupportFAQ` | Support page | `apps/website/src/components/supportpage/SupportFAQ.jsx` |
+| Component       | Page(s)                        | File                                                       |
+| --------------- | ------------------------------ | ---------------------------------------------------------- |
+| `FAQsAccordion` | `/faqs`                        | `apps/website/src/components/faqspage/FAQsAccordion.jsx`   |
+| `BCAFAQ`        | BCA landing page               | `apps/website/src/components/landingPageBCA/FAQ.jsx`       |
+| `BBAFAQ`        | BBA landing page               | `apps/website/src/components/landingPageBBA/FAQ.jsx`       |
+| `FSDFAQ`        | Full-Stack Dev landing page    | `apps/website/src/components/landingPageFSD/FAQ.jsx`       |
+| `DGMFAQ`        | Digital Marketing landing page | `apps/website/src/components/landingPageDGM/FAQ.jsx`       |
+| `FAQSection`    | Homepage, About                | `apps/website/src/components/common/FAQSection.jsx`        |
+| `ProgramsFAQ`   | Programs, OJD, OJT pages       | `apps/website/src/components/programspage/ProgramsFAQ.jsx` |
+| `TestFAQ`       | 10-minute test page            | `apps/website/src/components/testpage/TestFAQ.jsx`         |
+| `SupportFAQ`    | Support page                   | `apps/website/src/components/supportpage/SupportFAQ.jsx`   |
 
 ---
 
@@ -248,6 +248,7 @@ The HTML `<button>` element permits **phrasing content only**, per the [MDN spec
 The `getFAQSchema` function now accepts a second parameter: `baseUrl`.
 
 Before:
+
 ```json
 {
   "@type": "Question",
@@ -260,6 +261,7 @@ Before:
 ```
 
 After:
+
 ```json
 {
   "@type": "Question",
@@ -276,20 +278,20 @@ Each FAQ in the structured data is now associated with a specific anchor URL on 
 
 ### Files Updated (12 pages)
 
-| Page | URL Passed |
-|---|---|
-| `/faqs` | `absoluteUrl("/faqs")` |
-| `/` (homepage) | `absoluteUrl("/")` |
-| `/about` | `absoluteUrl("/about")` |
-| `/programs` | `absoluteUrl("/programs")` |
-| `/programs/on-job-degree` | `absoluteUrl("/programs/on-job-degree")` |
-| `/programs/on-job-training` | `absoluteUrl("/programs/on-job-training")` |
-| `/bca-training-program-in-agra` | `absoluteUrl("/bca-training-program-in-agra")` |
-| `/bba-training-program-in-agra` | `absoluteUrl("/bba-training-program-in-agra")` |
+| Page                                           | URL Passed                                                    |
+| ---------------------------------------------- | ------------------------------------------------------------- |
+| `/faqs`                                        | `absoluteUrl("/faqs")`                                        |
+| `/` (homepage)                                 | `absoluteUrl("/")`                                            |
+| `/about`                                       | `absoluteUrl("/about")`                                       |
+| `/programs`                                    | `absoluteUrl("/programs")`                                    |
+| `/programs/on-job-degree`                      | `absoluteUrl("/programs/on-job-degree")`                      |
+| `/programs/on-job-training`                    | `absoluteUrl("/programs/on-job-training")`                    |
+| `/bca-training-program-in-agra`                | `absoluteUrl("/bca-training-program-in-agra")`                |
+| `/bba-training-program-in-agra`                | `absoluteUrl("/bba-training-program-in-agra")`                |
 | `/full-stack-web-development-training-in-agra` | `absoluteUrl("/full-stack-web-development-training-in-agra")` |
-| `/digital-marketing-course-in-agra` | `absoluteUrl("/digital-marketing-course-in-agra")` |
-| `/support` | `absoluteUrl("/support")` |
-| `/10-minutes-test` | `absoluteUrl("/10-minutes-test")` |
+| `/digital-marketing-course-in-agra`            | `absoluteUrl("/digital-marketing-course-in-agra")`            |
+| `/support`                                     | `absoluteUrl("/support")`                                     |
+| `/10-minutes-test`                             | `absoluteUrl("/10-minutes-test")`                             |
 
 ---
 
@@ -315,7 +317,7 @@ const FAQ_SCHEMA_OWNER = {
   test: "/10-minutes-test",
   degrees: "/programs/on-job-degree",
   general: "/faqs",
-  homepage: "/"
+  homepage: "/",
 };
 
 const CURRENT_PAGE = "/faqs";
@@ -327,22 +329,23 @@ if (FAQ_SCHEMA_OWNER[cat.slug] === CURRENT_PAGE) {
 ```
 
 The `/faqs` page:
+
 1. **Displays** all categories visually (UI is unchanged) — all FAQs are still visible
 2. **Includes in FAQPage schema only** the categories owned by `/faqs`: `general`
 
 ### Schema Coverage by Page
 
-| Page | Categories in Schema | Notes |
-|---|---|---|
-| `/faqs` | general only | All FAQs visible, only `general` in schema |
-| `/bca-training-program-in-agra` | bca | Owns `bca` |
-| `/bba-training-program-in-agra` | bba | Owns `bba` |
-| `/full-stack-web-development-training-in-agra` | fullstack | Owns `fullstack` |
-| `/digital-marketing-course-in-agra` | digitalmarketing | Owns `digitalmarketing` |
-| `/programs/on-job-degree` | degrees | Owns `degrees` |
-| `/10-minutes-test` | test | Owns `test` |
-| `/support` | support | Owns `support` |
-| `/` (homepage) | homepage | Owns `homepage` |
+| Page                                           | Categories in Schema | Notes                                      |
+| ---------------------------------------------- | -------------------- | ------------------------------------------ |
+| `/faqs`                                        | general only         | All FAQs visible, only `general` in schema |
+| `/bca-training-program-in-agra`                | bca                  | Owns `bca`                                 |
+| `/bba-training-program-in-agra`                | bba                  | Owns `bba`                                 |
+| `/full-stack-web-development-training-in-agra` | fullstack            | Owns `fullstack`                           |
+| `/digital-marketing-course-in-agra`            | digitalmarketing     | Owns `digitalmarketing`                    |
+| `/programs/on-job-degree`                      | degrees              | Owns `degrees`                             |
+| `/10-minutes-test`                             | test                 | Owns `test`                                |
+| `/support`                                     | support              | Owns `support`                             |
+| `/` (homepage)                                 | homepage             | Owns `homepage`                            |
 
 Each FAQ category's schema appears on **exactly one page**, following Google's guidelines.
 
@@ -362,13 +365,13 @@ A shared utility module with two exports:
 
 Generates a stable anchor ID for any FAQ item. Used by all 9 FAQ components + 1 schema file.
 
-| Input | Output |
-|---|---|
-| `{ slug: "bca-eligibility-agra" }` | `faq-bca-eligibility-agra` |
-| `{ question: "What is the fee for BCA?" }` | `faq-what-is-the-fee-for-bca` |
+| Input                                      | Output                               |
+| ------------------------------------------ | ------------------------------------ |
+| `{ slug: "bca-eligibility-agra" }`         | `faq-bca-eligibility-agra`           |
+| `{ question: "What is the fee for BCA?" }` | `faq-what-is-the-fee-for-bca`        |
 | `{ q: "When does the next batch start?" }` | `faq-when-does-the-next-batch-start` |
-| `{}` | `""` |
-| `null` | `""` |
+| `{}`                                       | `""`                                 |
+| `null`                                     | `""`                                 |
 
 ### `slugify(text)`
 
@@ -380,15 +383,16 @@ Simple string slugification utility.
 
 All accordion components now follow the [WAI-ARIA accordion pattern](https://www.w3.org/WAI/ARIA/apg/patterns/accordion/):
 
-| Attribute | Purpose | Example |
-|---|---|---|
-| `type="button"` | Prevents unintended form submission | `<button type="button">` |
-| `aria-expanded` | Indicates whether the panel is open | `aria-expanded={isOpen}` |
-| `aria-controls` | Associates button with its controlled panel | `aria-controls="faq-panel-0"` |
-| `role="region"` | Identifies the panel as a landmark region | `role="region"` |
-| `aria-labelledby` | Associates panel with its trigger button | `aria-labelledby="faq-trigger-0"` |
+| Attribute         | Purpose                                     | Example                           |
+| ----------------- | ------------------------------------------- | --------------------------------- |
+| `type="button"`   | Prevents unintended form submission         | `<button type="button">`          |
+| `aria-expanded`   | Indicates whether the panel is open         | `aria-expanded={isOpen}`          |
+| `aria-controls`   | Associates button with its controlled panel | `aria-controls="faq-panel-0"`     |
+| `role="region"`   | Identifies the panel as a landmark region   | `role="region"`                   |
+| `aria-labelledby` | Associates panel with its trigger button    | `aria-labelledby="faq-trigger-0"` |
 
 **Accordion trigger pattern (valid HTML5):**
+
 ```html
 <h3 class="m-0">
   <button
@@ -404,12 +408,9 @@ All accordion components now follow the [WAI-ARIA accordion pattern](https://www
 ```
 
 **Accordion panel pattern:**
+
 ```html
-<div
-  id="faq-panel-0"
-  role="region"
-  aria-labelledby="faq-trigger-0"
->
+<div id="faq-panel-0" role="region" aria-labelledby="faq-trigger-0">
   <p>Answer text</p>
 </div>
 ```
@@ -422,53 +423,53 @@ All accordion components now follow the [WAI-ARIA accordion pattern](https://www
 
 ### New File
 
-| File | Purpose |
-|---|---|
+| File                                   | Purpose                                             |
+| -------------------------------------- | --------------------------------------------------- |
 | `apps/website/src/lib/seo/faqUtils.js` | Shared `getFaqAnchorId()` and `slugify()` utilities |
 
 ### Core Schema
 
-| File | Change |
-|---|---|
+| File                                           | Change                                                                       |
+| ---------------------------------------------- | ---------------------------------------------------------------------------- |
 | `apps/website/src/lib/seo/schema/faqSchema.js` | Added `baseUrl` parameter; each FAQ now gets `url: baseUrl + "#" + anchorId` |
 
 ### FAQ Components (9 files)
 
-| File | Header Pattern | Panel IDs | ARIA Attrs |
-|---|---|---|---|
-| `apps/website/src/components/faqspage/FAQsAccordion.jsx` | `h3 > button > span` | ✅ | ✅ |
-| `apps/website/src/components/landingPageBCA/FAQ.jsx` | `h3 > button > span` | ✅ | ✅ |
-| `apps/website/src/components/landingPageBBA/FAQ.jsx` | `h3 > button > span` | ✅ | ✅ |
-| `apps/website/src/components/landingPageFSD/FAQ.jsx` | `h3 > button > span` | ✅ | ✅ |
-| `apps/website/src/components/landingPageDGM/FAQ.jsx` | `h3 > button > span` | ✅ | ✅ |
-| `apps/website/src/components/common/FAQSection.jsx` | `h3 > button > span` | ✅ | ✅ |
-| `apps/website/src/components/programspage/ProgramsFAQ.jsx` | `h3 > button > span` | ✅ | ✅ |
-| `apps/website/src/components/testpage/TestFAQ.jsx` | `h3 > button > span` | ✅ | ✅ |
-| `apps/website/src/components/supportpage/SupportFAQ.jsx` | `h3 > button > span` | ✅ | ✅ |
+| File                                                       | Header Pattern       | Panel IDs | ARIA Attrs |
+| ---------------------------------------------------------- | -------------------- | --------- | ---------- |
+| `apps/website/src/components/faqspage/FAQsAccordion.jsx`   | `h3 > button > span` | ✅        | ✅         |
+| `apps/website/src/components/landingPageBCA/FAQ.jsx`       | `h3 > button > span` | ✅        | ✅         |
+| `apps/website/src/components/landingPageBBA/FAQ.jsx`       | `h3 > button > span` | ✅        | ✅         |
+| `apps/website/src/components/landingPageFSD/FAQ.jsx`       | `h3 > button > span` | ✅        | ✅         |
+| `apps/website/src/components/landingPageDGM/FAQ.jsx`       | `h3 > button > span` | ✅        | ✅         |
+| `apps/website/src/components/common/FAQSection.jsx`        | `h3 > button > span` | ✅        | ✅         |
+| `apps/website/src/components/programspage/ProgramsFAQ.jsx` | `h3 > button > span` | ✅        | ✅         |
+| `apps/website/src/components/testpage/TestFAQ.jsx`         | `h3 > button > span` | ✅        | ✅         |
+| `apps/website/src/components/supportpage/SupportFAQ.jsx`   | `h3 > button > span` | ✅        | ✅         |
 
 ### Page Files (12 files)
 
-| File | Change |
-|---|---|
-| `apps/website/src/app/faqs/page.jsx` | Schema ownership map; removed `allFaqs` dead code |
-| `apps/website/src/app/page.js` | +`baseUrl` param to `getFAQSchema()` |
-| `apps/website/src/app/about/page.jsx` | +`baseUrl` param |
-| `apps/website/src/app/programs/page.jsx` | +`baseUrl` param |
-| `apps/website/src/app/programs/on-job-degree/page.jsx` | +`baseUrl` param |
-| `apps/website/src/app/programs/on-job-training/page.jsx` | +`baseUrl` param |
-| `apps/website/src/app/bca-training-program-in-agra/page.jsx` | +`baseUrl` param |
-| `apps/website/src/app/bba-training-program-in-agra/page.jsx` | +`baseUrl` param |
-| `apps/website/src/app/full-stack-web-development-training-in-agra/page.jsx` | +`baseUrl` param |
-| `apps/website/src/app/digital-marketing-course-in-agra/page.jsx` | +`baseUrl` param |
-| `apps/website/src/app/support/page.jsx` | +`baseUrl` param |
-| `apps/website/src/app/10-minutes-test/page.jsx` | +`baseUrl` param |
+| File                                                                        | Change                                            |
+| --------------------------------------------------------------------------- | ------------------------------------------------- |
+| `apps/website/src/app/faqs/page.jsx`                                        | Schema ownership map; removed `allFaqs` dead code |
+| `apps/website/src/app/page.js`                                              | +`baseUrl` param to `getFAQSchema()`              |
+| `apps/website/src/app/about/page.jsx`                                       | +`baseUrl` param                                  |
+| `apps/website/src/app/programs/page.jsx`                                    | +`baseUrl` param                                  |
+| `apps/website/src/app/programs/on-job-degree/page.jsx`                      | +`baseUrl` param                                  |
+| `apps/website/src/app/programs/on-job-training/page.jsx`                    | +`baseUrl` param                                  |
+| `apps/website/src/app/bca-training-program-in-agra/page.jsx`                | +`baseUrl` param                                  |
+| `apps/website/src/app/bba-training-program-in-agra/page.jsx`                | +`baseUrl` param                                  |
+| `apps/website/src/app/full-stack-web-development-training-in-agra/page.jsx` | +`baseUrl` param                                  |
+| `apps/website/src/app/digital-marketing-course-in-agra/page.jsx`            | +`baseUrl` param                                  |
+| `apps/website/src/app/support/page.jsx`                                     | +`baseUrl` param                                  |
+| `apps/website/src/app/10-minutes-test/page.jsx`                             | +`baseUrl` param                                  |
 
 ### Temporary Script Files (for reference, not committed)
 
-| File | Purpose |
-|---|---|
-| `tmp/fix-faq-html.js` | First pass script for heading-inside-button fixes |
-| `tmp/fix-remaining.js` | Second pass script for remaining files |
+| File                   | Purpose                                           |
+| ---------------------- | ------------------------------------------------- |
+| `tmp/fix-faq-html.js`  | First pass script for heading-inside-button fixes |
+| `tmp/fix-remaining.js` | Second pass script for remaining files            |
 
 **Total: 22 permanent files modified (1 new, 21 edited)**
 
@@ -478,13 +479,13 @@ All accordion components now follow the [WAI-ARIA accordion pattern](https://www
 
 ### What This Achieves
 
-| Improvement | Impact |
-|---|---|
+| Improvement                         | Impact                                                                                                              |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | **Proper `<h3>` heading hierarchy** | Google can better understand page structure. Headings are one of the signals Google uses for content understanding. |
-| **Schema ownership map** | No duplicate FAQPage markup across pages — cleaner structured data per Google's guidelines |
-| **Schema `url` enrichment** | Each FAQ in JSON-LD references its page anchor — useful for parsers and other search engines |
-| **Anchor IDs** | Direct linking to specific FAQs from blog posts, social media, and internal pages |
-| **ARIA accessibility** | Improved screen reader navigation and keyboard interaction |
+| **Schema ownership map**            | No duplicate FAQPage markup across pages — cleaner structured data per Google's guidelines                          |
+| **Schema `url` enrichment**         | Each FAQ in JSON-LD references its page anchor — useful for parsers and other search engines                        |
+| **Anchor IDs**                      | Direct linking to specific FAQs from blog posts, social media, and internal pages                                   |
+| **ARIA accessibility**              | Improved screen reader navigation and keyboard interaction                                                          |
 
 ### Where This Helps (Medium-Term)
 
@@ -528,6 +529,7 @@ Add a visible, crawlable table of contents at the top of the `/faqs` page with r
 Google's link best practices say crawlable links should be real `<a>` elements with `href`. ([Google link docs](https://developers.google.com/search/docs/crawling-indexing/links-crawlable))
 
 This would:
+
 - Create crawlable internal links to each section
 - Improve user navigation
 - Help Google associate each FAQ anchor with descriptive link text
@@ -546,6 +548,7 @@ For high-intent, competitive queries, create dedicated pages:
 ```
 
 Each page should include:
+
 - Direct answer at the top
 - Supporting details (eligibility, fees, process)
 - Related FAQs with internal links
@@ -558,21 +561,21 @@ Google recommends descriptive, human-readable URLs, so these clean FAQ URLs are 
 
 Audit FAQ content to ensure questions and answers are **page-specific** rather than duplicated word-for-word:
 
-| Current (duplicate) | Better (page-specific) |
-|---|---|
-| `/faqs`: "What is the eligibility for the BCA program?" | Generic, suitable for FAQ hub |
+| Current (duplicate)                                                             | Better (page-specific)                                                                |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `/faqs`: "What is the eligibility for the BCA program?"                         | Generic, suitable for FAQ hub                                                         |
 | `/bca-training-program-in-agra`: "What is the eligibility for the BCA program?" | Rewrite to: "Who is eligible for SkillYards BCA with Full-Stack Development in Agra?" |
 
 Similar intent, but not blindly duplicated — and therefore each can be schema'd independently without issue.
 
 ### SEO Strength Ranking
 
-| Strategy | SEO Strength |
-|---|---|
-| Big FAQ page with spans, no IDs, duplicate schema | Weak |
-| FAQ page with anchors + `<h3>` + schema ownership | Good |
-| Course pages with targeted, unique FAQs | Better |
-| Dedicated long-tail FAQ pages linked from course pages | Best |
+| Strategy                                               | SEO Strength |
+| ------------------------------------------------------ | ------------ |
+| Big FAQ page with spans, no IDs, duplicate schema      | Weak         |
+| FAQ page with anchors + `<h3>` + schema ownership      | Good         |
+| Course pages with targeted, unique FAQs                | Better       |
+| Dedicated long-tail FAQ pages linked from course pages | Best         |
 
 ---
 
@@ -583,8 +586,10 @@ Similar intent, but not blindly duplicated — and therefore each can be schema'
 ```html
 <div id="faq-bca-eligibility-agra" class="rounded-2xl border ...">
   <button class="flex w-full ...">
-    <h3 class="text-sm font-bold m-0 ...">What is the eligibility for BCA at SkillYards?</h3>
-    <div class="..."><Plus size={14} /></div>
+    <h3 class="text-sm font-bold m-0 ...">
+      What is the eligibility for BCA at SkillYards?
+    </h3>
+    <div class="..."><Plus size="{14}" /></div>
   </button>
   <div class="..."><!-- answer --></div>
 </div>
@@ -602,8 +607,10 @@ Similar intent, but not blindly duplicated — and therefore each can be schema'
       aria-controls="faq-panel-0"
       class="flex w-full ..."
     >
-      <span class="text-sm font-bold ...">What is the eligibility for BCA at SkillYards?</span>
-      <span class="..."><Plus size={14} /></span>
+      <span class="text-sm font-bold ..."
+        >What is the eligibility for BCA at SkillYards?</span
+      >
+      <span class="..."><Plus size="{14}" /></span>
     </button>
   </h3>
   <div id="faq-panel-0" role="region" aria-labelledby="faq-trigger-0">
@@ -671,7 +678,7 @@ const FAQ_SCHEMA_OWNER = {
   test: "/10-minutes-test",
   degrees: "/programs/on-job-degree",
   general: "/faqs",
-  homepage: "/"
+  homepage: "/",
 };
 
 const CURRENT_PAGE = "/faqs";
@@ -684,4 +691,4 @@ if (FAQ_SCHEMA_OWNER[cat.slug] === CURRENT_PAGE) {
 
 ---
 
-*Document maintained by the development team. Last updated: May 2026.*
+_Document maintained by the development team. Last updated: May 2026._

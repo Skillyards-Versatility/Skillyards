@@ -24,8 +24,14 @@ async function getHandler(req, { ctx }) {
   const session = await getSessionById(db, sessionId);
 
   if (!session || session.status !== "completed") {
-    ctx.warn("RESULT_FETCH_INVALID_SESSION", { sessionId, status: session?.status });
-    return Response.json({ error: "Test not finalized or missing" }, { status: 404 });
+    ctx.warn("RESULT_FETCH_INVALID_SESSION", {
+      sessionId,
+      status: session?.status,
+    });
+    return Response.json(
+      { error: "Test not finalized or missing" },
+      { status: 404 },
+    );
   }
 
   const total = session.questionsSnapshot?.length || 0;

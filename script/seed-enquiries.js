@@ -8,15 +8,15 @@ async function seed() {
       lastName: "Sharma",
       email: "rahul@gmail.com",
       phone: "9876543210",
-      message: "I want information about digital marketing course"
+      message: "I want information about digital marketing course",
     },
     {
       firstName: "Anjali",
       lastName: "Gupta",
       email: "anjali@gmail.com",
       phone: "9123456780",
-      message: "Please send details for data science programme"
-    }
+      message: "Please send details for data science programme",
+    },
   ]);
 
   console.log("Dummy enquiries inserted");

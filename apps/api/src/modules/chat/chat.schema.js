@@ -34,7 +34,9 @@ export const addReactionSchema = z.object({
 export const createConversationSchema = z.object({
   type: z.enum(["direct", "group"]).default("direct"),
   name: z.string().trim().max(100).optional(),
-  participantIds: z.array(z.string().uuid()).min(1, "At least one participant required"),
+  participantIds: z
+    .array(z.string().uuid())
+    .min(1, "At least one participant required"),
 });
 
 export function validateCreateChannel(data) {

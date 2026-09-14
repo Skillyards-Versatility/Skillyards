@@ -5,7 +5,13 @@ import { X, UserCheck, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { assignStudentBatch } from "@/actions/batch";
 
-export function AssignBatchModal({ isOpen, onClose, student, batches, onSuccess }) {
+export function AssignBatchModal({
+  isOpen,
+  onClose,
+  student,
+  batches,
+  onSuccess,
+}) {
   const [selectedBatchId, setSelectedBatchId] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -35,7 +41,7 @@ export function AssignBatchModal({ isOpen, onClose, student, batches, onSuccess 
       toast.success(
         batchName
           ? `Assigned ${student.name} to "${batchName}"`
-          : `Removed batch assignment for ${student.name}`
+          : `Removed batch assignment for ${student.name}`,
       );
       if (onSuccess) onSuccess();
       onClose();
@@ -61,20 +67,37 @@ export function AssignBatchModal({ isOpen, onClose, student, batches, onSuccess 
             <UserCheck className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold text-foreground">Assign Student Batch</h2>
-            <p className="text-xs text-muted-foreground">Assign custom batch to student record.</p>
+            <h2 className="text-lg font-bold text-foreground">
+              Assign Student Batch
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Assign custom batch to student record.
+            </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="p-3 bg-muted/40 rounded-lg text-xs space-y-1">
-            <div><span className="font-semibold text-foreground">Student:</span> {student.name}</div>
-            <div><span className="font-semibold text-foreground">Course:</span> {student.courseName || "Not assigned"}</div>
-            <div><span className="font-semibold text-foreground">Current Batch:</span> {student.batchName || "Unassigned"}</div>
+            <div>
+              <span className="font-semibold text-foreground">Student:</span>{" "}
+              {student.name}
+            </div>
+            <div>
+              <span className="font-semibold text-foreground">Course:</span>{" "}
+              {student.courseName || "Not assigned"}
+            </div>
+            <div>
+              <span className="font-semibold text-foreground">
+                Current Batch:
+              </span>{" "}
+              {student.batchName || "Unassigned"}
+            </div>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">Select Target Batch</label>
+            <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
+              Select Target Batch
+            </label>
             <select
               value={selectedBatchId}
               onChange={(e) => setSelectedBatchId(e.target.value)}
@@ -103,7 +126,9 @@ export function AssignBatchModal({ isOpen, onClose, student, batches, onSuccess 
               className="flex items-center justify-center min-w-[120px] px-4 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
             >
               {isSubmitting ? (
-                <><Loader2 className="animate-spin mr-2 h-4 w-4" /> Saving...</>
+                <>
+                  <Loader2 className="animate-spin mr-2 h-4 w-4" /> Saving...
+                </>
               ) : (
                 "Save Batch"
               )}

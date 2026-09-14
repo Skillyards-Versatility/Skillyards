@@ -4,7 +4,12 @@ import { useState } from "react";
 import { Plus, Users, Layers, Filter, CheckCircle2, Clock } from "lucide-react";
 import { CreateBatchModal } from "./CreateBatchModal";
 
-export function CourseBatchesSection({ batches = [], activeBatchId, onSelectBatch, onBatchCreated }) {
+export function CourseBatchesSection({
+  batches = [],
+  activeBatchId,
+  onSelectBatch,
+  onBatchCreated,
+}) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCourseForNew, setSelectedCourseForNew] = useState("");
 
@@ -15,7 +20,10 @@ export function CourseBatchesSection({ batches = [], activeBatchId, onSelectBatc
 
   // Total metrics
   const totalBatches = batches.length;
-  const totalStudentsInBatches = batches.reduce((sum, b) => sum + (Number(b.studentCount) || 0), 0);
+  const totalStudentsInBatches = batches.reduce(
+    (sum, b) => sum + (Number(b.studentCount) || 0),
+    0,
+  );
 
   return (
     <div className="space-y-4">
@@ -26,7 +34,8 @@ export function CourseBatchesSection({ batches = [], activeBatchId, onSelectBatc
             Course Batches
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {totalBatches} batches active across courses with {totalStudentsInBatches} assigned students.
+            {totalBatches} batches active across courses with{" "}
+            {totalStudentsInBatches} assigned students.
           </p>
         </div>
 
@@ -41,7 +50,8 @@ export function CourseBatchesSection({ batches = [], activeBatchId, onSelectBatc
 
       {batches.length === 0 ? (
         <div className="card p-6 text-center text-muted-foreground text-sm">
-          No course batches created yet. Click &quot;Create New Batch&quot; to set up your first cohort.
+          No course batches created yet. Click &quot;Create New Batch&quot; to
+          set up your first cohort.
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -89,7 +99,9 @@ export function CourseBatchesSection({ batches = [], activeBatchId, onSelectBatc
                 <div className="pt-3 mt-1 border-t border-border flex items-center justify-between text-xs">
                   <div className="flex items-center gap-1.5 font-semibold text-foreground">
                     <Users className="w-3.5 h-3.5 text-primary" />
-                    <span>{count} Student{count !== 1 ? "s" : ""}</span>
+                    <span>
+                      {count} Student{count !== 1 ? "s" : ""}
+                    </span>
                   </div>
 
                   <span

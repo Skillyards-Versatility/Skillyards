@@ -1,7 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ClipboardList, PhoneCall, CreditCard, CalendarCheck, ArrowRight } from "lucide-react";
+import {
+  ClipboardList,
+  PhoneCall,
+  CreditCard,
+  CalendarCheck,
+  ArrowRight,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -55,7 +61,8 @@ export default function AdmissionProcess() {
             <span className="italic text-primary">New Career.</span>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-            No complicated entrance exams. No long waiting periods. Just a simple, guided path to enrollment.
+            No complicated entrance exams. No long waiting periods. Just a
+            simple, guided path to enrollment.
           </p>
         </div>
 
@@ -77,14 +84,27 @@ export default function AdmissionProcess() {
                   className={`flex items-center gap-6 md:gap-10 ${isEven ? "md:flex-row" : "md:flex-row-reverse"}`}
                 >
                   {/* Content */}
-                  <div className={`flex-1 rounded-2xl border border-border bg-card p-5 shadow-sm ${isEven ? "md:text-right" : "md:text-left"}`}>
-                    <p className="mb-1 text-4xl font-black text-primary/20">{step.number}</p>
-                    <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground">{step.title}</h3>
-                    <p className="text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
+                  <div
+                    className={`flex-1 rounded-2xl border border-border bg-card p-5 shadow-sm ${isEven ? "md:text-right" : "md:text-left"}`}
+                  >
+                    <p className="mb-1 text-4xl font-black text-primary/20">
+                      {step.number}
+                    </p>
+                    <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {step.desc}
+                    </p>
                     {step.action && (
-                      <Button asChild size="sm" className="mt-3 rounded-full bg-primary text-primary-foreground font-bold">
+                      <Button
+                        asChild
+                        size="sm"
+                        className="mt-3 rounded-full bg-primary text-primary-foreground font-bold"
+                      >
                         <Link href={step.action.href}>
-                          {step.action.label} <ArrowRight size={14} className="ml-1" />
+                          {step.action.label}{" "}
+                          <ArrowRight size={14} className="ml-1" />
                         </Link>
                       </Button>
                     )}

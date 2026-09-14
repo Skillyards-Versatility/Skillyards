@@ -11,7 +11,7 @@ export async function POST(request) {
 
       return NextResponse.json(
         { message: "Server misconfigured" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -24,10 +24,7 @@ export async function POST(request) {
       sanitySecret === WEBHOOK_SECRET;
 
     if (!isValid) {
-      return NextResponse.json(
-        { message: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
     // Parse body safely
@@ -57,7 +54,7 @@ export async function POST(request) {
         message: "Failed to revalidate",
         error: error?.message || "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

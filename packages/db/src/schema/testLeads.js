@@ -14,5 +14,3 @@ export const testLeads = pgTable("test_leads", {
 
   createdAt: timestamp("created_at").defaultNow(),
 });
-
-

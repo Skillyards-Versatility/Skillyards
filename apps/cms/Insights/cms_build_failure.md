@@ -4,10 +4,10 @@
 
 This document exists to:
 
-* Explain a critical CMS deployment failure and its resolution
-* Help future contributors understand **why this setup exists**
-* Prevent reintroducing the same class of bugs
-* Clarify how dependencies behave in a **monorepo with multiple build systems**
+- Explain a critical CMS deployment failure and its resolution
+- Help future contributors understand **why this setup exists**
+- Prevent reintroducing the same class of bugs
+- Clarify how dependencies behave in a **monorepo with multiple build systems**
 
 > This is not just a bug fix — this is a system-level learning reference.
 
@@ -17,15 +17,15 @@ This document exists to:
 
 Skillyards is structured as a **monorepo** with multiple apps:
 
-* `apps/website` → Next.js (frontend)
-* `apps/api` → backend services
-* `apps/cms` → Sanity Studio (content management)
+- `apps/website` → Next.js (frontend)
+- `apps/api` → backend services
+- `apps/cms` → Sanity Studio (content management)
 
 Each app:
 
-* Builds independently
-* Has its own dependency graph
-* Uses different tooling
+- Builds independently
+- Has its own dependency graph
+- Uses different tooling
 
 ---
 
@@ -33,13 +33,13 @@ Each app:
 
 The `skillyards-cms` project was **failing on Vercel preview deployments**, while:
 
-* Other apps deployed successfully
-* Local development worked inconsistently
+- Other apps deployed successfully
+- Local development worked inconsistently
 
 ### Error observed:
 
 ```
-RollupError: Could not resolve entry module 
+RollupError: Could not resolve entry module
 "node_modules/styled-components/dist/styled-components.browser.esm.js"
 ```
 
@@ -63,8 +63,8 @@ requires:
 
 But:
 
-* Peer dependencies are **not installed automatically**
-* They must be explicitly installed in the workspace
+- Peer dependencies are **not installed automatically**
+- They must be explicitly installed in the workspace
 
 ---
 
@@ -72,8 +72,8 @@ But:
 
 Initially:
 
-* `styled-components` existed in root
-* Assumed it would work for CMS
+- `styled-components` existed in root
+- Assumed it would work for CMS
 
 Reality:
 
@@ -83,20 +83,20 @@ Reality:
 
 ### 3. Build System Mismatch
 
-* Website → Next.js 
-* CMS → Sanity Studio (Vite + Rollup internally)
+- Website → Next.js
+- CMS → Sanity Studio (Vite + Rollup internally)
 
 This caused confusion because:
 
-* Errors looked unfamiliar
-* Fixes were attempted assuming Next.js behavior
+- Errors looked unfamiliar
+- Fixes were attempted assuming Next.js behavior
 
 ---
 
 ### 4. Version + Resolution Conflict
 
-* Plugin required `styled-components v6`
-* Vercel build (Rollup) could not resolve its internal module path
+- Plugin required `styled-components v6`
+- Vercel build (Rollup) could not resolve its internal module path
 
 ---
 
@@ -115,8 +115,8 @@ npm install styled-components@^6
 
 Upgrade to avoid version drift:
 
-* `sanity` → latest
-* `@sanity/vision` → latest
+- `sanity` → latest
+- `@sanity/vision` → latest
 
 ---
 
@@ -139,16 +139,16 @@ vite: (config) => {
 
 This ensures:
 
-* Rollup (via Vite) can correctly resolve styled-components
-* Build works consistently in Vercel
+- Rollup (via Vite) can correctly resolve styled-components
+- Build works consistently in Vercel
 
 ---
 
 ## Result
 
-* CMS builds successfully on Vercel
-* Local dev and production are aligned
-* All apps deploy independently without conflict
+- CMS builds successfully on Vercel
+- Local dev and production are aligned
+- All apps deploy independently without conflict
 
 ---
 
@@ -156,15 +156,15 @@ This ensures:
 
 ### Before
 
-* CMS preview deployments failing
-* Confusing behavior between local and production
-* Time lost debugging environment-specific issues
+- CMS preview deployments failing
+- Confusing behavior between local and production
+- Time lost debugging environment-specific issues
 
 ### After
 
-* Stable deployment pipeline
-* Clear dependency ownership per app
-* Improved confidence in releases
+- Stable deployment pipeline
+- Clear dependency ownership per app
+- Improved confidence in releases
 
 ---
 
@@ -182,16 +182,16 @@ If a plugin requires something:
 
 Each app is its own system:
 
-* Own build
-* Own dependencies
-* Own runtime
+- Own build
+- Own dependencies
+- Own runtime
 
 ---
 
 ### 3. One repo can have multiple build systems
 
-* Next.js ≠ Sanity Studio
-* Webpack ≠ Vite
+- Next.js ≠ Sanity Studio
+- Webpack ≠ Vite
 
 Do not assume fixes transfer across apps
 
@@ -202,5 +202,3 @@ Do not assume fixes transfer across apps
 > If it fails on Vercel, it is broken — regardless of local success
 
 ---
-
-

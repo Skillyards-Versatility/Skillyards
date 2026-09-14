@@ -9,7 +9,10 @@ dotenv.config({ path: path.join(__dirname, "../apps/api/.env") });
 async function main() {
   const { db, users } = await import("@repo/db");
   const allUsers = await db.select().from(users);
-  console.log("Users:", allUsers.map(u => ({ email: u.email, role: u.role, name: u.name })));
+  console.log(
+    "Users:",
+    allUsers.map((u) => ({ email: u.email, role: u.role, name: u.name })),
+  );
 }
 
 main().catch(console.error);

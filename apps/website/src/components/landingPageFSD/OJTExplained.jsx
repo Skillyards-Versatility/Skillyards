@@ -2,7 +2,14 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Bot, Bug, ClipboardList, FileText, Sparkles, TestTube2 } from "lucide-react";
+import {
+  Bot,
+  Bug,
+  ClipboardList,
+  FileText,
+  Sparkles,
+  TestTube2,
+} from "lucide-react";
 
 const points = [
   {
@@ -57,7 +64,10 @@ export function FSDOJTExplained() {
             <span className="italic text-primary">With AI</span>
           </h2>
           <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Modern developers use AI to understand errors faster, debug smarter, write documentation, plan features, and improve productivity. At SkillYards, AI is taught as a coding assistant, not as a replacement for fundamentals, logic, or hands-on coding.
+            Modern developers use AI to understand errors faster, debug smarter,
+            write documentation, plan features, and improve productivity. At
+            SkillYards, AI is taught as a coding assistant, not as a replacement
+            for fundamentals, logic, or hands-on coding.
           </p>
         </div>
 
@@ -77,8 +87,12 @@ export function FSDOJTExplained() {
                   <Icon size={18} className="text-primary" />
                 </div>
                 <div>
-                  <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground">{point.title}</h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">{point.desc}</p>
+                  <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground">
+                    {point.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    {point.desc}
+                  </p>
                 </div>
               </motion.div>
             );
@@ -103,7 +117,8 @@ export function FSDOJTExplained() {
           viewport={{ once: true }}
           className="mx-auto mt-8 max-w-3xl rounded-2xl border border-primary/10 bg-primary/5 px-5 py-4 text-center text-sm leading-relaxed text-muted-foreground"
         >
-          AI is taught as a coding assistant, not as a replacement for fundamentals, logic, or hands-on coding.
+          AI is taught as a coding assistant, not as a replacement for
+          fundamentals, logic, or hands-on coding.
         </motion.p>
       </div>
     </section>

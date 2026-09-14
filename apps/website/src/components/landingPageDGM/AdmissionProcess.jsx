@@ -49,7 +49,8 @@ export function DGMAdmissionProcess() {
             <span className="italic text-primary">Free Demo Class</span>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
-            The first step is simple: see the course, understand the structure, and decide with clarity.
+            The first step is simple: see the course, understand the structure,
+            and decide with clarity.
           </p>
         </div>
 
@@ -65,12 +66,18 @@ export function DGMAdmissionProcess() {
                 transition={{ delay: i * 0.08 }}
                 className="flex flex-col rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-6"
               >
-                <p className="mb-3 text-4xl font-black text-primary/15 sm:text-5xl">{step.number}</p>
+                <p className="mb-3 text-4xl font-black text-primary/15 sm:text-5xl">
+                  {step.number}
+                </p>
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 sm:h-11 sm:w-11">
                   <Icon size={18} className="text-primary sm:h-5 sm:w-5" />
                 </div>
-                <h3 className="mb-2 font-serif text-base font-extrabold leading-snug text-foreground sm:text-lg">{step.title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
+                <h3 className="mb-2 font-serif text-base font-extrabold leading-snug text-foreground sm:text-lg">
+                  {step.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {step.desc}
+                </p>
               </motion.div>
             );
           })}

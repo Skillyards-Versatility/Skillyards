@@ -47,12 +47,16 @@ Each variant must:
 - Keep the same topic
 
 Original questions:
-${batch.map((q, i) => `[Q${i + 1}]
+${batch
+  .map(
+    (q, i) => `[Q${i + 1}]
 ID: ${q.id}
 Topic: ${q.topic}
 Question: ${q.question}
 Options: ${JSON.stringify(q.options)}
-CorrectAnswer: ${q.correctAnswer}`).join("\n\n")}
+CorrectAnswer: ${q.correctAnswer}`,
+  )
+  .join("\n\n")}
 
 Return ONLY valid JSON (no markdown, no code fences):
 {
@@ -78,12 +82,16 @@ Return ONLY valid JSON (no markdown, no code fences):
 
 // Process a subset (only generate for the topics used in tests)
 const sample = questions.slice(0, 60);
-console.log(`Processing ${sample.length} questions in ${Math.ceil(sample.length / 10)} batches`);
+console.log(
+  `Processing ${sample.length} questions in ${Math.ceil(sample.length / 10)} batches`,
+);
 
 const BATCH_SIZE = 10;
 for (let i = 0; i < sample.length; i += BATCH_SIZE) {
   const batch = sample.slice(i, i + BATCH_SIZE);
-  console.log(`Generating batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(sample.length / BATCH_SIZE)} (${batch.length} questions)...`);
+  console.log(
+    `Generating batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(sample.length / BATCH_SIZE)} (${batch.length} questions)...`,
+  );
   try {
     const result = await generateBatch(batch);
     Object.assign(variants, result);
@@ -93,6 +101,11 @@ for (let i = 0; i < sample.length; i += BATCH_SIZE) {
   }
 }
 
-const outputPath = resolve(__dirname, "../src/modules/test/question-variants.json");
+const outputPath = resolve(
+  __dirname,
+  "../src/modules/test/question-variants.json",
+);
 writeFileSync(outputPath, JSON.stringify(variants, null, 2));
-console.log(`\nDone. Saved ${Object.keys(variants).length} variant sets to question-variants.json`);
+console.log(
+  `\nDone. Saved ${Object.keys(variants).length} variant sets to question-variants.json`,
+);

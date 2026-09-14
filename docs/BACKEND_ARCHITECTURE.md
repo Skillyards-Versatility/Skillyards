@@ -8,11 +8,6 @@
 
 ## Table of Contents
 
-
-
-
-
-
 1. [System Overview](#1-system-overview)
 2. [Infrastructure & Deployment](#2-infrastructure--deployment)
 3. [Monorepo Structure](#3-monorepo-structure)
@@ -70,17 +65,17 @@ graph LR
 
 ### Technology Stack
 
-| Layer | Technology | Purpose |
-|---|---|---|
-| **API Runtime** | Next.js 16.1.6 (Turbopack) | API Route Handlers, server-side logic |
-| **ORM** | Drizzle ORM 0.45 | Type-safe SQL query builder |
-| **Database** | Neon PostgreSQL (Serverless) | Serverless Postgres with HTTP driver |
-| **Object Storage** | Cloudflare R2 (S3-compatible) | PDF receipt storage |
-| **PDF Generation** | Puppeteer (Railway Worker) | Headless Chrome HTML→PDF conversion |
-| **Email** | Resend | Transactional email delivery |
-| **Auth** | jose (JWT HS256) | Stateless session management |
-| **Validation** | Zod | Runtime schema validation |
-| **CAPTCHA** | Google reCAPTCHA v2 | Bot protection for public forms |
+| Layer              | Technology                    | Purpose                               |
+| ------------------ | ----------------------------- | ------------------------------------- |
+| **API Runtime**    | Next.js 16.1.6 (Turbopack)    | API Route Handlers, server-side logic |
+| **ORM**            | Drizzle ORM 0.45              | Type-safe SQL query builder           |
+| **Database**       | Neon PostgreSQL (Serverless)  | Serverless Postgres with HTTP driver  |
+| **Object Storage** | Cloudflare R2 (S3-compatible) | PDF receipt storage                   |
+| **PDF Generation** | Puppeteer (Railway Worker)    | Headless Chrome HTML→PDF conversion   |
+| **Email**          | Resend                        | Transactional email delivery          |
+| **Auth**           | jose (JWT HS256)              | Stateless session management          |
+| **Validation**     | Zod                           | Runtime schema validation             |
+| **CAPTCHA**        | Google reCAPTCHA v2           | Bot protection for public forms       |
 
 ---
 
@@ -122,16 +117,16 @@ graph TD
 
 ### Environment Variables (API)
 
-| Variable | Purpose |
-|---|---|
-| `DATABASE_URL` | Neon PostgreSQL connection string |
-| `JWT_SECRET` | HMAC key for JWT signing/verification |
-| `R2_ACCESS_KEY`, `R2_SECRET_KEY`, `R2_ENDPOINT`, `R2_BUCKET` | Cloudflare R2 credentials |
-| `PDF_SERVICE_URL` | Railway PDF service endpoint |
-| `PDF_SERVICE_API_KEY` | Shared secret for internal service auth |
-| `RESEND_API_KEY` | Resend transactional email API key |
-| `RECAPTCHA_SECRET_KEY` | Google reCAPTCHA server-side secret |
-| `EMAIL_FROM`, `ADMIN_EMAIL` | Email sender/recipient configuration |
+| Variable                                                     | Purpose                                 |
+| ------------------------------------------------------------ | --------------------------------------- |
+| `DATABASE_URL`                                               | Neon PostgreSQL connection string       |
+| `JWT_SECRET`                                                 | HMAC key for JWT signing/verification   |
+| `R2_ACCESS_KEY`, `R2_SECRET_KEY`, `R2_ENDPOINT`, `R2_BUCKET` | Cloudflare R2 credentials               |
+| `PDF_SERVICE_URL`                                            | Railway PDF service endpoint            |
+| `PDF_SERVICE_API_KEY`                                        | Shared secret for internal service auth |
+| `RESEND_API_KEY`                                             | Resend transactional email API key      |
+| `RECAPTCHA_SECRET_KEY`                                       | Google reCAPTCHA server-side secret     |
+| `EMAIL_FROM`, `ADMIN_EMAIL`                                  | Email sender/recipient configuration    |
 
 ---
 
@@ -178,13 +173,13 @@ graph TD
     style REPO fill:#7c3aed,color:#fff
 ```
 
-| Layer | Responsibility | Example |
-|---|---|---|
-| **Route Handler** | HTTP concerns (request parsing, response formatting) | `app/api/students/route.js` |
-| **Middleware** | Auth, authz, rate limiting, correlation, resource loading | `lib/middleware.js` |
-| **Service** | Business logic, orchestration, validation | `modules/students/student.service.js` |
-| **Repository** | Raw database queries (Drizzle ORM) | `modules/students/student.repository.js` |
-| **Schema** | Zod validation schemas | `modules/students/student.schema.js` |
+| Layer             | Responsibility                                            | Example                                  |
+| ----------------- | --------------------------------------------------------- | ---------------------------------------- |
+| **Route Handler** | HTTP concerns (request parsing, response formatting)      | `app/api/students/route.js`              |
+| **Middleware**    | Auth, authz, rate limiting, correlation, resource loading | `lib/middleware.js`                      |
+| **Service**       | Business logic, orchestration, validation                 | `modules/students/student.service.js`    |
+| **Repository**    | Raw database queries (Drizzle ORM)                        | `modules/students/student.repository.js` |
+| **Schema**        | Zod validation schemas                                    | `modules/students/student.schema.js`     |
 
 ---
 
@@ -335,14 +330,14 @@ erDiagram
 
 ### Key Database Indexes
 
-| Table | Index | Purpose |
-|---|---|---|
-| `payments` | `payments_student_id_idx` | Fast student payment lookups |
-| `payments` | `payments_installment_id_idx` | Fast installment→payment joins |
-| `payments` | `payments_receipt_number_idx` | Unique receipt number queries |
-| `installments` | `installments_student_id_idx`, `installments_plan_id_idx` | Student/Plan lookups |
-| `payment_allocations` | `alloc_payment_id_idx`, `alloc_installment_id_idx` | Allocation joins |
-| `plans` | `plans_student_id_idx` | Student plan lookups |
+| Table                 | Index                                                     | Purpose                        |
+| --------------------- | --------------------------------------------------------- | ------------------------------ |
+| `payments`            | `payments_student_id_idx`                                 | Fast student payment lookups   |
+| `payments`            | `payments_installment_id_idx`                             | Fast installment→payment joins |
+| `payments`            | `payments_receipt_number_idx`                             | Unique receipt number queries  |
+| `installments`        | `installments_student_id_idx`, `installments_plan_id_idx` | Student/Plan lookups           |
+| `payment_allocations` | `alloc_payment_id_idx`, `alloc_installment_id_idx`        | Allocation joins               |
+| `plans`               | `plans_student_id_idx`                                    | Student plan lookups           |
 
 ---
 
@@ -375,7 +370,6 @@ graph TD
     style HANDLER fill:#dc2626,color:#fff
 ```
 
-
 ### 5.2 Authentication (JWT + Cookie)
 
 ```
@@ -394,14 +388,14 @@ API Request → Cookie: session=<JWT> → jwtVerify(token, HS256) → session pa
 
 ### 5.3 Authorization (Role-Based Policy Engine)
 
-| Role | Access Level |
-|---|---|
-| **ADMIN** | Full system access, master override on all resources |
-| **MANAGER** | Same as ADMIN (full override) |
-| **SALES** | Restricted in V1 (`SALES_UNASSIGNED_DENY`), V2 will add student assignment |
-| **STAFF** | Default role, restricted access |
-| **STUDENT** | Ownership-based only (can view own records) |
-| **INTERNAL** | Service-to-service auth via `x-internal-key` header |
+| Role         | Access Level                                                               |
+| ------------ | -------------------------------------------------------------------------- |
+| **ADMIN**    | Full system access, master override on all resources                       |
+| **MANAGER**  | Same as ADMIN (full override)                                              |
+| **SALES**    | Restricted in V1 (`SALES_UNASSIGNED_DENY`), V2 will add student assignment |
+| **STAFF**    | Default role, restricted access                                            |
+| **STUDENT**  | Ownership-based only (can view own records)                                |
+| **INTERNAL** | Service-to-service auth via `x-internal-key` header                        |
 
 Policy functions:
 
@@ -433,6 +427,7 @@ Every request gets a `requestId` (either from `x-request-id` header or auto-gene
 ### 5.6 CORS
 
 Handled by `utils/cors.js`. Allowed origins are:
+
 - `skillyards.in`, `www.skillyards.in`, `admin.skillyards.in`
 - Vercel preview URLs
 - `localhost:3000`, `localhost:3001`, `localhost:3002`
@@ -459,16 +454,17 @@ Credentials are allowed (`Access-Control-Allow-Credentials: true`).
 
 ```javascript
 const [student, payments, ledger, plan] = await Promise.all([
-    getStudentById(db, studentId),
-    getPaymentsWithAllocations(db, studentId),      // payments + allocations
-    getStudentLedger(db, studentId),                  // totalDue, totalPaid, pending
-    getPlanWithInstallments(db, studentId)             // plan + installments
+  getStudentById(db, studentId),
+  getPaymentsWithAllocations(db, studentId), // payments + allocations
+  getStudentLedger(db, studentId), // totalDue, totalPaid, pending
+  getPlanWithInstallments(db, studentId), // plan + installments
 ]);
 ```
 
 This fires **4 independent queries in parallel** for maximum performance.
 
 **Validation Schema**:
+
 - `name`: required, 1-100 chars
 - `phone`: optional, max 10 digits
 - `email`: optional, valid email
@@ -490,14 +486,15 @@ This fires **4 independent queries in parallel** for maximum performance.
 
 **4 Plan Types**:
 
-| Type | Behavior |
-|---|---|
-| `full` | Single installment = full amount, due immediately |
-| `emi` | Equal monthly installments (auto-calculated), last one absorbs remainder |
-| `custom` | User-defined amounts per installment, sum must equal total |
+| Type       | Behavior                                                                        |
+| ---------- | ------------------------------------------------------------------------------- |
+| `full`     | Single installment = full amount, due immediately                               |
+| `emi`      | Equal monthly installments (auto-calculated), last one absorbs remainder        |
+| `custom`   | User-defined amounts per installment, sum must equal total                      |
 | `flexible` | User-defined amounts, sum can be less than total (remaining can be added later) |
 
 **Flexible Installment Addition**:
+
 - Only works on `flexible` plans
 - Validates `amount ≤ remaining balance`
 - Creates a new installment attached to the existing plan
@@ -536,6 +533,7 @@ graph TD
 ```
 
 **Ledger Service** (`getStudentLedger`):
+
 - Computes `totalDue` (from plan), `totalPaid` (from payments), `pending`, and `credit` (overpayment)
 - Uses `Promise.all` for parallel queries
 
@@ -550,6 +548,7 @@ graph TD
 **Route**: `POST /api/enquiries` (public, reCAPTCHA-protected)
 
 **Flow**:
+
 1. Verify reCAPTCHA token (bypassed in development)
 2. Insert enquiry into database
 3. Send admin notification email (non-blocking)
@@ -604,6 +603,7 @@ graph TD
 ```
 
 **Key Design Decisions**:
+
 - Questions are **snapshotted** at session start (stored in `jsonb`) so grading is immune to question edits
 - `correctAnswer` is stripped from the frontend payload but kept in the DB snapshot
 - Sessions auto-expire after 10.5 minutes
@@ -627,7 +627,7 @@ sequenceDiagram
 
     Admin->>API: GET /api/payments/{id}/receipt?format=pdf
     API->>DB: getPaymentById()
-    
+
     alt Receipt is READY
         API->>R2: GetObject (receipt key)
         R2-->>API: PDF stream
@@ -674,6 +674,7 @@ stateDiagram-v2
 ### Internal Service Authentication
 
 The callback endpoint (`/api/internal/receipt/complete`) uses a **separate auth path**:
+
 - Validates `x-internal-key` header against `PDF_SERVICE_API_KEY`
 - Bypasses JWT/cookie authentication entirely
 - Uses the `internalServiceOnly` flag in `createProtectedRoute`
@@ -767,6 +768,7 @@ Drizzle's **SQL-like query builder** gives more control and produces predictable
 ### Why Separate PDF Service?
 
 PDF generation via Puppeteer requires:
+
 1. A **headless Chrome instance** (~200MB memory)
 2. **10-25 seconds** of execution time
 3. A **persistent process** (no cold starts)
@@ -776,6 +778,7 @@ Vercel serverless functions have a 30s timeout and no filesystem persistence, ma
 ### Why Fire-and-Forget + Callback?
 
 The API doesn't `await` the PDF service response. Instead:
+
 1. API triggers generation and immediately returns `202 Accepted`
 2. PDF service generates the PDF, uploads to R2, and calls back
 3. The callback atomically updates the payment record
@@ -793,11 +796,11 @@ Zod provides **runtime type safety** at the API boundary. It catches malformed r
 ### Why Questions Snapshot in JSONB?
 
 Test questions are snapshotted into the session record at test start. This ensures that:
+
 - Grading is **deterministic** even if questions are later edited or removed
 - The `correctAnswer` field is preserved server-side but stripped from the client payload
 - The evaluation snapshot provides a permanent audit trail
 
 ---
 
-*This document is the authoritative reference for the Skillyards backend architecture. For V2 scope and roadmap, see [V2_SCOPE_AND_TODOS.md](../V2_SCOPE_AND_TODOS.md).*
-
+_This document is the authoritative reference for the Skillyards backend architecture. For V2 scope and roadmap, see [V2_SCOPE_AND_TODOS.md](../V2_SCOPE_AND_TODOS.md)._

@@ -13,7 +13,7 @@ async function testModel(modelName) {
   try {
     const response = await ai.models.generateContent({
       model: modelName,
-      contents: "Hello, tell me a 1-sentence joke."
+      contents: "Hello, tell me a 1-sentence joke.",
     });
     console.log(`✅ Success with ${modelName}: "${response.text.trim()}"`);
     return true;
@@ -28,11 +28,11 @@ async function main() {
     "gemini-2.0-flash",
     "gemini-2.5-flash",
     "gemini-flash-latest",
-    "gemini-2.0-flash-lite"
+    "gemini-2.0-flash-lite",
   ];
   for (const model of models) {
     await testModel(model);
-    await new Promise(r => setTimeout(r, 1000)); // wait 1s
+    await new Promise((r) => setTimeout(r, 1000)); // wait 1s
   }
 }
 

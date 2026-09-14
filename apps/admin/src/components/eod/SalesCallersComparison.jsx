@@ -1,8 +1,25 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { PhoneCall, Target, TrendingUp, CheckCircle2, ChevronRight, AlertTriangle, Sparkles } from "lucide-react";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import {
+  PhoneCall,
+  Target,
+  TrendingUp,
+  CheckCircle2,
+  ChevronRight,
+  AlertTriangle,
+  Sparkles,
+} from "lucide-react";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 // Helper to format full names to short names for chart X-axis labels (e.g. "Saurabh Verma" -> "Saurabh V.")
 const getShortName = (fullName) => {
@@ -23,22 +40,38 @@ const CustomTargetTooltip = ({ active, payload, label }) => {
       <div className="bg-background/95 backdrop-blur-xl border border-border/80 rounded-2xl p-3.5 shadow-2xl space-y-2 text-xs min-w-[210px] z-[150]">
         <div className="flex items-center justify-between gap-3 border-b border-border/50 pb-2 font-bold text-foreground">
           <span className="font-extrabold text-sm">{fullName}</span>
-          <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 ${
-            isMet ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
-          }`}>
-            {isMet ? <CheckCircle2 className="w-3 h-3 text-emerald-500" /> : <AlertTriangle className="w-3 h-3 text-amber-500" />}
+          <span
+            className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold shrink-0 ${
+              isMet
+                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+            }`}
+          >
+            {isMet ? (
+              <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+            ) : (
+              <AlertTriangle className="w-3 h-3 text-amber-500" />
+            )}
             {isMet ? "Met 🔥" : `${dataObj?.connectedAchievedPct}%`}
           </span>
         </div>
 
         <div className="space-y-1.5 pt-1">
           {payload.map((entry, index) => (
-            <div key={`item-${index}`} className="flex items-center justify-between gap-4">
+            <div
+              key={`item-${index}`}
+              className="flex items-center justify-between gap-4"
+            >
               <span className="flex items-center gap-2 font-medium text-muted-foreground">
-                <span className="w-2.5 h-2.5 rounded-full shadow-2xs shrink-0" style={{ backgroundColor: entry.fill }} />
+                <span
+                  className="w-2.5 h-2.5 rounded-full shadow-2xs shrink-0"
+                  style={{ backgroundColor: entry.fill }}
+                />
                 <span className="truncate">{entry.name}:</span>
               </span>
-              <span className="font-extrabold text-foreground shrink-0">{Number(entry.value).toLocaleString()}</span>
+              <span className="font-extrabold text-foreground shrink-0">
+                {Number(entry.value).toLocaleString()}
+              </span>
             </div>
           ))}
         </div>
@@ -60,7 +93,9 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
 
   // Aggregate sales caller data with dynamic day-by-day target calculations
   const callersData = useMemo(() => {
-    const salesReports = reports.filter((r) => r.team?.toLowerCase() === "sales");
+    const salesReports = reports.filter(
+      (r) => r.team?.toLowerCase() === "sales",
+    );
     const callerMap = {};
 
     salesReports.forEach((r) => {
@@ -87,7 +122,9 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
       const d = r.data || {};
       const dialed = Number(d.dialedCalls || 0);
       const connected = Number(d.connectedCalls || 0);
-      const counselling = Number(d.counsellingDone || d.counsellingWalkin || d.counsellingVirtual || 0);
+      const counselling = Number(
+        d.counsellingDone || d.counsellingWalkin || d.counsellingVirtual || 0,
+      );
       const walkin = Number(d.walkinCounselling || 0);
       const totalCounselling = counselling + walkin;
       const session = Number(d.sessionBooked || 0);
@@ -109,21 +146,35 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
       callerMap[userName].targetConnected += dayTargetConnected;
     });
 
-    return Object.values(callerMap).map((caller) => {
-      const connectRate = caller.actualDialed > 0 ? ((caller.actualConnected / caller.actualDialed) * 100).toFixed(1) : "0.0";
-      const dialedAchievedPct = caller.targetDialed > 0 ? Math.round((caller.actualDialed / caller.targetDialed) * 100) : 0;
-      const connectedAchievedPct = caller.targetConnected > 0 ? Math.round((caller.actualConnected / caller.targetConnected) * 100) : 0;
-      const totalCounselling = caller.counsellingDone + caller.walkinCounselling;
+    return Object.values(callerMap)
+      .map((caller) => {
+        const connectRate =
+          caller.actualDialed > 0
+            ? ((caller.actualConnected / caller.actualDialed) * 100).toFixed(1)
+            : "0.0";
+        const dialedAchievedPct =
+          caller.targetDialed > 0
+            ? Math.round((caller.actualDialed / caller.targetDialed) * 100)
+            : 0;
+        const connectedAchievedPct =
+          caller.targetConnected > 0
+            ? Math.round(
+                (caller.actualConnected / caller.targetConnected) * 100,
+              )
+            : 0;
+        const totalCounselling =
+          caller.counsellingDone + caller.walkinCounselling;
 
-      return {
-        ...caller,
-        totalCounselling,
-        connectRate,
-        dialedAchievedPct,
-        connectedAchievedPct,
-        isTargetMet: dialedAchievedPct >= 100 && connectedAchievedPct >= 100,
-      };
-    }).sort((a, b) => b.actualConnected - a.actualConnected);
+        return {
+          ...caller,
+          totalCounselling,
+          connectRate,
+          dialedAchievedPct,
+          connectedAchievedPct,
+          isTargetMet: dialedAchievedPct >= 100 && connectedAchievedPct >= 100,
+        };
+      })
+      .sort((a, b) => b.actualConnected - a.actualConnected);
   }, [reports]);
 
   // Clean Chart Data
@@ -137,7 +188,7 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
       // Conversions View
       "Dialed Calls": c.actualDialed,
       "Connected Calls": c.actualConnected,
-      "Counsellings": c.totalCounselling,
+      Counsellings: c.totalCounselling,
       "Sessions Booked": c.sessionBooked,
       isTargetMet: c.isTargetMet,
       connectedAchievedPct: c.connectedAchievedPct,
@@ -194,15 +245,19 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
       <div className="space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1">
           <h4 className="text-[11px] sm:text-xs font-extrabold text-muted-foreground uppercase tracking-wider">
-            {activeViewMode === "targets" ? "Actual Connected (Indigo) vs Target (Amber)" : "Dialed, Connected, Counsellings & Sessions"}
+            {activeViewMode === "targets"
+              ? "Actual Connected (Indigo) vs Target (Amber)"
+              : "Dialed, Connected, Counsellings & Sessions"}
           </h4>
-          
+
           <div className="flex items-center gap-3 text-xs font-semibold">
             <span className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-2xs" /> 🚩 Met
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-2xs" />{" "}
+              🚩 Met
             </span>
             <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400">
-              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-2xs" /> ⚠️ Pending
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-2xs" />{" "}
+              ⚠️ Pending
             </span>
           </div>
         </div>
@@ -211,11 +266,23 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
         <div className="overflow-x-auto custom-scrollbar no-scrollbar w-full pt-2">
           <div className="min-w-[500px] sm:min-w-full h-[320px] sm:h-[340px]">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 15, right: 15, left: -20, bottom: 45 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" opacity={0.4} />
+              <BarChart
+                data={chartData}
+                margin={{ top: 15, right: 15, left: -20, bottom: 45 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="hsl(var(--border))"
+                  opacity={0.4}
+                />
                 <XAxis
                   dataKey="name"
-                  tick={{ fill: "hsl(var(--foreground))", fontSize: 11, fontWeight: 700 }}
+                  tick={{
+                    fill: "hsl(var(--foreground))",
+                    fontSize: 11,
+                    fontWeight: 700,
+                  }}
                   axisLine={false}
                   tickLine={false}
                   interval={0}
@@ -223,21 +290,62 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
                   textAnchor="end"
                   height={50}
                 />
-                <YAxis tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }} axisLine={false} tickLine={false} />
+                <YAxis
+                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
                 <Tooltip content={<CustomTargetTooltip />} />
-                <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "10px", fontWeight: "bold" }} />
+                <Legend
+                  wrapperStyle={{
+                    fontSize: "11px",
+                    paddingTop: "10px",
+                    fontWeight: "bold",
+                  }}
+                />
 
                 {activeViewMode === "targets" ? (
                   <>
-                    <Bar dataKey="Actual Connected" fill="#4f46e5" radius={[6, 6, 0, 0]} maxBarSize={36} />
-                    <Bar dataKey="Target Connected" fill="#f59e0b" radius={[6, 6, 0, 0]} maxBarSize={36} opacity={0.85} />
+                    <Bar
+                      dataKey="Actual Connected"
+                      fill="#4f46e5"
+                      radius={[6, 6, 0, 0]}
+                      maxBarSize={36}
+                    />
+                    <Bar
+                      dataKey="Target Connected"
+                      fill="#f59e0b"
+                      radius={[6, 6, 0, 0]}
+                      maxBarSize={36}
+                      opacity={0.85}
+                    />
                   </>
                 ) : (
                   <>
-                    <Bar dataKey="Dialed Calls" fill="#2563eb" radius={[6, 6, 0, 0]} maxBarSize={26} />
-                    <Bar dataKey="Connected Calls" fill="#059669" radius={[6, 6, 0, 0]} maxBarSize={26} />
-                    <Bar dataKey="Counsellings" fill="#9333ea" radius={[6, 6, 0, 0]} maxBarSize={26} />
-                    <Bar dataKey="Sessions Booked" fill="#d97706" radius={[6, 6, 0, 0]} maxBarSize={26} />
+                    <Bar
+                      dataKey="Dialed Calls"
+                      fill="#2563eb"
+                      radius={[6, 6, 0, 0]}
+                      maxBarSize={26}
+                    />
+                    <Bar
+                      dataKey="Connected Calls"
+                      fill="#059669"
+                      radius={[6, 6, 0, 0]}
+                      maxBarSize={26}
+                    />
+                    <Bar
+                      dataKey="Counsellings"
+                      fill="#9333ea"
+                      radius={[6, 6, 0, 0]}
+                      maxBarSize={26}
+                    />
+                    <Bar
+                      dataKey="Sessions Booked"
+                      fill="#d97706"
+                      radius={[6, 6, 0, 0]}
+                      maxBarSize={26}
+                    />
                   </>
                 )}
               </BarChart>
@@ -265,7 +373,11 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <div className="flex items-center gap-2.5">
                     {caller.image ? (
-                      <img src={`/files/${caller.image}`} alt={caller.name} className="w-8 h-8 rounded-full object-cover border border-indigo-500/20 shrink-0" />
+                      <img
+                        src={`/files/${caller.image}`}
+                        alt={caller.name}
+                        className="w-8 h-8 rounded-full object-cover border border-indigo-500/20 shrink-0"
+                      />
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-extrabold text-xs shrink-0">
                         {caller.name.charAt(0)}
@@ -276,7 +388,9 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
                         <span className="truncate">{caller.name}</span>
                         <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-indigo-600 shrink-0 transition-colors" />
                       </div>
-                      <div className="text-[11px] text-muted-foreground">{caller.reportCount} reports</div>
+                      <div className="text-[11px] text-muted-foreground">
+                        {caller.reportCount} reports
+                      </div>
                     </div>
                   </div>
 
@@ -287,34 +401,57 @@ export function SalesCallersComparison({ reports = [], onSelectUser }) {
                         : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
                     }`}
                   >
-                    {caller.isTargetMet ? "Target Met 🔥" : `⚠️ ${caller.connectedAchievedPct}%`}
+                    {caller.isTargetMet
+                      ? "Target Met 🔥"
+                      : `⚠️ ${caller.connectedAchievedPct}%`}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 text-xs pt-1">
                   <div className="bg-indigo-500/5 p-2 rounded-xl border border-indigo-500/10">
-                    <span className="text-[10px] text-muted-foreground uppercase font-semibold">Connected / Target</span>
+                    <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                      Connected / Target
+                    </span>
                     <div className="font-extrabold text-indigo-600 dark:text-indigo-400 mt-0.5">
-                      {caller.actualConnected} <span className="text-muted-foreground font-normal">/ {caller.targetConnected}</span>
+                      {caller.actualConnected}{" "}
+                      <span className="text-muted-foreground font-normal">
+                        / {caller.targetConnected}
+                      </span>
                     </div>
                   </div>
 
                   <div className="bg-muted/30 p-2 rounded-xl">
-                    <span className="text-[10px] text-muted-foreground uppercase font-semibold">Dialed / Target</span>
+                    <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                      Dialed / Target
+                    </span>
                     <div className="font-extrabold text-foreground mt-0.5">
-                      {caller.actualDialed} <span className="text-muted-foreground font-normal">/ {caller.targetDialed}</span>
+                      {caller.actualDialed}{" "}
+                      <span className="text-muted-foreground font-normal">
+                        / {caller.targetDialed}
+                      </span>
                     </div>
                   </div>
 
                   <div className="bg-purple-500/5 p-2 rounded-xl border border-purple-500/10">
-                    <span className="text-[10px] text-muted-foreground uppercase font-semibold">Total Counselling</span>
-                    <div className="font-extrabold text-purple-600 dark:text-purple-400 mt-0.5">{caller.totalCounselling}</div>
-                    <div className="text-[9px] text-muted-foreground mt-0.5">{caller.counsellingDone} done · {caller.walkinCounselling} walk-in</div>
+                    <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                      Total Counselling
+                    </span>
+                    <div className="font-extrabold text-purple-600 dark:text-purple-400 mt-0.5">
+                      {caller.totalCounselling}
+                    </div>
+                    <div className="text-[9px] text-muted-foreground mt-0.5">
+                      {caller.counsellingDone} done · {caller.walkinCounselling}{" "}
+                      walk-in
+                    </div>
                   </div>
 
                   <div className="bg-emerald-500/5 p-2 rounded-xl border border-emerald-500/10">
-                    <span className="text-[10px] text-muted-foreground uppercase font-semibold">Connect Rate</span>
-                    <div className="font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5">{caller.connectRate}%</div>
+                    <span className="text-[10px] text-muted-foreground uppercase font-semibold">
+                      Connect Rate
+                    </span>
+                    <div className="font-extrabold text-emerald-600 dark:text-emerald-400 mt-0.5">
+                      {caller.connectRate}%
+                    </div>
                   </div>
                 </div>
               </div>

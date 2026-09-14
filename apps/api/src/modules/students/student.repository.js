@@ -6,11 +6,27 @@ function getMonthRange(type, customStart, customEnd) {
   const now = new Date();
   if (type === "current") {
     const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+    const endDate = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+      999,
+    );
     return { startDate, endDate };
   } else if (type === "past") {
     const startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const endDate = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
+    const endDate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      0,
+      23,
+      59,
+      59,
+      999,
+    );
     return { startDate, endDate };
   } else if (type === "custom" && customStart) {
     const startDate = new Date(customStart);
@@ -32,7 +48,12 @@ export async function getStudentById(db, studentId) {
   return result[0] || null;
 }
 
-export async function getStudentsWithPayments(db, limit = 100, offset = 0, filters = {}) {
+export async function getStudentsWithPayments(
+  db,
+  limit = 100,
+  offset = 0,
+  filters = {},
+) {
   let query = db
     .select({
       id: students.id,
@@ -66,7 +87,11 @@ export async function getStudentsWithPayments(db, limit = 100, offset = 0, filte
   }
 
   if (filters.enrolledIn) {
-    const range = getMonthRange(filters.enrolledIn, filters.startDate, filters.endDate);
+    const range = getMonthRange(
+      filters.enrolledIn,
+      filters.startDate,
+      filters.endDate,
+    );
     if (range) {
       conditions.push(gte(students.createdAt, range.startDate));
       conditions.push(lte(students.createdAt, range.endDate));

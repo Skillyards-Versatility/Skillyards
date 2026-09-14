@@ -21,7 +21,7 @@ async function main() {
       aiStatus: followUps.aiStatus,
       transcription: followUps.transcription,
       analysis: followUps.analysis,
-      createdAt: followUps.createdAt
+      createdAt: followUps.createdAt,
     })
     .from(followUps)
     .orderBy(desc(followUps.createdAt))
@@ -41,7 +41,9 @@ async function main() {
     console.log(`    Recording URL: ${rec.recordingUrl}`);
     console.log(`    AI Status: ${rec.aiStatus}`);
     console.log(`    Created At: ${rec.createdAt}`);
-    console.log(`    Transcription Snippet: ${rec.transcription ? rec.transcription.slice(0, 100) + "..." : "None"}`);
+    console.log(
+      `    Transcription Snippet: ${rec.transcription ? rec.transcription.slice(0, 100) + "..." : "None"}`,
+    );
     if (rec.analysis) {
       console.log(`    Analysis Keys: ${Object.keys(rec.analysis).join(", ")}`);
       console.log(`    Lead Score: ${rec.analysis.leadScore}`);

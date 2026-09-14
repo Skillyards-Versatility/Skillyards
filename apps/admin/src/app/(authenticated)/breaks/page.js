@@ -13,5 +13,12 @@ export default async function BreaksPage() {
 
   const allUsers = await getUsers();
 
-  return <BreaksPageClient userId={session.userId} userRole={session.role} users={allUsers} isAdmin={session.role === "ADMIN"} />;
+  return (
+    <BreaksPageClient
+      userId={session.userId}
+      userRole={session.role}
+      users={allUsers}
+      isAdmin={session.role === "ADMIN"}
+    />
+  );
 }

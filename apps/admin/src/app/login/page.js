@@ -26,16 +26,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md card p-8 shadow-2xl border-3 border-primary rounded-3xl">
-        
         {/* Header */}
         <div className="text-center mb-8 flex items-center justify-center">
-         <Logo/>
+          <Logo />
         </div>
 
         {/* Form */}
         <form action={action} className="space-y-5">
           <div className="space-y-4">
-            
             {/* Email */}
             <div className="relative">
               <Mail className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
@@ -47,7 +45,9 @@ export default function LoginPage() {
                 className="input pl-10"
               />
               {state?.errors?.email && (
-                <p className="text-xs text-red-500 mt-1">{state.errors.email}</p>
+                <p className="text-xs text-red-500 mt-1">
+                  {state.errors.email}
+                </p>
               )}
             </div>
 
@@ -62,13 +62,18 @@ export default function LoginPage() {
                 className="input pl-10"
               />
               {state?.errors?.password && (
-                <p className="text-xs text-red-500 mt-1">{state.errors.password}</p>
+                <p className="text-xs text-red-500 mt-1">
+                  {state.errors.password}
+                </p>
               )}
             </div>
           </div>
 
           <div className="text-right">
-            <Link href="/forgot-password" className="text-xs text-muted-foreground hover:text-primary">
+            <Link
+              href="/forgot-password"
+              className="text-xs text-muted-foreground hover:text-primary"
+            >
               Forgot password?
             </Link>
           </div>

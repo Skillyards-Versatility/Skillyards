@@ -24,7 +24,10 @@ export async function getBatches(courseName = "") {
 
     return await res.json();
   } catch (err) {
-    console.error("[ADMIN][ERROR] Network error fetching batches:", err.message);
+    console.error(
+      "[ADMIN][ERROR] Network error fetching batches:",
+      err.message,
+    );
     return [];
   }
 }
@@ -43,7 +46,7 @@ export async function createBatch(batchData) {
       throw new Error(
         data?.error?.fieldErrors
           ? Object.values(data.error.fieldErrors).flat().join(", ")
-          : data?.error || "Failed to create batch"
+          : data?.error || "Failed to create batch",
       );
     }
 

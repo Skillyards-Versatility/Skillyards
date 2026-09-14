@@ -71,11 +71,11 @@ export async function login(prevState, formData) {
       expires,
       sameSite: "lax",
       path: "/",
-      domain: process.env.NODE_ENV === "production" ? ".skillyards.in" : undefined,
+      domain:
+        process.env.NODE_ENV === "production" ? ".skillyards.in" : undefined,
     });
 
     return { success: true, role: user.role };
-
   } catch (error) {
     console.error("Login Error:", error);
     return {
@@ -89,7 +89,8 @@ export async function logout() {
   cookieStore.set("session", "", {
     maxAge: 0,
     path: "/",
-    domain: process.env.NODE_ENV === "production" ? ".skillyards.in" : undefined,
+    domain:
+      process.env.NODE_ENV === "production" ? ".skillyards.in" : undefined,
   });
   redirect("/login");
 }
@@ -117,7 +118,10 @@ export async function forgotPassword(prevState, formData) {
         .set({ resetToken: token, resetTokenExpiry: expiry })
         .where(eq(users.id, user.id));
 
-      const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || process.env.ADMIN_URL || "https://admin.skillyards.in";
+      const adminUrl =
+        process.env.NEXT_PUBLIC_ADMIN_URL ||
+        process.env.ADMIN_URL ||
+        "https://admin.skillyards.in";
       const resetLink = `${adminUrl}/reset-password?token=${token}`;
 
       try {
@@ -133,7 +137,8 @@ export async function forgotPassword(prevState, formData) {
 
     return {
       success: true,
-      message: "If an account with that email exists, a reset link has been sent.",
+      message:
+        "If an account with that email exists, a reset link has been sent.",
     };
   } catch (error) {
     console.error("Forgot Password Error:", error);
@@ -165,13 +170,15 @@ export async function resetPassword(prevState, formData) {
       .where(
         and(
           eq(users.resetToken, token),
-          gt(users.resetTokenExpiry, new Date())
-        )
+          gt(users.resetTokenExpiry, new Date()),
+        ),
       )
       .limit(1);
 
     if (!user) {
-      return { error: "Invalid or expired reset link. Please request a new one." };
+      return {
+        error: "Invalid or expired reset link. Please request a new one.",
+      };
     }
 
     const hashed = await bcrypt.hash(newPassword, 10);

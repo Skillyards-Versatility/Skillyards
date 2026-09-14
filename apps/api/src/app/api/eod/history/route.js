@@ -40,7 +40,15 @@ async function getHandler(req, { ctx }) {
 
     let activeUsers = [];
     if (ctx.session.role === "ADMIN" || ctx.session.role === "MANAGER") {
-      activeUsers = await db.select({ id: users.id, name: users.name, team: users.team, email: users.email, profileImageKey: users.profileImageKey }).from(users);
+      activeUsers = await db
+        .select({
+          id: users.id,
+          name: users.name,
+          team: users.team,
+          email: users.email,
+          profileImageKey: users.profileImageKey,
+        })
+        .from(users);
     }
 
     return Response.json({ success: true, reports, activeUsers });
@@ -48,7 +56,7 @@ async function getHandler(req, { ctx }) {
     ctx.error("EOD_HISTORY_FETCH_FAILED", { error: error.message });
     return Response.json(
       { success: false, message: "Failed to fetch history" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

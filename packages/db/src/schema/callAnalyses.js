@@ -1,4 +1,12 @@
-import { pgTable, uuid, text, integer, timestamp, jsonb, boolean } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  integer,
+  timestamp,
+  jsonb,
+  boolean,
+} from "drizzle-orm/pg-core";
 import { followUps } from "./followUps.js";
 
 export const callAnalyses = pgTable("call_analyses", {

@@ -2,7 +2,16 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Briefcase, FileText, Github, Linkedin, MessageSquare, SearchCheck, Send, UserRoundSearch } from "lucide-react";
+import {
+  Briefcase,
+  FileText,
+  Github,
+  Linkedin,
+  MessageSquare,
+  SearchCheck,
+  Send,
+  UserRoundSearch,
+} from "lucide-react";
 
 const supportItems = [
   {
@@ -56,10 +65,12 @@ export function FSDPlacementOutcomes() {
             Placement Assistance
           </motion.div>
           <h2 className="font-serif text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Placement Assistance After <span className="italic text-primary">Full-Stack Training</span>
+            Placement Assistance After{" "}
+            <span className="italic text-primary">Full-Stack Training</span>
           </h2>
           <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            SkillYards provides placement assistance to help students prepare for web development opportunities.
+            SkillYards provides placement assistance to help students prepare
+            for web development opportunities.
           </p>
         </div>
 
@@ -78,7 +89,9 @@ export function FSDPlacementOutcomes() {
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10">
                   <Icon size={18} className="text-primary" />
                 </div>
-                <h3 className="font-serif text-lg font-extrabold text-foreground">{item.title}</h3>
+                <h3 className="font-serif text-lg font-extrabold text-foreground">
+                  {item.title}
+                </h3>
               </motion.div>
             );
           })}

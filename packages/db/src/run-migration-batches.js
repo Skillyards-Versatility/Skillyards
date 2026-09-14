@@ -1,6 +1,8 @@
 import { neon } from "@neondatabase/serverless";
 
-const dbUrl = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_3Ziyfzo1MVng@ep-old-cell-aepno7oh-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
+const dbUrl =
+  process.env.DATABASE_URL ||
+  "postgresql://neondb_owner:npg_3Ziyfzo1MVng@ep-old-cell-aepno7oh-pooler.c-2.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require";
 const sql = neon(dbUrl);
 
 async function run() {
@@ -32,7 +34,10 @@ async function run() {
     `;
     console.log("Column 'batch_id' ensured in students table.");
   } catch (e) {
-    console.error("Failed to add 'batch_id' column to students table:", e.message);
+    console.error(
+      "Failed to add 'batch_id' column to students table:",
+      e.message,
+    );
   }
 
   try {
@@ -41,17 +46,38 @@ async function run() {
     `;
     console.log("Column 'batch_name' ensured in students table.");
   } catch (e) {
-    console.error("Failed to add 'batch_name' column to students table:", e.message);
+    console.error(
+      "Failed to add 'batch_name' column to students table:",
+      e.message,
+    );
   }
 
   // 3. Seed initial default course batches
   const seedBatches = [
-    { name: "OJT Fullstack Batch 1", courseName: "OJT (Full Stack Development)" },
-    { name: "OJT Fullstack Batch 2", courseName: "OJT (Full Stack Development)" },
-    { name: "OJT Digital Marketing Batch 1", courseName: "OJT (Advanced Digital Marketing)" },
-    { name: "OJD BCA Batch 1", courseName: "OJD (Bachelor of Computer Applications)" },
-    { name: "OJD BCA Batch 2", courseName: "OJD (Bachelor of Computer Applications)" },
-    { name: "OJD BBA Batch 1", courseName: "OJD (Bachelor of Business Administration)" },
+    {
+      name: "OJT Fullstack Batch 1",
+      courseName: "OJT (Full Stack Development)",
+    },
+    {
+      name: "OJT Fullstack Batch 2",
+      courseName: "OJT (Full Stack Development)",
+    },
+    {
+      name: "OJT Digital Marketing Batch 1",
+      courseName: "OJT (Advanced Digital Marketing)",
+    },
+    {
+      name: "OJD BCA Batch 1",
+      courseName: "OJD (Bachelor of Computer Applications)",
+    },
+    {
+      name: "OJD BCA Batch 2",
+      courseName: "OJD (Bachelor of Computer Applications)",
+    },
+    {
+      name: "OJD BBA Batch 1",
+      courseName: "OJD (Bachelor of Business Administration)",
+    },
   ];
 
   for (const b of seedBatches) {

@@ -54,10 +54,7 @@ export async function addPayment(db, studentId, input) {
   for (const inst of installmentsToProcess) {
     if (remaining <= 0) break;
 
-    const totalPaid = await paymentRepo.getTotalPaidForInstallment(
-      db,
-      inst.id
-    );
+    const totalPaid = await paymentRepo.getTotalPaidForInstallment(db, inst.id);
 
     const remainingDue = inst.amountDue - totalPaid;
 
@@ -86,25 +83,20 @@ export async function addPayment(db, studentId, input) {
     await paymentRepo.updateInstallmentStatus(db, id);
   }
 
-
   return payment;
 }
 
 export async function getPaymentsWithAllocations(db, studentId) {
-  const payments = await paymentRepo.getPaymentsByStudentIdRaw(
-    db,
-    studentId
-  );
+  const payments = await paymentRepo.getPaymentsByStudentIdRaw(db, studentId);
 
   if (!payments.length) return [];
 
   const paymentIds = payments.map((p) => p.id);
 
-  const allocations =
-    await paymentRepo.getAllocationsByPaymentIds(
-      db,
-      paymentIds
-    );
+  const allocations = await paymentRepo.getAllocationsByPaymentIds(
+    db,
+    paymentIds,
+  );
 
   const allocationMap = {};
 

@@ -10,6 +10,6 @@ export default async function TeamPage() {
   if (settings.team_feature === false) redirect("/dashboard");
 
   const session = await getSession();
-  
+
   return <TeamDirectoryClient userRole={session?.role || "SALES"} />;
 }

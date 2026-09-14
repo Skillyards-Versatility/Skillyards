@@ -12,7 +12,11 @@ export default async function EodHistoryPage() {
 
   return (
     <div className="space-y-6">
-      <EodHistoryClient isAdmin={isAdmin} isManager={isManager} settings={settings} />
+      <EodHistoryClient
+        isAdmin={isAdmin}
+        isManager={isManager}
+        settings={settings}
+      />
     </div>
   );
 }

@@ -53,7 +53,8 @@ export const orgData = {
   location: {
     name: "SkillYards",
     address: {
-      streetAddress: "A-3, behind Manoj Dhaba, Bhagwan Talkies Crossing, Indra Puri, New Agra Colony, Agra, Uttar Pradesh",
+      streetAddress:
+        "A-3, behind Manoj Dhaba, Bhagwan Talkies Crossing, Indra Puri, New Agra Colony, Agra, Uttar Pradesh",
       addressLocality: "Agra",
       addressRegion: "Uttar Pradesh",
       postalCode: "282005",

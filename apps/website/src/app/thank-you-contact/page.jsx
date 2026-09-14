@@ -4,7 +4,8 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 
 export const metadata = {
   title: "Thank You — SkillYards",
-  description: "Thanks for reaching out to SkillYards. Our team will get in touch with you shortly.",
+  description:
+    "Thanks for reaching out to SkillYards. Our team will get in touch with you shortly.",
   alternates: { canonical: "/thank-you-contact" },
   robots: { index: false, follow: false },
 };
@@ -22,7 +23,10 @@ export default function ThankYouPage() {
           <div className="relative mb-8">
             <div className="absolute inset-0 bg-primary/30 rounded-full blur-2xl" />
             <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-2xl shadow-primary/30">
-              <CheckCircle2 className="w-12 h-12 sm:w-14 sm:h-14 text-primary-foreground" strokeWidth={2.5} />
+              <CheckCircle2
+                className="w-12 h-12 sm:w-14 sm:h-14 text-primary-foreground"
+                strokeWidth={2.5}
+              />
             </div>
           </div>
 
@@ -35,7 +39,8 @@ export default function ThankYouPage() {
           </h1>
 
           <p className="max-w-2xl text-base sm:text-lg md:text-xl text-neutral-600 dark:text-neutral-400 leading-relaxed font-light">
-            Your enquiry has reached us. A member of the SkillYards team will reach out within
+            Your enquiry has reached us. A member of the SkillYards team will
+            reach out within
             <span className="font-semibold text-primary"> 24 hours </span>
             to help you take the next step in your career journey.
           </p>
@@ -52,7 +57,9 @@ export default function ThankYouPage() {
               <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                 <Home className="w-5 h-5" />
               </div>
-              <span className="text-sm font-semibold text-neutral-900 dark:text-white">Back to Home</span>
+              <span className="text-sm font-semibold text-neutral-900 dark:text-white">
+                Back to Home
+              </span>
             </Link>
 
             <Link
@@ -62,7 +69,9 @@ export default function ThankYouPage() {
               <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                 <BookOpen className="w-5 h-5" />
               </div>
-              <span className="text-sm font-semibold text-neutral-900 dark:text-white">Explore Programs</span>
+              <span className="text-sm font-semibold text-neutral-900 dark:text-white">
+                Explore Programs
+              </span>
             </Link>
 
             <Link
@@ -72,7 +81,9 @@ export default function ThankYouPage() {
               <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                 <Phone className="w-5 h-5" />
               </div>
-              <span className="text-sm font-semibold text-neutral-900 dark:text-white">Call Us Now</span>
+              <span className="text-sm font-semibold text-neutral-900 dark:text-white">
+                Call Us Now
+              </span>
             </Link>
           </div>
         </div>

@@ -4,7 +4,9 @@ import { relations } from "drizzle-orm";
 
 export const leaves = pgTable("leaves", {
   id: uuid("id").defaultRandom().primaryKey(),
-  userId: uuid("user_id").notNull().references(() => users.id),
+  userId: uuid("user_id")
+    .notNull()
+    .references(() => users.id),
   startDate: timestamp("start_date").notNull(),
   endDate: timestamp("end_date").notNull(),
   type: text("type").notNull(), // CASUAL, SICK, UNPAID
@@ -15,18 +17,18 @@ export const leaves = pgTable("leaves", {
   approvedById: uuid("approved_by_id").references(() => users.id),
   rejectionReason: text("rejection_reason"),
   createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow()
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 export const leavesRelations = relations(leaves, ({ one }) => ({
   user: one(users, {
     fields: [leaves.userId],
     references: [users.id],
-    relationName: "employee_leaves"
+    relationName: "employee_leaves",
   }),
   approver: one(users, {
     fields: [leaves.approvedById],
     references: [users.id],
-    relationName: "approved_leaves"
-  })
+    relationName: "approved_leaves",
+  }),
 }));

@@ -15,7 +15,7 @@ try {
   execSync("npx drizzle-kit push", {
     cwd: path.join(__dirname, "../packages/db"),
     stdio: "inherit",
-    env: process.env
+    env: process.env,
   });
   console.log("Schema pushed successfully!");
 } catch (error) {

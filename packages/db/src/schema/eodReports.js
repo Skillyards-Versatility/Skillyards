@@ -1,4 +1,11 @@
-import { pgTable, uuid, text, timestamp, jsonb, uniqueIndex } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  jsonb,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 
 export const eodReports = pgTable(
@@ -25,7 +32,7 @@ export const eodReports = pgTable(
   (table) => ({
     userDateIdx: uniqueIndex("eod_reports_user_date_idx").on(
       table.userId,
-      table.date
+      table.date,
     ),
-  })
+  }),
 );

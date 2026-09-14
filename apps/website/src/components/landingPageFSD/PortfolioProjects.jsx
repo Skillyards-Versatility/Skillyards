@@ -80,10 +80,13 @@ export function FSDPortfolioProjects() {
             Portfolio Projects
           </motion.div>
           <h2 className="font-serif text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Build Portfolio-Ready <span className="italic text-primary">Full-Stack Projects.</span>
+            Build Portfolio-Ready{" "}
+            <span className="italic text-primary">Full-Stack Projects.</span>
           </h2>
           <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            By the end of the course, students learn how to build, document, deploy, and present full-stack projects that can support interviews, GitHub reviews, portfolio discussions, and career conversations.
+            By the end of the course, students learn how to build, document,
+            deploy, and present full-stack projects that can support interviews,
+            GitHub reviews, portfolio discussions, and career conversations.
           </p>
         </div>
 
@@ -102,16 +105,25 @@ export function FSDPortfolioProjects() {
                   <span className="mb-1 inline-block rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">
                     {project.month}
                   </span>
-                  <h3 className="font-serif text-lg font-extrabold text-foreground">{project.name}</h3>
-                  <p className="text-xs text-muted-foreground">{project.type}</p>
+                  <h3 className="font-serif text-lg font-extrabold text-foreground">
+                    {project.name}
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    {project.type}
+                  </p>
                 </div>
               </div>
 
-              <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{project.desc}</p>
+              <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
+                {project.desc}
+              </p>
 
               <div className="mb-4 flex flex-wrap gap-1.5">
                 {project.stack.map((stack) => (
-                  <span key={stack} className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
+                  <span
+                    key={stack}
+                    className="rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+                  >
                     {stack}
                   </span>
                 ))}

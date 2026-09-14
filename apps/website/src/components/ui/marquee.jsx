@@ -6,7 +6,7 @@ export function Marquee({
   pauseOnHover = false,
   children,
   vertical = false,
-  repeat =2 ,
+  repeat = 2,
   ...props
 }) {
   return (
@@ -27,8 +27,10 @@ export function Marquee({
           <div
             key={i}
             className={cn("flex shrink-0 justify-around gap-(--gap)", {
-              "animate-[marquee_var(--duration,40s)_linear_infinite] flex-row": !vertical,
-              "animate-[marquee-vertical_var(--duration,40s)_linear_infinite] flex-col": vertical,
+              "animate-[marquee_var(--duration,40s)_linear_infinite] flex-row":
+                !vertical,
+              "animate-[marquee-vertical_var(--duration,40s)_linear_infinite] flex-col":
+                vertical,
               "group-hover:paused": pauseOnHover,
               "direction-reverse": reverse,
             })}

@@ -1,7 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Clock, MapPin, Users, Calendar, IndianRupee } from "lucide-react";
+import {
+  ArrowRight,
+  Clock,
+  MapPin,
+  Users,
+  Calendar,
+  IndianRupee,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -22,10 +29,18 @@ const programs = [
     ],
     facts: [
       { icon: Clock, label: "Duration", value: "3 years (6 semesters)" },
-      { icon: Clock, label: "Training", value: "Daily hands-on practical training alongside theory" },
+      {
+        icon: Clock,
+        label: "Training",
+        value: "Daily hands-on practical training alongside theory",
+      },
       { icon: Users, label: "Eligibility", value: "12th Science, 50% minimum" },
       { icon: MapPin, label: "Mode", value: "Offline, Agra campus" },
-      { icon: IndianRupee, label: "Fee", value: "Starting ₹5,000/month (T&C apply)" },
+      {
+        icon: IndianRupee,
+        label: "Fee",
+        value: "Starting ₹5,000/month (T&C apply)",
+      },
       { icon: Calendar, label: "Batch", value: "August 2026 · 35 seats" },
     ],
     cta: "Explore BCA Program",
@@ -49,10 +64,22 @@ const programs = [
     ],
     facts: [
       { icon: Clock, label: "Duration", value: "3 years (6 semesters)" },
-      { icon: Clock, label: "Training", value: "Daily hands-on practical training alongside theory" },
-      { icon: Users, label: "Eligibility", value: "12th pass (any stream), 50% minimum" },
+      {
+        icon: Clock,
+        label: "Training",
+        value: "Daily hands-on practical training alongside theory",
+      },
+      {
+        icon: Users,
+        label: "Eligibility",
+        value: "12th pass (any stream), 50% minimum",
+      },
       { icon: MapPin, label: "Mode", value: "Offline, Agra campus" },
-      { icon: IndianRupee, label: "Fee", value: "Starting ₹5,000/month (T&C apply)" },
+      {
+        icon: IndianRupee,
+        label: "Fee",
+        value: "Starting ₹5,000/month (T&C apply)",
+      },
       { icon: Calendar, label: "Batch", value: "August 2026 · 35 seats" },
     ],
     cta: "Explore BBA Program",
@@ -65,7 +92,6 @@ export default function OnJobProgramCards() {
   return (
     <section id="programs" className="bg-card/20 py-20">
       <div className="mx-auto max-w-5xl px-6">
-
         <div className="mb-12 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 10 }}
@@ -82,8 +108,9 @@ export default function OnJobProgramCards() {
             transition={{ delay: 0.08 }}
             className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground"
           >
-            Two programs. Both are 3-year university-affiliated degrees. Both include daily practical
-            training. Pick the one that fits where you want to go.
+            Two programs. Both are 3-year university-affiliated degrees. Both
+            include daily practical training. Pick the one that fits where you
+            want to go.
           </motion.p>
         </div>
 
@@ -98,7 +125,9 @@ export default function OnJobProgramCards() {
                 transition={{ delay: i * 0.1 }}
                 className={`flex flex-col rounded-3xl border-2 bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-lg ${prog.accentBorder}`}
               >
-                <span className={`mb-4 inline-block self-start rounded-full px-3 py-1 text-xs font-bold ${prog.badgeBg}`}>
+                <span
+                  className={`mb-4 inline-block self-start rounded-full px-3 py-1 text-xs font-bold ${prog.badgeBg}`}
+                >
                   {prog.badge}
                 </span>
 
@@ -107,7 +136,9 @@ export default function OnJobProgramCards() {
                 </h3>
 
                 <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                  <strong className="text-foreground">Who it&apos;s for: </strong>
+                  <strong className="text-foreground">
+                    Who it&apos;s for:{" "}
+                  </strong>
                   {prog.whoFor}
                 </p>
 
@@ -117,7 +148,10 @@ export default function OnJobProgramCards() {
                   </p>
                   <ul className="space-y-1.5">
                     {prog.skills.map((skill) => (
-                      <li key={skill} className="flex items-start gap-2 text-sm text-foreground">
+                      <li
+                        key={skill}
+                        className="flex items-start gap-2 text-sm text-foreground"
+                      >
                         <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                         {skill}
                       </li>
@@ -128,9 +162,13 @@ export default function OnJobProgramCards() {
                 <div className="mt-5 space-y-2 rounded-xl border border-border bg-background/60 px-4 py-3">
                   {prog.facts.map(({ icon: Icon, label, value }) => (
                     <div key={label} className="flex items-start gap-2 text-sm">
-                      <Icon size={14} className="mt-0.5 shrink-0 text-primary" />
+                      <Icon
+                        size={14}
+                        className="mt-0.5 shrink-0 text-primary"
+                      />
                       <span className="text-muted-foreground">
-                        <strong className="text-foreground">{label}:</strong> {value}
+                        <strong className="text-foreground">{label}:</strong>{" "}
+                        {value}
                       </span>
                     </div>
                   ))}
@@ -141,7 +179,10 @@ export default function OnJobProgramCards() {
                     asChild
                     className="w-full rounded-full bg-primary text-primary-foreground font-extrabold transition-all hover:scale-[1.02] shadow-md"
                   >
-                    <Link href={prog.href} className="flex items-center justify-center gap-2">
+                    <Link
+                      href={prog.href}
+                      className="flex items-center justify-center gap-2"
+                    >
                       {prog.cta} <ArrowRight size={17} />
                     </Link>
                   </Button>

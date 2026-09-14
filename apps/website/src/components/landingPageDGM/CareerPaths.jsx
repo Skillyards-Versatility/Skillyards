@@ -34,10 +34,16 @@ export function DGMCareerPaths() {
             <span className="italic text-primary">at SkillYards</span>
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-sm text-muted-foreground sm:text-base">
-            SkillYards offers offline digital marketing training in Agra for students and learners who want classroom guidance, mentor support, and practical project-based learning.
+            SkillYards offers offline digital marketing training in Agra for
+            students and learners who want classroom guidance, mentor support,
+            and practical project-based learning.
           </p>
           <p className="mx-auto mt-3 max-w-3xl text-sm text-muted-foreground sm:text-base">
-            If you are searching for a digital marketing institute in Agra, SEO course in Agra, Google Ads training in Agra, Meta Ads training in Agra, or offline digital marketing course near Bhagwan Talkies, SkillYards is designed to help you learn with structure, practice, AI-integrated workflows, and career guidance.
+            If you are searching for a digital marketing institute in Agra, SEO
+            course in Agra, Google Ads training in Agra, Meta Ads training in
+            Agra, or offline digital marketing course near Bhagwan Talkies,
+            SkillYards is designed to help you learn with structure, practice,
+            AI-integrated workflows, and career guidance.
           </p>
         </div>
 
@@ -56,8 +62,12 @@ export function DGMCareerPaths() {
                 <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 sm:h-11 sm:w-11">
                   <Icon size={18} className="text-primary sm:h-5 sm:w-5" />
                 </div>
-                <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground sm:text-xl">{item.title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{item.text}</p>
+                <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground sm:text-xl">
+                  {item.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {item.text}
+                </p>
               </motion.div>
             );
           })}

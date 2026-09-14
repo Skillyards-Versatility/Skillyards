@@ -9,7 +9,10 @@ export function WhoIsThisFor() {
     { label: "Eligibility", value: "12th pass, 50% minimum" },
     { label: "Duration", value: "3 years (6 semesters)" },
     { label: "Mode", value: "Offline, Agra campus only" },
-    { label: "Daily schedule", value: "Daily hands-on Digital Marketing training alongside theory" },
+    {
+      label: "Daily schedule",
+      value: "Daily hands-on Digital Marketing training alongside theory",
+    },
     { label: "Fee", value: "Starting ₹5,000/month (T&C apply)" },
     { label: "Batch", value: "August 2026, 35 seats" },
   ];
@@ -33,10 +36,11 @@ export function WhoIsThisFor() {
 
         <div className="max-w-3xl mx-auto">
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-10 text-center">
-            The BBA with Digital Marketing is built for 12th pass students from any
-            stream, Science, Commerce or Arts, who want a university-affiliated bachelor&apos;s degree
-            combined with practical digital marketing skills. No prior business or marketing
-            knowledge is required. Minimum eligibility: 12th pass with 50% marks.
+            The BBA with Digital Marketing is built for 12th pass students from
+            any stream, Science, Commerce or Arts, who want a
+            university-affiliated bachelor&apos;s degree combined with practical
+            digital marketing skills. No prior business or marketing knowledge
+            is required. Minimum eligibility: 12th pass with 50% marks.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
@@ -58,8 +62,8 @@ export function WhoIsThisFor() {
 
           <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5 text-center">
             <p className="text-sm text-muted-foreground">
-              Looking for a tech degree instead? If you have a Science background and want to learn
-               coding in Agra, see our{" "}
+              Looking for a tech degree instead? If you have a Science
+              background and want to learn coding in Agra, see our{" "}
               <Link
                 href="/bca-training-program-in-agra"
                 className="font-bold text-primary underline underline-offset-4 hover:opacity-80"

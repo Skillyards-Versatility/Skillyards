@@ -24,7 +24,8 @@ Instead of executing AI workloads inside serverless functions, which are subject
 ├── packages/
 │   └── db/           # Shared database package (Drizzle schemas for Neon Postgres)
 ```
-*(Note: `website-chatbot.js` is a planned routing extension for future development.)*
+
+_(Note: `website-chatbot.js` is a planned routing extension for future development.)_
 
 ---
 
@@ -81,19 +82,23 @@ sequenceDiagram
 ## 3. Architectural Components
 
 ### A. Asynchronous Task Queue (`apps/ai-service/src/server.js`)
-*   **Memory Queue (`auditQueue`)**: Request triggers are immediately pushed to an in-memory queue. The HTTP endpoint `/api/audit` returns `202 Accepted` instantly to prevent connection timeouts.
-*   **Serialized Processing**: An active loop (`processQueue`) pops tasks and runs them one by one.
-*   **Rate-Limiting Cooldown**: Introduces a **2-second sleep/cooldown delay** after every audit to prevent rate-limit errors (`429`) or demand spikes on the Gemini API.
+
+- **Memory Queue (`auditQueue`)**: Request triggers are immediately pushed to an in-memory queue. The HTTP endpoint `/api/audit` returns `202 Accepted` instantly to prevent connection timeouts.
+- **Serialized Processing**: An active loop (`processQueue`) pops tasks and runs them one by one.
+- **Rate-Limiting Cooldown**: Introduces a **2-second sleep/cooldown delay** after every audit to prevent rate-limit errors (`429`) or demand spikes on the Gemini API.
 
 ### B. Gemini 2.5 Flash Call Analyzer (`apps/ai-service/src/call-analyzer.js`)
-*   **Modern SDK**: Built using the official `@google/genai` library (rather than legacy `@google/generative-ai` packages).
-*   **Dynamic Audio Handling**:
-    *   **Inline Data**: Files under 10MB are transformed into base64 strings and passed inline.
-    *   **Files API**: Files 10MB or larger are written to local scratch storage, uploaded to the Gemini Files API, referenced during context execution, and cleaned up locally and remotely afterward.
-*   **Model Integration**: Calls the `gemini-2.5-flash` model with `responseMimeType: "application/json"`.
+
+- **Modern SDK**: Built using the official `@google/genai` library (rather than legacy `@google/generative-ai` packages).
+- **Dynamic Audio Handling**:
+  - **Inline Data**: Files under 10MB are transformed into base64 strings and passed inline.
+  - **Files API**: Files 10MB or larger are written to local scratch storage, uploaded to the Gemini Files API, referenced during context execution, and cleaned up locally and remotely afterward.
+- **Model Integration**: Calls the `gemini-2.5-flash` model with `responseMimeType: "application/json"`.
 
 ### C. Comprehensive Rubric & Schema (`apps/ai-service/src/call-analyzer.config.js`)
+
 The analysis operates on a strict schema and system prompt that verifies:
+
 1.  **Knowledge Base Verification**: Audits claims against official details (On-Job Degree specializations, Career Accelerator options, DBRAU university association, and key trainers).
 2.  **Strategic Cold Calling Stages**: Tracks adherence across 14 stages (Authority Intro, SPIN discovery, qualification questions, parent/payer identification, LACE objection handling, soft/strong CTA, urgency creation).
 3.  **Linguistic & Grammar Quality**: Measures Hinglish/Hindi/English grammar scores, sentence framing quality (bad sentence construction), filler repetition counts, and redundant back-to-back translations.
@@ -101,13 +106,15 @@ The analysis operates on a strict schema and system prompt that verifies:
 5.  **Compliance Checks**: Identifies absolute claims (e.g., "100% Job Guarantee", guaranteed internships/salaries, scarcity pressure) and assigns risk levels.
 
 ### D. Relational Database Logging (`packages/db`)
+
 The results are mapped to two areas in the Neon PostgreSQL database:
+
 1.  **`follow_ups` Table**: Keeps legacy fields (`transcription` and the raw `analysis` JSON) for compatibility. Updates status to `pending` ➔ `processing` ➔ `completed` / `failed`.
 2.  **`call_analyses` Table**: Stores structured metrics natively for querying and filtering in the Admin dashboard:
-    *   `overall_score` (Integer)
-    *   `lead_grade` (Text, e.g., `A_hot`, `B_warm`, `C_cold`)
-    *   `has_compliance_risk` (Boolean)
-    *   JSON columns for `scores`, `compliance_flags`, `script_adherence`, `objections_raised`, `tone_and_delivery`, `coaching`, and `recommended_next_action`.
+    - `overall_score` (Integer)
+    - `lead_grade` (Text, e.g., `A_hot`, `B_warm`, `C_cold`)
+    - `has_compliance_risk` (Boolean)
+    - JSON columns for `scores`, `compliance_flags`, `script_adherence`, `objections_raised`, `tone_and_delivery`, `coaching`, and `recommended_next_action`.
 
 ---
 

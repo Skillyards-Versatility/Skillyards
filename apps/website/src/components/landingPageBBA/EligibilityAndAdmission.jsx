@@ -1,7 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, CheckCircle, FileText, PhoneCall, CreditCard, Calendar } from "lucide-react";
+import {
+  ArrowRight,
+  CheckCircle,
+  FileText,
+  PhoneCall,
+  CreditCard,
+  Calendar,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -66,11 +73,16 @@ export function EligibilityAndAdmission() {
             viewport={{ once: true }}
             className="rounded-2xl border border-border/50 bg-card p-6"
           >
-            <h3 className="mb-4 font-serif text-xl font-extrabold text-foreground">Eligibility</h3>
+            <h3 className="mb-4 font-serif text-xl font-extrabold text-foreground">
+              Eligibility
+            </h3>
             <ul className="space-y-3">
               {eligibility.map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <CheckCircle size={16} className="mt-0.5 shrink-0 text-primary" />
+                  <CheckCircle
+                    size={16}
+                    className="mt-0.5 shrink-0 text-primary"
+                  />
                   <span
                     className="text-sm text-muted-foreground"
                     dangerouslySetInnerHTML={{ __html: item }}
@@ -87,7 +99,9 @@ export function EligibilityAndAdmission() {
             viewport={{ once: true }}
             className="rounded-2xl border border-border/50 bg-card p-6"
           >
-            <h3 className="mb-4 font-serif text-xl font-extrabold text-foreground">How to Join</h3>
+            <h3 className="mb-4 font-serif text-xl font-extrabold text-foreground">
+              How to Join
+            </h3>
             <div className="space-y-4">
               {steps.map((step, i) => {
                 const Icon = step.icon;
@@ -102,7 +116,9 @@ export function EligibilityAndAdmission() {
                       )}
                     </div>
                     <div className="pb-4">
-                      <h4 className="text-sm font-bold text-foreground">{step.title}</h4>
+                      <h4 className="text-sm font-bold text-foreground">
+                        {step.title}
+                      </h4>
                       <p
                         className="text-xs text-muted-foreground"
                         dangerouslySetInnerHTML={{ __html: step.desc }}

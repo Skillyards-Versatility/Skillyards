@@ -7,7 +7,14 @@ export const mockStudents = [
     baseFee: 40000,
     scholarship: 5000,
     transactions: [
-      { id: "TXN1029", amount: 15000, mode: "UPI", reference: "UPI/330/HDFC", date: "Oct 24, 2026", receiptId: "RC-001" },
+      {
+        id: "TXN1029",
+        amount: 15000,
+        mode: "UPI",
+        reference: "UPI/330/HDFC",
+        date: "Oct 24, 2026",
+        receiptId: "RC-001",
+      },
     ],
   },
   {
@@ -18,8 +25,22 @@ export const mockStudents = [
     baseFee: 50000,
     scholarship: 8000,
     transactions: [
-      { id: "TXN1027", amount: 20000, mode: "Bank Transfer", reference: "NEFT/2210/SBI", date: "Oct 20, 2026", receiptId: "RC-002" },
-      { id: "TXN1030", amount: 10000, mode: "Cash", reference: "-", date: "Oct 25, 2026", receiptId: "RC-003" },
+      {
+        id: "TXN1027",
+        amount: 20000,
+        mode: "Bank Transfer",
+        reference: "NEFT/2210/SBI",
+        date: "Oct 20, 2026",
+        receiptId: "RC-002",
+      },
+      {
+        id: "TXN1030",
+        amount: 10000,
+        mode: "Cash",
+        reference: "-",
+        date: "Oct 25, 2026",
+        receiptId: "RC-003",
+      },
     ],
   },
   {
@@ -30,7 +51,14 @@ export const mockStudents = [
     baseFee: 35000,
     scholarship: 0,
     transactions: [
-      { id: "TXN1020", amount: 35000, mode: "UPI", reference: "UPI/120/ICICI", date: "Sep 15, 2026", receiptId: "RC-004" },
+      {
+        id: "TXN1020",
+        amount: 35000,
+        mode: "UPI",
+        reference: "UPI/120/ICICI",
+        date: "Sep 15, 2026",
+        receiptId: "RC-004",
+      },
     ],
   },
 ];
@@ -50,8 +78,18 @@ export const dashboardStats = {
  * In production this would come from a /transactions?limit=5 API endpoint.
  */
 export const recentTransactions = [
-  { id: "TXN1029", student: "Rahul Sharma", amount: "₹15,000", date: "Oct 24, 2026" },
-  { id: "TXN1028", student: "Aditi Patil", amount: "₹8,000", date: "Oct 23, 2026" },
+  {
+    id: "TXN1029",
+    student: "Rahul Sharma",
+    amount: "₹15,000",
+    date: "Oct 24, 2026",
+  },
+  {
+    id: "TXN1028",
+    student: "Aditi Patil",
+    amount: "₹8,000",
+    date: "Oct 23, 2026",
+  },
 ];
 
 /**

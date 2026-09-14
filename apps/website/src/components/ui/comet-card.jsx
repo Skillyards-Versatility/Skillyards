@@ -13,7 +13,7 @@ export const CometCard = ({
   rotateDepth = 17.5,
   translateDepth = 20,
   className,
-  children
+  children,
 }) => {
   const ref = useRef(null);
 
@@ -23,11 +23,27 @@ export const CometCard = ({
   const mouseXSpring = useSpring(x);
   const mouseYSpring = useSpring(y);
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], [`-${rotateDepth}deg`, `${rotateDepth}deg`]);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], [`${rotateDepth}deg`, `-${rotateDepth}deg`]);
+  const rotateX = useTransform(
+    mouseYSpring,
+    [-0.5, 0.5],
+    [`-${rotateDepth}deg`, `${rotateDepth}deg`],
+  );
+  const rotateY = useTransform(
+    mouseXSpring,
+    [-0.5, 0.5],
+    [`${rotateDepth}deg`, `-${rotateDepth}deg`],
+  );
 
-  const translateX = useTransform(mouseXSpring, [-0.5, 0.5], [`-${translateDepth}px`, `${translateDepth}px`]);
-  const translateY = useTransform(mouseYSpring, [-0.5, 0.5], [`${translateDepth}px`, `-${translateDepth}px`]);
+  const translateX = useTransform(
+    mouseXSpring,
+    [-0.5, 0.5],
+    [`-${translateDepth}px`, `${translateDepth}px`],
+  );
+  const translateY = useTransform(
+    mouseYSpring,
+    [-0.5, 0.5],
+    [`${translateDepth}px`, `-${translateDepth}px`],
+  );
 
   const glareX = useTransform(mouseXSpring, [-0.5, 0.5], [0, 100]);
   const glareY = useTransform(mouseYSpring, [-0.5, 0.5], [0, 100]);
@@ -58,7 +74,10 @@ export const CometCard = ({
   };
 
   return (
-    <div className={className} style={{ perspective: "1000px", transformStyle: "preserve-3d" }}>
+    <div
+      className={className}
+      style={{ perspective: "1000px", transformStyle: "preserve-3d" }}
+    >
       <motion.div
         ref={ref}
         onMouseMove={handleMouseMove}
@@ -77,7 +96,8 @@ export const CometCard = ({
           z: 50,
           transition: { duration: 0.2 },
         }}
-        className="relative rounded-[24px] flex flex-1 w-full h-full">
+        className="relative rounded-[24px] flex flex-1 w-full h-full"
+      >
         {children}
         <motion.div
           className="pointer-events-none absolute inset-0 z-50 h-full w-full rounded-[24px] mix-blend-overlay"
@@ -85,7 +105,8 @@ export const CometCard = ({
             background: glareBackground,
             opacity: 0.6,
           }}
-          transition={{ duration: 0.2 }} />
+          transition={{ duration: 0.2 }}
+        />
       </motion.div>
     </div>
   );

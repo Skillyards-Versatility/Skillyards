@@ -4,7 +4,12 @@ import { useState } from "react";
 import { Calendar, ChevronDown, Sparkles } from "lucide-react";
 import { getIstDate } from "@/lib/ist";
 
-export function DatePresetSelector({ startDate, endDate, setStartDate, setEndDate }) {
+export function DatePresetSelector({
+  startDate,
+  endDate,
+  setStartDate,
+  setEndDate,
+}) {
   const [activePreset, setActivePreset] = useState("today");
   const [showCustomInputs, setShowCustomInputs] = useState(false);
 
@@ -101,7 +106,9 @@ export function DatePresetSelector({ startDate, endDate, setStartDate, setEndDat
               setStartDate(e.target.value);
             }}
           />
-          <span className="text-muted-foreground font-bold text-[11px] uppercase tracking-wider">to</span>
+          <span className="text-muted-foreground font-bold text-[11px] uppercase tracking-wider">
+            to
+          </span>
           <input
             type="date"
             className="bg-transparent border-none text-xs font-semibold text-foreground focus:ring-0 p-0 w-[100px] cursor-pointer"

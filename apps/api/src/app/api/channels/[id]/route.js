@@ -1,6 +1,11 @@
 import { db } from "@repo/db";
 import { validateUpdateChannel } from "@/modules/chat/chat.schema";
-import { getChannel, updateChannel, archiveChannel, isMember } from "@/modules/chat/channels.service";
+import {
+  getChannel,
+  updateChannel,
+  archiveChannel,
+  isMember,
+} from "@/modules/chat/channels.service";
 import { createProtectedRoute } from "@/lib/middleware";
 
 async function getHandler(req, { ctx, context }) {
@@ -45,7 +50,10 @@ async function deleteHandler(req, { ctx, context }) {
     return Response.json({ error: "Channel not found" }, { status: 404 });
   }
   if (channel.createdBy !== ctx.session.userId) {
-    return Response.json({ error: "Only channel creator can archive" }, { status: 403 });
+    return Response.json(
+      { error: "Only channel creator can archive" },
+      { status: 403 },
+    );
   }
   try {
     const archived = await archiveChannel(db, id);

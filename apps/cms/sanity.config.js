@@ -8,11 +8,7 @@ const singleton = (S, typeName, title, documentId) =>
   S.listItem()
     .title(title)
     .id(documentId)
-    .child(
-      S.document()
-        .schemaType(typeName)
-        .documentId(documentId)
-    )
+    .child(S.document().schemaType(typeName).documentId(documentId))
 
 export default defineConfig({
   name: 'default',
@@ -29,9 +25,7 @@ export default defineConfig({
           .items([
             singleton(S, 'siteSettings', 'Site Settings', 'siteSettings'),
             S.divider(),
-            ...S.documentTypeListItems().filter(
-              (listItem) => listItem.getId() !== 'siteSettings'
-            ),
+            ...S.documentTypeListItems().filter((listItem) => listItem.getId() !== 'siteSettings'),
           ]),
     }),
     visionTool(),

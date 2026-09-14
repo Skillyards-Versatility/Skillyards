@@ -10,7 +10,12 @@ async function postHandler(req, { ctx, context }) {
   const [participation] = await db
     .select()
     .from(conversationParticipants)
-    .where(and(eq(conversationParticipants.conversationId, id), eq(conversationParticipants.userId, userId)))
+    .where(
+      and(
+        eq(conversationParticipants.conversationId, id),
+        eq(conversationParticipants.userId, userId),
+      ),
+    )
     .limit(1);
 
   if (!participation) {

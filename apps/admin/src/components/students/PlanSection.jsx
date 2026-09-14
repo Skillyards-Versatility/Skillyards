@@ -4,7 +4,9 @@ export function PlanSection({ plan, onAssignPlan, onEditPlan, canEdit }) {
   if (!plan) {
     return (
       <div className="card p-6 flex items-center justify-between gap-4">
-        <p className="text-sm text-muted-foreground">No fee plan assigned yet.</p>
+        <p className="text-sm text-muted-foreground">
+          No fee plan assigned yet.
+        </p>
         {onAssignPlan && (
           <button
             onClick={onAssignPlan}
@@ -19,12 +21,9 @@ export function PlanSection({ plan, onAssignPlan, onEditPlan, canEdit }) {
 
   return (
     <div className="card p-5 sm:p-6">
-      
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-foreground">
-          Fee Plan
-        </h3>
+        <h3 className="text-sm font-semibold text-foreground">Fee Plan</h3>
 
         <div className="flex items-center gap-2">
           {canEdit && onEditPlan && (
@@ -44,7 +43,6 @@ export function PlanSection({ plan, onAssignPlan, onEditPlan, canEdit }) {
 
       {/* Content */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
-        
         <div>
           <p className="text-muted-foreground text-xs mb-1">Total Amount</p>
           <p className="font-semibold text-foreground">
@@ -54,20 +52,15 @@ export function PlanSection({ plan, onAssignPlan, onEditPlan, canEdit }) {
 
         <div>
           <p className="text-muted-foreground text-xs mb-1">Installments</p>
-          <p className="font-semibold text-foreground">
-            {plan.installments}
-          </p>
+          <p className="font-semibold text-foreground">{plan.installments}</p>
         </div>
 
         {plan.startDate && (
           <div>
             <p className="text-muted-foreground text-xs mb-1">Start Date</p>
-            <p className="font-semibold text-foreground">
-              {plan.startDate}
-            </p>
+            <p className="font-semibold text-foreground">{plan.startDate}</p>
           </div>
         )}
-
       </div>
     </div>
   );

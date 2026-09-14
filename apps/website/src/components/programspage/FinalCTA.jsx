@@ -6,7 +6,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function FinalCTA() {
-  const whatsappNumber = process.env.NEXT_PUBLIC_PHONE?.replace(/\D/g, "") || "917060100561";
+  const whatsappNumber =
+    process.env.NEXT_PUBLIC_PHONE?.replace(/\D/g, "") || "917060100561";
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=Hi%2C%20I%27m%20confused%20between%20OJD%20and%20OJT%20programs.%20Can%20you%20help%20me%20choose%3F`;
 
   return (
@@ -44,7 +45,8 @@ export default function FinalCTA() {
           transition={{ delay: 0.15 }}
           className="mx-auto mt-4 max-w-xl text-base text-primary-foreground/75 leading-relaxed font-medium"
         >
-          Get free career guidance and find the right SkillYards program based on your education, interest, and career goal.
+          Get free career guidance and find the right SkillYards program based
+          on your education, interest, and career goal.
         </motion.p>
 
         <motion.div

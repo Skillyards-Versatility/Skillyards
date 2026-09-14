@@ -24,8 +24,9 @@ export function BbaPartners() {
               Companies hiring Digital Marketing professionals in Agra
             </h2>
             <p className="font-sans text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed tracking-wide">
-              We&apos;re a young institute in Agra, our first BBA batch hasn&apos;t graduated yet. The companies
-              shown below represent the kind of organisations that actively hire Digital Marketing
+              We&apos;re a young institute in Agra, our first BBA batch
+              hasn&apos;t graduated yet. The companies shown below represent the
+              kind of organisations that actively hire Digital Marketing
               Executives, SEO Specialists and PPC Experts across India.
             </p>
           </m.div>
@@ -43,7 +44,7 @@ export function BbaPartners() {
               `}</style>
               <div
                 className="flex gap-5 w-max hover:[animation-play-state:paused]"
-                style={{ animation: 'infiniteMarquee 28s linear infinite' }}
+                style={{ animation: "infiniteMarquee 28s linear infinite" }}
               >
                 {track.map((partner, idx) => (
                   <div
@@ -65,7 +66,8 @@ export function BbaPartners() {
 
           <div className="max-w-3xl mx-auto px-6 mt-8 text-center">
             <p className="text-xs text-muted-foreground">
-              Placement support includes resume building, mock interviews and referrals, starting from your second year.
+              Placement support includes resume building, mock interviews and
+              referrals, starting from your second year.
             </p>
           </div>
         </div>

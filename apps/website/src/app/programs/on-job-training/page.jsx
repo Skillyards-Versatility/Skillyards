@@ -16,8 +16,12 @@ import { getPageFaqs } from "@/lib/seo/getFaqs";
 import { absoluteUrl } from "@/lib/seo/core/url";
 import ProgramsFAQ from "@/components/programspage/ProgramsFAQ";
 
-const OnJobTrainingProgramCards = dynamic(() => import("@/components/onJobTrainingPage/OnJobTrainingProgramCards"));
-const OnJobTrainingComparisonTable = dynamic(() => import("@/components/onJobTrainingPage/OnJobTrainingComparisonTable"));
+const OnJobTrainingProgramCards = dynamic(
+  () => import("@/components/onJobTrainingPage/OnJobTrainingProgramCards"),
+);
+const OnJobTrainingComparisonTable = dynamic(
+  () => import("@/components/onJobTrainingPage/OnJobTrainingComparisonTable"),
+);
 
 export const revalidate = 86400;
 
@@ -41,7 +45,11 @@ export async function generateMetadata() {
       "SEO Course in Agra",
       "Google Ads Training in Agra",
     ],
-    ogImage: resolveOgImage(ogImages, "programs", "/images/opengraph/programs-og.jpg"),
+    ogImage: resolveOgImage(
+      ogImages,
+      "programs",
+      "/images/opengraph/programs-og.jpg",
+    ),
   });
 }
 
@@ -60,8 +68,13 @@ export default async function OnJobTrainingPage() {
     { name: "On-Job Training", url: "/programs/on-job-training" },
   ]);
 
-  const faqSchema = getFAQSchema(faqs, absoluteUrl("/programs/on-job-training"));
-  const combinedSchema = [collectionSchema, breadcrumbSchema, faqSchema].filter(Boolean);
+  const faqSchema = getFAQSchema(
+    faqs,
+    absoluteUrl("/programs/on-job-training"),
+  );
+  const combinedSchema = [collectionSchema, breadcrumbSchema, faqSchema].filter(
+    Boolean,
+  );
 
   return (
     <main>

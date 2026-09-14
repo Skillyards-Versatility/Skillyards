@@ -2,30 +2,119 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, LogOut, ChevronsLeft, ChevronsRight, X, ShieldCheck, Inbox, PhoneCall, ClipboardList, UserCircle, Coffee, CalendarRange, BarChart3, MessageSquare, MessageCircle, Settings } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  LogOut,
+  ChevronsLeft,
+  ChevronsRight,
+  X,
+  ShieldCheck,
+  Inbox,
+  PhoneCall,
+  ClipboardList,
+  UserCircle,
+  Coffee,
+  CalendarRange,
+  BarChart3,
+  MessageSquare,
+  MessageCircle,
+  Settings,
+} from "lucide-react";
 import { Logo } from "@/components/layout/Logo";
 import { useSidebar } from "@/components/providers/SidebarProvider";
 import { logout } from "@/actions/auth";
 
 const navItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, minRole: "MANAGER" },
-  { name: "Students", href: "/students", icon: Users, minRole: "MANAGER", featureFlag: "students_feature" },
-  { name: "Enquiries", href: "/enquiries", icon: Inbox, minRole: "MANAGER", featureFlag: "enquiries_feature" },
-  { name: "Calls", href: "/calls", icon: PhoneCall, minRole: "MANAGER", featureFlag: "calls_feature" },
-  { name: "Team Directory", href: "/team", icon: Users, featureFlag: "team_feature" },
-  { name: "EOD Reports", href: "/eod", icon: ClipboardList, featureFlag: "eod_feature" },
-  { name: "EOD Analytics", href: "/eod/analytics", icon: BarChart3, featureFlag: "eod_analytics_feature" },
-  { name: "Chat", href: "/chat", icon: MessageCircle, featureFlag: "chat_feature" },
-  { name: "Counselling", href: "/counselling", icon: MessageSquare, featureFlag: "counselling_feature" },
-  { name: "Leaves", href: "/leaves", icon: CalendarRange, featureFlag: "leaves_feature" },
-  { name: "Breaks", href: "/breaks", icon: Coffee, featureFlag: "breaks_feature" },
+  {
+    name: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+    minRole: "MANAGER",
+  },
+  {
+    name: "Students",
+    href: "/students",
+    icon: Users,
+    minRole: "MANAGER",
+    featureFlag: "students_feature",
+  },
+  {
+    name: "Enquiries",
+    href: "/enquiries",
+    icon: Inbox,
+    minRole: "MANAGER",
+    featureFlag: "enquiries_feature",
+  },
+  {
+    name: "Calls",
+    href: "/calls",
+    icon: PhoneCall,
+    minRole: "MANAGER",
+    featureFlag: "calls_feature",
+  },
+  {
+    name: "Team Directory",
+    href: "/team",
+    icon: Users,
+    featureFlag: "team_feature",
+  },
+  {
+    name: "EOD Reports",
+    href: "/eod",
+    icon: ClipboardList,
+    featureFlag: "eod_feature",
+  },
+  {
+    name: "EOD Analytics",
+    href: "/eod/analytics",
+    icon: BarChart3,
+    featureFlag: "eod_analytics_feature",
+  },
+  {
+    name: "Chat",
+    href: "/chat",
+    icon: MessageCircle,
+    featureFlag: "chat_feature",
+  },
+  {
+    name: "Counselling",
+    href: "/counselling",
+    icon: MessageSquare,
+    featureFlag: "counselling_feature",
+  },
+  {
+    name: "Leaves",
+    href: "/leaves",
+    icon: CalendarRange,
+    featureFlag: "leaves_feature",
+  },
+  {
+    name: "Breaks",
+    href: "/breaks",
+    icon: Coffee,
+    featureFlag: "breaks_feature",
+  },
   { name: "Profile", href: "/profile", icon: UserCircle },
-  { name: "Users", href: "/users", icon: ShieldCheck, featureFlag: "users_feature" },
+  {
+    name: "Users",
+    href: "/users",
+    icon: ShieldCheck,
+    featureFlag: "users_feature",
+  },
   { name: "Settings", href: "/settings", icon: Settings, minRole: "ADMIN" },
 ];
 
-
-const ROLE_LEVEL = { SALES: 0, HR: 0, DEVELOPER: 0, DIGITAL_MARKETER: 0, EDITOR: 0, OUTSIDE_SALES: 0, MANAGER: 1, ADMIN: 2 };
+const ROLE_LEVEL = {
+  SALES: 0,
+  HR: 0,
+  DEVELOPER: 0,
+  DIGITAL_MARKETER: 0,
+  EDITOR: 0,
+  OUTSIDE_SALES: 0,
+  MANAGER: 1,
+  ADMIN: 2,
+};
 
 function canSee(minRole, userRole) {
   if (!minRole) return true;
@@ -47,7 +136,12 @@ function SidebarContent({ variant, user, settings }) {
       <div className="flex items-center justify-between h-16 px-4 border-b border-sidebar-border shrink-0">
         {collapsed ? (
           <>
-            <Image src="/logo/logo-square.png" alt="Skillyards" width={36} height={36} />
+            <Image
+              src="/logo/logo-square.png"
+              alt="Skillyards"
+              width={36}
+              height={36}
+            />
             <button
               onClick={toggle}
               className="p-1.5 rounded-lg text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors cursor-pointer"
@@ -83,20 +177,26 @@ function SidebarContent({ variant, user, settings }) {
       {/* Nav */}
       <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto">
         {!collapsed && (
-          <p className="px-3 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider mb-4">Core</p>
+          <p className="px-3 text-xs font-semibold text-sidebar-foreground/50 uppercase tracking-wider mb-4">
+            Core
+          </p>
         )}
         {navItems
           .filter((item) => {
             if (!canSee(item.minRole, user?.role)) return false;
-            if (item.featureFlag && settings?.[item.featureFlag] === false) return false;
+            if (item.featureFlag && settings?.[item.featureFlag] === false)
+              return false;
             return true;
           })
           .map((item) => {
-            const isActive = item.href === "/eod" 
-              ? pathname === "/eod" || pathname.startsWith("/eod/history") || pathname.startsWith("/eod/submit")
-              : item.href === "/chat"
-                ? pathname === "/chat" || pathname.startsWith("/chat/")
-                : pathname.startsWith(item.href);
+            const isActive =
+              item.href === "/eod"
+                ? pathname === "/eod" ||
+                  pathname.startsWith("/eod/history") ||
+                  pathname.startsWith("/eod/submit")
+                : item.href === "/chat"
+                  ? pathname === "/chat" || pathname.startsWith("/chat/")
+                  : pathname.startsWith(item.href);
             const Icon = item.icon;
             return (
               <Link

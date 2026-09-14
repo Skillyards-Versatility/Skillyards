@@ -1,6 +1,15 @@
 "use client";
 
-import { ArrowRight, GraduationCap, Clock, Sparkles, BookOpen, Wallet, CreditCard, ChevronRight } from "lucide-react";
+import {
+  ArrowRight,
+  GraduationCap,
+  Clock,
+  Sparkles,
+  BookOpen,
+  Wallet,
+  CreditCard,
+  ChevronRight,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -36,7 +45,7 @@ const ojdPrograms = [
     themeColor: "text-rose-600",
     badgeBg: "bg-rose-500/10 text-rose-600 border-rose-500/20",
     glowColor: "bg-rose-500/10",
-  }
+  },
 ];
 
 const ojtPrograms = [
@@ -44,7 +53,14 @@ const ojtPrograms = [
     id: "fullstack",
     name: "AI-Integrated Full-Stack Web Development Training",
     badge: "Job-skill focused training",
-    skills: ["React", "Node.js", "MongoDB", "GitHub", "Deployment", "AI Coding Workflows"],
+    skills: [
+      "React",
+      "Node.js",
+      "MongoDB",
+      "GitHub",
+      "Deployment",
+      "AI Coding Workflows",
+    ],
     duration: "6 Months Duration",
     eligibility: "For graduates & college students",
     fee: "Starting from ₹5k/month",
@@ -71,10 +87,17 @@ const ojtPrograms = [
     themeColor: "text-amber-600",
     badgeBg: "bg-amber-500/10 text-amber-600 border-amber-500/20",
     glowColor: "bg-amber-400/10",
-  }
+  },
 ];
 
-function ProgramSection({ title, desc, ctaText, ctaHref, programs, badgeText }) {
+function ProgramSection({
+  title,
+  desc,
+  ctaText,
+  ctaHref,
+  programs,
+  badgeText,
+}) {
   return (
     <div className="mb-24 last:mb-0">
       {/* Section Header */}
@@ -91,7 +114,11 @@ function ProgramSection({ title, desc, ctaText, ctaHref, programs, badgeText }) 
           </p>
         </div>
         <div className="shrink-0">
-          <Button asChild variant="outline" className="rounded-full border-primary/20 hover:border-primary/50 text-xs font-black uppercase tracking-widest text-primary gap-1 px-6 py-5">
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-full border-primary/20 hover:border-primary/50 text-xs font-black uppercase tracking-widest text-primary gap-1 px-6 py-5"
+          >
             <Link href={ctaHref}>
               {ctaText} <ChevronRight size={14} />
             </Link>
@@ -108,19 +135,24 @@ function ProgramSection({ title, desc, ctaText, ctaHref, programs, badgeText }) 
               className="flex-none w-[85vw] md:w-[45vw] lg:w-auto snap-center flex flex-col h-full group"
             >
               <div className="flex flex-col rounded-[2.5rem] border border-border/50 bg-white dark:bg-[#0d0d12] dark:border-white/5 shadow-xl transition-all duration-300 hover:shadow-2xl hover:shadow-primary/10 w-full h-full flex-1 overflow-hidden relative">
-                
                 {/* Subtle Dark Mode Glow */}
-                <div className={`absolute -top-20 -right-20 w-48 h-48 blur-[100px] opacity-0 dark:opacity-45 rounded-full transition-opacity duration-500 group-hover:opacity-65 ${prog.glowColor}`} />
+                <div
+                  className={`absolute -top-20 -right-20 w-48 h-48 blur-[100px] opacity-0 dark:opacity-45 rounded-full transition-opacity duration-500 group-hover:opacity-65 ${prog.glowColor}`}
+                />
 
                 {/* Top Header Section */}
                 <div className="w-full p-6 lg:p-8 border-b border-border/30 bg-slate-50/50 dark:bg-white/[0.03] text-center relative z-10">
-                  <div className={`inline-block px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest mb-3 border ${prog.badgeBg}`}>
+                  <div
+                    className={`inline-block px-3 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest mb-3 border ${prog.badgeBg}`}
+                  >
                     {prog.badge}
                   </div>
                   <h3 className="font-serif text-xl lg:text-2xl font-black text-foreground leading-tight tracking-tight mb-2">
                     {prog.name}
                   </h3>
-                  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">Hands-On Training</p>
+                  <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.2em]">
+                    Hands-On Training
+                  </p>
                 </div>
 
                 {/* Details Section */}
@@ -128,8 +160,14 @@ function ProgramSection({ title, desc, ctaText, ctaHref, programs, badgeText }) 
                   {/* Skills/Tags */}
                   <div className="mb-6 flex flex-wrap gap-2">
                     {prog.skills.map((skill) => (
-                      <span key={skill} className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/[0.05] text-[10px] font-bold text-foreground/80 border border-border/50">
-                        <Sparkles size={10} className={`${prog.themeColor} shrink-0`} />
+                      <span
+                        key={skill}
+                        className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-white/[0.05] text-[10px] font-bold text-foreground/80 border border-border/50"
+                      >
+                        <Sparkles
+                          size={10}
+                          className={`${prog.themeColor} shrink-0`}
+                        />
                         {skill}
                       </span>
                     ))}
@@ -164,10 +202,19 @@ function ProgramSection({ title, desc, ctaText, ctaHref, programs, badgeText }) 
 
                   {/* CTA */}
                   <div className="mt-auto">
-                    <Button asChild className="w-full h-11 lg:h-12 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 group/btn cursor-pointer">
-                      <Link href={prog.href} className="flex items-center justify-center">
+                    <Button
+                      asChild
+                      className="w-full h-11 lg:h-12 rounded-xl font-black text-xs uppercase tracking-widest transition-all shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 group/btn cursor-pointer"
+                    >
+                      <Link
+                        href={prog.href}
+                        className="flex items-center justify-center"
+                      >
                         {prog.cta}
-                        <ArrowRight size={14} className="ml-2 group-hover/btn:translate-x-1.5 transition-transform" />
+                        <ArrowRight
+                          size={14}
+                          className="ml-2 group-hover/btn:translate-x-1.5 transition-transform"
+                        />
                       </Link>
                     </Button>
                   </div>
@@ -176,7 +223,7 @@ function ProgramSection({ title, desc, ctaText, ctaHref, programs, badgeText }) 
             </div>
           ))}
         </div>
-        
+
         {/* Mobile Dot Indicators */}
         <div className="flex justify-center gap-1.5 mt-4 lg:hidden">
           {programs.map((_, idx) => (
@@ -202,8 +249,10 @@ export default function ProgramCards() {
             Explore Your <span className="text-primary italic">Career</span> Hub
           </h2>
           <p className="mx-auto max-w-2xl text-sm md:text-base font-semibold text-muted-foreground">
-            Classroom-based practical training at <span className="text-foreground">SkillYards, Agra</span>. 
-            Students work on live and practical projects to build real-world portfolios and gain hands-on expertise.
+            Classroom-based practical training at{" "}
+            <span className="text-foreground">SkillYards, Agra</span>. Students
+            work on live and practical projects to build real-world portfolios
+            and gain hands-on expertise.
           </p>
         </div>
 
@@ -227,7 +276,7 @@ export default function ProgramCards() {
           programs={ojtPrograms}
         />
       </div>
-      
+
       <style jsx global>{`
         .no-scrollbar::-webkit-scrollbar {
           display: none;

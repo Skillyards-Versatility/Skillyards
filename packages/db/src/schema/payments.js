@@ -1,4 +1,11 @@
-import { pgTable, uuid, integer, text, timestamp, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  integer,
+  text,
+  timestamp,
+  index,
+} from "drizzle-orm/pg-core";
 import { students } from "./students.js";
 import { installments } from "./installments.js";
 
@@ -11,8 +18,9 @@ export const payments = pgTable(
       .notNull()
       .references(() => students.id, { onDelete: "cascade" }),
 
-    installmentId: uuid("installment_id")
-      .references(() => installments.id, { onDelete: "set null" }),
+    installmentId: uuid("installment_id").references(() => installments.id, {
+      onDelete: "set null",
+    }),
 
     amount: integer("amount").notNull(),
 
@@ -31,7 +39,11 @@ export const payments = pgTable(
   },
   (table) => ({
     studentIdx: index("payments_student_id_idx").on(table.studentId),
-    installmentIdx: index("payments_installment_id_idx").on(table.installmentId),
-    receiptNumberIdx: index("payments_receipt_number_idx").on(table.receiptNumber),
-  })
+    installmentIdx: index("payments_installment_id_idx").on(
+      table.installmentId,
+    ),
+    receiptNumberIdx: index("payments_receipt_number_idx").on(
+      table.receiptNumber,
+    ),
+  }),
 );

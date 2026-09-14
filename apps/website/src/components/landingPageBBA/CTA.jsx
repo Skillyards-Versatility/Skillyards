@@ -30,13 +30,19 @@ export const BBA_CTA = () => {
             {/* Heading */}
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-serif font-extrabold leading-[1.1] tracking-tight mb-4 md:mb-6">
               Ready to Transform <br className="hidden sm:block" />
-              Your <span className="italic text-shadow-primary-foreground">Future?</span>
+              Your{" "}
+              <span className="italic text-shadow-primary-foreground">
+                Future?
+              </span>
             </h2>
 
             {/* Description */}
             <p className="text-sm sm:text-base md:text-lg text-primary-foreground/80 max-w-2xl mx-auto leading-relaxed mb-8 md:mb-10">
               Join the only BBA program designed to build{" "}
-              <span className="font-bold text-primary-foreground">industry-ready leadership</span> and digital mastery.
+              <span className="font-bold text-primary-foreground">
+                industry-ready leadership
+              </span>{" "}
+              and digital mastery.
             </p>
 
             {/* Buttons */}
@@ -50,7 +56,12 @@ export const BBA_CTA = () => {
                 </Button>
               </Link>
 
-              <a href={`https://wa.me/${process.env.NEXT_PUBLIC_PHONE?.replace(/\D/g, "") || "917060100561"}`} target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto">
+              <a
+                href={`https://wa.me/${process.env.NEXT_PUBLIC_PHONE?.replace(/\D/g, "") || "917060100561"}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto"
+              >
                 <Button
                   size="lg"
                   variant="outline"
@@ -65,8 +76,14 @@ export const BBA_CTA = () => {
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-6 border-t border-primary-foreground/10">
               {highlights.map((text) => (
                 <div key={text} className="flex items-center gap-1.5">
-                  <Check size={14} strokeWidth={3} className="text-secondary shrink-0" />
-                  <span className="text-primary-foreground/60 text-xs md:text-sm font-bold uppercase tracking-wider">{text}</span>
+                  <Check
+                    size={14}
+                    strokeWidth={3}
+                    className="text-secondary shrink-0"
+                  />
+                  <span className="text-primary-foreground/60 text-xs md:text-sm font-bold uppercase tracking-wider">
+                    {text}
+                  </span>
                 </div>
               ))}
             </div>

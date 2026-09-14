@@ -1,12 +1,22 @@
 import dynamic from "next/dynamic";
 import { buildSEO } from "@/lib/seo/buildSEO";
-import { absoluteUrl, withFragment, absoluteAssetUrl } from "@/lib/seo/core/url";
-import { ORGANIZATION_ID, PRIMARY_LOCATION_ID, WEBSITE_ID } from "@/lib/seo/schema/global";
+import {
+  absoluteUrl,
+  withFragment,
+  absoluteAssetUrl,
+} from "@/lib/seo/core/url";
+import {
+  ORGANIZATION_ID,
+  PRIMARY_LOCATION_ID,
+  WEBSITE_ID,
+} from "@/lib/seo/schema/global";
 
 export const revalidate = 86400;
 import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
 import { resolveOgImage } from "@/lib/seo/og";
-const BBALandingPage = dynamic(() => import("@/components/landingPageBBA/LandingPage").then(m => m.LandingPage));
+const BBALandingPage = dynamic(() =>
+  import("@/components/landingPageBBA/LandingPage").then((m) => m.LandingPage),
+);
 import JsonLd from "@/components/JsonLd";
 import { courses } from "@/data/courses";
 import { getFAQSchema } from "@/lib/seo/schema/faqSchema";
@@ -17,10 +27,10 @@ const course = courses.bba;
 export async function generateMetadata() {
   const ogImages = await getAllOgImages();
   return buildSEO({
-  ...course.seo,
-  path: "/bba-training-program-in-agra",
-  ogImage: resolveOgImage(ogImages, "bba", course.seo.ogImage),
-});
+    ...course.seo,
+    path: "/bba-training-program-in-agra",
+    ogImage: resolveOgImage(ogImages, "bba", course.seo.ogImage),
+  });
 }
 
 function buildCourseSchema(course) {
@@ -30,7 +40,11 @@ function buildCourseSchema(course) {
     "@id": withFragment(absoluteUrl(course.seo.path), "#course"),
     name: course.title,
     description: course.description,
-    keywords: course.seo?.keywords || ["BBA program", "digital marketing", course.title],
+    keywords: course.seo?.keywords || [
+      "BBA program",
+      "digital marketing",
+      course.title,
+    ],
     provider: { "@id": ORGANIZATION_ID },
     isPartOf: {
       "@type": "EducationalOccupationalProgram",
@@ -99,9 +113,17 @@ const webPageSchema = buildWebPageSchema({
 export default async function BBAPage() {
   const bbaFaqs = await getPageFaqs("bba", 999);
 
-  const faqSchema = getFAQSchema(bbaFaqs, absoluteUrl("/bba-training-program-in-agra"));
+  const faqSchema = getFAQSchema(
+    bbaFaqs,
+    absoluteUrl("/bba-training-program-in-agra"),
+  );
 
-  const combinedSchema = { "@context": "https://schema.org", "@graph": [courseSchema, breadcrumbSchema, webPageSchema, faqSchema].filter(Boolean) };
+  const combinedSchema = {
+    "@context": "https://schema.org",
+    "@graph": [courseSchema, breadcrumbSchema, webPageSchema, faqSchema].filter(
+      Boolean,
+    ),
+  };
 
   return (
     <>

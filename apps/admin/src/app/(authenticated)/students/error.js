@@ -10,7 +10,9 @@ export default function StudentsError({ error, reset }) {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center">
-      <h2 className="text-xl font-bold text-foreground mb-2">Failed to load students</h2>
+      <h2 className="text-xl font-bold text-foreground mb-2">
+        Failed to load students
+      </h2>
       <p className="text-muted-foreground text-sm mb-6 max-w-md">
         Could not load the students data. The backend might be unreachable.
       </p>

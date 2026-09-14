@@ -8,17 +8,24 @@ import { getSettings } from "@/actions/settings";
 
 export default async function AuthenticatedLayout({ children }) {
   const session = await getSession();
-  let user = session ? { name: session.name, role: session.role, userId: session.userId, profileImageKey: null } : null;
-  
+  let user = session
+    ? {
+        name: session.name,
+        role: session.role,
+        userId: session.userId,
+        profileImageKey: null,
+      }
+    : null;
+
   let settings = {};
 
   if (session) {
     try {
       const [dbUser] = await db
-        .select({ 
+        .select({
           profileImageKey: users.profileImageKey,
           statusEmoji: users.statusEmoji,
-          statusText: users.statusText
+          statusText: users.statusText,
         })
         .from(users)
         .where(eq(users.id, session.userId))
@@ -28,7 +35,7 @@ export default async function AuthenticatedLayout({ children }) {
         user.statusEmoji = dbUser.statusEmoji;
         user.statusText = dbUser.statusText;
       }
-      
+
       settings = await getSettings();
     } catch (err) {
       console.error("[ADMIN][ERROR] Authenticated layout:", err.message);
@@ -37,7 +44,9 @@ export default async function AuthenticatedLayout({ children }) {
 
   return (
     <SidebarProvider>
-      <LayoutContent user={user} settings={settings}>{children}</LayoutContent>
+      <LayoutContent user={user} settings={settings}>
+        {children}
+      </LayoutContent>
       {session && settings.breaks_feature !== false && <BreakWidget />}
     </SidebarProvider>
   );

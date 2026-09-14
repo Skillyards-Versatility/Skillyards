@@ -1,7 +1,12 @@
 "use server";
 
 import { API } from "@/lib/api";
-import { getIstDate, isIstBeforeCutoff, isIstSunday, formatIstDate } from "@/lib/ist";
+import {
+  getIstDate,
+  isIstBeforeCutoff,
+  isIstSunday,
+  formatIstDate,
+} from "@/lib/ist";
 import { getRawToken } from "@/lib/auth";
 
 async function authHeaders() {
@@ -14,11 +19,17 @@ export async function submitEodReport({ date, data, screenshotKey }) {
     const targetDate = date || getIstDate();
 
     if (isIstSunday() || new Date(targetDate).getDay() === 0) {
-      return { success: false, message: "Submissions are not allowed on Sundays." };
+      return {
+        success: false,
+        message: "Submissions are not allowed on Sundays.",
+      };
     }
 
     if (!isIstBeforeCutoff()) {
-      return { success: false, message: "Submission cutoff (7:30 PM IST) has passed." };
+      return {
+        success: false,
+        message: "Submission cutoff (7:30 PM IST) has passed.",
+      };
     }
 
     const res = await fetch(`${API}/api/eod`, {

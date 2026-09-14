@@ -2,7 +2,7 @@ export function success(data = null, message = null) {
   return {
     success: true,
     data,
-    message
+    message,
   };
 }
 
@@ -10,6 +10,6 @@ export function error(message = null, data = null) {
   return {
     success: false,
     data,
-    message
+    message,
   };
 }

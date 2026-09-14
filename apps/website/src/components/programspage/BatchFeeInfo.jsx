@@ -3,7 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowUpRight, CalendarDays, Clock3, CreditCard, Sparkles, Users } from "lucide-react";
+import {
+  ArrowUpRight,
+  CalendarDays,
+  Clock3,
+  CreditCard,
+  Sparkles,
+  Users,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { urlFor } from "@/lib/sanity/image";
 
@@ -12,8 +19,12 @@ export default function BatchFeeInfo({ batches = [], variant = "programs" }) {
 
   const isHome = variant === "home";
   const eyebrow = isHome ? "Upcoming Batches" : "Batch & Fee Info";
-  const title = isHome ? "Upcoming Batches - Enroll Now" : "Next Batches Are Filling Fast.";
-  const sectionSubheading = isHome ? "Pick Cohort. Claim Seat. Start Fast." : null;
+  const title = isHome
+    ? "Upcoming Batches - Enroll Now"
+    : "Next Batches Are Filling Fast.";
+  const sectionSubheading = isHome
+    ? "Pick Cohort. Claim Seat. Start Fast."
+    : null;
   const subtitle = isHome
     ? "Reserve your seat now. See batch timings, fees, available seats, and program details upfront - no surprises."
     : "Seats stay intentionally limited. Each batch card gives you timing, fee clarity, and seat urgency at one glance.";
@@ -34,7 +45,8 @@ export default function BatchFeeInfo({ batches = [], variant = "programs" }) {
           <h2 className="font-serif text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             {isHome ? (
               <>
-                Upcoming Batches <span className="italic text-primary">- Enroll Now</span>
+                Upcoming Batches{" "}
+                <span className="italic text-primary">- Enroll Now</span>
               </>
             ) : (
               title
@@ -82,10 +94,12 @@ export default function BatchFeeInfo({ batches = [], variant = "programs" }) {
 
                     <div className="absolute top-[10px] -left-2 z-[5] h-[18px] w-12 -rotate-12 border border-[rgba(200,180,100,0.25)] bg-[rgba(255,240,180,0.55)] dark:bg-[rgba(255,240,180,0.2)]" />
 
-                  <div className="absolute bottom-[10px] right-[10px] z-[5] rounded-full bg-white/85 px-3 py-1.5 text-xs font-semibold uppercase text-[#2c2c2a] backdrop-blur-sm dark:bg-[#1c1c1a]/80 dark:text-[#d3d1c7]">
-                    {batch.seatsLeft <= 10 ? `${batch.seatsLeft} seats left` : "Open admissions"}
+                    <div className="absolute bottom-[10px] right-[10px] z-[5] rounded-full bg-white/85 px-3 py-1.5 text-xs font-semibold uppercase text-[#2c2c2a] backdrop-blur-sm dark:bg-[#1c1c1a]/80 dark:text-[#d3d1c7]">
+                      {batch.seatsLeft <= 10
+                        ? `${batch.seatsLeft} seats left`
+                        : "Open admissions"}
+                    </div>
                   </div>
-                </div>
                 ) : null}
 
                 <div className="flex flex-col gap-3 px-1">
@@ -110,7 +124,9 @@ export default function BatchFeeInfo({ batches = [], variant = "programs" }) {
                         <CalendarDays size={12} />
                         Start
                       </div>
-                      <p className="text-base font-medium text-[#2c2c2a] dark:text-[#d3d1c7]">{batch.nextBatch}</p>
+                      <p className="text-base font-medium text-[#2c2c2a] dark:text-[#d3d1c7]">
+                        {batch.nextBatch}
+                      </p>
                     </div>
 
                     <div className="rounded-[14px] border border-black/8 bg-[#faf8f1] px-3 py-2 dark:border-white/8 dark:bg-[#242422]">
@@ -118,7 +134,9 @@ export default function BatchFeeInfo({ batches = [], variant = "programs" }) {
                         <Clock3 size={12} />
                         Duration
                       </div>
-                      <p className="text-base font-medium text-[#2c2c2a] dark:text-[#d3d1c7]">{batch.duration || "Contact us"}</p>
+                      <p className="text-base font-medium text-[#2c2c2a] dark:text-[#d3d1c7]">
+                        {batch.duration || "Contact us"}
+                      </p>
                     </div>
 
                     <div className="rounded-[14px] border border-black/8 bg-[#faf8f1] px-3 py-2 dark:border-white/8 dark:bg-[#242422]">
@@ -126,7 +144,9 @@ export default function BatchFeeInfo({ batches = [], variant = "programs" }) {
                         <CreditCard size={12} />
                         Fee
                       </div>
-                      <p className="text-base font-medium text-[#2c2c2a] dark:text-[#d3d1c7]">{batch.fee}</p>
+                      <p className="text-base font-medium text-[#2c2c2a] dark:text-[#d3d1c7]">
+                        {batch.fee}
+                      </p>
                     </div>
 
                     <div className="rounded-[14px] border border-black/8 bg-[#faf8f1] px-3 py-2 dark:border-white/8 dark:bg-[#242422]">
@@ -134,7 +154,9 @@ export default function BatchFeeInfo({ batches = [], variant = "programs" }) {
                         <Users size={12} />
                         Seats
                       </div>
-                      <p className={`text-base font-medium ${batch.seatsLeft <= 10 ? "text-[#d14b45] dark:text-[#ff8f88]" : "text-[#2c2c2a] dark:text-[#d3d1c7]"}`}>
+                      <p
+                        className={`text-base font-medium ${batch.seatsLeft <= 10 ? "text-[#d14b45] dark:text-[#ff8f88]" : "text-[#2c2c2a] dark:text-[#d3d1c7]"}`}
+                      >
                         {batch.seatsLeft} remaining
                       </p>
                     </div>
@@ -145,7 +167,10 @@ export default function BatchFeeInfo({ batches = [], variant = "programs" }) {
                     size="sm"
                     className="mt-1 rounded-full bg-[#23211c] text-base font-semibold text-white hover:bg-[#111111] dark:bg-[#f2efe6] dark:text-[#1c1c1a] dark:hover:bg-white"
                   >
-                    <Link href={batch.ctaLink || "/contact"} className="inline-flex items-center justify-center gap-2">
+                    <Link
+                      href={batch.ctaLink || "/contact"}
+                      className="inline-flex items-center justify-center gap-2"
+                    >
                       Reserve My Seat
                       <ArrowUpRight size={15} />
                     </Link>
@@ -158,7 +183,12 @@ export default function BatchFeeInfo({ batches = [], variant = "programs" }) {
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
           Questions about fees or batches?{" "}
-          <Link href={`https://wa.me/${process.env.NEXT_PUBLIC_PHONE?.replace(/\D/g, "") || "917060100561"}`} target="_blank" rel="noopener noreferrer" className="font-bold text-primary underline underline-offset-4 hover:opacity-80">
+          <Link
+            href={`https://wa.me/${process.env.NEXT_PUBLIC_PHONE?.replace(/\D/g, "") || "917060100561"}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-bold text-primary underline underline-offset-4 hover:opacity-80"
+          >
             WhatsApp our counsellors now
           </Link>
         </p>

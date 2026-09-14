@@ -1,4 +1,11 @@
-import { pgTable, uuid, text, timestamp, boolean, jsonb } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  boolean,
+  jsonb,
+} from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -17,5 +24,5 @@ export const users = pgTable("users", {
   statusText: text("status_text"),
   statusClearAt: timestamp("status_clear_at"),
   lastSeenAt: timestamp("last_seen_at"),
-  createdAt: timestamp("created_at").defaultNow()
+  createdAt: timestamp("created_at").defaultNow(),
 });

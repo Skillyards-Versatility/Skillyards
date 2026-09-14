@@ -21,43 +21,46 @@ async function runTests() {
   // 1. RECEIPT GET (Existing Tests)
   console.log("Test 1: GET RECEIPT (Admin Cookie)");
   const res1 = await fetch(`${API_URL}/${VALID_PAYMENT_ID}/receipt`, {
-    headers: { "Cookie": `session=${adminToken}` }
+    headers: { Cookie: `session=${adminToken}` },
   });
   console.log(`Status: ${res1.status} (Expected: 200 or 202)`);
-  if ([200, 202].includes(res1.status)) console.log("✅ Passed"); else console.log("❌ Failed");
+  if ([200, 202].includes(res1.status)) console.log("✅ Passed");
+  else console.log("❌ Failed");
 
   // 2. PAYMENT POST (Structural Test)
   console.log("\nTest 2: POST PAYMENT (Admin Cookie)");
   const res2 = await fetch(`${API_URL}/${VALID_STUDENT_ID}`, {
     method: "POST",
-    headers: { 
-      "Cookie": `session=${adminToken}`,
-      "Content-Type": "application/json"
+    headers: {
+      Cookie: `session=${adminToken}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       amount: 1000,
       method: "cash",
-      note: "Test payment"
-    })
+      note: "Test payment",
+    }),
   });
   // Note: if student exists, should be 201. If missing, 404.
   // The goal is to see it REPLACES the raw 500 or 401 with something controlled.
   console.log(`Status: ${res2.status} (Expected: 201 or 404)`);
-  if ([201, 404].includes(res2.status)) console.log("✅ Passed"); else console.log("❌ Failed");
+  if ([201, 404].includes(res2.status)) console.log("✅ Passed");
+  else console.log("❌ Failed");
 
   // 3. SALES DENY (Structural Test)
   console.log("\nTest 3: POST PAYMENT (Sales Cookie - Restricted)");
   const salesToken = await signToken({ userId: "sales-1", role: "SALES" });
   const res3 = await fetch(`${API_URL}/${VALID_STUDENT_ID}`, {
     method: "POST",
-    headers: { 
-      "Cookie": `session=${salesToken}`,
-      "Content-Type": "application/json"
+    headers: {
+      Cookie: `session=${salesToken}`,
+      "Content-Type": "application/json",
     },
-    body: JSON.stringify({ amount: 1000 })
+    body: JSON.stringify({ amount: 1000 }),
   });
   console.log(`Status: ${res3.status} (Expected: 403)`);
-  if (res3.status === 403) console.log("✅ Passed"); else console.log("❌ Failed");
+  if (res3.status === 403) console.log("✅ Passed");
+  else console.log("❌ Failed");
 
   console.log("\n🏁 Structural Enforcement Tests Completed.");
 }

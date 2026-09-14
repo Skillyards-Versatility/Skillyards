@@ -49,10 +49,12 @@ export function FSDAdmissionProcess() {
             Admission Process
           </motion.div>
           <h2 className="font-serif text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Start with a <span className="italic text-primary">Free Demo Class.</span>
+            Start with a{" "}
+            <span className="italic text-primary">Free Demo Class.</span>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
-            A simple classroom-first admission flow for learners who want to check the fit before enrolling.
+            A simple classroom-first admission flow for learners who want to
+            check the fit before enrolling.
           </p>
         </div>
 
@@ -68,12 +70,18 @@ export function FSDAdmissionProcess() {
                 transition={{ delay: i * 0.1 }}
                 className="relative flex flex-col rounded-3xl border border-border bg-card p-6 shadow-sm"
               >
-                <p className="mb-3 text-5xl font-black text-primary/15">{step.number}</p>
+                <p className="mb-3 text-5xl font-black text-primary/15">
+                  {step.number}
+                </p>
                 <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10">
                   <Icon size={20} className="text-primary" />
                 </div>
-                <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground">{step.title}</h3>
-                <p className="mb-4 flex-1 text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
+                <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground">
+                  {step.title}
+                </h3>
+                <p className="mb-4 flex-1 text-sm leading-relaxed text-muted-foreground">
+                  {step.desc}
+                </p>
                 {step.action && (
                   <FSDPrimaryDemoCTA
                     size="sm"

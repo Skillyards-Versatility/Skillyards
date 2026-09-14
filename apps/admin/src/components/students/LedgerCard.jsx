@@ -1,5 +1,10 @@
-"use client"
-import { ArrowUpRight, ArrowDownRight, Wallet, IndianRupee } from "lucide-react";
+"use client";
+import {
+  ArrowUpRight,
+  ArrowDownRight,
+  Wallet,
+  IndianRupee,
+} from "lucide-react";
 
 export function LedgerCards({ ledger }) {
   const format = (num) => {
@@ -9,7 +14,6 @@ export function LedgerCards({ ledger }) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      
       {/* Total Due */}
       <div className="card p-5">
         <div className="flex items-center justify-between">
@@ -61,7 +65,6 @@ export function LedgerCards({ ledger }) {
           {format(ledger?.credit)}
         </p>
       </div>
-
     </div>
   );
 }

@@ -46,7 +46,7 @@ const SLIDES = [
     id: 5,
     src: "/images/carousel/InfoCarousal5.webp",
     alt: "Full-Stack Development - Hands-on projects",
-  }
+  },
 ];
 
 export default function InfoCarouselSection() {
@@ -67,7 +67,7 @@ export default function InfoCarouselSection() {
   return (
     <section className="bg-[#f3f3f3] px-4 pt-32 pb-10 sm:pt-36 sm:px-6 lg:pt-40 lg:px-10 dark:bg-[#1c1a21] transition-colors duration-300">
       <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-foreground tracking-tight leading-tight text-center mb-12 max-w-5xl mx-auto">
-           Best Digital Marketing & IT Training Institute in Agra
+        Best Digital Marketing & IT Training Institute in Agra
       </h1>
       <div className="mx-auto grid max-w-6xl gap-0 overflow-hidden rounded-2xl border border-border bg-card text-card-foreground lg:grid-cols-[minmax(0,1fr)_1.4fr] font-sans transition-colors duration-300 shadow-sm">
         {/* ---------- Left: business info ---------- */}
@@ -231,20 +231,34 @@ export default function InfoCarouselSection() {
 
 function PinIcon() {
   return (
-    <svg className="mt-0.5 h-4 w-4 shrink-0 text-[#030e5a] dark:text-[#d4c2fc] transition-colors duration-300" viewBox="0 0 24 24" fill="none">
+    <svg
+      className="mt-0.5 h-4 w-4 shrink-0 text-[#030e5a] dark:text-[#d4c2fc] transition-colors duration-300"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
       <path
         d="M12 21s-7-6.2-7-11.4A7 7 0 0119 9.6C19 14.8 12 21 12 21z"
         stroke="currentColor"
         strokeWidth="1.6"
       />
-      <circle cx="12" cy="9.6" r="2.4" stroke="currentColor" strokeWidth="1.6" />
+      <circle
+        cx="12"
+        cy="9.6"
+        r="2.4"
+        stroke="currentColor"
+        strokeWidth="1.6"
+      />
     </svg>
   );
 }
 
 function PhoneIcon() {
   return (
-    <svg className="mt-0.5 h-4 w-4 shrink-0 text-[#030e5a] dark:text-[#d4c2fc] transition-colors duration-300" viewBox="0 0 24 24" fill="none">
+    <svg
+      className="mt-0.5 h-4 w-4 shrink-0 text-[#030e5a] dark:text-[#d4c2fc] transition-colors duration-300"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
       <path
         d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.4c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"
         stroke="currentColor"
@@ -265,7 +279,11 @@ function PhoneFilledIcon() {
 
 function ClockIcon() {
   return (
-    <svg className="mt-0.5 h-4 w-4 shrink-0 text-[#030e5a] dark:text-[#d4c2fc] transition-colors duration-300" viewBox="0 0 24 24" fill="none">
+    <svg
+      className="mt-0.5 h-4 w-4 shrink-0 text-[#030e5a] dark:text-[#d4c2fc] transition-colors duration-300"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
       <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.6" />
       <path
         d="M12 7v5l3.5 2"
@@ -280,7 +298,15 @@ function ClockIcon() {
 function CheckIcon() {
   return (
     <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none">
-      <rect x="3" y="3" width="18" height="18" rx="4" stroke="currentColor" strokeWidth="1.5" />
+      <rect
+        x="3"
+        y="3"
+        width="18"
+        height="18"
+        rx="4"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      />
       <path
         d="M7.5 12.5l2.5 2.5 6-6"
         stroke="currentColor"

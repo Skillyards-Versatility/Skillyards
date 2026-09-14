@@ -35,7 +35,6 @@ export default function SkillTestSection() {
       <div className="relative z-10 max-w-6xl mx-auto w-full">
         <LazyMotion features={domAnimation}>
           <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center">
-
             {/* Left: Content */}
             <m.div
               initial={{ opacity: 0, x: -30 }}
@@ -55,11 +54,15 @@ export default function SkillTestSection() {
               </m.div>
 
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-foreground leading-[1.1]">
-                Free <span className="text-primary italic">10-Minute</span> IT Skill Test
+                Free <span className="text-primary italic">10-Minute</span> IT
+                Skill Test
               </h2>
 
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-lg">
-                Test your IT skills across web development (HTML, CSS, JavaScript, React, Node.js) and digital marketing (SEO, PPC, analytics). Score 70%+ and get a free SkillYards Certificate sent to your email instantly.
+                Test your IT skills across web development (HTML, CSS,
+                JavaScript, React, Node.js) and digital marketing (SEO, PPC,
+                analytics). Score 70%+ and get a free SkillYards Certificate
+                sent to your email instantly.
               </p>
 
               {/* Feature pills */}
@@ -146,8 +149,16 @@ export default function SkillTestSection() {
                   {/* Mock stats */}
                   <div className="grid grid-cols-3 gap-3">
                     {[
-                      { label: "Score", value: "85%", color: "text-green-600 dark:text-green-400" },
-                      { label: "Questions", value: "30", color: "text-foreground" },
+                      {
+                        label: "Score",
+                        value: "85%",
+                        color: "text-green-600 dark:text-green-400",
+                      },
+                      {
+                        label: "Questions",
+                        value: "30",
+                        color: "text-foreground",
+                      },
                       { label: "Grade", value: "A", color: "text-primary" },
                     ].map((stat) => (
                       <div
@@ -177,7 +188,8 @@ export default function SkillTestSection() {
                   </div>
 
                   <p className="text-center text-xs text-muted-foreground leading-relaxed">
-                    Score 70%+ on the test and get this certificate emailed to you instantly
+                    Score 70%+ on the test and get this certificate emailed to
+                    you instantly
                   </p>
                 </div>
               </div>

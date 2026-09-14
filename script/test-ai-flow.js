@@ -7,7 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, "../apps/api/.env") });
 
-const API_SECRET = process.env.CALL_TRACKER_SECRET || "f8fe36033866cd8b2630e77a3322784d";
+const API_SECRET =
+  process.env.CALL_TRACKER_SECRET || "f8fe36033866cd8b2630e77a3322784d";
 const API_URL = "http://localhost:3000/api/telephony/gsm-callback";
 
 async function main() {
@@ -21,7 +22,9 @@ async function main() {
   console.log("🔍 Fetching a valid telecaller from the database...");
   const [user] = await db.select().from(users).limit(1);
   if (!user) {
-    console.error("❌ No users found in the database. Please seed or add a user first!");
+    console.error(
+      "❌ No users found in the database. Please seed or add a user first!",
+    );
     process.exit(1);
   }
   console.log(`✅ Found user: ${user.name} (${user.id})`);
@@ -29,13 +32,15 @@ async function main() {
   // 2. Fetch a sample audio file from public URL
   const sampleAudioUrl = "https://www.w3schools.com/html/horse.mp3";
   console.log(`📥 Downloading sample audio file from: ${sampleAudioUrl}...`);
-  
+
   let audioBuffer;
   try {
     const audioRes = await fetch(sampleAudioUrl);
     if (!audioRes.ok) throw new Error(`HTTP error! status: ${audioRes.status}`);
     audioBuffer = Buffer.from(await audioRes.arrayBuffer());
-    console.log(`✅ Downloaded sample audio file successfully (${audioBuffer.length} bytes)`);
+    console.log(
+      `✅ Downloaded sample audio file successfully (${audioBuffer.length} bytes)`,
+    );
   } catch (err) {
     console.error("❌ Failed to download sample audio file:", err.message);
     process.exit(1);
@@ -53,7 +58,9 @@ async function main() {
   };
 
   // 4. Send POST request to gsm-callback endpoint
-  console.log(`📤 Sending call record log to ingestion endpoint: ${API_URL}...`);
+  console.log(
+    `📤 Sending call record log to ingestion endpoint: ${API_URL}...`,
+  );
   try {
     const response = await fetch(API_URL, {
       method: "POST",
@@ -71,7 +78,9 @@ async function main() {
     }
     console.log("✅ Ingestion API accepted the call logs successfully!");
   } catch (err) {
-    console.error("❌ Failed to connect to API server. Ensure Next.js API is running on http://localhost:3000");
+    console.error(
+      "❌ Failed to connect to API server. Ensure Next.js API is running on http://localhost:3000",
+    );
     console.error(err.message);
     process.exit(1);
   }
@@ -89,7 +98,9 @@ async function main() {
     console.error("❌ New call record not found in database!");
     process.exit(1);
   }
-  console.log(`✅ Logged call record found with ID: ${newCall.id}. Starting poll for AI status...`);
+  console.log(
+    `✅ Logged call record found with ID: ${newCall.id}. Starting poll for AI status...`,
+  );
 
   // 6. Poll database until AI status transitions from pending/processing -> completed/failed
   let attempts = 0;
@@ -101,7 +112,9 @@ async function main() {
       .from(followUps)
       .where(eq(followUps.id, newCall.id));
 
-    console.log(`[Attempt ${attempts}] Current AI Status: ${updatedCall?.aiStatus}`);
+    console.log(
+      `[Attempt ${attempts}] Current AI Status: ${updatedCall?.aiStatus}`,
+    );
 
     if (updatedCall?.aiStatus === "completed") {
       clearInterval(interval);
@@ -114,7 +127,9 @@ async function main() {
       process.exit(0);
     } else if (updatedCall?.aiStatus === "failed") {
       clearInterval(interval);
-      console.error("\n❌ AI Auditing failed. Please check the logs in the ai-service console.");
+      console.error(
+        "\n❌ AI Auditing failed. Please check the logs in the ai-service console.",
+      );
       process.exit(1);
     }
 

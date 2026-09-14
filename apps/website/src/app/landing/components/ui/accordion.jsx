@@ -4,7 +4,12 @@ import * as React from "react";
 
 const AccordionContext = React.createContext(null);
 
-export function Accordion({ children, type = "single", collapsible = true, defaultValue }) {
+export function Accordion({
+  children,
+  type = "single",
+  collapsible = true,
+  defaultValue,
+}) {
   const [openValue, setOpenValue] = React.useState(defaultValue || "");
 
   const toggleItem = React.useCallback(
@@ -16,7 +21,7 @@ export function Accordion({ children, type = "single", collapsible = true, defau
         return value;
       });
     },
-    [collapsible]
+    [collapsible],
   );
 
   return (
@@ -29,7 +34,9 @@ export function Accordion({ children, type = "single", collapsible = true, defau
 export function AccordionItem({ children, value, className = "" }) {
   return (
     <div className={`border-b border-border ${className}`} data-state={value}>
-      <AccordionContext.Provider value={{ ...React.useContext(AccordionContext), itemValue: value }}>
+      <AccordionContext.Provider
+        value={{ ...React.useContext(AccordionContext), itemValue: value }}
+      >
         {children}
       </AccordionContext.Provider>
     </div>
@@ -37,7 +44,8 @@ export function AccordionItem({ children, value, className = "" }) {
 }
 
 export function AccordionTrigger({ children, className = "" }) {
-  const { openValue, toggleItem, itemValue } = React.useContext(AccordionContext);
+  const { openValue, toggleItem, itemValue } =
+    React.useContext(AccordionContext);
   const isOpen = openValue === itemValue;
 
   return (
@@ -66,8 +74,6 @@ export function AccordionContent({ children, className = "" }) {
   if (!isOpen) return null;
 
   return (
-    <div className={`pb-4 pt-0 transition-all ${className}`}>
-      {children}
-    </div>
+    <div className={`pb-4 pt-0 transition-all ${className}`}>{children}</div>
   );
 }

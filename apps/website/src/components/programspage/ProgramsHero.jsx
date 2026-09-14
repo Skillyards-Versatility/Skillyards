@@ -43,7 +43,9 @@ export default function ProgramsHero() {
           className="font-serif text-4xl font-extrabold leading-[1.15] tracking-tight text-foreground sm:text-5xl md:text-6xl desk:text-7xl"
         >
           Confused After 12th or Graduation?{" "}
-          <span className="block mt-2 italic text-primary font-serif">Find the Right Career Path.</span>
+          <span className="block mt-2 italic text-primary font-serif">
+            Find the Right Career Path.
+          </span>
         </motion.h1>
 
         <motion.p
@@ -52,8 +54,9 @@ export default function ProgramsHero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg font-medium"
         >
-          Discover SkillYards&apos; On Job Degree and On Job Training programs in Agra. 
-          We blend university degrees with practical skills and 100% placement assistance to set you up for career success.
+          Discover SkillYards&apos; On Job Degree and On Job Training programs
+          in Agra. We blend university degrees with practical skills and 100%
+          placement assistance to set you up for career success.
         </motion.p>
 
         <motion.div
@@ -67,7 +70,8 @@ export default function ProgramsHero() {
             onClick={handleScrollToComparison}
             className="w-full rounded-full bg-primary px-8 py-6 text-xs font-black uppercase tracking-widest text-primary-foreground shadow-xl shadow-primary/20 transition-all hover:scale-105 hover:bg-primary/90 sm:w-auto cursor-pointer"
           >
-            Find the Right Program <ArrowRight size={16} className="ml-2 animate-bounce-horizontal" />
+            Find the Right Program{" "}
+            <ArrowRight size={16} className="ml-2 animate-bounce-horizontal" />
           </Button>
 
           <Button
@@ -77,7 +81,8 @@ export default function ProgramsHero() {
             className="w-full rounded-full border-2 border-border bg-foreground/5 px-8 py-6 text-xs font-bold uppercase tracking-widest text-foreground transition-all hover:scale-105 hover:bg-foreground/10 sm:w-auto"
           >
             <Link href="/contact">
-              <HelpCircle size={16} className="mr-2" /> Book Free Career Counselling
+              <HelpCircle size={16} className="mr-2" /> Book Free Career
+              Counselling
             </Link>
           </Button>
         </motion.div>
@@ -96,11 +101,16 @@ export default function ProgramsHero() {
           <span>100% placement assistance</span>
         </motion.div>
       </div>
-      
+
       <style jsx global>{`
         @keyframes bounce-horizontal {
-          0%, 100% { transform: translateX(0); }
-          50% { transform: translateX(4px); }
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          50% {
+            transform: translateX(4px);
+          }
         }
         .animate-bounce-horizontal {
           animation: bounce-horizontal 1s infinite;

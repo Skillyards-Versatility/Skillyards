@@ -43,14 +43,14 @@ export function buildSEO({
     keywords,
 
     alternates: {
-      canonical: absoluteUrl, 
+      canonical: absoluteUrl,
     },
 
     openGraph: {
       type: ogType,
       title,
       description,
-      url: absoluteUrl, 
+      url: absoluteUrl,
       siteName: SEO_CONFIG.siteName,
       images: [
         {

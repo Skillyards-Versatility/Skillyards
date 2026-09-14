@@ -4,7 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Plus, Loader2, Pencil } from "lucide-react";
-import { addStudentPayment, addFlexibleInstallment, updateStudentPlan, updateInstallment } from "@/actions/student";
+import {
+  addStudentPayment,
+  addFlexibleInstallment,
+  updateStudentPlan,
+  updateInstallment,
+} from "@/actions/student";
 import { formatDate } from "@/lib/format";
 import { EditStudentModal } from "@/components/students/EditStudentModal";
 
@@ -15,7 +20,14 @@ import { AddPaymentForm } from "@/components/students/AddPaymentForm";
 import { AddInstallmentForm } from "@/components/students/AddInstallmentForm";
 import { AssignPlanWizard } from "@/components/students/AssignPlanWizard";
 
-export function StudentDetailClient({ student, initialTransactions, initialPlan, initialInstallments, canEdit = false, batches = [] }) {
+export function StudentDetailClient({
+  student,
+  initialTransactions,
+  initialPlan,
+  initialInstallments,
+  canEdit = false,
+  batches = [],
+}) {
   const router = useRouter();
 
   const [plan, setPlan] = useState(initialPlan ?? null);
@@ -23,9 +35,15 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
   const [installments, setInstallments] = useState(initialInstallments ?? []);
   const [transactions, setTransactions] = useState(initialTransactions);
 
-  useEffect(() => { setPlan(initialPlan ?? null); }, [initialPlan]);
-  useEffect(() => { setInstallments(initialInstallments ?? []); }, [initialInstallments]);
-  useEffect(() => { setTransactions(initialTransactions ?? []); }, [initialTransactions]);
+  useEffect(() => {
+    setPlan(initialPlan ?? null);
+  }, [initialPlan]);
+  useEffect(() => {
+    setInstallments(initialInstallments ?? []);
+  }, [initialInstallments]);
+  useEffect(() => {
+    setTransactions(initialTransactions ?? []);
+  }, [initialTransactions]);
 
   const [wizardOpen, setWizardOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -41,7 +59,11 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
   const [installmentEditForm, setInstallmentEditForm] = useState(null);
   const [isSavingInstallment, setIsSavingInstallment] = useState(false);
 
-  const [paymentForm, setPaymentForm] = useState({ amount: "", mode: "upi", reference: "" });
+  const [paymentForm, setPaymentForm] = useState({
+    amount: "",
+    mode: "upi",
+    reference: "",
+  });
   const [installmentContext, setInstallmentContext] = useState(null);
 
   const openPaymentModal = (installmentId = "") => {
@@ -51,10 +73,20 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
       if (!inst) return;
       const remaining = inst.amount - inst.paid;
       setInstallmentContext({ label: `Installment ${instIdx + 1}`, remaining });
-      setPaymentForm({ amount: String(remaining), mode: "upi", reference: "", installmentId });
+      setPaymentForm({
+        amount: String(remaining),
+        mode: "upi",
+        reference: "",
+        installmentId,
+      });
     } else {
       setInstallmentContext(null);
-      setPaymentForm({ amount: "", mode: "upi", reference: "", installmentId: "" });
+      setPaymentForm({
+        amount: "",
+        mode: "upi",
+        reference: "",
+        installmentId: "",
+      });
     }
     setModalOpen(true);
   };
@@ -67,7 +99,10 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
   const handleSubmitPayment = async (e) => {
     e.preventDefault();
     const amount = Number(paymentForm.amount);
-    if (!amount || amount <= 0) { toast.error("Invalid amount"); return; }
+    if (!amount || amount <= 0) {
+      toast.error("Invalid amount");
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -81,13 +116,16 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
         ? installments.findIndex((i) => i.id === paymentForm.installmentId) + 1
         : 0;
 
-      setTransactions(prev => [{
-        id: payment.id,
-        date: formatDate(payment.createdAt),
-        amount: payment.amount,
-        mode: payment.method,
-        allocatedTo: instNum > 0 ? `Installment ${instNum}` : "Auto",
-      }, ...prev]);
+      setTransactions((prev) => [
+        {
+          id: payment.id,
+          date: formatDate(payment.createdAt),
+          amount: payment.amount,
+          mode: payment.method,
+          allocatedTo: instNum > 0 ? `Installment ${instNum}` : "Auto",
+        },
+        ...prev,
+      ]);
 
       setModalOpen(false);
       router.refresh();
@@ -102,13 +140,19 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
   const handleAddInstallment = async ({ amount, dueDate }) => {
     setIsAddingInstallment(true);
     try {
-      const inst = await addFlexibleInstallment(student.id, { amount, dueDate });
-      setInstallments(prev => [...prev, {
-        id: inst.id,
-        dueDate: formatDate(inst.dueDate),
-        amount: inst.amountDue,
-        paid: 0,
-      }]);
+      const inst = await addFlexibleInstallment(student.id, {
+        amount,
+        dueDate,
+      });
+      setInstallments((prev) => [
+        ...prev,
+        {
+          id: inst.id,
+          dueDate: formatDate(inst.dueDate),
+          amount: inst.amountDue,
+          paid: 0,
+        },
+      ]);
       setInstallmentModalOpen(false);
       router.refresh();
       toast.success("Installment added");
@@ -135,7 +179,7 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
     setIsSavingPlan(true);
     try {
       await updateStudentPlan(student.id, { totalAmount: total });
-      setPlan(prev => prev ? { ...prev, total } : prev);
+      setPlan((prev) => (prev ? { ...prev, total } : prev));
       setPlanEditOpen(false);
       router.refresh();
       toast.success("Plan updated");
@@ -173,12 +217,12 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
         amountDue: amount,
         dueDate: installmentEditForm.dueDate,
       });
-      setInstallments(prev =>
-        prev.map(i =>
+      setInstallments((prev) =>
+        prev.map((i) =>
           i.id === installmentEditForm.id
             ? { ...i, amount, dueDate: formatDate(installmentEditForm.dueDate) }
-            : i
-        )
+            : i,
+        ),
       );
       setInstallmentEditOpen(false);
       setInstallmentEditForm(null);
@@ -192,18 +236,18 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
   };
 
   const scheduledTotal = installments.reduce((s, i) => s + i.amount, 0);
-  const flexibleRemaining = plan ? (plan.total - scheduledTotal) : 0;
+  const flexibleRemaining = plan ? plan.total - scheduledTotal : 0;
   const totalPaid = installments.reduce((s, i) => s + (i.paid ?? 0), 0);
   const isFullyPaid = !!plan && totalPaid >= plan.total;
-  const isFlexibleNoExtraInstallments = plan?.type === "Flexible" && (
-    installments.length === 0 ||
-    (totalPaid >= scheduledTotal && flexibleRemaining > 0)
-  );
-  const addPaymentDisabled = !plan || isFullyPaid || isFlexibleNoExtraInstallments;
+  const isFlexibleNoExtraInstallments =
+    plan?.type === "Flexible" &&
+    (installments.length === 0 ||
+      (totalPaid >= scheduledTotal && flexibleRemaining > 0));
+  const addPaymentDisabled =
+    !plan || isFullyPaid || isFlexibleNoExtraInstallments;
 
   return (
     <div className="space-y-6">
-
       <div className="flex justify-end">
         <button
           onClick={() => openPaymentModal()}
@@ -241,29 +285,40 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
               </p>
             </div>
             <div>
-              <p className="text-muted-foreground text-xs mb-1">Email Address</p>
+              <p className="text-muted-foreground text-xs mb-1">
+                Email Address
+              </p>
               <p className="font-semibold text-foreground truncate">
                 {student.email || "—"}
               </p>
             </div>
             <div>
-              <p className="text-muted-foreground text-xs mb-1">Assigned Batch</p>
+              <p className="text-muted-foreground text-xs mb-1">
+                Assigned Batch
+              </p>
               <p className="font-semibold text-foreground">
                 {student.batchName ? (
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 text-xs font-semibold">
                     {student.batchName}
                   </span>
                 ) : (
-                  <span className="text-muted-foreground italic font-normal">Unassigned</span>
+                  <span className="text-muted-foreground italic font-normal">
+                    Unassigned
+                  </span>
                 )}
               </p>
             </div>
             <div>
-              <p className="text-muted-foreground text-xs mb-1">Laptop Option</p>
+              <p className="text-muted-foreground text-xs mb-1">
+                Laptop Option
+              </p>
               <p className="font-semibold text-foreground">
                 {student.laptopOpted ? (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/60 text-xs font-bold">
-                    Opted{student.laptopOptedAt ? ` · ${new Date(student.laptopOptedAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}` : ""}
+                    Opted
+                    {student.laptopOptedAt
+                      ? ` · ${new Date(student.laptopOptedAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })}`
+                      : ""}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-gray-100 text-gray-700 dark:bg-gray-850 dark:text-gray-400 border border-gray-200 dark:border-gray-800 text-xs font-semibold">
@@ -275,13 +330,22 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
           </div>
         </div>
 
-        <PlanSection plan={plan} onAssignPlan={() => setWizardOpen(true)} onEditPlan={canEdit ? openPlanEdit : undefined} canEdit={canEdit} />
+        <PlanSection
+          plan={plan}
+          onAssignPlan={() => setWizardOpen(true)}
+          onEditPlan={canEdit ? openPlanEdit : undefined}
+          canEdit={canEdit}
+        />
       </div>
 
       <InstallmentsTable
         installments={installments}
         onPay={openPaymentModal}
-        onAddInstallment={plan?.type === "Flexible" && flexibleRemaining > 0 ? () => setInstallmentModalOpen(true) : undefined}
+        onAddInstallment={
+          plan?.type === "Flexible" && flexibleRemaining > 0
+            ? () => setInstallmentModalOpen(true)
+            : undefined
+        }
         onEditInstallment={canEdit ? openInstallmentEdit : undefined}
         canEdit={canEdit}
         unscheduled={plan?.type === "Flexible" ? flexibleRemaining : 0}
@@ -318,20 +382,32 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
       {/* Edit Plan Modal */}
       {planEditOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setPlanEditOpen(false)} />
-          <form onSubmit={handlePlanEditSubmit} className="relative w-full max-w-sm bg-card border border-border/60 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 p-6 space-y-4">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
+            onClick={() => setPlanEditOpen(false)}
+          />
+          <form
+            onSubmit={handlePlanEditSubmit}
+            className="relative w-full max-w-sm bg-card border border-border/60 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 p-6 space-y-4"
+          >
             <div>
               <h3 className="font-semibold text-lg">Edit Fee Plan</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">Admin correction of plan total</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Admin correction of plan total
+              </p>
             </div>
             <div>
-              <label className="text-xs font-medium block mb-1">Total Amount (₹)</label>
+              <label className="text-xs font-medium block mb-1">
+                Total Amount (₹)
+              </label>
               <input
                 type="number"
                 min="0"
                 className="input w-full"
                 value={planEditForm.total}
-                onChange={(e) => setPlanEditForm({ ...planEditForm, total: e.target.value })}
+                onChange={(e) =>
+                  setPlanEditForm({ ...planEditForm, total: e.target.value })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -358,20 +434,35 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
       {/* Edit Installment Modal */}
       {installmentEditOpen && installmentEditForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200" onClick={() => setInstallmentEditOpen(false)} />
-          <form onSubmit={handleInstallmentEditSubmit} className="relative w-full max-w-sm bg-card border border-border/60 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 p-6 space-y-4">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200"
+            onClick={() => setInstallmentEditOpen(false)}
+          />
+          <form
+            onSubmit={handleInstallmentEditSubmit}
+            className="relative w-full max-w-sm bg-card border border-border/60 rounded-2xl shadow-2xl animate-in zoom-in-95 duration-200 p-6 space-y-4"
+          >
             <div>
               <h3 className="font-semibold text-lg">Edit Installment</h3>
-              <p className="text-xs text-muted-foreground mt-0.5">Admin correction of installment details</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Admin correction of installment details
+              </p>
             </div>
             <div>
-              <label className="text-xs font-medium block mb-1">Amount (₹)</label>
+              <label className="text-xs font-medium block mb-1">
+                Amount (₹)
+              </label>
               <input
                 type="number"
                 min="0"
                 className="input w-full"
                 value={installmentEditForm.amount}
-                onChange={(e) => setInstallmentEditForm({ ...installmentEditForm, amount: e.target.value })}
+                onChange={(e) =>
+                  setInstallmentEditForm({
+                    ...installmentEditForm,
+                    amount: e.target.value,
+                  })
+                }
               />
             </div>
             <div>
@@ -380,7 +471,12 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
                 type="date"
                 className="input w-full"
                 value={installmentEditForm.dueDate}
-                onChange={(e) => setInstallmentEditForm({ ...installmentEditForm, dueDate: e.target.value })}
+                onChange={(e) =>
+                  setInstallmentEditForm({
+                    ...installmentEditForm,
+                    dueDate: e.target.value,
+                  })
+                }
               />
             </div>
             <div className="space-y-2">
@@ -389,12 +485,17 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
                 disabled={isSavingInstallment}
                 className="w-full py-2.5 bg-primary text-primary-foreground hover:bg-primary/90 font-semibold text-sm rounded-xl transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {isSavingInstallment && <Loader2 className="w-4 h-4 animate-spin" />}
+                {isSavingInstallment && (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                )}
                 Save Changes
               </button>
               <button
                 type="button"
-                onClick={() => { setInstallmentEditOpen(false); setInstallmentEditForm(null); }}
+                onClick={() => {
+                  setInstallmentEditOpen(false);
+                  setInstallmentEditForm(null);
+                }}
                 className="w-full py-2.5 bg-secondary text-secondary-foreground hover:bg-secondary/80 font-semibold text-sm rounded-xl transition-colors"
               >
                 Cancel
@@ -415,7 +516,6 @@ export function StudentDetailClient({ student, initialTransactions, initialPlan,
           }}
         />
       )}
-
     </div>
   );
 }

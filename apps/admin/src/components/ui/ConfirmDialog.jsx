@@ -29,7 +29,7 @@ export function ConfirmDialog({
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
         <h3 className="text-sm font-semibold mb-2">{title}</h3>
         <p className="text-sm text-gray-500 mb-5">{message}</p>
-        
+
         {requireInput && (
           <div className="mb-5">
             <input

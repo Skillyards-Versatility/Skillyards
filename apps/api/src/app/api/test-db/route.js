@@ -11,11 +11,14 @@ async function getHandler() {
     const data = await getAllEnquiries();
     return Response.json(success(data, "Enquiries fetched successfully"));
   } catch (err) {
-    return Response.json(error("Failed to fetch enquiries", { error: err.message }), { status: 400 });
+    return Response.json(
+      error("Failed to fetch enquiries", { error: err.message }),
+      { status: 400 },
+    );
   }
 }
 
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
-  policy: canAccessEnquiry
+  policy: canAccessEnquiry,
 });

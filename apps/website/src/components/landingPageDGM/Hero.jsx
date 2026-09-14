@@ -24,7 +24,9 @@ export function DGMHero() {
           className="mb-4 inline-flex max-w-full items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-primary sm:px-4 sm:text-xs sm:tracking-widest"
         >
           <Star size={12} className="fill-current shrink-0 text-secondary" />
-          <span className="text-center leading-tight">6-Month AI-Integrated Digital Marketing Course in Agra</span>
+          <span className="text-center leading-tight">
+            6-Month AI-Integrated Digital Marketing Course in Agra
+          </span>
         </motion.div>
 
         <motion.h1
@@ -43,7 +45,11 @@ export function DGMHero() {
           transition={{ delay: 0.2 }}
           className="mx-auto mt-5 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-lg"
         >
-          Learn SEO, Google Ads, Meta Ads, social media marketing, content, analytics, and reporting with practical AI tools used by modern marketers. At SkillYards, students work on mentor-guided projects, campaign planning, SEO audits, reporting exercises, and portfolio-ready case work.
+          Learn SEO, Google Ads, Meta Ads, social media marketing, content,
+          analytics, and reporting with practical AI tools used by modern
+          marketers. At SkillYards, students work on mentor-guided projects,
+          campaign planning, SEO audits, reporting exercises, and
+          portfolio-ready case work.
         </motion.p>
 
         <motion.div

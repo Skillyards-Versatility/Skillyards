@@ -3,7 +3,9 @@ import * as studentRepo from "../students/student.repository";
 
 export async function getStudentLedger(db, studentId, preStudent = null) {
   const [student, totalDue, totalPaid] = await Promise.all([
-    preStudent ? Promise.resolve(preStudent) : studentRepo.getStudentById(db, studentId),
+    preStudent
+      ? Promise.resolve(preStudent)
+      : studentRepo.getStudentById(db, studentId),
     paymentRepo.getTotalDueForStudent(db, studentId),
     paymentRepo.getTotalPaidForStudent(db, studentId),
   ]);

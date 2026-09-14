@@ -1,7 +1,16 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Briefcase, Bug, FileText, FolderGit2, LayoutTemplate, LineChart, MessageSquareMore, Sparkles } from "lucide-react";
+import {
+  Briefcase,
+  Bug,
+  FileText,
+  FolderGit2,
+  LayoutTemplate,
+  LineChart,
+  MessageSquareMore,
+  Sparkles,
+} from "lucide-react";
 
 const items = [
   { label: "Portfolio-ready projects", icon: Briefcase },
@@ -11,7 +20,10 @@ const items = [
   { label: "Reporting and documentation", icon: FileText },
   { label: "AI-assisted productivity workflows", icon: Sparkles },
   { label: "Resume and portfolio preparation", icon: LayoutTemplate },
-  { label: "Mock interviews and interview preparation", icon: MessageSquareMore },
+  {
+    label: "Mock interviews and interview preparation",
+    icon: MessageSquareMore,
+  },
 ];
 
 export default function OJTPracticalLearning() {
@@ -28,10 +40,14 @@ export default function OJTPracticalLearning() {
             Practical Learning
           </motion.div>
           <h2 className="font-serif text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Practical Learning, <span className="italic text-primary">Not Just Theory</span>
+            Practical Learning,{" "}
+            <span className="italic text-primary">Not Just Theory</span>
           </h2>
           <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            SkillYards OJT programs focus on practical skill-building through projects, portfolio work, GitHub/workflow practice, reporting exercises, code reviews, campaign planning, and mentor-guided learning.
+            SkillYards OJT programs focus on practical skill-building through
+            projects, portfolio work, GitHub/workflow practice, reporting
+            exercises, code reviews, campaign planning, and mentor-guided
+            learning.
           </p>
         </div>
 
@@ -50,7 +66,9 @@ export default function OJTPracticalLearning() {
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10">
                   <Icon size={18} className="text-primary" />
                 </div>
-                <p className="text-sm font-semibold leading-relaxed text-foreground">{item.label}</p>
+                <p className="text-sm font-semibold leading-relaxed text-foreground">
+                  {item.label}
+                </p>
               </motion.div>
             );
           })}

@@ -1,4 +1,3 @@
-
 import React from "react";
 
 export default function AgraPage() {
@@ -16,10 +15,15 @@ export default function AgraPage() {
         </p>
 
         <div className="mt-10 grid md:grid-cols-3 gap-6">
-          {["BBA","BCA","Digital Marketing"].map((c)=>(
-            <div key={c} className="rounded-xl p-6 bg-white dark:bg-neutral-800 shadow">
+          {["BBA", "BCA", "Digital Marketing"].map((c) => (
+            <div
+              key={c}
+              className="rounded-xl p-6 bg-white dark:bg-neutral-800 shadow"
+            >
               <h2 className="text-2xl font-semibold">{c}</h2>
-              <p className="mt-3">Industry-oriented curriculum with practical learning.</p>
+              <p className="mt-3">
+                Industry-oriented curriculum with practical learning.
+              </p>
             </div>
           ))}
         </div>

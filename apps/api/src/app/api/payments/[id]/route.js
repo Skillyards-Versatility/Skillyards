@@ -7,7 +7,7 @@ import { canAccessStudent } from "@/lib/permissions";
 
 /**
  * SECURED STUDENT PAYMENT HANDLER
- * 
+ *
  * Enforced by createProtectedRoute:
  * - Session verified
  * - Student record loaded (req.resource)
@@ -21,10 +21,7 @@ async function postHandler(req, { context, ctx, resource: student }) {
   const result = validateCreatePayment(body);
   if (!result.success) {
     ctx.warn("VALIDATION_FAILURE", { errors: result.error.flatten() });
-    return Response.json(
-      { error: result.error.flatten() },
-      { status: 400 }
-    );
+    return Response.json({ error: result.error.flatten() }, { status: 400 });
   }
 
   // Side effect: only happens AFTER Authz
@@ -37,7 +34,7 @@ async function postHandler(req, { context, ctx, resource: student }) {
 // ── STRUCTURAL ENFORCEMENT ──
 export const POST = createProtectedRoute(postHandler, {
   policy: canAccessStudent,
-  resourceLoader: (id) => getStudentById(db, id)
+  resourceLoader: (id) => getStudentById(db, id),
 });
 
 export const OPTIONS = createProtectedRoute(() => {}, { isPublic: true });

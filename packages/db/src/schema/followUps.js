@@ -1,4 +1,12 @@
-import { pgTable, uuid, text, integer, timestamp, jsonb, boolean } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  integer,
+  timestamp,
+  jsonb,
+  boolean,
+} from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 
 export const followUps = pgTable("follow_ups", {
@@ -12,7 +20,7 @@ export const followUps = pgTable("follow_ups", {
   outcome: text("outcome").notNull(), // 'reached' | 'not_reached'
   type: text("type").default("call").notNull(),
   contactedAt: timestamp("contacted_at").notNull(),
-  
+
   // AI Auditing columns
   aiStatus: text("ai_status").default("pending").notNull(), // 'pending' | 'processing' | 'completed' | 'failed'
   transcription: text("transcription"),

@@ -15,14 +15,11 @@ async function main() {
     .select({
       id: followUps.id,
       recordingUrl: followUps.recordingUrl,
-      aiStatus: followUps.aiStatus
+      aiStatus: followUps.aiStatus,
     })
     .from(followUps)
     .where(
-      and(
-        isNotNull(followUps.recordingUrl),
-        eq(followUps.aiStatus, "failed")
-      )
+      and(isNotNull(followUps.recordingUrl), eq(followUps.aiStatus, "failed")),
     )
     .limit(1);
 
@@ -41,8 +38,8 @@ async function main() {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       followUpId: testCall.id,
-      recordingUrl: testCall.recordingUrl
-    })
+      recordingUrl: testCall.recordingUrl,
+    }),
   });
 
   const responseData = await response.json();
@@ -53,7 +50,9 @@ async function main() {
     return;
   }
 
-  console.log("\n⏳ Polling database to check if status updates to pending/processing...");
+  console.log(
+    "\n⏳ Polling database to check if status updates to pending/processing...",
+  );
   for (let i = 0; i < 5; i++) {
     await new Promise((r) => setTimeout(r, 1000));
     const [updatedCall] = await db
@@ -61,7 +60,7 @@ async function main() {
       .from(followUps)
       .where(eq(followUps.id, testCall.id))
       .limit(1);
-    
+
     console.log(`   [Second ${i + 1}] DB AI Status: ${updatedCall?.aiStatus}`);
   }
 

@@ -8,7 +8,7 @@ export function SidebarProvider({ children }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  const toggle = () => setIsCollapsed(prev => !prev);
+  const toggle = () => setIsCollapsed((prev) => !prev);
   const openMobile = () => setIsMobileOpen(true);
   const closeMobile = () => setIsMobileOpen(false);
 
@@ -22,7 +22,9 @@ export function SidebarProvider({ children }) {
   }, []);
 
   return (
-    <SidebarContext.Provider value={{ isCollapsed, toggle, isMobileOpen, openMobile, closeMobile }}>
+    <SidebarContext.Provider
+      value={{ isCollapsed, toggle, isMobileOpen, openMobile, closeMobile }}
+    >
       {children}
     </SidebarContext.Provider>
   );
@@ -30,6 +32,7 @@ export function SidebarProvider({ children }) {
 
 export function useSidebar() {
   const context = useContext(SidebarContext);
-  if (!context) throw new Error("useSidebar must be used within SidebarProvider");
+  if (!context)
+    throw new Error("useSidebar must be used within SidebarProvider");
   return context;
 }

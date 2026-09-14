@@ -1,6 +1,13 @@
 "use server";
 
-import { db, users, conversations, conversationParticipants, messages, messageReactions } from "@repo/db";
+import {
+  db,
+  users,
+  conversations,
+  conversationParticipants,
+  messages,
+  messageReactions,
+} from "@repo/db";
 import { eq, and, ne, desc, sql, inArray, isNull } from "drizzle-orm";
 import { getSession } from "@/lib/auth";
 import webPush from "web-push";
@@ -9,7 +16,7 @@ if (process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
   webPush.setVapidDetails(
     "mailto:admin@skillyards.com",
     process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
+    process.env.VAPID_PRIVATE_KEY,
   );
 }
 
@@ -52,20 +59,26 @@ export async function getOrCreateConversation(otherUserId) {
     const [match] = await db
       .select({ conversationId: conversationParticipants.conversationId })
       .from(conversationParticipants)
-      .innerJoin(conversations, eq(conversationParticipants.conversationId, conversations.id))
+      .innerJoin(
+        conversations,
+        eq(conversationParticipants.conversationId, conversations.id),
+      )
       .where(
         and(
           inArray(conversationParticipants.conversationId, myConvIds),
           eq(conversationParticipants.userId, otherUserId),
-          eq(conversations.type, "dm")
-        )
+          eq(conversations.type, "dm"),
+        ),
       )
       .limit(1);
 
     if (match) return match.conversationId;
   }
 
-  const [conv] = await db.insert(conversations).values({ type: "dm" }).returning();
+  const [conv] = await db
+    .insert(conversations)
+    .values({ type: "dm" })
+    .returning();
 
   await db.insert(conversationParticipants).values([
     { conversationId: conv.id, userId },
@@ -147,13 +160,24 @@ export async function createChannel(name, userIds = []) {
 
   const trimmed = name?.trim().toLowerCase().replace(/\s+/g, "-");
   if (!trimmed) return { success: false, error: "Channel name is required" };
-  if (trimmed.length < 2) return { success: false, error: "Channel name must be at least 2 characters" };
-  if (!/^[a-z0-9-]+$/.test(trimmed)) return { success: false, error: "Channel name can only contain lowercase letters, numbers, and hyphens" };
+  if (trimmed.length < 2)
+    return {
+      success: false,
+      error: "Channel name must be at least 2 characters",
+    };
+  if (!/^[a-z0-9-]+$/.test(trimmed))
+    return {
+      success: false,
+      error:
+        "Channel name can only contain lowercase letters, numbers, and hyphens",
+    };
 
   const [existing] = await db
     .select()
     .from(conversations)
-    .where(and(eq(conversations.type, "channel"), eq(conversations.name, trimmed)))
+    .where(
+      and(eq(conversations.type, "channel"), eq(conversations.name, trimmed)),
+    )
     .limit(1);
 
   if (existing) return { success: false, error: "Channel already exists" };
@@ -174,8 +198,8 @@ export async function createChannel(name, userIds = []) {
       .where(
         and(
           eq(conversationParticipants.conversationId, conv.id),
-          inArray(conversationParticipants.userId, userIds)
-        )
+          inArray(conversationParticipants.userId, userIds),
+        ),
       );
     const existingSet = new Set(existingParticipants.map((p) => p.userId));
     for (const uid of userIds) {
@@ -197,7 +221,9 @@ export async function getChannelMembers(channelId) {
   const [conv] = await db
     .select()
     .from(conversations)
-    .where(and(eq(conversations.id, channelId), eq(conversations.type, "channel")))
+    .where(
+      and(eq(conversations.id, channelId), eq(conversations.type, "channel")),
+    )
     .limit(1);
 
   if (!conv) return [];
@@ -236,13 +262,14 @@ export async function addChannelMembers(channelId, userIds) {
     .where(
       and(
         eq(conversationParticipants.conversationId, channelId),
-        eq(conversationParticipants.userId, session.userId)
-      )
+        eq(conversationParticipants.userId, session.userId),
+      ),
     )
     .limit(1);
 
   if (!membership) return { success: false, error: "Not a participant" };
-  if (membership.role !== "admin") return { success: false, error: "Only admins can add members" };
+  if (membership.role !== "admin")
+    return { success: false, error: "Only admins can add members" };
 
   const existing = await db
     .select({ userId: conversationParticipants.userId })
@@ -250,8 +277,8 @@ export async function addChannelMembers(channelId, userIds) {
     .where(
       and(
         eq(conversationParticipants.conversationId, channelId),
-        inArray(conversationParticipants.userId, userIds)
-      )
+        inArray(conversationParticipants.userId, userIds),
+      ),
     );
 
   const existingSet = new Set(existing.map((p) => p.userId));
@@ -276,13 +303,14 @@ export async function addAllUsersToChannel(channelId) {
     .where(
       and(
         eq(conversationParticipants.conversationId, channelId),
-        eq(conversationParticipants.userId, session.userId)
-      )
+        eq(conversationParticipants.userId, session.userId),
+      ),
     )
     .limit(1);
 
   if (!membership) return { success: false, error: "Not a participant" };
-  if (membership.role !== "admin") return { success: false, error: "Only admins can add members" };
+  if (membership.role !== "admin")
+    return { success: false, error: "Only admins can add members" };
 
   const allUsers = await db.select({ id: users.id }).from(users);
   const allUserIds = allUsers.map((u) => u.id);
@@ -314,16 +342,16 @@ export async function joinChannel(channelId) {
     .where(
       and(
         eq(conversationParticipants.conversationId, channelId),
-        eq(conversationParticipants.userId, session.userId)
-      )
+        eq(conversationParticipants.userId, session.userId),
+      ),
     )
     .limit(1);
 
   if (existing) return { success: true };
 
-  await db.insert(conversationParticipants).values([
-    { conversationId: channelId, userId: session.userId },
-  ]);
+  await db
+    .insert(conversationParticipants)
+    .values([{ conversationId: channelId, userId: session.userId }]);
 
   return { success: true };
 }
@@ -337,8 +365,8 @@ export async function leaveChannel(channelId) {
     .where(
       and(
         eq(conversationParticipants.conversationId, channelId),
-        eq(conversationParticipants.userId, session.userId)
-      )
+        eq(conversationParticipants.userId, session.userId),
+      ),
     );
 
   return { success: true };
@@ -349,7 +377,11 @@ export async function ensureTeamChannels() {
   if (!session) return;
 
   const userId = session.userId;
-  const [user] = await db.select({ team: users.team }).from(users).where(eq(users.id, userId)).limit(1);
+  const [user] = await db
+    .select({ team: users.team })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
   if (!user) return;
 
   const teamSlug = user.team ? TEAM_MAP[user.team] : null;
@@ -358,7 +390,9 @@ export async function ensureTeamChannels() {
     let [channel] = await db
       .select()
       .from(conversations)
-      .where(and(eq(conversations.type, "channel"), eq(conversations.name, slug)))
+      .where(
+        and(eq(conversations.type, "channel"), eq(conversations.name, slug)),
+      )
       .limit(1);
 
     if (!channel) {
@@ -367,9 +401,9 @@ export async function ensureTeamChannels() {
         .values({ type: "channel", name: slug, createdBy: userId })
         .returning();
 
-      await db.insert(conversationParticipants).values([
-        { conversationId: channel.id, userId, role: "admin" },
-      ]);
+      await db
+        .insert(conversationParticipants)
+        .values([{ conversationId: channel.id, userId, role: "admin" }]);
 
       continue;
     }
@@ -380,8 +414,8 @@ export async function ensureTeamChannels() {
       .where(
         and(
           eq(conversationParticipants.conversationId, channel.id),
-          eq(conversationParticipants.userId, userId)
-        )
+          eq(conversationParticipants.userId, userId),
+        ),
       )
       .limit(1);
 
@@ -392,8 +426,8 @@ export async function ensureTeamChannels() {
         .where(
           and(
             eq(conversationParticipants.conversationId, channel.id),
-            eq(conversationParticipants.role, "admin")
-          )
+            eq(conversationParticipants.role, "admin"),
+          ),
         )
         .limit(1);
 
@@ -405,9 +439,15 @@ export async function ensureTeamChannels() {
             .where(eq(conversationParticipants.id, membership.id));
         }
       } else {
-        await db.insert(conversationParticipants).values([
-          { conversationId: channel.id, userId, role: hasAdmin ? "member" : "admin" },
-        ]);
+        await db
+          .insert(conversationParticipants)
+          .values([
+            {
+              conversationId: channel.id,
+              userId,
+              role: hasAdmin ? "member" : "admin",
+            },
+          ]);
       }
     }
   }
@@ -431,20 +471,32 @@ export async function getConversationInfo(conversationId) {
   if (conv.type === "channel") return conv;
 
   const [other] = await db
-    .select({ id: users.id, name: users.name, role: users.role, profileImageKey: users.profileImageKey, lastSeenAt: users.lastSeenAt })
+    .select({
+      id: users.id,
+      name: users.name,
+      role: users.role,
+      profileImageKey: users.profileImageKey,
+      lastSeenAt: users.lastSeenAt,
+    })
     .from(conversationParticipants)
     .innerJoin(users, eq(conversationParticipants.userId, users.id))
     .where(
       and(
         eq(conversationParticipants.conversationId, conversationId),
-        ne(conversationParticipants.userId, session.userId)
-      )
+        ne(conversationParticipants.userId, session.userId),
+      ),
     )
     .limit(1);
 
   const otherUserLastSeen = other?.lastSeenAt || null;
 
-  return { ...conv, otherUserName: other?.name, otherUserRole: other?.role, otherUserProfileImageKey: other?.profileImageKey, otherUserLastSeen };
+  return {
+    ...conv,
+    otherUserName: other?.name,
+    otherUserRole: other?.role,
+    otherUserProfileImageKey: other?.profileImageKey,
+    otherUserLastSeen,
+  };
 }
 
 export async function getReadReceipts(conversationId) {
@@ -462,8 +514,8 @@ export async function getReadReceipts(conversationId) {
     .where(
       and(
         eq(conversationParticipants.conversationId, conversationId),
-        sql`${conversationParticipants.lastReadAt} IS NOT NULL`
-      )
+        sql`${conversationParticipants.lastReadAt} IS NOT NULL`,
+      ),
     )
     .orderBy(conversationParticipants.lastReadAt);
 
@@ -482,8 +534,8 @@ export async function getMessages(conversationId, since) {
     .where(
       and(
         eq(conversationParticipants.conversationId, conversationId),
-        eq(conversationParticipants.userId, userId)
-      )
+        eq(conversationParticipants.userId, userId),
+      ),
     )
     .limit(1);
 
@@ -527,7 +579,7 @@ export async function getMessages(conversationId, since) {
         FROM ${messageReactions} AS r
         GROUP BY r.message_id, r.emoji
       ) AS mr`,
-      eq(messages.id, sql`mr.message_id`)
+      eq(messages.id, sql`mr.message_id`),
     )
     .where(and(...conditions))
     .groupBy(messages.id, users.name, users.profileImageKey)
@@ -548,8 +600,8 @@ export async function sendMessage(conversationId, content, parentId, fileData) {
     .where(
       and(
         eq(conversationParticipants.conversationId, conversationId),
-        eq(conversationParticipants.userId, userId)
-      )
+        eq(conversationParticipants.userId, userId),
+      ),
     )
     .limit(1);
 
@@ -577,10 +629,7 @@ export async function sendMessage(conversationId, content, parentId, fileData) {
     insertValues.fileName = fileData.fileName || null;
   }
 
-  const [message] = await db
-    .insert(messages)
-    .values(insertValues)
-    .returning();
+  const [message] = await db.insert(messages).values(insertValues).returning();
 
   await db
     .update(conversations)
@@ -604,8 +653,8 @@ export async function sendMessage(conversationId, content, parentId, fileData) {
         and(
           eq(conversationParticipants.conversationId, conversationId),
           ne(conversationParticipants.userId, userId),
-          sql`${users.pushSubscription} IS NOT NULL`
-        )
+          sql`${users.pushSubscription} IS NOT NULL`,
+        ),
       );
 
     for (const p of otherParticipants) {
@@ -616,11 +665,14 @@ export async function sendMessage(conversationId, content, parentId, fileData) {
             title: senderName,
             body: content,
             url: `/chat/${conversationId}`,
-          })
+          }),
         );
       } catch (pushErr) {
         if (pushErr.statusCode === 410) {
-          await db.update(users).set({ pushSubscription: null }).where(eq(users.id, p.id));
+          await db
+            .update(users)
+            .set({ pushSubscription: null })
+            .where(eq(users.id, p.id));
         }
       }
     }
@@ -686,7 +738,7 @@ export async function getThreadReplies(messageId) {
         FROM ${messageReactions} AS r
         GROUP BY r.message_id, r.emoji
       ) AS mr`,
-      eq(messages.id, sql`mr.message_id`)
+      eq(messages.id, sql`mr.message_id`),
     )
     .where(eq(messages.parentId, messageId))
     .groupBy(messages.id, users.name, users.profileImageKey)
@@ -708,8 +760,8 @@ export async function toggleReaction(messageId, emoji) {
       and(
         eq(messageReactions.messageId, messageId),
         eq(messageReactions.userId, userId),
-        eq(messageReactions.emoji, emoji)
-      )
+        eq(messageReactions.emoji, emoji),
+      ),
     )
     .limit(1);
 
@@ -718,9 +770,7 @@ export async function toggleReaction(messageId, emoji) {
       .delete(messageReactions)
       .where(eq(messageReactions.id, existing.id));
   } else {
-    await db
-      .insert(messageReactions)
-      .values({ messageId, userId, emoji });
+    await db.insert(messageReactions).values({ messageId, userId, emoji });
   }
 
   const reactions = await db
@@ -748,7 +798,8 @@ export async function editMessage(messageId, content) {
     .limit(1);
 
   if (!msg) return { success: false, error: "Message not found" };
-  if (msg.senderId !== session.userId) return { success: false, error: "Can only edit your own messages" };
+  if (msg.senderId !== session.userId)
+    return { success: false, error: "Can only edit your own messages" };
 
   await db
     .update(messages)
@@ -769,7 +820,8 @@ export async function deleteMessage(messageId) {
     .limit(1);
 
   if (!msg) return { success: false, error: "Message not found" };
-  if (msg.senderId !== session.userId) return { success: false, error: "Can only delete your own messages" };
+  if (msg.senderId !== session.userId)
+    return { success: false, error: "Can only delete your own messages" };
 
   await db
     .update(messages)
@@ -789,7 +841,7 @@ export async function markAsRead(conversationId) {
     .where(
       and(
         eq(conversationParticipants.conversationId, conversationId),
-        eq(conversationParticipants.userId, session.userId)
-      )
+        eq(conversationParticipants.userId, session.userId),
+      ),
     );
 }
