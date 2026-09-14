@@ -53,10 +53,16 @@ function assert(condition, message) {
 }
 
 function checkGraph(graph) {
-  assert(Array.isArray(graph) && graph.length > 0, "graph must be a non-empty array");
+  assert(
+    Array.isArray(graph) && graph.length > 0,
+    "graph must be a non-empty array",
+  );
 
   const topLevelIds = graph.map((node) => node?.["@id"]).filter(Boolean);
-  assert(topLevelIds.length === graph.length, "every top-level node must have an @id");
+  assert(
+    topLevelIds.length === graph.length,
+    "every top-level node must have an @id",
+  );
 
   const idCounts = new Map();
   topLevelIds.forEach((id) => idCounts.set(id, (idCounts.get(id) || 0) + 1));
@@ -88,7 +94,10 @@ function checkGraph(graph) {
   // URL-like fields should be absolute.
   const urlFields = collectUrlLikeStrings(graph);
   urlFields.forEach(({ key, value }) => {
-    assert(isAbsoluteHttpUrl(value), `${key} must be absolute http(s): ${value}`);
+    assert(
+      isAbsoluteHttpUrl(value),
+      `${key} must be absolute http(s): ${value}`,
+    );
   });
 }
 

@@ -12,9 +12,15 @@ import { getPageFaqs } from "@/lib/seo/getFaqs";
 import { absoluteUrl } from "@/lib/seo/core/url";
 import ProgramsFAQ from "@/components/programspage/ProgramsFAQ";
 
-const OnJobProgramCards = dynamic(() => import("@/components/onJobDegreePage/OnJobProgramCards"));
-const OJDEligibility = dynamic(() => import("@/components/onJobDegreePage/OJDEligibility"));
-const PlacementOutcomes = dynamic(() => import("@/components/onJobDegreePage/PlacementOutcomes"));
+const OnJobProgramCards = dynamic(
+  () => import("@/components/onJobDegreePage/OnJobProgramCards"),
+);
+const OJDEligibility = dynamic(
+  () => import("@/components/onJobDegreePage/OJDEligibility"),
+);
+const PlacementOutcomes = dynamic(
+  () => import("@/components/onJobDegreePage/PlacementOutcomes"),
+);
 const FinalCTA = dynamic(() => import("@/components/onJobDegreePage/FinalCTA"));
 
 export const revalidate = 86400;
@@ -22,7 +28,8 @@ export const revalidate = 86400;
 export async function generateMetadata() {
   const ogImages = await getAllOgImages();
   return buildSEO({
-    title: "BCA & BBA Degree Programs in Agra with Practical Training | SkillYards",
+    title:
+      "BCA & BBA Degree Programs in Agra with Practical Training | SkillYards",
     description:
       "Earn a recognised BCA or BBA degree in Agra while learning MERN stack development or Digital Marketing hands-on. 3 hrs practical + 2 hrs theory daily. Batch starts August. 35 seats.",
     path: "/programs/on-job-degree",
@@ -34,7 +41,11 @@ export async function generateMetadata() {
       "on job degree Agra",
       "degree with skill training Agra",
     ],
-    ogImage: resolveOgImage(ogImages, "programs", "/images/opengraph/programs-og.jpg"),
+    ogImage: resolveOgImage(
+      ogImages,
+      "programs",
+      "/images/opengraph/programs-og.jpg",
+    ),
   });
 }
 
@@ -44,74 +55,76 @@ const courseSchema = {
     {
       "@type": "Course",
       "@id": "https://www.skillyards.in/programs/on-job-degree#bca",
-      "name": "BCA with Full-Stack Development",
-      "description": "A 3-year university-affiliated Bachelor of Computer Applications degree with 3 hours of daily hands-on MERN stack development training at SkillYards, Agra.",
-      "provider": {
+      name: "BCA with Full-Stack Development",
+      description:
+        "A 3-year university-affiliated Bachelor of Computer Applications degree with 3 hours of daily hands-on MERN stack development training at SkillYards, Agra.",
+      provider: {
         "@type": "Organization",
-        "name": "SkillYards",
-        "url": "https://www.skillyards.in",
+        name: "SkillYards",
+        url: "https://www.skillyards.in",
       },
-      "educationalCredentialAwarded": "Bachelor of Computer Applications (BCA)",
-      "timeRequired": "P3Y",
-      "hasCourseInstance": {
+      educationalCredentialAwarded: "Bachelor of Computer Applications (BCA)",
+      timeRequired: "P3Y",
+      hasCourseInstance: {
         "@type": "CourseInstance",
-        "courseMode": "offline",
-        "startDate": "2026-08-01",
-        "location": {
+        courseMode: "offline",
+        startDate: "2026-08-01",
+        location: {
           "@type": "Place",
-          "name": "SkillYards, Agra",
-          "address": {
+          name: "SkillYards, Agra",
+          address: {
             "@type": "PostalAddress",
-            "addressLocality": "Agra",
-            "addressRegion": "Uttar Pradesh",
-            "addressCountry": "IN",
+            addressLocality: "Agra",
+            addressRegion: "Uttar Pradesh",
+            addressCountry: "IN",
           },
         },
       },
-      "offers": {
+      offers: {
         "@type": "Offer",
-        "priceSpecification": {
+        priceSpecification: {
           "@type": "UnitPriceSpecification",
-          "price": "5000",
-          "priceCurrency": "INR",
-          "unitText": "month",
+          price: "5000",
+          priceCurrency: "INR",
+          unitText: "month",
         },
       },
     },
     {
       "@type": "Course",
       "@id": "https://www.skillyards.in/programs/on-job-degree#bba",
-      "name": "BBA with Digital Marketing",
-      "description": "A 3-year university-affiliated Bachelor of Business Administration degree with 3 hours of daily hands-on Digital Marketing training at SkillYards, Agra.",
-      "provider": {
+      name: "BBA with Digital Marketing",
+      description:
+        "A 3-year university-affiliated Bachelor of Business Administration degree with 3 hours of daily hands-on Digital Marketing training at SkillYards, Agra.",
+      provider: {
         "@type": "Organization",
-        "name": "SkillYards",
-        "url": "https://www.skillyards.in",
+        name: "SkillYards",
+        url: "https://www.skillyards.in",
       },
-      "educationalCredentialAwarded": "Bachelor of Business Administration (BBA)",
-      "timeRequired": "P3Y",
-      "hasCourseInstance": {
+      educationalCredentialAwarded: "Bachelor of Business Administration (BBA)",
+      timeRequired: "P3Y",
+      hasCourseInstance: {
         "@type": "CourseInstance",
-        "courseMode": "offline",
-        "startDate": "2026-08-01",
-        "location": {
+        courseMode: "offline",
+        startDate: "2026-08-01",
+        location: {
           "@type": "Place",
-          "name": "SkillYards, Agra",
-          "address": {
+          name: "SkillYards, Agra",
+          address: {
             "@type": "PostalAddress",
-            "addressLocality": "Agra",
-            "addressRegion": "Uttar Pradesh",
-            "addressCountry": "IN",
+            addressLocality: "Agra",
+            addressRegion: "Uttar Pradesh",
+            addressCountry: "IN",
           },
         },
       },
-      "offers": {
+      offers: {
         "@type": "Offer",
-        "priceSpecification": {
+        priceSpecification: {
           "@type": "UnitPriceSpecification",
-          "price": "5000",
-          "priceCurrency": "INR",
-          "unitText": "month",
+          price: "5000",
+          priceCurrency: "INR",
+          unitText: "month",
         },
       },
     },

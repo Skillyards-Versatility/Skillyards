@@ -1,7 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ClipboardList, PhoneCall, CreditCard, CalendarCheck, ArrowRight } from "lucide-react";
+import {
+  ClipboardList,
+  PhoneCall,
+  CreditCard,
+  CalendarCheck,
+  ArrowRight,
+} from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -36,7 +42,6 @@ export default function OJDEligibility() {
   return (
     <section className="bg-card/20 py-20">
       <div className="mx-auto max-w-5xl px-6">
-
         <motion.h2
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -47,7 +52,6 @@ export default function OJDEligibility() {
         </motion.h2>
 
         <div className="grid gap-10 lg:grid-cols-2">
-
           {/* Left - Eligibility */}
           <motion.div
             initial={{ opacity: 0, x: -16 }}
@@ -140,8 +144,12 @@ export default function OJDEligibility() {
                       <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                         Step {step.number}
                       </p>
-                      <p className="mt-0.5 font-bold text-foreground">{step.title}</p>
-                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
+                      <p className="mt-0.5 font-bold text-foreground">
+                        {step.title}
+                      </p>
+                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                        {step.desc}
+                      </p>
                     </div>
                   </motion.div>
                 );
@@ -161,7 +169,6 @@ export default function OJDEligibility() {
               </Link>
             </Button>
           </motion.div>
-
         </div>
       </div>
     </section>

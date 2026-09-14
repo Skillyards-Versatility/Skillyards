@@ -12,7 +12,7 @@ async function main() {
   try {
     const response = await ai.models.generateContent({
       model: "gemini-1.5-flash",
-      contents: "Hello, tell me a 1-sentence joke."
+      contents: "Hello, tell me a 1-sentence joke.",
     });
     console.log(`✅ Success: "${response.text.trim()}"`);
   } catch (err) {

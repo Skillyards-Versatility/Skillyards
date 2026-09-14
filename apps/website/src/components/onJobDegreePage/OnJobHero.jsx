@@ -17,7 +17,6 @@ export default function OnJobHero() {
   return (
     <section className="relative flex w-full flex-col items-center overflow-hidden bg-background py-16 md:py-24 border-b border-border">
       <div className="relative z-10 mx-auto w-full max-w-4xl px-6 text-center">
-
         <div className="mb-6 flex justify-center">
           <Breadcrumbs
             items={[
@@ -46,7 +45,9 @@ export default function OnJobHero() {
         >
           A Real Degree.
           <br />
-          <span className="italic text-primary">Real Skills to Go With It.</span>
+          <span className="italic text-primary">
+            Real Skills to Go With It.
+          </span>
         </motion.h1>
 
         <motion.p
@@ -55,10 +56,11 @@ export default function OnJobHero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg"
         >
-          SkillYards&apos; On Job Degree programs are 3-year university-affiliated degrees (BCA or BBA)
-          where students spend the majority of each day on hands-on practical training alongside
-          academic theory. Unlike a regular college, you graduate with a degree and the actual skills
-          employers ask for in interviews.
+          SkillYards&apos; On Job Degree programs are 3-year
+          university-affiliated degrees (BCA or BBA) where students spend the
+          majority of each day on hands-on practical training alongside academic
+          theory. Unlike a regular college, you graduate with a degree and the
+          actual skills employers ask for in interviews.
         </motion.p>
 
         <motion.div
@@ -95,12 +97,13 @@ export default function OnJobHero() {
         >
           {trustItems.map((item, i) => (
             <span key={item} className="flex items-center gap-2">
-              {i > 0 && <span className="hidden h-1 w-1 rounded-full bg-border sm:block" />}
+              {i > 0 && (
+                <span className="hidden h-1 w-1 rounded-full bg-border sm:block" />
+              )}
               {item}
             </span>
           ))}
         </motion.div>
-
       </div>
     </section>
   );

@@ -5,7 +5,7 @@ import { corsHeaders } from "../utils/cors";
 
 /**
  * SKILLYARDS STRUCTURAL ENFORCEMENT WRAPPER
- * 
+ *
  * Enforces:
  * 1. Authentication (via getRequestContext)
  * 2. Resource Fetch (via resourceLoader)
@@ -14,7 +14,16 @@ import { corsHeaders } from "../utils/cors";
  * 5. Request Correlation (requestId)
  */
 
-export function createProtectedRoute(handler, { policy, resourceLoader, isPublic = false, internalServiceOnly = false, rateLimit }) {
+export function createProtectedRoute(
+  handler,
+  {
+    policy,
+    resourceLoader,
+    isPublic = false,
+    internalServiceOnly = false,
+    rateLimit,
+  },
+) {
   return async (req, context) => {
     const ctx = await getRequestContext(req);
     const headers = corsHeaders(req);
@@ -33,9 +42,15 @@ export function createProtectedRoute(handler, { policy, resourceLoader, isPublic
 
         if (!authKey || authKey !== expectedKey) {
           ctx.warn("INTERNAL_AUTH_FAILURE", { url: req.url });
-          return new Response(JSON.stringify({ success: false, message: "Forbidden (Internal Only)" }), { status: 403, headers });
+          return new Response(
+            JSON.stringify({
+              success: false,
+              message: "Forbidden (Internal Only)",
+            }),
+            { status: 403, headers },
+          );
         }
-        
+
         // Success: Mark as internal for logging/policy
         ctx.session = { userId: null, role: "INTERNAL" };
       }
@@ -43,12 +58,16 @@ export function createProtectedRoute(handler, { policy, resourceLoader, isPublic
       // 1. ── AUTHENTICATION (Bypass allowed ONLY if internal or public) ──
       if (!ctx.session && !isPublic && !internalServiceOnly) {
         ctx.warn("UNAUTHORIZED_ACCESS_ATTEMPT", { url: req.url });
-        return new Response(JSON.stringify({ success: false, message: "Unauthorized" }), { status: 401, headers });
+        return new Response(
+          JSON.stringify({ success: false, message: "Unauthorized" }),
+          { status: 401, headers },
+        );
       }
 
       // 2. ── RATE PROTECTION (Configurable per route, distributed via Upstash) ──
-      const session = ctx.session || {}; 
-      const ip = req.headers.get("x-forwarded-for")?.split(',')[0]?.trim() || "anon";
+      const session = ctx.session || {};
+      const ip =
+        req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "anon";
       const resourceId = (await context?.params)?.id;
 
       const limits = rateLimit || DEFAULT_RATE_LIMIT;
@@ -64,12 +83,24 @@ export function createProtectedRoute(handler, { policy, resourceLoader, isPublic
         daily: limits.daily,
         global: limits.global,
       });
-      
+
       if (limited) {
-        ctx.warn("RATE_LIMIT_EXCEEDED", { prefix: limits.prefix, retryAfterMs });
+        ctx.warn("RATE_LIMIT_EXCEEDED", {
+          prefix: limits.prefix,
+          retryAfterMs,
+        });
         return new Response(
-          JSON.stringify({ success: false, message: "Too many requests. Please wait." }), 
-          { status: 429, headers: { ...headers, "Retry-After": String(Math.ceil(retryAfterMs / 1000)) } }
+          JSON.stringify({
+            success: false,
+            message: "Too many requests. Please wait.",
+          }),
+          {
+            status: 429,
+            headers: {
+              ...headers,
+              "Retry-After": String(Math.ceil(retryAfterMs / 1000)),
+            },
+          },
         );
       }
 
@@ -79,28 +110,34 @@ export function createProtectedRoute(handler, { policy, resourceLoader, isPublic
         resource = await resourceLoader(resourceId);
         if (!resource) {
           ctx.warn("RESOURCE_NOT_FOUND", { resourceId });
-          return new Response(JSON.stringify({ success: false, message: "Resource not found" }), { status: 404, headers });
+          return new Response(
+            JSON.stringify({ success: false, message: "Resource not found" }),
+            { status: 404, headers },
+          );
         }
       }
 
       // 4. ── AUTHORIZATION (Policy Engine) ──
       const { authorized, reason } = policy(ctx.session, resource, req);
-      
+
       ctx.log("AUTHZ_DECISION", {
         userId: session.userId || "anonymous",
         role: session.role || "PUBLIC",
         resourceId,
         result: authorized ? "ALLOW" : "DENY",
-        reason
+        reason,
       });
 
       if (!authorized) {
-        return new Response(JSON.stringify({ success: false, message: "Forbidden" }), { status: 403, headers });
+        return new Response(
+          JSON.stringify({ success: false, message: "Forbidden" }),
+          { status: 403, headers },
+        );
       }
 
       // 5. ── SUCCESS: Proceed to handler ──
       const response = await handler(req, { context, ctx, resource });
-      
+
       // ── CORS PRESERVATION ──
       // Ensure successful responses also carry the necessary CORS headers
       if (response instanceof Response) {
@@ -109,12 +146,17 @@ export function createProtectedRoute(handler, { policy, resourceLoader, isPublic
           response.headers.set(k, v);
         });
       }
-      
-      return response;
 
+      return response;
     } catch (error) {
-      ctx.error("CRITICAL_ERROR_IN_WRAPPER", { error: error.message, stack: error.stack });
-      return new Response(JSON.stringify({ success: false, message: "Internal Server Error" }), { status: 500, headers });
+      ctx.error("CRITICAL_ERROR_IN_WRAPPER", {
+        error: error.message,
+        stack: error.stack,
+      });
+      return new Response(
+        JSON.stringify({ success: false, message: "Internal Server Error" }),
+        { status: 500, headers },
+      );
     }
   };
 }

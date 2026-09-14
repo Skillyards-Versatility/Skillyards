@@ -1,4 +1,5 @@
-const LOGO_URL = "https://raw.githubusercontent.com/skillyards/.github/be315000f3f0e8efe5b2f92eb5cf2e00fdf22579/skillyards-dark.svg#gh-dark-mode-only";
+const LOGO_URL =
+  "https://raw.githubusercontent.com/skillyards/.github/be315000f3f0e8efe5b2f92eb5cf2e00fdf22579/skillyards-dark.svg#gh-dark-mode-only";
 
 const TEAM_LABELS = {
   sales: "Sales Team",
@@ -15,7 +16,10 @@ const SALES_FIELDS = [
   { key: "connectedCalls", label: "Connected Calls" },
   { key: "counsellingDone", label: "Counselling Done" },
   { key: "counsellingBooked", label: "Counselling Booked" },
-  { key: "walkinCounselling", label: "Counselling Conducted (Walk-in / Others)" },
+  {
+    key: "walkinCounselling",
+    label: "Counselling Conducted (Walk-in / Others)",
+  },
   { key: "sessionBooked", label: "Sessions Booked" },
   { key: "admissionRegistration", label: "Admissions / Registrations" },
   { key: "admissionProjection", label: "Admission Projection" },
@@ -76,17 +80,22 @@ const TEAM_FIELDS = {
 };
 
 function cellStyle(isHeader = false, isZebra = false) {
-  const base = "padding:12px 16px;text-align:left;font-size:14px;border-bottom:1px solid #e2e8f0;";
+  const base =
+    "padding:12px 16px;text-align:left;font-size:14px;border-bottom:1px solid #e2e8f0;";
   if (isHeader) {
-    return base + "background:linear-gradient(to right, #f8fafc, #f1f5f9);color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-size:11px;";
+    return (
+      base +
+      "background:linear-gradient(to right, #f8fafc, #f1f5f9);color:#64748b;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;font-size:11px;"
+    );
   }
   const bg = isZebra ? "background:#fafafa;" : "background:#ffffff;";
   return base + bg + "color:#1e293b;";
 }
 
 function renderValue(val) {
-  if (val === undefined || val === null || val === "") return "<span style='color:#cbd5e1;'>—</span>";
-  if (!isNaN(val) && typeof val !== 'boolean') {
+  if (val === undefined || val === null || val === "")
+    return "<span style='color:#cbd5e1;'>—</span>";
+  if (!isNaN(val) && typeof val !== "boolean") {
     return `<span style="display:inline-block;padding:2px 8px;background:#e0f2fe;color:#0369a1;border-radius:12px;font-size:12px;font-weight:600;border:1px solid #bae6fd;">${val}</span>`;
   }
   return val;
@@ -94,9 +103,11 @@ function renderValue(val) {
 
 function renderReportTable(reports, team) {
   const fields = TEAM_FIELDS[team] || [];
-  if (!reports.length || !fields.length) return "<p style='color:#94a3b8;font-size:13px;font-style:italic;'>No submissions today.</p>";
+  if (!reports.length || !fields.length)
+    return "<p style='color:#94a3b8;font-size:13px;font-style:italic;'>No submissions today.</p>";
 
-  let html = '<div style="border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0, 0, 0, 0.05);margin:20px 0;">';
+  let html =
+    '<div style="border:1px solid #e2e8f0;border-radius:12px;overflow:hidden;box-shadow:0 4px 6px -1px rgba(0, 0, 0, 0.05);margin:20px 0;">';
   html += '<table style="width:100%;border-collapse:collapse;">';
 
   // Header
@@ -125,7 +136,8 @@ function renderReportTable(reports, team) {
   const notesReports = reports.filter((r) => r.data?.notes);
   if (notesReports.length > 0) {
     html += '<div style="margin-top:24px;">';
-    html += '<p style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-weight:700;margin:0 0 12px;">Notes & Updates</p>';
+    html +=
+      '<p style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#94a3b8;font-weight:700;margin:0 0 12px;">Notes & Updates</p>';
     for (const r of notesReports) {
       html += `<div style="background:#ffffff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 4px rgba(0,0,0,0.02);border:1px solid #e2e8f0;border-left:4px solid #0ea5e9;">`;
       html += `<p style="font-size:13px;color:#0f172a;margin:0 0 6px;font-weight:700;">
@@ -189,12 +201,16 @@ export function adminEnquiryTemplate(enquiry) {
   `;
 }
 
-export function receiptEmailTemplate({ studentName, receiptNumber, isAdmin = false }) {
+export function receiptEmailTemplate({
+  studentName,
+  receiptNumber,
+  isAdmin = false,
+}) {
   const year = new Date().getFullYear();
 
   const title = isAdmin ? "Receipt Copy (Admin)" : "Payment Receipt";
   const greeting = isAdmin ? "Hi Admin," : `Hi ${studentName},`;
-  const body = isAdmin 
+  const body = isAdmin
     ? `This is a copy of the payment receipt <b>${receiptNumber || ""}</b> sent to <b>${studentName}</b>.`
     : `Please find attached your payment receipt <b>${receiptNumber || ""}</b>. Thank you for your payment!`;
 
@@ -212,13 +228,17 @@ export function receiptEmailTemplate({ studentName, receiptNumber, isAdmin = fal
           ${body}
         </p>
         
-        ${!isAdmin ? `
+        ${
+          !isAdmin
+            ? `
         <div style="background:#f8fafc;border-radius:10px;padding:16px 18px;border-left:3px solid #635ee7;margin-bottom:28px;">
           <p style="font-size:13px;color:#1e293b;line-height:1.6;margin:0;">
             If you have any questions regarding this receipt, please contact us at <a href="mailto:support@skillyards.in" style="color:#635ee7;text-decoration:none;">support@skillyards.in</a>.
           </p>
         </div>
-        ` : ""}
+        `
+            : ""
+        }
       </div>
 
       <div style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:24px 28px;text-align:center;">
@@ -285,7 +305,13 @@ export function userConfirmationTemplate(enquiry) {
   `;
 }
 
-export function eodReportTemplate({ team, date, reports, missingUsers = [], adminUrl }) {
+export function eodReportTemplate({
+  team,
+  date,
+  reports,
+  missingUsers = [],
+  adminUrl,
+}) {
   const year = new Date().getFullYear();
   const teamLabel = TEAM_LABELS[team] || team;
   const submittedCount = reports.length;
@@ -298,7 +324,7 @@ export function eodReportTemplate({ team, date, reports, missingUsers = [], admi
           <span style="margin-right:8px;font-size:18px;">⚠️</span> Missing Submissions (${missingUsers.length})
         </h3>
         <ul style="margin:0;padding-left:24px;color:#b91c1c;font-size:14px;line-height:1.6;">
-          ${missingUsers.map(u => `<li><b>${u.name}</b> (${u.email})</li>`).join("")}
+          ${missingUsers.map((u) => `<li><b>${u.name}</b> (${u.email})</li>`).join("")}
         </ul>
       </div>
     `;
@@ -428,7 +454,9 @@ export function eodAllTeamsTemplate({ date, teamSummaries, adminUrl }) {
 
 export function eodWarningTemplate({ userName, date, adminUrl }) {
   const year = new Date().getFullYear();
-  const portalUrl = adminUrl ? `${adminUrl}/eod/submit?date=${date}` : "https://admin.skillyards.in/eod/submit";
+  const portalUrl = adminUrl
+    ? `${adminUrl}/eod/submit?date=${date}`
+    : "https://admin.skillyards.in/eod/submit";
 
   return `
   <div style="background:#f1f5f9;padding:2rem;font-family:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
@@ -470,7 +498,17 @@ export function eodWarningTemplate({ userName, date, adminUrl }) {
 
 const TYPE_LABELS = { CASUAL: "Casual", SICK: "Sick", UNPAID: "Unpaid" };
 
-export function leaveStatusTemplate({ applicantName, type, startDate, endDate, isHalfDay, halfDayPeriod, status, approvedByName, rejectionReason }) {
+export function leaveStatusTemplate({
+  applicantName,
+  type,
+  startDate,
+  endDate,
+  isHalfDay,
+  halfDayPeriod,
+  status,
+  approvedByName,
+  rejectionReason,
+}) {
   const year = new Date().getFullYear();
   const dateStr = isHalfDay
     ? `${new Date(startDate).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })} (${halfDayPeriod === "MORNING" ? "Morning" : "Afternoon"} half-day)`
@@ -513,12 +551,16 @@ export function leaveStatusTemplate({ applicantName, type, startDate, endDate, i
           </div>
         </div>
 
-        ${rejectionReason ? `
+        ${
+          rejectionReason
+            ? `
         <p style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#94a3b8;margin:0 0 10px;font-weight:600;">Reason for rejection</p>
         <div style="background:#fef2f2;border-radius:10px;padding:16px 18px;border-left:3px solid #dc2626;margin-bottom:24px;">
           <p style="font-size:14px;color:#991b1b;line-height:1.7;margin:0;">${rejectionReason}</p>
         </div>
-        ` : ""}
+        `
+            : ""
+        }
       </div>
 
       <div style="border-top:1px solid #e2e8f0;padding:16px 28px;background:#f8fafc;">
@@ -529,7 +571,16 @@ export function leaveStatusTemplate({ applicantName, type, startDate, endDate, i
   `;
 }
 
-export function leaveNotificationTemplate({ applicantName, type, reason, startDate, endDate, isHalfDay, halfDayPeriod, adminUrl }) {
+export function leaveNotificationTemplate({
+  applicantName,
+  type,
+  reason,
+  startDate,
+  endDate,
+  isHalfDay,
+  halfDayPeriod,
+  adminUrl,
+}) {
   const year = new Date().getFullYear();
   const dateStr = isHalfDay
     ? `${new Date(startDate).toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short", year: "numeric" })} (${halfDayPeriod === "MORNING" ? "Morning" : "Afternoon"} half-day)`

@@ -8,7 +8,6 @@ import { eq } from "drizzle-orm";
 const app = express();
 app.use(express.json());
 
-
 const auditQueue = [];
 let isProcessing = false;
 
@@ -21,8 +20,10 @@ async function processQueue() {
   const { followUpId, recordingUrl } = task;
 
   try {
-    console.log(`[Queue] Processing audit for followUpId: ${followUpId}, recordingUrl: ${recordingUrl}`);
-    
+    console.log(
+      `[Queue] Processing audit for followUpId: ${followUpId}, recordingUrl: ${recordingUrl}`,
+    );
+
     // Update db status to processing
     await db
       .update(followUps)
@@ -40,10 +41,15 @@ async function processQueue() {
       })
       .where(eq(followUps.id, followUpId));
 
-    console.log(`[Queue] Successfully completed audit for followUpId: ${followUpId}`);
+    console.log(
+      `[Queue] Successfully completed audit for followUpId: ${followUpId}`,
+    );
   } catch (error) {
-    console.error(`[Queue] AI Auditing Failed for call ID ${followUpId}:`, error);
-    
+    console.error(
+      `[Queue] AI Auditing Failed for call ID ${followUpId}:`,
+      error,
+    );
+
     // Set status to failed
     try {
       await db
@@ -51,7 +57,10 @@ async function processQueue() {
         .set({ aiStatus: "failed" })
         .where(eq(followUps.id, followUpId));
     } catch (dbError) {
-      console.error("[Queue] Failed to mark audit as failed in database:", dbError);
+      console.error(
+        "[Queue] Failed to mark audit as failed in database:",
+        dbError,
+      );
     }
   } finally {
     isProcessing = false;
@@ -69,7 +78,9 @@ app.post("/api/audit", async (req, res) => {
 
   // Push task to queue
   auditQueue.push({ followUpId, recordingUrl });
-  console.log(`[Queue] Enqueued audit for call ID ${followUpId}. Queue size: ${auditQueue.length}`);
+  console.log(
+    `[Queue] Enqueued audit for call ID ${followUpId}. Queue size: ${auditQueue.length}`,
+  );
 
   // Trigger processing
   processQueue();

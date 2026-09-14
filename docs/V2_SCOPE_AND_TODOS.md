@@ -9,7 +9,6 @@ This document outlines the identified technical debt, incomplete features (TBDs)
 - [ ] **Student Self-Service**: Fully implement ownership checks for all student-facing endpoints to ensure a student can only see their own plan and installments.
 - [ ] **Revoke Sessions**: Add infrastructure to invalidate JWTs/sessions if a user's role changes or their account is deactivated.
 
-
 ## 2. Payment & Financial Ledger
 
 - [ ] **Automated Installment Updates**: Ensure `updateInstallmentStatus` is called atomically after every payment or refund to maintain ledger integrity.
@@ -35,4 +34,5 @@ This document outlines the identified technical debt, incomplete features (TBDs)
 - [ ] **CORS Lockdown**: Move `cors.js` allowed origins to an environment variable rather than a hardcoded list.
 
 ---
-*Note: This scope is derived from current `// TBD` and `// TODO` markers in the codebase as of April 2026.*
+
+_Note: This scope is derived from current `// TBD` and `// TODO` markers in the codebase as of April 2026._

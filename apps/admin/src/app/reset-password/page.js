@@ -38,7 +38,6 @@ function ResetPasswordForm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md card p-8 shadow-2xl border-3 border-primary rounded-3xl">
-
         <div className="text-center mb-8 flex items-center justify-center">
           <Logo />
         </div>
@@ -83,7 +82,9 @@ function ResetPasswordForm() {
                     className="input pl-10"
                   />
                   {state?.errors?.newPassword && (
-                    <p className="text-xs text-red-500 mt-1">{state.errors.newPassword}</p>
+                    <p className="text-xs text-red-500 mt-1">
+                      {state.errors.newPassword}
+                    </p>
                   )}
                 </div>
 
@@ -98,7 +99,9 @@ function ResetPasswordForm() {
                     className="input pl-10"
                   />
                   {state?.errors?.confirmPassword && (
-                    <p className="text-xs text-red-500 mt-1">{state.errors.confirmPassword}</p>
+                    <p className="text-xs text-red-500 mt-1">
+                      {state.errors.confirmPassword}
+                    </p>
                   )}
                 </div>
               </div>
@@ -137,11 +140,13 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="animate-spin h-8 w-8 text-primary" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-background">
+          <Loader2 className="animate-spin h-8 w-8 text-primary" />
+        </div>
+      }
+    >
       <ResetPasswordForm />
     </Suspense>
   );

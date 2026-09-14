@@ -10,7 +10,10 @@ const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, "../apps/ai-service/.env") });
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://localhost:3005";
-const RECORDING_FILE = path.join(__dirname, "../apps/ai-service/src/real recording.m4a");
+const RECORDING_FILE = path.join(
+  __dirname,
+  "../apps/ai-service/src/real recording.m4a",
+);
 const R2_KEY = `recordings/test/real-recording-test_${Date.now()}.m4a`;
 const TEST_PHONE = "9999999999";
 
@@ -37,17 +40,21 @@ async function main() {
     process.exit(1);
   }
   const audioBuffer = fs.readFileSync(RECORDING_FILE);
-  console.log(`✅ Read recording: ${(audioBuffer.length / 1024 / 1024).toFixed(2)} MB`);
+  console.log(
+    `✅ Read recording: ${(audioBuffer.length / 1024 / 1024).toFixed(2)} MB`,
+  );
 
   // 4. Upload to R2
   console.log(`☁️  Uploading to R2 as: ${R2_KEY}`);
   const { s3Client } = await import("../apps/ai-service/src/r2-client.js");
-  await s3Client.send(new PutObjectCommand({
-    Bucket: process.env.R2_BUCKET,
-    Key: R2_KEY,
-    Body: audioBuffer,
-    ContentType: "audio/x-m4a",
-  }));
+  await s3Client.send(
+    new PutObjectCommand({
+      Bucket: process.env.R2_BUCKET,
+      Key: R2_KEY,
+      Body: audioBuffer,
+      ContentType: "audio/x-m4a",
+    }),
+  );
   console.log("✅ Uploaded to R2 successfully");
 
   // 5. Insert follow_ups record
@@ -78,7 +85,11 @@ async function main() {
     }),
   });
   if (!response.ok) {
-    console.error("❌ AI service returned", response.status, await response.text());
+    console.error(
+      "❌ AI service returned",
+      response.status,
+      await response.text(),
+    );
     process.exit(1);
   }
   console.log("✅ AI audit queued successfully (202 Accepted)");
@@ -97,7 +108,9 @@ async function main() {
         .where(eq(followUps.id, inserted.id));
 
       const status = record?.aiStatus || "unknown";
-      process.stdout.write(`\r  [Attempt ${attempts}/${maxAttempts}] Status: ${status}  `);
+      process.stdout.write(
+        `\r  [Attempt ${attempts}/${maxAttempts}] Status: ${status}  `,
+      );
 
       if (status === "completed") {
         clearInterval(interval);

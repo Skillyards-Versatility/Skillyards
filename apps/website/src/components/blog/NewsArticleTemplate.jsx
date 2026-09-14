@@ -14,7 +14,10 @@ import { extractHeadings } from "@/lib/sanity/slugifyHeading";
 const formatDate = (value) => {
   if (!value) return "";
   const cleanValue = typeof value === "string" ? value.split("T")[0] : value;
-  const localDate = typeof cleanValue === "string" ? new Date(cleanValue.replace(/-/g, "/")) : new Date(cleanValue);
+  const localDate =
+    typeof cleanValue === "string"
+      ? new Date(cleanValue.replace(/-/g, "/"))
+      : new Date(cleanValue);
   return isNaN(localDate)
     ? ""
     : localDate.toLocaleDateString("en-IN", {
@@ -27,7 +30,10 @@ const formatDate = (value) => {
 const formatDateFull = (value) => {
   if (!value) return "";
   const cleanValue = typeof value === "string" ? value.split("T")[0] : value;
-  const localDate = typeof cleanValue === "string" ? new Date(cleanValue.replace(/-/g, "/")) : new Date(cleanValue);
+  const localDate =
+    typeof cleanValue === "string"
+      ? new Date(cleanValue.replace(/-/g, "/"))
+      : new Date(cleanValue);
   return isNaN(localDate)
     ? ""
     : localDate.toLocaleDateString("en-IN", {
@@ -58,13 +64,13 @@ function Masthead({ post, pageNum }) {
         </span>
       </h1>
       <div className="border-t border-foreground/35 mt-3" />
-      
+
       <div className="border-b-[3px] border-t border-foreground/80 py-2 mt-2.5 flex flex-wrap justify-between items-center text-[10px] sm:text-[11px] font-mono tracking-[0.18em] uppercase text-foreground/80">
         <div className="font-bold">Agra, India</div>
-        <div className="font-bold py-1 sm:py-0">{formatDateFull(post.publishedAt)}</div>
-        <div className="font-bold">
-          PAGE {pageNum || 1}
+        <div className="font-bold py-1 sm:py-0">
+          {formatDateFull(post.publishedAt)}
         </div>
+        <div className="font-bold">PAGE {pageNum || 1}</div>
       </div>
     </div>
   );
@@ -76,13 +82,19 @@ function MetaRow({ post, readingTime }) {
       <span className="font-bold text-foreground">
         BY {post.author?.name || "SkillYards Team"}
       </span>
-      <span aria-hidden="true" className="text-foreground/30">·</span>
+      <span aria-hidden="true" className="text-foreground/30">
+        ·
+      </span>
       <span>{formatDate(post.publishedAt)}</span>
-      <span aria-hidden="true" className="text-foreground/30">·</span>
+      <span aria-hidden="true" className="text-foreground/30">
+        ·
+      </span>
       <span>{readingTime} MIN READ</span>
       {post.category && (
         <>
-          <span aria-hidden="true" className="text-foreground/30">·</span>
+          <span aria-hidden="true" className="text-foreground/30">
+            ·
+          </span>
           <span className="bg-foreground/5 dark:bg-white/5 px-2 py-0.5 text-[9px] font-bold text-foreground/80 border border-foreground/10">
             {post.category.replace(/-/g, " ")}
           </span>
@@ -111,20 +123,30 @@ function ProofSourceBox({ post }) {
 
       <div className="flex flex-col gap-2 text-sm font-serif">
         <div>
-          <span className="block font-mono text-[9px] uppercase tracking-widest text-foreground/45 leading-none mb-1">ORIGINAL COVERAGE</span>
+          <span className="block font-mono text-[9px] uppercase tracking-widest text-foreground/45 leading-none mb-1">
+            ORIGINAL COVERAGE
+          </span>
           <span className="font-bold text-foreground text-base leading-tight">
             {post.sourceLanguage || "Hindi"} print media
           </span>
         </div>
-        
+
         <div className="grid grid-cols-2 gap-2 border-t border-foreground/10 pt-2.5 mt-1">
           <div>
-            <span className="block font-mono text-[9px] uppercase tracking-widest text-foreground/45 leading-none mb-0.5">SOURCE</span>
-            <span className="font-bold text-foreground-dark font-serif text-sm">{post.sourceName}</span>
+            <span className="block font-mono text-[9px] uppercase tracking-widest text-foreground/45 leading-none mb-0.5">
+              SOURCE
+            </span>
+            <span className="font-bold text-foreground-dark font-serif text-sm">
+              {post.sourceName}
+            </span>
           </div>
           <div>
-            <span className="block font-mono text-[9px] uppercase tracking-widest text-foreground/45 leading-none mb-0.5">PUBLISHED</span>
-            <span className="text-foreground text-sm">{formatDate(post.sourceDate)}</span>
+            <span className="block font-mono text-[9px] uppercase tracking-widest text-foreground/45 leading-none mb-0.5">
+              PUBLISHED
+            </span>
+            <span className="text-foreground text-sm">
+              {formatDate(post.sourceDate)}
+            </span>
           </div>
         </div>
 
@@ -153,12 +175,14 @@ function ClippingImageSection({ post, clippingImageUrl }) {
       <p className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/50 mb-3 border-b border-foreground/10 pb-1.5">
         MEDIA EXHIBIT
       </p>
-      
+
       <div className="bg-[#f0ebe0] dark:bg-stone-850 p-2.5 border border-foreground/15 shadow-inner">
         <figure className="relative">
           <Image
             src={clippingImageUrl}
-            alt={post.clippingImage?.alt || `${post.sourceName} newspaper clipping`}
+            alt={
+              post.clippingImage?.alt || `${post.sourceName} newspaper clipping`
+            }
             width={1200}
             height={900}
             className="w-full h-auto object-contain brightness-[0.98] contrast-[1.02]"
@@ -166,7 +190,8 @@ function ClippingImageSection({ post, clippingImageUrl }) {
             priority
           />
           <figcaption className="mt-3.5 text-center text-xs font-serif italic text-foreground/60 leading-relaxed border-t border-foreground/10 pt-2.5">
-            Photographic archive: {post.sourceLanguage || "Hindi"} print cutting, source: {post.sourceName}
+            Photographic archive: {post.sourceLanguage || "Hindi"} print
+            cutting, source: {post.sourceName}
           </figcaption>
         </figure>
       </div>
@@ -198,13 +223,14 @@ function ArticleBody({ content, publishedAt }) {
       <h3 className="text-[10px] font-mono font-bold uppercase tracking-[0.25em] text-foreground/50 mb-4 border-b border-foreground/15 pb-1">
         CORRESPONDENT ANALYSIS & DETAILS
       </h3>
-      
+
       {/* Dateline */}
       <div className="font-mono text-[11px] font-bold tracking-wider text-foreground mb-3 uppercase">
         AGRA, UP —
       </div>
 
-      <article className="
+      <article
+        className="
         news-prose prose dark:prose-invert max-w-none
         prose-headings:font-serif prose-headings:font-extrabold prose-headings:tracking-tight prose-headings:text-foreground
         prose-h2:font-serif prose-h2:text-2xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-foreground/15 prose-h2:pb-2
@@ -216,8 +242,12 @@ function ArticleBody({ content, publishedAt }) {
         prose-blockquote:border-l-4 prose-blockquote:border-foreground/35 prose-blockquote:bg-foreground/5 prose-blockquote:px-6 prose-blockquote:py-3 prose-blockquote:rounded-none prose-blockquote:not-italic prose-blockquote:font-serif prose-blockquote:text-foreground/85 prose-blockquote:border-y prose-blockquote:border-r prose-blockquote:border-foreground/10
         prose-img:rounded-none prose-img:border prose-img:border-foreground/20 prose-img:p-1 prose-img:shadow-sm
         prose-code:font-mono prose-code:text-foreground/75 prose-code:bg-foreground/5 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-sm
-      ">
-        <PortableText value={content || []} components={portableTextComponents} />
+      "
+      >
+        <PortableText
+          value={content || []}
+          components={portableTextComponents}
+        />
       </article>
     </div>
   );
@@ -250,12 +280,15 @@ function AuthorSection({ post }) {
           </div>
         )}
         <div className="flex-1">
-          <p className="font-mono text-[9px] uppercase tracking-widest text-foreground/45 leading-none mb-1">REPORTER BYLINE</p>
+          <p className="font-mono text-[9px] uppercase tracking-widest text-foreground/45 leading-none mb-1">
+            REPORTER BYLINE
+          </p>
           <h4 className="font-serif text-lg font-bold text-foreground leading-tight">
             {post.author?.name || "SkillYards Team"}
           </h4>
           <p className="font-serif text-xs text-foreground/60 mt-0.5 leading-relaxed">
-            {post.author?.role || "Education Lead"} · Special Correspondent in Agra
+            {post.author?.role || "Education Lead"} · Special Correspondent in
+            Agra
           </p>
           {post.author?.shortBio && (
             <p className="font-serif text-xs text-foreground/70 mt-2 leading-relaxed text-justify max-w-xl">
@@ -292,7 +325,7 @@ function FullStoryColumn({ story, columnNumber }) {
         <h2 className="font-serif text-3xl sm:text-4xl font-black leading-[1.08] tracking-tight text-stone-950 dark:text-stone-50 mb-4">
           {story.title}
         </h2>
-        
+
         {story.excerpt && (
           <p className="font-serif text-[15px] leading-relaxed text-foreground/75 italic border-l-[3px] border-foreground/30 pl-3 py-0.5 my-4">
             {story.excerpt}
@@ -401,14 +434,13 @@ export default function NewsArticleTemplate({
 
       <main className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch divide-y lg:divide-y-0 lg:divide-x divide-stone-900/10 dark:divide-stone-100/10 min-h-[900px]">
-          
           {/* MOBILE ONLY COLUMN: Single-Focus active story */}
           <div className="block lg:hidden space-y-8 animate-paper-delay-1 pb-8">
             <div>
               <h1 className="font-serif text-3xl sm:text-4xl font-black leading-[1.08] tracking-tight text-stone-950 dark:text-stone-50 mb-4">
                 {post.title}
               </h1>
-              
+
               {post.excerpt && (
                 <p className="font-serif text-[15px] leading-relaxed text-foreground/75 italic border-l-[3px] border-foreground/30 pl-3 py-0.5 my-4">
                   {post.excerpt}
@@ -418,13 +450,19 @@ export default function NewsArticleTemplate({
               <MetaRow post={post} readingTime={activeReadingTime} />
             </div>
 
-            <ClippingImageSection post={post} clippingImageUrl={activeClippingUrl} />
+            <ClippingImageSection
+              post={post}
+              clippingImageUrl={activeClippingUrl}
+            />
 
             <ProofSourceBox post={post} />
 
             <EnglishSummaryBox summary={post.englishSummary} />
 
-            <ArticleBody content={post.content} publishedAt={post.publishedAt} />
+            <ArticleBody
+              content={post.content}
+              publishedAt={post.publishedAt}
+            />
 
             {activeHeadings.length > 0 && (
               <div className="p-5 bg-[#faf6ee]/40 dark:bg-stone-900/10 border border-foreground/15">
@@ -446,7 +484,7 @@ export default function NewsArticleTemplate({
               <h1 className="font-serif text-3xl sm:text-4xl font-black leading-[1.08] tracking-tight text-stone-950 dark:text-stone-50 mb-4">
                 {story1.title}
               </h1>
-              
+
               {story1.excerpt && (
                 <p className="font-serif text-[15px] leading-relaxed text-foreground/75 italic border-l-[3px] border-foreground/30 pl-3 py-0.5 my-4">
                   {story1.excerpt}
@@ -456,13 +494,19 @@ export default function NewsArticleTemplate({
               <MetaRow post={story1} readingTime={readingTime} />
             </div>
 
-            <ClippingImageSection post={story1} clippingImageUrl={story1ClippingUrl} />
+            <ClippingImageSection
+              post={story1}
+              clippingImageUrl={story1ClippingUrl}
+            />
 
             <ProofSourceBox post={story1} />
 
             <EnglishSummaryBox summary={story1.englishSummary} />
 
-            <ArticleBody content={story1.content} publishedAt={story1.publishedAt} />
+            <ArticleBody
+              content={story1.content}
+              publishedAt={story1.publishedAt}
+            />
 
             {headings.length > 0 && (
               <div className="p-5 bg-[#faf6ee]/40 dark:bg-stone-900/10 border border-foreground/15">
@@ -480,15 +524,13 @@ export default function NewsArticleTemplate({
 
           {/* COLUMN 2: BIG MIDDLE SECTION (Renders 2nd news story in full if available, else elegant blank) */}
           <div className="hidden lg:flex lg:col-span-5 px-0 lg:px-8 space-y-6 pt-8 lg:pt-0 flex-col justify-start animate-paper-delay-2 pb-8 lg:pb-0">
-
-            
             {story2 ? (
               <FullStoryColumn story={story2} columnNumber={2} />
             ) : (
               /* Faint elegant blank column layout with newspaper quote and layout motif */
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center border border-dashed border-foreground/15 min-h-[450px] bg-[#faf6eb]/10 dark:bg-stone-900/5 relative overflow-hidden select-none">
                 <div className="absolute inset-0 bg-[radial-gradient(#80808008_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none" />
-                
+
                 <div className="max-w-md space-y-4 relative z-10">
                   <div className="font-serif text-3xl font-black text-foreground/10 tracking-widest uppercase">
                     Main Story B
@@ -498,8 +540,9 @@ export default function NewsArticleTemplate({
                     This column is reserved for subsequent editorial dispatches.
                   </p>
                   <p className="font-serif text-[11px] italic text-foreground/30 leading-relaxed px-4">
-                    "Education is the progressive discovery of our own ignorance."<br />
-                    — Will Durant
+                    "Education is the progressive discovery of our own
+                    ignorance."
+                    <br />— Will Durant
                   </p>
                 </div>
               </div>
@@ -529,10 +572,15 @@ export default function NewsArticleTemplate({
 
             {/* Print Ad Placement Mockup (tasteful context-relevant CTA) */}
             <div className="border border-foreground/20 p-5 text-center relative overflow-hidden bg-foreground text-background mt-auto">
-              <p className="text-[8px] font-mono tracking-widest text-background/50 uppercase mb-4">Advertisement</p>
-              <h4 className="font-serif text-lg font-black leading-snug mb-2 uppercase tracking-wide">Launch Your IT Career</h4>
+              <p className="text-[8px] font-mono tracking-widest text-background/50 uppercase mb-4">
+                Advertisement
+              </p>
+              <h4 className="font-serif text-lg font-black leading-snug mb-2 uppercase tracking-wide">
+                Launch Your IT Career
+              </h4>
               <p className="text-xs font-serif text-background/85 mb-5 leading-relaxed">
-                Enroll in SkillYards premium technology & corporate training programs in Agra. 100% placement support.
+                Enroll in SkillYards premium technology & corporate training
+                programs in Agra. 100% placement support.
               </p>
               <a
                 href="/programs"
@@ -542,7 +590,6 @@ export default function NewsArticleTemplate({
               </a>
             </div>
           </div>
-          
         </div>
       </main>
 
@@ -558,7 +605,9 @@ export default function NewsArticleTemplate({
                 &larr; Prev News
               </a>
             ) : (
-              <span className="text-stone-400 dark:text-stone-600 font-medium">&larr; First News</span>
+              <span className="text-stone-400 dark:text-stone-600 font-medium">
+                &larr; First News
+              </span>
             )}
 
             <span className="font-serif italic text-xs font-bold text-stone-800 dark:text-stone-200">
@@ -573,7 +622,9 @@ export default function NewsArticleTemplate({
                 Next News &rarr;
               </a>
             ) : (
-              <span className="text-stone-400 dark:text-stone-600 font-medium">Last News &rarr;</span>
+              <span className="text-stone-400 dark:text-stone-600 font-medium">
+                Last News &rarr;
+              </span>
             )}
           </div>
         </section>
@@ -591,7 +642,9 @@ export default function NewsArticleTemplate({
                 &larr; Prev Page
               </a>
             ) : (
-              <span className="text-stone-400 dark:text-stone-600 font-medium">&larr; First Page</span>
+              <span className="text-stone-400 dark:text-stone-600 font-medium">
+                &larr; First Page
+              </span>
             )}
 
             <span className="font-serif italic text-xs font-bold text-stone-800 dark:text-stone-200">
@@ -606,12 +659,13 @@ export default function NewsArticleTemplate({
                 Next Page &rarr;
               </a>
             ) : (
-              <span className="text-stone-400 dark:text-stone-600 font-medium">End of Gazette &rarr;</span>
+              <span className="text-stone-400 dark:text-stone-600 font-medium">
+                End of Gazette &rarr;
+              </span>
             )}
           </div>
         </section>
       )}
-
     </div>
   );
 }

@@ -23,7 +23,9 @@ export async function getChannelById(db, channelId) {
       createdBy: conversations.createdBy,
     })
     .from(conversations)
-    .where(and(eq(conversations.id, channelId), eq(conversations.type, "channel")))
+    .where(
+      and(eq(conversations.id, channelId), eq(conversations.type, "channel")),
+    )
     .limit(1);
   return res[0] || null;
 }
@@ -94,8 +96,8 @@ export async function isChannelMember(db, channelId, userId) {
     .where(
       and(
         eq(conversationParticipants.conversationId, channelId),
-        eq(conversationParticipants.userId, userId)
-      )
+        eq(conversationParticipants.userId, userId),
+      ),
     )
     .limit(1);
   return !!res[0];
@@ -115,8 +117,8 @@ export async function removeChannelMember(db, channelId, userId) {
     .where(
       and(
         eq(conversationParticipants.conversationId, channelId),
-        eq(conversationParticipants.userId, userId)
-      )
+        eq(conversationParticipants.userId, userId),
+      ),
     );
 }
 
@@ -139,6 +141,11 @@ export async function getChannelsForUser(db, userId) {
       createdBy: conversations.createdBy,
     })
     .from(conversations)
-    .where(and(inArray(conversations.id, userChannelIds), eq(conversations.type, "channel")))
+    .where(
+      and(
+        inArray(conversations.id, userChannelIds),
+        eq(conversations.type, "channel"),
+      ),
+    )
     .orderBy(asc(conversations.name));
 }

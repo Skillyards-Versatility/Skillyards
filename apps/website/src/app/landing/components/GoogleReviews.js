@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Star, ExternalLink, MessageSquarePlus, CheckCircle2, AlertCircle, RefreshCw } from "lucide-react";
+import {
+  Star,
+  ExternalLink,
+  MessageSquarePlus,
+  CheckCircle2,
+  AlertCircle,
+  RefreshCw,
+} from "lucide-react";
 
 // Helper to get user initials for fallback avatar
 const getInitials = (name) => {
@@ -44,7 +51,7 @@ export default function GoogleReviews() {
       if (!res.ok) throw new Error("Failed to fetch reviews");
       const json = await res.json();
       setData(json);
-      
+
       // Store placeId if available to construct accurate Google Maps URLs
       if (json.placeId) {
         setPlaceId(json.placeId);
@@ -62,8 +69,9 @@ export default function GoogleReviews() {
   }, []);
 
   // Dynamically build maps urls depending on whether we got a Place ID
-  const mapSearchUrl = "https://www.google.com/maps/search/?api=1&query=Skillyards+Versatility+Pvt+Ltd+Agra";
-  const writeReviewUrl = placeId 
+  const mapSearchUrl =
+    "https://www.google.com/maps/search/?api=1&query=Skillyards+Versatility+Pvt+Ltd+Agra";
+  const writeReviewUrl = placeId
     ? `https://search.google.com/local/writereview?placeid=${placeId}`
     : mapSearchUrl;
   const viewReviewsUrl = placeId
@@ -82,7 +90,10 @@ export default function GoogleReviews() {
         {/* Skeleton Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((n) => (
-            <div key={n} className="bg-white dark:bg-[#1c1a21] border border-gray-100 dark:border-white/5 rounded-2xl p-6 shadow-sm flex flex-col h-[220px]">
+            <div
+              key={n}
+              className="bg-white dark:bg-[#1c1a21] border border-gray-100 dark:border-white/5 rounded-2xl p-6 shadow-sm flex flex-col h-[220px]"
+            >
               <div className="flex items-center gap-4 mb-4">
                 <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-neutral-800 animate-pulse" />
                 <div className="flex-1">
@@ -105,9 +116,13 @@ export default function GoogleReviews() {
       <section className="max-w-md mx-auto px-6 py-16 text-center">
         <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 rounded-2xl p-8 flex flex-col items-center">
           <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Unable to load reviews</h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">There was a problem loading ratings from Google.</p>
-          <button 
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+            Unable to load reviews
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+            There was a problem loading ratings from Google.
+          </p>
+          <button
             onClick={fetchReviews}
             className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold transition-all shadow"
           >
@@ -120,7 +135,6 @@ export default function GoogleReviews() {
 
   return (
     <section className="max-w-6xl mx-auto px-6 sm:px-8 py-16 sm:py-24 transition-all duration-300">
-      
       {/* Top Header Badge & Intro */}
       <div className="flex flex-col items-center text-center mb-12">
         <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-bold text-primary tracking-wider uppercase mb-4">
@@ -130,7 +144,8 @@ export default function GoogleReviews() {
           Highly Rated Digital Marketing &amp; Full Stack Institute in Agra
         </h2>
         <p className="text-base sm:text-lg text-muted-foreground max-w-2xl">
-          200+ students have rated SkillYards on Google - for BBA Digital Marketing, BCA Full Stack and our short skill programs.
+          200+ students have rated SkillYards on Google - for BBA Digital
+          Marketing, BCA Full Stack and our short skill programs.
         </p>
       </div>
 
@@ -139,21 +154,31 @@ export default function GoogleReviews() {
         <div className="flex flex-col sm:flex-row items-center gap-6 text-center sm:text-left">
           {/* Big Number Badge */}
           <div className="bg-gradient-to-br from-amber-400 to-orange-500 text-white w-24 h-24 sm:w-28 sm:h-28 rounded-2xl flex flex-col items-center justify-center shadow-lg transform -rotate-1">
-            <span className="text-4xl sm:text-5xl font-black">{data.rating.toFixed(1)}</span>
-            <span className="text-xs font-bold uppercase tracking-wider opacity-90">OUT OF 5</span>
+            <span className="text-4xl sm:text-5xl font-black">
+              {data.rating.toFixed(1)}
+            </span>
+            <span className="text-xs font-bold uppercase tracking-wider opacity-90">
+              OUT OF 5
+            </span>
           </div>
 
           <div>
             <div className="flex items-center justify-center sm:justify-start gap-1 mb-2">
               {[1, 2, 3, 4, 5].map((s) => (
-                <Star key={s} className="w-6 h-6 fill-amber-400 text-amber-400" />
+                <Star
+                  key={s}
+                  className="w-6 h-6 fill-amber-400 text-amber-400"
+                />
               ))}
             </div>
             <h3 className="text-xl sm:text-2xl font-bold text-foreground">
               Google &amp; Justdial Ratings
             </h3>
             <p className="text-sm text-muted-foreground mt-1">
-              Based on <span className="font-bold text-foreground">200+ student reviews</span>
+              Based on{" "}
+              <span className="font-bold text-foreground">
+                200+ student reviews
+              </span>
             </p>
           </div>
         </div>
@@ -211,7 +236,9 @@ export default function GoogleReviews() {
                       referrerPolicy="no-referrer"
                     />
                   ) : (
-                    <div className={`w-12 h-12 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-extrabold text-sm shadow-inner`}>
+                    <div
+                      className={`w-12 h-12 rounded-full bg-gradient-to-br ${gradient} flex items-center justify-center text-white font-extrabold text-sm shadow-inner`}
+                    >
                       {initials}
                     </div>
                   )}
@@ -221,7 +248,10 @@ export default function GoogleReviews() {
                       <h4 className="font-bold text-foreground leading-tight">
                         {author.displayName}
                       </h4>
-                      <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-500/10" title="Verified Reviewer" />
+                      <CheckCircle2
+                        className="w-4 h-4 text-emerald-500 fill-emerald-500/10"
+                        title="Verified Reviewer"
+                      />
                     </div>
                     <span className="text-[11px] text-primary font-bold uppercase tracking-wider">
                       Google Reviewer

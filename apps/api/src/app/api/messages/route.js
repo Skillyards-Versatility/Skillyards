@@ -11,18 +11,30 @@ async function postHandler(req, { ctx }) {
     return Response.json({ error: result.error.flatten() }, { status: 400 });
   }
   if (!result.data.channelId && !result.data.conversationId) {
-    return Response.json({ error: "Either channelId or conversationId is required" }, { status: 400 });
+    return Response.json(
+      { error: "Either channelId or conversationId is required" },
+      { status: 400 },
+    );
   }
   if (result.data.channelId && result.data.conversationId) {
-    return Response.json({ error: "Provide either channelId or conversationId, not both" }, { status: 400 });
+    return Response.json(
+      { error: "Provide either channelId or conversationId, not both" },
+      { status: 400 },
+    );
   }
   try {
     const message = await sendMessage(db, result.data, ctx.session.userId);
-    ctx.log("MESSAGE_SENT", { messageId: message.id, channelId: message.channelId });
+    ctx.log("MESSAGE_SENT", {
+      messageId: message.id,
+      channelId: message.channelId,
+    });
     return Response.json(message, { status: 201 });
   } catch (err) {
     if (err.message === "NOT_CHANNEL_MEMBER") {
-      return Response.json({ error: "You are not a member of this channel" }, { status: 403 });
+      return Response.json(
+        { error: "You are not a member of this channel" },
+        { status: 403 },
+      );
     }
     throw err;
   }

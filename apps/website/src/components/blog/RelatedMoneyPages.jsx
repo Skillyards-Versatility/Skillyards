@@ -9,7 +9,7 @@ export default function RelatedMoneyPages({ pages }) {
       typeof p.title === "string" &&
       p.title.trim() &&
       typeof p.path === "string" &&
-      p.path.trim()
+      p.path.trim(),
   );
 
   if (related.length === 0) return null;

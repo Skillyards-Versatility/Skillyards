@@ -29,7 +29,11 @@ export async function generateMetadata() {
       "IT trainer jobs",
       "SkillYards hiring",
     ],
-    ogImage: resolveOgImage(ogImages, "careers", "/images/opengraph/careers-og.jpg"),
+    ogImage: resolveOgImage(
+      ogImages,
+      "careers",
+      "/images/opengraph/careers-og.jpg",
+    ),
   });
 }
 
@@ -39,7 +43,8 @@ export default async function CareersPage() {
   const careersPageSchema = getCollectionPageSchema({
     url: "/careers",
     name: "Careers at SkillYards",
-    description: "Explore career opportunities at SkillYards. Join our team of educators, engineers, and professionals shaping the future of skill-based learning in India."
+    description:
+      "Explore career opportunities at SkillYards. Join our team of educators, engineers, and professionals shaping the future of skill-based learning in India.",
   });
 
   return (
@@ -53,10 +58,7 @@ export default async function CareersPage() {
         <CareersCTA />
       </div>
 
-      <JsonLd
-        data={careersPageSchema}
-        id="careers-page-schema-skillyards"
-      />
+      <JsonLd data={careersPageSchema} id="careers-page-schema-skillyards" />
 
       {roles?.length > 0 &&
         roles.map((job) => (

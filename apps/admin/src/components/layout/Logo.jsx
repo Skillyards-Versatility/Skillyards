@@ -14,7 +14,8 @@ export function Logo({ className = "h-14 w-auto" }) {
     return <div className={`${className} bg-transparent`} />;
   }
 
-  const src = resolvedTheme === "dark" ? "/logo/logo-dark.svg" : "/logo/logo-light.svg";
+  const src =
+    resolvedTheme === "dark" ? "/logo/logo-dark.svg" : "/logo/logo-light.svg";
 
   return (
     <Image

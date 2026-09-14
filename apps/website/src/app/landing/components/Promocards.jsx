@@ -98,7 +98,6 @@ export default function DigitalMarketingPromoCards() {
 
       {/* Bento Grid */}
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-
         {/* Card 1: Agra Center (col-span-2) */}
         <div className="group md:col-span-2 relative rounded-[2rem] p-[1px] bg-gradient-to-b from-white/15 via-white/5 to-transparent shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1.5 hover:shadow-indigo-500/5 hover:from-white/25">
           <div className="h-full rounded-[calc(2rem-1px)] bg-[#0d0c11]/85 backdrop-blur-2xl p-6 sm:p-8 flex flex-col sm:flex-row gap-6 items-start justify-between">
@@ -123,9 +122,15 @@ export default function DigitalMarketingPromoCards() {
                 </p>
 
                 <ul className={LIST}>
-                  <li>• Direct commute from Sikandra, Kamla Nagar, Shahganj, Tajganj and Bichpuri</li>
+                  <li>
+                    • Direct commute from Sikandra, Kamla Nagar, Shahganj,
+                    Tajganj and Bichpuri
+                  </li>
                   <li>• On-site parking for two-wheelers and cars</li>
-                  <li>• Students also travel in from Mathura, Firozabad, Etah, Etawah and Bharatpur</li>
+                  <li>
+                    • Students also travel in from Mathura, Firozabad, Etah,
+                    Etawah and Bharatpur
+                  </li>
                   <li>• Open weekdays from 9:00 AM — walk in any day</li>
                   <li>• Free counselling, no appointment needed</li>
                 </ul>
@@ -155,8 +160,8 @@ export default function DigitalMarketingPromoCards() {
                 </p>
 
                 <p className={`${BODY} mt-3`}>
-                  Learn Google Ads, GA4 and SEO on the BBA track; React, Next.js,
-                  Node.js and MongoDB on the BCA track.
+                  Learn Google Ads, GA4 and SEO on the BBA track; React,
+                  Next.js, Node.js and MongoDB on the BCA track.
                 </p>
               </div>
             </div>
@@ -177,9 +182,19 @@ export default function DigitalMarketingPromoCards() {
                 </h3>
 
                 <ul className={`${BODY} space-y-1.5 list-none`}>
-                  <li>• <strong className="text-white">On-Job Degree</strong> — 3-year BBA or BCA</li>
-                  <li>• <strong className="text-white">On-Job Training</strong> — shorter, skill-focused program</li>
-                  <li>• <strong className="text-white">Quick Skill Program</strong> — free AI bootcamp</li>
+                  <li>
+                    • <strong className="text-white">On-Job Degree</strong> —
+                    3-year BBA or BCA
+                  </li>
+                  <li>
+                    • <strong className="text-white">On-Job Training</strong> —
+                    shorter, skill-focused program
+                  </li>
+                  <li>
+                    •{" "}
+                    <strong className="text-white">Quick Skill Program</strong>{" "}
+                    — free AI bootcamp
+                  </li>
                 </ul>
 
                 <p className={`${BODY} mt-4`}>
@@ -204,14 +219,14 @@ export default function DigitalMarketingPromoCards() {
                 </h3>
 
                 <p className={BODY}>
-                  Speak to a counsellor in person at campus, or call to ask about
-                  eligibility, fees and batch timings.
+                  Speak to a counsellor in person at campus, or call to ask
+                  about eligibility, fees and batch timings.
                 </p>
 
                 <address className={`${BODY} mt-4 not-italic space-y-1`}>
                   <div>
-                    📍 A-3, behind Manoj Dhaba, Bhagwan Talkies crossing,
-                    Indra Puri, New Agra Colony, Agra, Uttar Pradesh 282005
+                    📍 A-3, behind Manoj Dhaba, Bhagwan Talkies crossing, Indra
+                    Puri, New Agra Colony, Agra, Uttar Pradesh 282005
                   </div>
                   <div>
                     📞{" "}
@@ -251,9 +266,7 @@ export default function DigitalMarketingPromoCards() {
             </div>
           </div>
         </div>
-
       </div>
-
     </section>
   );
 }

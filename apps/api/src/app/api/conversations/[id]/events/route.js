@@ -1,4 +1,10 @@
-import { db, messages, messageReactions, users, conversationParticipants } from "@repo/db";
+import {
+  db,
+  messages,
+  messageReactions,
+  users,
+  conversationParticipants,
+} from "@repo/db";
 import { getTypingUserIds } from "@/modules/chat/typing.store";
 import { eq, and, gt, isNull, inArray, sql } from "drizzle-orm";
 import { createProtectedRoute } from "@/lib/middleware";
@@ -30,31 +36,49 @@ async function getHandler(req, { ctx, context }) {
           const newMsgs = await getNewConversationMessages(db, id, since);
           for (const msg of newMsgs) {
             if (closed) return;
-            controller.enqueue(`event: new_message\ndata: ${JSON.stringify(msg)}\n\n`);
+            controller.enqueue(
+              `event: new_message\ndata: ${JSON.stringify(msg)}\n\n`,
+            );
           }
 
           const editedMsgs = await getEditedConversationMessages(db, id, since);
           for (const msg of editedMsgs) {
             if (closed) return;
-            controller.enqueue(`event: message_updated\ndata: ${JSON.stringify(msg)}\n\n`);
+            controller.enqueue(
+              `event: message_updated\ndata: ${JSON.stringify(msg)}\n\n`,
+            );
           }
 
-          const deletedMsgs = await getDeletedConversationMessages(db, id, since);
+          const deletedMsgs = await getDeletedConversationMessages(
+            db,
+            id,
+            since,
+          );
           for (const msg of deletedMsgs) {
             if (closed) return;
-            controller.enqueue(`event: message_deleted\ndata: ${JSON.stringify({ messageId: msg.id })}\n\n`);
+            controller.enqueue(
+              `event: message_deleted\ndata: ${JSON.stringify({ messageId: msg.id })}\n\n`,
+            );
           }
 
           const reactions = await getNewConversationReactions(db, id, since);
           for (const r of reactions) {
             if (closed) return;
-            controller.enqueue(`event: reaction_added\ndata: ${JSON.stringify(r)}\n\n`);
+            controller.enqueue(
+              `event: reaction_added\ndata: ${JSON.stringify(r)}\n\n`,
+            );
           }
 
-          const removedReactions = await getRemovedConversationReactions(db, id, since);
+          const removedReactions = await getRemovedConversationReactions(
+            db,
+            id,
+            since,
+          );
           for (const r of removedReactions) {
             if (closed) return;
-            controller.enqueue(`event: reaction_removed\ndata: ${JSON.stringify(r)}\n\n`);
+            controller.enqueue(
+              `event: reaction_removed\ndata: ${JSON.stringify(r)}\n\n`,
+            );
           }
 
           const typingUserIds = getTypingUserIds(id);
@@ -63,7 +87,9 @@ async function getHandler(req, { ctx, context }) {
               .select({ id: users.id, name: users.name })
               .from(users)
               .where(inArray(users.id, typingUserIds));
-            controller.enqueue(`event: typing\ndata: ${JSON.stringify({ users: typingUsers })}\n\n`);
+            controller.enqueue(
+              `event: typing\ndata: ${JSON.stringify({ users: typingUsers })}\n\n`,
+            );
           }
 
           controller.enqueue(`event: heartbeat\ndata: {}\n\n`);
@@ -100,8 +126,8 @@ async function getNewConversationMessages(db, conversationId, since) {
       and(
         eq(messages.conversationId, conversationId),
         gt(messages.createdAt, new Date(since)),
-        isNull(messages.deletedAt)
-      )
+        isNull(messages.deletedAt),
+      ),
     )
     .orderBy(sql`${messages.createdAt} ASC`);
 
@@ -109,7 +135,12 @@ async function getNewConversationMessages(db, conversationId, since) {
 
   const senderIds = [...new Set(rows.map((r) => r.senderId))];
   const senders = await db
-    .select({ id: users.id, name: users.name, role: users.role, profileImageKey: users.profileImageKey })
+    .select({
+      id: users.id,
+      name: users.name,
+      role: users.role,
+      profileImageKey: users.profileImageKey,
+    })
     .from(users)
     .where(inArray(users.id, senderIds));
   const senderMap = Object.fromEntries(senders.map((s) => [s.id, s]));
@@ -132,7 +163,7 @@ async function getEditedConversationMessages(db, conversationId, since) {
         eq(messages.conversationId, conversationId),
         gt(messages.editedAt, new Date(since)),
         isNull(messages.deletedAt),
-      )
+      ),
     );
   return rows.map((r) => ({
     id: r.id,
@@ -149,7 +180,7 @@ async function getDeletedConversationMessages(db, conversationId, since) {
       and(
         eq(messages.conversationId, conversationId),
         gt(messages.deletedAt, new Date(since)),
-      )
+      ),
     );
   return rows;
 }
@@ -174,7 +205,7 @@ async function getNewConversationReactions(db, conversationId, since) {
         eq(messages.conversationId, conversationId),
         gt(messageReactions.createdAt, new Date(since)),
         isNull(messages.deletedAt),
-      )
+      ),
     );
   return rows.map((r) => ({
     ...r,

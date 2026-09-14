@@ -25,7 +25,10 @@ async function postHandler(req, { ctx }) {
   const result = await startTest({ db, leadId, topics });
 
   if (result.alreadyCompleted) {
-    ctx.log("ASSESSMENT_ALREADY_COMPLETED", { leadId, sessionId: result.sessionId });
+    ctx.log("ASSESSMENT_ALREADY_COMPLETED", {
+      leadId,
+      sessionId: result.sessionId,
+    });
     return Response.json({
       success: true,
       alreadyCompleted: true,

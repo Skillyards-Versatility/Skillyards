@@ -1,4 +1,11 @@
-import { pgTable, uuid, text, timestamp, date, uniqueIndex } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  date,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 
 export const counsellingSessions = pgTable(
@@ -10,8 +17,9 @@ export const counsellingSessions = pgTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
 
-    bookedById: uuid("booked_by_id")
-      .references(() => users.id, { onDelete: "set null" }),
+    bookedById: uuid("booked_by_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
 
     studentName: text("student_name").notNull(),
     phone: text("phone"),
@@ -30,5 +38,5 @@ export const counsellingSessions = pgTable(
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  () => ({})
+  () => ({}),
 );

@@ -31,8 +31,9 @@ export function FinalCTA() {
           transition={{ delay: 0.15 }}
           className="mx-auto mt-4 max-w-lg text-sm text-primary-foreground/70 sm:text-base"
         >
-          Talk to our counselling team. They&apos;ll confirm BCA is the right fit for your
-          background and goals. The call is free and takes about 15 minutes.
+          Talk to our counselling team. They&apos;ll confirm BCA is the right
+          fit for your background and goals. The call is free and takes about 15
+          minutes.
         </motion.p>
 
         <motion.div

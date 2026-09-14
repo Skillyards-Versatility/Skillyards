@@ -2,30 +2,26 @@ import { desc } from "drizzle-orm";
 import { db, enquiries } from "../../../../../packages/db";
 
 export async function createEnquiry(enquiryData) {
-    try {
-        const result = await db
-            .insert(enquiries)
-            .values(enquiryData)
-            .returning()
+  try {
+    const result = await db.insert(enquiries).values(enquiryData).returning();
 
-        return result[0]
-
-    } catch (err) {
-        throw new Error("Failed to create enquiry: " + err.message);
-    }
+    return result[0];
+  } catch (err) {
+    throw new Error("Failed to create enquiry: " + err.message);
+  }
 }
 
 export async function getAllEnquiries() {
-    try {
-        const result = await db
-            .select()
-            .from(enquiries)
-            .orderBy(desc(enquiries.createdAt));
+  try {
+    const result = await db
+      .select()
+      .from(enquiries)
+      .orderBy(desc(enquiries.createdAt));
 
-        return result;
-    } catch (err) {
-        throw new Error("Failed to fetch enquiries: " + err.message);
-    }
+    return result;
+  } catch (err) {
+    throw new Error("Failed to fetch enquiries: " + err.message);
+  }
 }
 
 // export async function getEnquiryById(id) {

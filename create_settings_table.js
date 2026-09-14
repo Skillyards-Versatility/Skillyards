@@ -1,6 +1,6 @@
-require('dotenv').config();
-const { sql } = require('drizzle-orm');
-const { db } = require('@repo/db');
+require("dotenv").config();
+const { sql } = require("drizzle-orm");
+const { db } = require("@repo/db");
 
 async function run() {
   try {

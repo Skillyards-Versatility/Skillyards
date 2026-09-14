@@ -29,7 +29,10 @@ export default function ParentPillarCallout({ pillar }) {
             <span className="underline underline-offset-4 decoration-primary/30 group-hover:decoration-primary">
               Explore the Guide
             </span>
-            <span aria-hidden="true" className="transition-transform group-hover:translate-x-0.5">
+            <span
+              aria-hidden="true"
+              className="transition-transform group-hover:translate-x-0.5"
+            >
               →
             </span>
           </div>
@@ -38,4 +41,3 @@ export default function ParentPillarCallout({ pillar }) {
     </section>
   );
 }
-

@@ -1,6 +1,9 @@
 import { db, plans } from "@repo/db";
 import { eq } from "drizzle-orm";
-import { createPlanWithInstallments, getPlanWithInstallments } from "@/modules/plans/plan.service";
+import {
+  createPlanWithInstallments,
+  getPlanWithInstallments,
+} from "@/modules/plans/plan.service";
 import { getStudentById } from "@/modules/students/student.repository";
 import { createProtectedRoute } from "@/lib/middleware";
 import { canAccessStudent } from "@/lib/permissions";
@@ -28,10 +31,13 @@ async function postHandler(req, { context, ctx, resource: student }) {
   const plan = await createPlanWithInstallments(db, studentId, body);
 
   ctx.log("PLAN_CREATED", { studentId, planId: plan.id });
-  return Response.json({
-    success: true,
-    data: plan,
-  }, { status: 201 });
+  return Response.json(
+    {
+      success: true,
+      data: plan,
+    },
+    { status: 201 },
+  );
 }
 
 /**
@@ -39,7 +45,10 @@ async function postHandler(req, { context, ctx, resource: student }) {
  */
 async function patchHandler(req, { context, ctx, resource: student }) {
   if (ctx.session.role !== "ADMIN") {
-    return Response.json({ error: "Admin access required to edit plans" }, { status: 403 });
+    return Response.json(
+      { error: "Admin access required to edit plans" },
+      { status: 403 },
+    );
   }
 
   const { id: studentId } = await context.params;
@@ -57,7 +66,10 @@ async function patchHandler(req, { context, ctx, resource: student }) {
     .limit(1);
 
   if (!plan) {
-    return Response.json({ error: "No plan found for student" }, { status: 404 });
+    return Response.json(
+      { error: "No plan found for student" },
+      { status: 404 },
+    );
   }
 
   if (plan.type !== "flexible" && totalAmount !== plan.totalAmount) {
@@ -66,9 +78,13 @@ async function patchHandler(req, { context, ctx, resource: student }) {
     const { installments } = await getPlanWithInstallments(db, studentId);
     const scheduled = (installments || []).reduce((s, i) => s + i.amountDue, 0);
     if (scheduled !== totalAmount) {
-      return Response.json({
-        error: "Total amount must equal the sum of scheduled installments. Edit installments first or assign a new plan.",
-      }, { status: 400 });
+      return Response.json(
+        {
+          error:
+            "Total amount must equal the sum of scheduled installments. Edit installments first or assign a new plan.",
+        },
+        { status: 400 },
+      );
     }
   }
 
@@ -86,15 +102,15 @@ async function patchHandler(req, { context, ctx, resource: student }) {
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
   policy: canAccessStudent,
-  resourceLoader: (id) => getStudentById(db, id)
+  resourceLoader: (id) => getStudentById(db, id),
 });
 
 export const POST = createProtectedRoute(postHandler, {
   policy: canAccessStudent,
-  resourceLoader: (id) => getStudentById(db, id)
+  resourceLoader: (id) => getStudentById(db, id),
 });
 
 export const PATCH = createProtectedRoute(patchHandler, {
   policy: canAccessStudent,
-  resourceLoader: (id) => getStudentById(db, id)
+  resourceLoader: (id) => getStudentById(db, id),
 });

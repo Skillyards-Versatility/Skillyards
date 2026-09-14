@@ -103,10 +103,10 @@ export async function getCalls(telecallerId = null, limit = 30, offset = 0) {
     if (!migrated) {
       try {
         await db.execute(
-          sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_training BOOLEAN DEFAULT FALSE NOT NULL;`
+          sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_training BOOLEAN DEFAULT FALSE NOT NULL;`,
         );
         await db.execute(
-          sql`ALTER TABLE follow_ups ADD COLUMN IF NOT EXISTS is_training BOOLEAN DEFAULT FALSE NOT NULL;`
+          sql`ALTER TABLE follow_ups ADD COLUMN IF NOT EXISTS is_training BOOLEAN DEFAULT FALSE NOT NULL;`,
         );
         migrated = true;
         console.log("Programmatic database migrations applied successfully.");
@@ -170,7 +170,12 @@ export async function refreshCall(callId) {
   }
 }
 
-export async function getUploadPresignedUrlAction(telecallerId, phone, ext, isTrainingInput) {
+export async function getUploadPresignedUrlAction(
+  telecallerId,
+  phone,
+  ext,
+  isTrainingInput,
+) {
   try {
     const session = await getSession();
     if (!session || !["ADMIN", "MANAGER"].includes(session.role)) {
@@ -178,7 +183,10 @@ export async function getUploadPresignedUrlAction(telecallerId, phone, ext, isTr
     }
 
     if (!telecallerId || !phone) {
-      return { success: false, error: "Missing required fields. Please hard-refresh your browser." };
+      return {
+        success: false,
+        error: "Missing required fields. Please hard-refresh your browser.",
+      };
     }
 
     const cleanPhone = phone.replace(/\D/g, "").slice(-10);
@@ -194,20 +202,35 @@ export async function getUploadPresignedUrlAction(telecallerId, phone, ext, isTr
       return { success: false, error: "Telecaller not found in database" };
     }
 
-    const isTraining = isTrainingInput === true || (isTrainingInput === null && user.isTraining);
+    const isTraining =
+      isTrainingInput === true || (isTrainingInput === null && user.isTraining);
 
-    const response = await fetch(`${API}/api/telephony/presign?telecaller_id=${telecallerId}&to_number=${cleanPhone}&recording_ext=${ext}&is_training=${isTraining}`, {
-      headers: {
-        "x-app-secret": process.env.CALL_TRACKER_SECRET || "skillyards_call_tracker_secret_default",
+    const response = await fetch(
+      `${API}/api/telephony/presign?telecaller_id=${telecallerId}&to_number=${cleanPhone}&recording_ext=${ext}&is_training=${isTraining}`,
+      {
+        headers: {
+          "x-app-secret":
+            process.env.CALL_TRACKER_SECRET ||
+            "skillyards_call_tracker_secret_default",
+        },
       },
-    });
+    );
 
     const data = await response.json();
     if (!response.ok || !data.success) {
-      return { success: false, error: data.message || "Failed to get presigned URL from API" };
+      return {
+        success: false,
+        error: data.message || "Failed to get presigned URL from API",
+      };
     }
 
-    return { success: true, uploadUrl: data.uploadUrl, recordingKey: data.key, isTraining, userName: user.name };
+    return {
+      success: true,
+      uploadUrl: data.uploadUrl,
+      recordingKey: data.key,
+      isTraining,
+      userName: user.name,
+    };
   } catch (error) {
     console.error("getUploadPresignedUrlAction error:", error);
     return { success: false, error: error.message };
@@ -221,7 +244,16 @@ export async function finalizeCallUploadAction(payload) {
       return { success: false, error: "Unauthorized" };
     }
 
-    const { telecallerId, userName, phone, duration, outcome, contactedAt, isTraining, recordingKey } = payload;
+    const {
+      telecallerId,
+      userName,
+      phone,
+      duration,
+      outcome,
+      contactedAt,
+      isTraining,
+      recordingKey,
+    } = payload;
 
     if (!phone) {
       return { success: false, error: "Missing phone number in payload." };
@@ -247,7 +279,8 @@ export async function finalizeCallUploadAction(payload) {
 
     // Trigger AI Audit service
     if (inserted.outcome === "reached") {
-      const aiServiceUrl = process.env.AI_SERVICE_URL || "http://localhost:3005";
+      const aiServiceUrl =
+        process.env.AI_SERVICE_URL || "http://localhost:3005";
       fetch(`${aiServiceUrl}/api/audit`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -256,7 +289,7 @@ export async function finalizeCallUploadAction(payload) {
           recordingUrl: recordingKey,
         }),
       }).catch((err) =>
-        console.error("AI service trigger failed for custom recording:", err)
+        console.error("AI service trigger failed for custom recording:", err),
       );
     }
 
@@ -277,8 +310,8 @@ export async function finalizeCallUploadAction(payload) {
         createdAt: inserted.createdAt.toISOString(),
         aiStatus: inserted.aiStatus,
         isTraining: inserted.isTraining,
-        analysis: null
-      }
+        analysis: null,
+      },
     };
   } catch (error) {
     console.error("finalizeCallUploadAction error:", error);

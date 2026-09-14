@@ -1,15 +1,14 @@
-import {
-  findLeadByEmail,
-  createLead,
-  getLeadById,
-} from "./test.repository";
+import { findLeadByEmail, createLead, getLeadById } from "./test.repository";
 
-import { getSessionById, createTestSession, getLatestSessionByLeadId, getRandomActiveQuestions } from "./test.repository";
+import {
+  getSessionById,
+  createTestSession,
+  getLatestSessionByLeadId,
+  getRandomActiveQuestions,
+} from "./test.repository";
 import { testSessions } from "@repo/db";
 import { eq } from "drizzle-orm";
 import { generateAndSendCertificate } from "./certificate.service";
-
-
 
 // ---------------- REGISTER ----------------
 
@@ -38,8 +37,6 @@ export async function registerTestLead({ db, data }) {
   }
 }
 
-
-
 // ---------------- START TEST ----------------
 
 export async function startTest({ db, leadId, topics }) {
@@ -50,9 +47,12 @@ export async function startTest({ db, leadId, topics }) {
       return { alreadyCompleted: true, sessionId: existingSession.id };
     }
 
-    const elapsedMinutes = (new Date() - new Date(existingSession.startedAt)) / 60000;
+    const elapsedMinutes =
+      (new Date() - new Date(existingSession.startedAt)) / 60000;
 
-    const snapshotTopics = [...new Set(existingSession.questionsSnapshot.map(q => q.topic))].sort();
+    const snapshotTopics = [
+      ...new Set(existingSession.questionsSnapshot.map((q) => q.topic)),
+    ].sort();
     const sortedTopics = [...topics].sort();
     const topicsMatch =
       snapshotTopics.length === sortedTopics.length &&
@@ -60,7 +60,9 @@ export async function startTest({ db, leadId, topics }) {
 
     if (elapsedMinutes <= 5 && topicsMatch) {
       // Resume session — accidental refresh with same subjects
-      const questionsForFrontend = existingSession.questionsSnapshot.map(({ correctAnswer, ...q }) => q);
+      const questionsForFrontend = existingSession.questionsSnapshot.map(
+        ({ correctAnswer, ...q }) => q,
+      );
       return {
         sessionId: existingSession.id,
         questions: questionsForFrontend,
@@ -78,7 +80,9 @@ export async function startTest({ db, leadId, topics }) {
   const rawQuestions = await getRandomActiveQuestions(topics);
 
   if (!rawQuestions || rawQuestions.length === 0) {
-    throw new Error("No questions available for the selected topics in the database.");
+    throw new Error(
+      "No questions available for the selected topics in the database.",
+    );
   }
 
   const session = await createTestSession(db, {
@@ -125,7 +129,7 @@ export async function submitTest({ db, sessionId, answers }) {
   const evaluationSnapshot = [];
 
   for (const userAns of answers) {
-    const actualQ = questions.find(q => q.id === userAns.questionId);
+    const actualQ = questions.find((q) => q.id === userAns.questionId);
     if (!actualQ) continue;
 
     const correctAnswer = actualQ.correctAnswer;
@@ -180,7 +184,6 @@ export async function submitTest({ db, sessionId, answers }) {
     total,
   };
 }
-
 
 async function generateAndSendCertificateWrapper({
   db,

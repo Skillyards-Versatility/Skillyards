@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import {
   format,
   parse,
@@ -28,7 +32,9 @@ function displayToIso(display) {
   const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(display);
   if (!m) return "";
   const [, dd, mm, yyyy] = m;
-  const d = Number(dd), mo = Number(mm), y = Number(yyyy);
+  const d = Number(dd),
+    mo = Number(mm),
+    y = Number(yyyy);
   if (mo < 1 || mo > 12 || d < 1 || d > 31 || y < 1900) return "";
   const date = parse(display, "dd/MM/yyyy", new Date());
   if (!isValid(date)) return "";
@@ -37,7 +43,8 @@ function displayToIso(display) {
 
 function autoFormat(raw) {
   const digits = raw.replace(/\D/g, "").slice(0, 8);
-  if (digits.length >= 5) return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
+  if (digits.length >= 5)
+    return `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`;
   if (digits.length >= 3) return `${digits.slice(0, 2)}/${digits.slice(2)}`;
   return digits;
 }
@@ -52,10 +59,19 @@ function dateToIso(d) {
   return format(d, "yyyy-MM-dd");
 }
 
-export function DateInput({ value, onChange, required, className = "input", disabled, ...rest }) {
+export function DateInput({
+  value,
+  onChange,
+  required,
+  className = "input",
+  disabled,
+  ...rest
+}) {
   const [display, setDisplay] = useState(() => isoToDisplay(value));
   const [open, setOpen] = useState(false);
-  const [viewMonth, setViewMonth] = useState(() => isoToDate(value) || new Date());
+  const [viewMonth, setViewMonth] = useState(
+    () => isoToDate(value) || new Date(),
+  );
   const wrapRef = useRef(null);
 
   useEffect(() => {
@@ -67,9 +83,12 @@ export function DateInput({ value, onChange, required, className = "input", disa
   useEffect(() => {
     if (!open) return;
     const onClick = (e) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+      if (wrapRef.current && !wrapRef.current.contains(e.target))
+        setOpen(false);
     };
-    const onKey = (e) => { if (e.key === "Escape") setOpen(false); };
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
     document.addEventListener("mousedown", onClick);
     document.addEventListener("keydown", onKey);
     return () => {
@@ -118,7 +137,7 @@ export function DateInput({ value, onChange, required, className = "input", disa
         />
         <button
           type="button"
-          onClick={() => !disabled && setOpen(o => !o)}
+          onClick={() => !disabled && setOpen((o) => !o)}
           disabled={disabled}
           aria-label="Open calendar"
           className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded hover:bg-muted text-muted-foreground disabled:opacity-50"
@@ -132,7 +151,7 @@ export function DateInput({ value, onChange, required, className = "input", disa
           <div className="flex items-center justify-between mb-2">
             <button
               type="button"
-              onClick={() => setViewMonth(m => addMonths(m, -1))}
+              onClick={() => setViewMonth((m) => addMonths(m, -1))}
               className="p-1.5 rounded hover:bg-muted text-muted-foreground"
               aria-label="Previous month"
             >
@@ -143,7 +162,7 @@ export function DateInput({ value, onChange, required, className = "input", disa
             </span>
             <button
               type="button"
-              onClick={() => setViewMonth(m => addMonths(m, 1))}
+              onClick={() => setViewMonth((m) => addMonths(m, 1))}
               className="p-1.5 rounded hover:bg-muted text-muted-foreground"
               aria-label="Next month"
             >
@@ -152,8 +171,11 @@ export function DateInput({ value, onChange, required, className = "input", disa
           </div>
 
           <div className="grid grid-cols-7 gap-0.5 mb-1">
-            {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map(d => (
-              <div key={d} className="text-[10px] font-semibold text-muted-foreground text-center py-1">
+            {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((d) => (
+              <div
+                key={d}
+                className="text-[10px] font-semibold text-muted-foreground text-center py-1"
+              >
                 {d}
               </div>
             ))}

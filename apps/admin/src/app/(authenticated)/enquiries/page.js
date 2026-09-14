@@ -4,14 +4,24 @@ import { desc, eq } from "drizzle-orm";
 
 import { db, enquiries as enquiriesTable } from "@repo/db";
 import { getSession } from "@/lib/auth";
-import { shouldFetch, getCachedEnquiries, setCachedEnquiries } from "@/lib/enquiries-cache";
+import {
+  shouldFetch,
+  getCachedEnquiries,
+  setCachedEnquiries,
+} from "@/lib/enquiries-cache";
 import { EnquiriesClient } from "./enquiries-client";
 
 export const dynamic = "force-dynamic";
 
 const PAGE_SIZE = 10;
 
-const VALID_SORT_COLUMNS = ["firstName", "email", "status", "createdAt", "source"];
+const VALID_SORT_COLUMNS = [
+  "firstName",
+  "email",
+  "status",
+  "createdAt",
+  "source",
+];
 
 function mapEnquiry(enquiry) {
   return {
@@ -57,14 +67,17 @@ export default async function EnquiriesPage({ searchParams }) {
   const isAdmin = session?.role === "ADMIN";
   const params = await searchParams;
   const requestedPage = Number(params?.page || 1);
-  const currentPage = Number.isFinite(requestedPage) && requestedPage > 0
-    ? Math.floor(requestedPage)
-    : 1;
+  const currentPage =
+    Number.isFinite(requestedPage) && requestedPage > 0
+      ? Math.floor(requestedPage)
+      : 1;
   const search = typeof params?.search === "string" ? params.search : "";
   const sort = typeof params?.sort === "string" ? params.sort : "createdAt";
   const order = typeof params?.order === "string" ? params.order : "desc";
-  const statusFilter = typeof params?.status === "string" && params.status ? params.status : "";
-  const sourceFilter = typeof params?.source === "string" && params.source ? params.source : "";
+  const statusFilter =
+    typeof params?.status === "string" && params.status ? params.status : "";
+  const sourceFilter =
+    typeof params?.source === "string" && params.source ? params.source : "";
 
   const allEnquiries = await getAllMerged();
 

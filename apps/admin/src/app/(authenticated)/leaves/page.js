@@ -10,6 +10,6 @@ export default async function LeavesPage() {
   if (settings.leaves_feature === false) redirect("/dashboard");
 
   const session = await getSession();
-  
+
   return <LeavesHubClient userRole={session?.role || "SALES"} />;
 }

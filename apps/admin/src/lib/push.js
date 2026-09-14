@@ -17,8 +17,15 @@ export async function registerServiceWorker() {
 }
 
 export async function subscribeToPushNotifications() {
-  if (typeof window === "undefined" || !("serviceWorker" in navigator) || !("PushManager" in window)) {
-    return { success: false, message: "Push notifications not supported by browser." };
+  if (
+    typeof window === "undefined" ||
+    !("serviceWorker" in navigator) ||
+    !("PushManager" in window)
+  ) {
+    return {
+      success: false,
+      message: "Push notifications not supported by browser.",
+    };
   }
 
   try {
@@ -26,7 +33,7 @@ export async function subscribeToPushNotifications() {
     if (!registration) {
       registration = await registerServiceWorker();
     }
-    
+
     if (!registration) {
       return { success: false, message: "Service worker not registered." };
     }
@@ -34,12 +41,16 @@ export async function subscribeToPushNotifications() {
     // Convert public VAPID key to Uint8Array
     const publicVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
     if (!publicVapidKey) {
-      console.error("NEXT_PUBLIC_VAPID_PUBLIC_KEY is missing from environment variables.");
+      console.error(
+        "NEXT_PUBLIC_VAPID_PUBLIC_KEY is missing from environment variables.",
+      );
       return { success: false, message: "Configuration error." };
     }
 
     const padding = "=".repeat((4 - (publicVapidKey.length % 4)) % 4);
-    const base64 = (publicVapidKey + padding).replace(/\-/g, "+").replace(/_/g, "/");
+    const base64 = (publicVapidKey + padding)
+      .replace(/\-/g, "+")
+      .replace(/_/g, "/");
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);
     for (let i = 0; i < rawData.length; ++i) {
@@ -54,13 +65,16 @@ export async function subscribeToPushNotifications() {
     // Send subscription to server
     const { API } = await import("@/lib/api");
     const { getRawToken } = await import("@/lib/auth");
-    
+
     // In client components, we might just call a server action, or pass the token.
     // Actually, hitting the API from the client requires passing the cookie/auth header.
     // Instead of importing getRawToken, we can just do a relative fetch if rewrites are set up,
     // or we can use a server action. Let's just return the subscription and let the UI component call a server action.
-    
-    return { success: true, subscription: JSON.parse(JSON.stringify(subscription)) };
+
+    return {
+      success: true,
+      subscription: JSON.parse(JSON.stringify(subscription)),
+    };
   } catch (error) {
     console.error("Push subscription failed:", error);
     return { success: false, message: error.message || "Failed to subscribe" };

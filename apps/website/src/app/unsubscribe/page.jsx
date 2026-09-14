@@ -23,14 +23,14 @@ export default function Page() {
   const webPageSchema = getWebPageSchema({
     url: "/unsubscribe",
     name: "Unsubscribe from Emails | SkillYards",
-    description: "Manage your email preferences on SkillYards."
+    description: "Manage your email preferences on SkillYards.",
   });
 
   return (
     <>
       <JsonLd data={webPageSchema} id="unsubscribe-webpage-schema" />
       <Suspense fallback={<Loading />}>
-      <UnsubscribeClient />
+        <UnsubscribeClient />
       </Suspense>
     </>
   );

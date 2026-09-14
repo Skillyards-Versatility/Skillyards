@@ -16,7 +16,7 @@ export default async function CounsellingPage() {
   const session = await getSession();
   const isAdmin = session?.role === "ADMIN" || session?.role === "MANAGER";
   const canEdit = session?.role === "ADMIN";
-  
+
   const batches = await getBatches();
 
   let counselors = [];
@@ -29,14 +29,19 @@ export default async function CounsellingPage() {
           eq(users.role, "ADMIN"),
           eq(users.role, "SALES"),
           eq(users.role, "OUTSIDE_SALES"),
-          and(eq(users.role, "MANAGER"), eq(users.team, "sales"))
-        )
+          and(eq(users.role, "MANAGER"), eq(users.team, "sales")),
+        ),
       );
   }
 
   return (
     <div className="p-4 sm:p-6 lg:p-8">
-      <CounsellingClient isAdmin={isAdmin} canEdit={canEdit} counselors={counselors} batches={batches} />
+      <CounsellingClient
+        isAdmin={isAdmin}
+        canEdit={canEdit}
+        counselors={counselors}
+        batches={batches}
+      />
     </div>
   );
 }

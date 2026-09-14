@@ -6,7 +6,7 @@ export * from "./students.js";
 export * from "./payments.js";
 export * from "./plans.js";
 export * from "./installments.js";
-export * from "./payment_allocation.js"
+export * from "./payment_allocation.js";
 export * from "./pdfFailures.js";
 export * from "./followUps.js";
 export * from "./employees.js";

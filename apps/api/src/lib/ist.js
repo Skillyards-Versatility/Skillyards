@@ -28,13 +28,13 @@ export function isIstBeforeCutoff(now = new Date()) {
     hour: "numeric",
     minute: "numeric",
   }).formatToParts(now);
-  
+
   const hourPart = parts.find((p) => p.type === "hour");
   const minutePart = parts.find((p) => p.type === "minute");
-  
+
   const hour = parseInt(hourPart ? hourPart.value : "0", 10);
   const minute = parseInt(minutePart ? minutePart.value : "0", 10);
-  
+
   if (hour < 19) return true;
   if (hour === 19 && minute < 30) return true;
   return false;

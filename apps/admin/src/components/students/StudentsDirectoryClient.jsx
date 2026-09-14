@@ -5,19 +5,23 @@ import { useRouter } from "next/navigation";
 import { CourseBatchesSection } from "./CourseBatchesSection";
 import { StudentTable } from "./StudentTable";
 
-export function StudentsDirectoryClient({ 
-  initialStudents = [], 
-  initialBatches = [], 
+export function StudentsDirectoryClient({
+  initialStudents = [],
+  initialBatches = [],
   canEdit = false,
   totalStudents = 0,
   limit = 100,
-  offset = 0
+  offset = 0,
 }) {
   const router = useRouter();
   const [selectedCourse, setSelectedCourse] = useState("");
   const [selectedBatchId, setSelectedBatchId] = useState("");
-  
-  const lastUpdated = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+
+  const lastUpdated = new Date().toLocaleTimeString("en-IN", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 
   const handleRefresh = () => {
     router.refresh();

@@ -2,14 +2,17 @@
 
 import { useEffect, useState } from "react";
 import {
-  X, ChevronRight, ChevronLeft, Check,
-  CreditCard, CalendarDays, SlidersHorizontal,
+  X,
+  ChevronRight,
+  ChevronLeft,
+  Check,
+  CreditCard,
+  CalendarDays,
+  SlidersHorizontal,
 } from "lucide-react";
 import { formatDate } from "@/lib/format";
 import { createStudentPlan } from "@/actions/student";
 import { DateInput } from "@/components/ui/date-input";
-
-
 
 function addMonths(dateStr, n) {
   const d = new Date(dateStr);
@@ -32,9 +35,6 @@ function generateStandardRows(config, net) {
     label: `Installment ${i + 1}`,
   }));
 }
-
-
-
 
 const PLAN_TYPES = [
   {
@@ -60,7 +60,7 @@ const PLAN_TYPES = [
 function StepPlanType({ planType, setPlanType, onNext }) {
   return (
     <div className="space-y-3">
-      {PLAN_TYPES.map(pt => (
+      {PLAN_TYPES.map((pt) => (
         <button
           key={pt.id}
           onClick={() => setPlanType(pt.id)}
@@ -70,11 +70,17 @@ function StepPlanType({ planType, setPlanType, onNext }) {
               : "border-border hover:bg-muted/40"
           }`}
         >
-          <span className={planType === pt.id ? "text-primary" : "text-muted-foreground"}>
+          <span
+            className={
+              planType === pt.id ? "text-primary" : "text-muted-foreground"
+            }
+          >
             {pt.icon}
           </span>
           <div>
-            <p className={`text-sm font-semibold ${planType === pt.id ? "text-primary" : "text-foreground"}`}>
+            <p
+              className={`text-sm font-semibold ${planType === pt.id ? "text-primary" : "text-foreground"}`}
+            >
               {pt.label}
             </p>
             <p className="text-xs text-muted-foreground mt-0.5">{pt.desc}</p>
@@ -96,14 +102,16 @@ function StepPlanType({ planType, setPlanType, onNext }) {
   );
 }
 
-
-
 function StepFullPay({ fullPayDate, setFullPayDate, net, onNext, onBack }) {
   return (
     <div className="space-y-5">
       <div className="rounded-lg bg-muted/50 border border-border px-4 py-3 flex items-center justify-between">
-        <span className="text-xs font-semibold text-muted-foreground uppercase">Amount Due</span>
-        <span className="text-lg font-bold text-foreground">₹{net.toLocaleString()}</span>
+        <span className="text-xs font-semibold text-muted-foreground uppercase">
+          Amount Due
+        </span>
+        <span className="text-lg font-bold text-foreground">
+          ₹{net.toLocaleString()}
+        </span>
       </div>
 
       <div>
@@ -118,7 +126,10 @@ function StepFullPay({ fullPayDate, setFullPayDate, net, onNext, onBack }) {
       </div>
 
       <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 flex items-center justify-center gap-2 py-3 border border-border rounded-lg font-semibold text-sm hover:bg-muted">
+        <button
+          onClick={onBack}
+          className="flex-1 flex items-center justify-center gap-2 py-3 border border-border rounded-lg font-semibold text-sm hover:bg-muted"
+        >
           <ChevronLeft className="w-4 h-4" /> Back
         </button>
         <button
@@ -132,8 +143,6 @@ function StepFullPay({ fullPayDate, setFullPayDate, net, onNext, onBack }) {
     </div>
   );
 }
-
-
 
 function StepStandardEMI({ config, setConfig, net, onNext, onBack }) {
   const rows = generateStandardRows(config, net);
@@ -154,18 +163,14 @@ function StepStandardEMI({ config, setConfig, net, onNext, onBack }) {
             className="input"
             placeholder="e.g. 6"
             value={config.count}
-            onChange={e => setConfig({ ...config, count: e.target.value })}
+            onChange={(e) => setConfig({ ...config, count: e.target.value })}
           />
         </div>
         <div>
           <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
             Frequency
           </label>
-          <select
-            className="input"
-            value={config.frequency}
-            disabled
-          >
+          <select className="input" value={config.frequency} disabled>
             <option value="monthly">Monthly</option>
           </select>
         </div>
@@ -185,7 +190,9 @@ function StepStandardEMI({ config, setConfig, net, onNext, onBack }) {
       {rows.length > 0 && (
         <div className="rounded-lg border border-border overflow-hidden">
           <div className="px-4 py-2.5 bg-muted/40 border-b border-border">
-            <p className="text-xs font-semibold text-muted-foreground uppercase">Preview</p>
+            <p className="text-xs font-semibold text-muted-foreground uppercase">
+              Preview
+            </p>
           </div>
           <table className="w-full text-sm">
             <thead className="text-xs text-muted-foreground">
@@ -196,11 +203,15 @@ function StepStandardEMI({ config, setConfig, net, onNext, onBack }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {rows.map(r => (
+              {rows.map((r) => (
                 <tr key={r.id}>
-                  <td className="px-4 py-2.5 text-muted-foreground">{r.label}</td>
+                  <td className="px-4 py-2.5 text-muted-foreground">
+                    {r.label}
+                  </td>
                   <td className="px-4 py-2.5">{formatDate(r.date)}</td>
-                  <td className="px-4 py-2.5 text-right font-semibold">₹{r.amount.toLocaleString()}</td>
+                  <td className="px-4 py-2.5 text-right font-semibold">
+                    ₹{r.amount.toLocaleString()}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -209,7 +220,10 @@ function StepStandardEMI({ config, setConfig, net, onNext, onBack }) {
       )}
 
       <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 flex items-center justify-center gap-2 py-3 border border-border rounded-lg font-semibold text-sm hover:bg-muted">
+        <button
+          onClick={onBack}
+          className="flex-1 flex items-center justify-center gap-2 py-3 border border-border rounded-lg font-semibold text-sm hover:bg-muted"
+        >
           <ChevronLeft className="w-4 h-4" /> Back
         </button>
         <button
@@ -224,9 +238,13 @@ function StepStandardEMI({ config, setConfig, net, onNext, onBack }) {
   );
 }
 
-
-
-function StepFlexible({ firstInstallment, setFirstInstallment, net, onNext, onBack }) {
+function StepFlexible({
+  firstInstallment,
+  setFirstInstallment,
+  net,
+  onNext,
+  onBack,
+}) {
   const amount = Number(firstInstallment.amount) || 0;
   const remaining = net - amount;
   const isValid = firstInstallment.date && amount > 0 && amount <= net;
@@ -234,8 +252,12 @@ function StepFlexible({ firstInstallment, setFirstInstallment, net, onNext, onBa
   return (
     <div className="space-y-5">
       <div className="rounded-lg bg-muted/50 border border-border px-4 py-3 flex items-center justify-between">
-        <span className="text-xs font-semibold text-muted-foreground uppercase">Total Net Payable</span>
-        <span className="text-lg font-bold text-foreground">₹{net.toLocaleString()}</span>
+        <span className="text-xs font-semibold text-muted-foreground uppercase">
+          Total Net Payable
+        </span>
+        <span className="text-lg font-bold text-foreground">
+          ₹{net.toLocaleString()}
+        </span>
       </div>
 
       <div>
@@ -244,7 +266,9 @@ function StepFlexible({ firstInstallment, setFirstInstallment, net, onNext, onBa
         </label>
         <DateInput
           value={firstInstallment.date}
-          onChange={(iso) => setFirstInstallment(prev => ({ ...prev, date: iso }))}
+          onChange={(iso) =>
+            setFirstInstallment((prev) => ({ ...prev, date: iso }))
+          }
         />
       </div>
 
@@ -259,31 +283,47 @@ function StepFlexible({ firstInstallment, setFirstInstallment, net, onNext, onBa
           className="input font-semibold"
           placeholder="e.g. 10000"
           value={firstInstallment.amount}
-          onChange={e => setFirstInstallment(prev => ({ ...prev, amount: e.target.value }))}
+          onChange={(e) =>
+            setFirstInstallment((prev) => ({ ...prev, amount: e.target.value }))
+          }
         />
       </div>
 
       {amount > 0 && (
-        <div className={`rounded-lg px-4 py-3 flex items-center justify-between border ${
-          remaining === 0 ? "bg-primary/5 border-primary/20" : "bg-muted/50 border-border"
-        }`}>
-          <span className="text-xs font-semibold text-muted-foreground uppercase">Balance after this installment</span>
-          <span className={`text-base font-bold ${remaining === 0 ? "text-primary" : "text-foreground"}`}>
+        <div
+          className={`rounded-lg px-4 py-3 flex items-center justify-between border ${
+            remaining === 0
+              ? "bg-primary/5 border-primary/20"
+              : "bg-muted/50 border-border"
+          }`}
+        >
+          <span className="text-xs font-semibold text-muted-foreground uppercase">
+            Balance after this installment
+          </span>
+          <span
+            className={`text-base font-bold ${remaining === 0 ? "text-primary" : "text-foreground"}`}
+          >
             ₹{remaining.toLocaleString()}
           </span>
         </div>
       )}
 
       {amount > net && (
-        <p className="text-xs text-destructive">Amount cannot exceed net payable</p>
+        <p className="text-xs text-destructive">
+          Amount cannot exceed net payable
+        </p>
       )}
 
       <p className="text-xs text-muted-foreground">
-        Remaining balance can be collected via additional installments after plan is assigned.
+        Remaining balance can be collected via additional installments after
+        plan is assigned.
       </p>
 
       <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 flex items-center justify-center gap-2 py-3 border border-border rounded-lg font-semibold text-sm hover:bg-muted">
+        <button
+          onClick={onBack}
+          className="flex-1 flex items-center justify-center gap-2 py-3 border border-border rounded-lg font-semibold text-sm hover:bg-muted"
+        >
           <ChevronLeft className="w-4 h-4" /> Back
         </button>
         <button
@@ -298,9 +338,14 @@ function StepFlexible({ firstInstallment, setFirstInstallment, net, onNext, onBa
   );
 }
 
-
-
-function StepReview({ net, planType, installmentRows, onBack, onConfirm, isSubmitting }) {
+function StepReview({
+  net,
+  planType,
+  installmentRows,
+  onBack,
+  onConfirm,
+  isSubmitting,
+}) {
   const planLabel = {
     full_pay: "Full Payment",
     standard_emi: "Standard EMI",
@@ -312,7 +357,9 @@ function StepReview({ net, planType, installmentRows, onBack, onConfirm, isSubmi
       {/* Summary */}
       <div className="rounded-xl border border-border overflow-hidden">
         <div className="px-4 py-3 bg-muted/40 border-b border-border flex items-center justify-between">
-          <p className="text-xs font-semibold text-muted-foreground uppercase">Plan Summary</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase">
+            Plan Summary
+          </p>
           <span className="text-xs font-semibold px-2.5 py-1 rounded bg-primary/10 text-primary border border-primary/20">
             {planLabel}
           </span>
@@ -346,11 +393,15 @@ function StepReview({ net, planType, installmentRows, onBack, onConfirm, isSubmi
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {installmentRows.map(r => (
+              {installmentRows.map((r) => (
                 <tr key={r.id}>
-                  <td className="px-4 py-2.5 text-muted-foreground">{r.label || `Installment`}</td>
+                  <td className="px-4 py-2.5 text-muted-foreground">
+                    {r.label || `Installment`}
+                  </td>
                   <td className="px-4 py-2.5">{formatDate(r.date)}</td>
-                  <td className="px-4 py-2.5 text-right font-semibold">₹{Number(r.amount).toLocaleString()}</td>
+                  <td className="px-4 py-2.5 text-right font-semibold">
+                    ₹{Number(r.amount).toLocaleString()}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -371,26 +422,41 @@ function StepReview({ net, planType, installmentRows, onBack, onConfirm, isSubmi
           disabled={isSubmitting}
           className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
         >
-          {isSubmitting ? "Saving..." : <><Check className="w-4 h-4" /> Confirm Plan</>}
+          {isSubmitting ? (
+            "Saving..."
+          ) : (
+            <>
+              <Check className="w-4 h-4" /> Confirm Plan
+            </>
+          )}
         </button>
       </div>
     </div>
   );
 }
 
-
-
 const STEP_LABELS = ["Plan Type", "Configure", "Review"];
 
-export function AssignPlanWizard({ open, onClose, student, studentId, onPlanCreated }) {
+export function AssignPlanWizard({
+  open,
+  onClose,
+  student,
+  studentId,
+  onPlanCreated,
+}) {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [planType, setPlanType] = useState("");
   const [standardConfig, setStandardConfig] = useState({
-    count: "", frequency: "monthly", startDate: "",
+    count: "",
+    frequency: "monthly",
+    startDate: "",
   });
-  const [firstInstallment, setFirstInstallment] = useState({ date: "", amount: "" });
+  const [firstInstallment, setFirstInstallment] = useState({
+    date: "",
+    amount: "",
+  });
   const [fullPayDate, setFullPayDate] = useState("");
 
   const net = student?.finalFee || 0;
@@ -398,7 +464,9 @@ export function AssignPlanWizard({ open, onClose, student, studentId, onPlanCrea
   // Escape key
   useEffect(() => {
     if (!open) return;
-    const onKey = e => { if (e.key === "Escape") onClose(); };
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, onClose]);
@@ -408,13 +476,22 @@ export function AssignPlanWizard({ open, onClose, student, studentId, onPlanCrea
   // Build final installment rows for review + confirm
   const buildInstallmentRows = () => {
     if (planType === "full_pay") {
-      return [{ id: "fp_1", date: fullPayDate, amount: net, label: "Full Payment" }];
+      return [
+        { id: "fp_1", date: fullPayDate, amount: net, label: "Full Payment" },
+      ];
     }
     if (planType === "standard_emi") {
       return generateStandardRows(standardConfig, net);
     }
     if (planType === "flexible") {
-      return [{ id: "flex_1", date: firstInstallment.date, amount: Number(firstInstallment.amount), label: "Installment 1" }];
+      return [
+        {
+          id: "flex_1",
+          date: firstInstallment.date,
+          amount: Number(firstInstallment.amount),
+          label: "Installment 1",
+        },
+      ];
     }
     return [];
   };
@@ -424,15 +501,22 @@ export function AssignPlanWizard({ open, onClose, student, studentId, onPlanCrea
     const rows = buildInstallmentRows();
 
     try {
-      const typeMap = { full_pay: "full", standard_emi: "emi", flexible: "flexible" };
+      const typeMap = {
+        full_pay: "full",
+        standard_emi: "emi",
+        flexible: "flexible",
+      };
       const type = typeMap[planType];
 
       const payload = { type, totalAmount: net };
 
       if (type === "emi") {
-        payload.installments = rows.map(r => ({ dueDate: r.date }));
+        payload.installments = rows.map((r) => ({ dueDate: r.date }));
       } else if (type === "flexible") {
-        payload.installments = rows.map(r => ({ amount: Number(r.amount), dueDate: r.date }));
+        payload.installments = rows.map((r) => ({
+          amount: Number(r.amount),
+          dueDate: r.date,
+        }));
       }
 
       const result = await createStudentPlan(studentId, payload);
@@ -452,19 +536,27 @@ export function AssignPlanWizard({ open, onClose, student, studentId, onPlanCrea
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <div className="absolute inset-0 bg-foreground/20 backdrop-blur-sm" />
 
       <div className="relative w-full max-w-lg card flex flex-col max-h-[90vh]">
-
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border shrink-0">
           <div>
-            <h2 className="text-sm font-bold text-foreground">Assign Fee Plan</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Step {step} of 3 — {stepTitle}</p>
+            <h2 className="text-sm font-bold text-foreground">
+              Assign Fee Plan
+            </h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Step {step} of 3 — {stepTitle}
+            </p>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground">
+          <button
+            onClick={onClose}
+            className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground"
+          >
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -481,27 +573,41 @@ export function AssignPlanWizard({ open, onClose, student, studentId, onPlanCrea
         <div className="flex px-6 py-3 border-b border-border gap-1 shrink-0">
           {STEP_LABELS.map((label, i) => (
             <div key={label} className="flex items-center gap-1 flex-1">
-              <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
-                i + 1 < step ? "bg-primary text-primary-foreground"
-                : i + 1 === step ? "bg-primary/10 text-primary border border-primary"
-                : "bg-muted text-muted-foreground"
-              }`}>
+              <div
+                className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                  i + 1 < step
+                    ? "bg-primary text-primary-foreground"
+                    : i + 1 === step
+                      ? "bg-primary/10 text-primary border border-primary"
+                      : "bg-muted text-muted-foreground"
+                }`}
+              >
                 {i + 1 < step ? <Check className="w-3 h-3" /> : i + 1}
               </div>
-              <span className={`text-xs hidden sm:block truncate ${
-                i + 1 === step ? "text-primary font-semibold" : "text-muted-foreground"
-              }`}>
+              <span
+                className={`text-xs hidden sm:block truncate ${
+                  i + 1 === step
+                    ? "text-primary font-semibold"
+                    : "text-muted-foreground"
+                }`}
+              >
                 {label}
               </span>
-              {i < 2 && <div className="h-px flex-1 bg-border mx-1 hidden sm:block" />}
+              {i < 2 && (
+                <div className="h-px flex-1 bg-border mx-1 hidden sm:block" />
+              )}
             </div>
           ))}
         </div>
 
         {/* Enrolled fee banner */}
         <div className="px-6 py-3 bg-muted/40 border-b border-border shrink-0 flex items-center justify-between">
-          <span className="text-xs font-semibold text-muted-foreground uppercase">Course Fee</span>
-          <span className="text-sm font-bold text-foreground">₹{net.toLocaleString()}</span>
+          <span className="text-xs font-semibold text-muted-foreground uppercase">
+            Course Fee
+          </span>
+          <span className="text-sm font-bold text-foreground">
+            ₹{net.toLocaleString()}
+          </span>
         </div>
 
         {/* Body */}

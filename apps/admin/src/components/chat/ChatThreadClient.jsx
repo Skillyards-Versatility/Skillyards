@@ -2,7 +2,22 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Send, Hash, Users, X, Check, Plus, Search, MessageSquare, Smile, Loader2, Paperclip, Image, FileText } from "lucide-react";
+import {
+  ArrowLeft,
+  Send,
+  Hash,
+  Users,
+  X,
+  Check,
+  Plus,
+  Search,
+  MessageSquare,
+  Smile,
+  Loader2,
+  Paperclip,
+  Image,
+  FileText,
+} from "lucide-react";
 import { toast } from "sonner";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
@@ -35,11 +50,25 @@ function formatMessageDate(dateStr) {
   if (!dateStr) return "";
   const d = new Date(dateStr);
   const now = new Date();
-  if (d.getDate() === now.getDate() && d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) return "Today";
+  if (
+    d.getDate() === now.getDate() &&
+    d.getMonth() === now.getMonth() &&
+    d.getFullYear() === now.getFullYear()
+  )
+    return "Today";
   const yesterday = new Date(now);
   yesterday.setDate(yesterday.getDate() - 1);
-  if (d.getDate() === yesterday.getDate() && d.getMonth() === yesterday.getMonth() && d.getFullYear() === yesterday.getFullYear()) return "Yesterday";
-  return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+  if (
+    d.getDate() === yesterday.getDate() &&
+    d.getMonth() === yesterday.getMonth() &&
+    d.getFullYear() === yesterday.getFullYear()
+  )
+    return "Yesterday";
+  return d.toLocaleDateString(undefined, {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
 }
 
 function shouldShowDateSeparator(currentMsg, previousMsg) {
@@ -60,22 +89,42 @@ function MarkdownContent({ content }) {
   let remaining = content;
   let idx = 0;
 
-  const regex = /(`{1,3})(.*?)\1|(\*\*|__)(.*?)\4|(\*|_)(.*?)\5|(https?:\/\/[^\s<]+)/g;
+  const regex =
+    /(`{1,3})(.*?)\1|(\*\*|__)(.*?)\4|(\*|_)(.*?)\5|(https?:\/\/[^\s<]+)/g;
   let lastIndex = 0;
   let match;
 
   while ((match = regex.exec(content)) !== null) {
     if (match.index > lastIndex) {
-      parts.push(<span key={idx++}>{content.slice(lastIndex, match.index)}</span>);
+      parts.push(
+        <span key={idx++}>{content.slice(lastIndex, match.index)}</span>,
+      );
     }
     if (match[1]) {
-      parts.push(<code key={idx++} className="bg-gray-200 dark:bg-gray-700 px-1 rounded text-xs font-mono">{match[2]}</code>);
+      parts.push(
+        <code
+          key={idx++}
+          className="bg-gray-200 dark:bg-gray-700 px-1 rounded text-xs font-mono"
+        >
+          {match[2]}
+        </code>,
+      );
     } else if (match[3]) {
       parts.push(<strong key={idx++}>{match[4]}</strong>);
     } else if (match[5]) {
       parts.push(<em key={idx++}>{match[6]}</em>);
     } else if (match[7]) {
-      parts.push(<a key={idx++} href={match[7]} target="_blank" rel="noopener noreferrer" className="underline text-blue-500 hover:text-blue-600">{match[7]}</a>);
+      parts.push(
+        <a
+          key={idx++}
+          href={match[7]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline text-blue-500 hover:text-blue-600"
+        >
+          {match[7]}
+        </a>,
+      );
     }
     lastIndex = regex.lastIndex;
   }
@@ -83,18 +132,31 @@ function MarkdownContent({ content }) {
     parts.push(<span key={idx++}>{content.slice(lastIndex)}</span>);
   }
 
-  return <span className="whitespace-pre-wrap break-words">{parts.length > 0 ? parts : content}</span>;
+  return (
+    <span className="whitespace-pre-wrap break-words">
+      {parts.length > 0 ? parts : content}
+    </span>
+  );
 }
 
 function Avatar({ src, name, className }) {
   const [error, setError] = useState(false);
   const showImg = src && !error;
   return (
-    <div className={`relative shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center ${className || ""}`}>
+    <div
+      className={`relative shrink-0 overflow-hidden bg-primary/10 flex items-center justify-center ${className || ""}`}
+    >
       {showImg && (
-        <img src={src} alt="" className="w-full h-full object-cover absolute inset-0" onError={() => setError(true)} />
+        <img
+          src={src}
+          alt=""
+          className="w-full h-full object-cover absolute inset-0"
+          onError={() => setError(true)}
+        />
       )}
-      <span className={`text-xs font-semibold text-primary ${showImg ? "opacity-0" : ""}`}>
+      <span
+        className={`text-xs font-semibold text-primary ${showImg ? "opacity-0" : ""}`}
+      >
         {name?.charAt(0)?.toUpperCase() || "?"}
       </span>
     </div>
@@ -114,14 +176,16 @@ function EmojiPickerPanel({ onSelect, onClose }) {
           reactions={COMMON_EMOJIS}
           reactionsDefaultOpen
           allowExpandReactions
-          theme={document?.documentElement?.classList?.contains?.("dark") ? Theme.DARK : Theme.LIGHT}
+          theme={
+            document?.documentElement?.classList?.contains?.("dark")
+              ? Theme.DARK
+              : Theme.LIGHT
+          }
         />
       </div>
     </>
   );
 }
-
-
 
 export function ChatThreadClient({
   conversationId,
@@ -167,12 +231,16 @@ export function ChatThreadClient({
 
   const latestTimestampRef = useRef(
     initialMessages.length > 0
-      ? new Date(initialMessages[initialMessages.length - 1].createdAt).getTime()
-      : undefined
+      ? new Date(
+          initialMessages[initialMessages.length - 1].createdAt,
+        ).getTime()
+      : undefined,
   );
 
   const isChannel = convInfo?.type === "channel";
-  const headerTitle = isChannel ? `# ${convInfo?.name || "channel"}` : (convInfo?.otherUserName || "Unknown");
+  const headerTitle = isChannel
+    ? `# ${convInfo?.name || "channel"}`
+    : convInfo?.otherUserName || "Unknown";
   const headerSubtitle = isChannel ? null : convInfo?.otherUserRole;
   const otherUserAvatar = convInfo?.otherUserProfileImageKey
     ? `/files/${convInfo.otherUserProfileImageKey}`
@@ -203,7 +271,9 @@ export function ChatThreadClient({
 
   useEffect(() => {
     if (messages.length === 0) return;
-    getReadReceipts(conversationId).then(setReadReceipts).catch(() => {});
+    getReadReceipts(conversationId)
+      .then(setReadReceipts)
+      .catch(() => {});
   }, [messages.length, conversationId]);
 
   const presenceIntervalRef = useRef(null);
@@ -217,7 +287,9 @@ export function ChatThreadClient({
 
   useEffect(() => {
     if (isChannel) {
-      getChannelMembers(conversationId).then(setMembers).catch(() => {});
+      getChannelMembers(conversationId)
+        .then(setMembers)
+        .catch(() => {});
     }
   }, [conversationId, isChannel]);
 
@@ -235,7 +307,9 @@ export function ChatThreadClient({
           });
           const result = unique.length > 0 ? [...merged, ...unique] : merged;
           if (result.length > 0) {
-            latestTimestampRef.current = new Date(result[result.length - 1].createdAt).getTime();
+            latestTimestampRef.current = new Date(
+              result[result.length - 1].createdAt,
+            ).getTime();
           }
           return result;
         });
@@ -253,7 +327,9 @@ export function ChatThreadClient({
     const MAX_RETRY_DELAY = 30000;
 
     function connect() {
-      eventSource = new EventSource(`/api/conversations/${conversationId}/events`);
+      eventSource = new EventSource(
+        `/api/conversations/${conversationId}/events`,
+      );
 
       eventSource.addEventListener("connected", () => {
         setConnectionStatus("connected");
@@ -286,7 +362,7 @@ export function ChatThreadClient({
       eventSource.addEventListener("message_updated", (e) => {
         const { id, content, editedAt } = JSON.parse(e.data);
         setMessages((prev) =>
-          prev.map((m) => (m.id === id ? { ...m, content, editedAt } : m))
+          prev.map((m) => (m.id === id ? { ...m, content, editedAt } : m)),
         );
       });
 
@@ -306,16 +382,23 @@ export function ChatThreadClient({
                 ...m,
                 reactions: m.reactions.map((r) =>
                   r.emoji === emoji
-                    ? { ...r, count: r.count + 1, hasReacted: r.hasReacted || reactorId === userId }
-                    : r
+                    ? {
+                        ...r,
+                        count: r.count + 1,
+                        hasReacted: r.hasReacted || reactorId === userId,
+                      }
+                    : r,
                 ),
               };
             }
             return {
               ...m,
-              reactions: [...(m.reactions || []), { emoji, count: 1, hasReacted: reactorId === userId }],
+              reactions: [
+                ...(m.reactions || []),
+                { emoji, count: 1, hasReacted: reactorId === userId },
+              ],
             };
-          })
+          }),
         );
       });
 
@@ -327,15 +410,18 @@ export function ChatThreadClient({
             const existing = (m.reactions || []).find((r) => r.emoji === emoji);
             if (!existing) return m;
             if (existing.count <= 1) {
-              return { ...m, reactions: m.reactions.filter((r) => r.emoji !== emoji) };
+              return {
+                ...m,
+                reactions: m.reactions.filter((r) => r.emoji !== emoji),
+              };
             }
             return {
               ...m,
               reactions: m.reactions.map((r) =>
-                r.emoji === emoji ? { ...r, count: r.count - 1 } : r
+                r.emoji === emoji ? { ...r, count: r.count - 1 } : r,
               ),
             };
-          })
+          }),
         );
       });
 
@@ -416,11 +502,16 @@ export function ChatThreadClient({
       }
 
       const data = await res.json();
-      const result = await sendMessage(conversationId, file.name || "File", null, {
-        fileKey: data.fileKey,
-        fileType: data.fileType,
-        fileName: data.fileName,
-      });
+      const result = await sendMessage(
+        conversationId,
+        file.name || "File",
+        null,
+        {
+          fileKey: data.fileKey,
+          fileType: data.fileType,
+          fileName: data.fileName,
+        },
+      );
 
       if (result.success) {
         setMessages((prev) => [
@@ -489,14 +580,19 @@ export function ChatThreadClient({
     const now = Date.now();
     if (now - lastTypingEmitRef.current < 3000) return;
     lastTypingEmitRef.current = now;
-    fetch(`/api/conversations/${conversationId}/typing`, { method: "POST" }).catch(() => {});
+    fetch(`/api/conversations/${conversationId}/typing`, {
+      method: "POST",
+    }).catch(() => {});
   }, [conversationId]);
 
-  const handleInputChange = useCallback((e) => {
-    setNewMessage(e.target.value);
-    clearTimeout(typingTimeoutRef.current);
-    typingTimeoutRef.current = setTimeout(emitTyping, 500);
-  }, [emitTyping]);
+  const handleInputChange = useCallback(
+    (e) => {
+      setNewMessage(e.target.value);
+      clearTimeout(typingTimeoutRef.current);
+      typingTimeoutRef.current = setTimeout(emitTyping, 500);
+    },
+    [emitTyping],
+  );
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -529,7 +625,11 @@ export function ChatThreadClient({
     setThreadReplyText("");
 
     try {
-      const result = await sendMessage(conversationId, content, threadParent.id);
+      const result = await sendMessage(
+        conversationId,
+        content,
+        threadParent.id,
+      );
       if (result.success) {
         const newReply = {
           id: result.message.id,
@@ -545,8 +645,8 @@ export function ChatThreadClient({
           prev.map((m) =>
             m.id === threadParent.id
               ? { ...m, replyCount: (m.replyCount || 0) + 1 }
-              : m
-          )
+              : m,
+          ),
         );
       } else {
         setThreadReplyText(content);
@@ -560,24 +660,31 @@ export function ChatThreadClient({
     }
   };
 
-  const handleToggleReaction = useCallback(async (messageId, emoji) => {
-    try {
-      const result = await toggleReaction(messageId, emoji);
-      if (result.success && result.reactions) {
-        const updateMsg = (msg) =>
-          msg.id === messageId ? { ...msg, reactions: result.reactions } : msg;
+  const handleToggleReaction = useCallback(
+    async (messageId, emoji) => {
+      try {
+        const result = await toggleReaction(messageId, emoji);
+        if (result.success && result.reactions) {
+          const updateMsg = (msg) =>
+            msg.id === messageId
+              ? { ...msg, reactions: result.reactions }
+              : msg;
 
-        if (threadParent?.id === messageId) {
-          setThreadParent((prev) => (prev ? { ...prev, reactions: result.reactions } : prev));
+          if (threadParent?.id === messageId) {
+            setThreadParent((prev) =>
+              prev ? { ...prev, reactions: result.reactions } : prev,
+            );
+          }
+
+          setThreadReplies((prev) => prev.map(updateMsg));
+          setMessages((prev) => prev.map(updateMsg));
         }
-
-        setThreadReplies((prev) => prev.map(updateMsg));
-        setMessages((prev) => prev.map(updateMsg));
+      } catch {
+        toast.error("Failed to toggle reaction");
       }
-    } catch {
-      toast.error("Failed to toggle reaction");
-    }
-  }, [threadParent]);
+    },
+    [threadParent],
+  );
 
   const handleStartEdit = useCallback((msg) => {
     setEditingMessageId(msg.id);
@@ -596,8 +703,10 @@ export function ChatThreadClient({
     if (result.success) {
       setMessages((prev) =>
         prev.map((m) =>
-          m.id === editingMessageId ? { ...m, content, editedAt: new Date().toISOString() } : m
-        )
+          m.id === editingMessageId
+            ? { ...m, content, editedAt: new Date().toISOString() }
+            : m,
+        ),
       );
       setEditingMessageId(null);
       setEditContent("");
@@ -659,10 +768,14 @@ export function ChatThreadClient({
     if (selectedUserIds.size === 0) return;
     setAddingMembers(true);
     try {
-      const result = await addChannelMembers(conversationId, [...selectedUserIds]);
+      const result = await addChannelMembers(conversationId, [
+        ...selectedUserIds,
+      ]);
       if (result.success) {
         if (result.added > 0) {
-          toast.success(`${result.added} member${result.added > 1 ? "s" : ""} added`);
+          toast.success(
+            `${result.added} member${result.added > 1 ? "s" : ""} added`,
+          );
         } else {
           toast.info("Selected users are already members");
         }
@@ -692,7 +805,9 @@ export function ChatThreadClient({
           const result = await addAllUsersToChannel(conversationId);
           if (result.success) {
             if (result.added > 0) {
-              toast.success(`${result.added} user${result.added > 1 ? "s" : ""} added to channel`);
+              toast.success(
+                `${result.added} user${result.added > 1 ? "s" : ""} added to channel`,
+              );
             } else {
               toast.info("All users are already members");
             }
@@ -725,10 +840,16 @@ export function ChatThreadClient({
           </div>
         ) : (
           <div className="relative w-9 h-9 shrink-0">
-            <Avatar src={otherUserAvatar} name={convInfo?.otherUserName} className="w-9 h-9 rounded-full" />
-            {convInfo?.otherUserLastSeen && Date.now() - new Date(convInfo.otherUserLastSeen).getTime() < 120000 && (
-              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full" />
-            )}
+            <Avatar
+              src={otherUserAvatar}
+              name={convInfo?.otherUserName}
+              className="w-9 h-9 rounded-full"
+            />
+            {convInfo?.otherUserLastSeen &&
+              Date.now() - new Date(convInfo.otherUserLastSeen).getTime() <
+                120000 && (
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full" />
+              )}
           </div>
         )}
         <div className="flex-1 min-w-0">
@@ -738,16 +859,25 @@ export function ChatThreadClient({
           )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <div className="flex items-center gap-1" title={
-            connectionStatus === "connected" ? "Connected" :
-            connectionStatus === "reconnecting" ? "Reconnecting..." :
-            "Connecting..."
-          }>
-            <span className={`w-2 h-2 rounded-full ${
-              connectionStatus === "connected" ? "bg-green-500" :
-              connectionStatus === "reconnecting" ? "bg-yellow-500 animate-pulse" :
-              "bg-gray-400"
-            }`} />
+          <div
+            className="flex items-center gap-1"
+            title={
+              connectionStatus === "connected"
+                ? "Connected"
+                : connectionStatus === "reconnecting"
+                  ? "Reconnecting..."
+                  : "Connecting..."
+            }
+          >
+            <span
+              className={`w-2 h-2 rounded-full ${
+                connectionStatus === "connected"
+                  ? "bg-green-500"
+                  : connectionStatus === "reconnecting"
+                    ? "bg-yellow-500 animate-pulse"
+                    : "bg-gray-400"
+              }`}
+            />
           </div>
           {isChannel && (
             <button
@@ -759,7 +889,10 @@ export function ChatThreadClient({
             </button>
           )}
           {readReceipts.length > 0 && (
-            <span className="text-[10px] text-gray-400 hidden md:block" title={`Seen by ${readReceipts.map((r) => r.name).join(", ")}`}>
+            <span
+              className="text-[10px] text-gray-400 hidden md:block"
+              title={`Seen by ${readReceipts.map((r) => r.name).join(", ")}`}
+            >
               Seen by {readReceipts.length}
             </span>
           )}
@@ -768,11 +901,17 @@ export function ChatThreadClient({
 
       {connectionStatus === "disconnected" && (
         <div className="px-4 py-2 bg-red-50 dark:bg-red-900/20 border-b border-red-200 dark:border-red-900 shrink-0">
-          <p className="text-xs text-red-600 dark:text-red-400 text-center">Connection lost. Retrying...</p>
+          <p className="text-xs text-red-600 dark:text-red-400 text-center">
+            Connection lost. Retrying...
+          </p>
         </div>
       )}
 
-      <div ref={messagesContainerRef} onScroll={() => setShowScrollBtn(!isNearBottom())} className="flex-1 overflow-y-auto px-4 py-4 space-y-1 relative">
+      <div
+        ref={messagesContainerRef}
+        onScroll={() => setShowScrollBtn(!isNearBottom())}
+        className="flex-1 overflow-y-auto px-4 py-4 space-y-1 relative"
+      >
         {messages.length === 0 ? (
           <div className="space-y-3 animate-pulse">
             {[1, 2, 3, 4, 5].map((i) => (
@@ -785,193 +924,240 @@ export function ChatThreadClient({
               </div>
             ))}
           </div>
-        ) : messages.map((msg, idx) => {
-          const isMine = String(msg.senderId) === String(userId);
-          const showDateSep = shouldShowDateSeparator(msg, messages[idx - 1]);
-          const prevMsg = messages[idx - 1];
-          const sameSender = prevMsg && prevMsg.senderId === msg.senderId && !shouldShowDateSeparator(msg, prevMsg);
-          const showHeader = !sameSender;
+        ) : (
+          messages.map((msg, idx) => {
+            const isMine = String(msg.senderId) === String(userId);
+            const showDateSep = shouldShowDateSeparator(msg, messages[idx - 1]);
+            const prevMsg = messages[idx - 1];
+            const sameSender =
+              prevMsg &&
+              prevMsg.senderId === msg.senderId &&
+              !shouldShowDateSeparator(msg, prevMsg);
+            const showHeader = !sameSender;
 
-          const avatarUrl = msg.senderProfileImageKey
-            ? `/files/${msg.senderProfileImageKey}`
-            : null;
+            const avatarUrl = msg.senderProfileImageKey
+              ? `/files/${msg.senderProfileImageKey}`
+              : null;
 
-          return (
-            <div key={msg.id} className="group animate-in fade-in slide-in-from-bottom-2 duration-300">
-              {showDateSep && (
-                <div className="flex justify-center my-6">
-                  <span className="text-[11px] font-medium text-gray-500 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm border border-gray-200/50 dark:border-gray-700/50">
-                    {formatMessageDate(msg.createdAt)}
-                  </span>
-                </div>
-              )}
-              <div className={`flex gap-2.5 mb-2 ${isMine ? "justify-end" : "justify-start"}`}>
-                {!isMine && (
-                  <div className="flex flex-col items-end">
-                    {showHeader ? (
-                      <Avatar src={avatarUrl} name={msg.senderName} className="w-8 h-8 rounded-full" />
-                    ) : (
-                      <div className="w-8 h-8 shrink-0" />
-                    )}
+            return (
+              <div
+                key={msg.id}
+                className="group animate-in fade-in slide-in-from-bottom-2 duration-300"
+              >
+                {showDateSep && (
+                  <div className="flex justify-center my-6">
+                    <span className="text-[11px] font-medium text-gray-500 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm border border-gray-200/50 dark:border-gray-700/50">
+                      {formatMessageDate(msg.createdAt)}
+                    </span>
                   </div>
                 )}
-                <div className={`max-w-[80%] md:max-w-[70%] flex flex-col ${isMine ? "items-end" : "items-start"}`}>
-                  {showHeader && (
-                    <div className={`flex items-center gap-2 mb-1.5 ${isMine ? "flex-row-reverse" : "flex-row"}`}>
-                      <p className="text-[11px] font-semibold text-gray-700 dark:text-gray-300">
-                        {isMine ? "You" : msg.senderName}
-                      </p>
-                      <p className="text-[10px] text-gray-400 font-medium">{formatMessageTime(msg.createdAt)}</p>
+                <div
+                  className={`flex gap-2.5 mb-2 ${isMine ? "justify-end" : "justify-start"}`}
+                >
+                  {!isMine && (
+                    <div className="flex flex-col items-end">
+                      {showHeader ? (
+                        <Avatar
+                          src={avatarUrl}
+                          name={msg.senderName}
+                          className="w-8 h-8 rounded-full"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 shrink-0" />
+                      )}
                     </div>
                   )}
                   <div
-                    className={`px-4 py-2.5 rounded-[20px] text-[14px] leading-relaxed shadow-sm transition-all duration-200 hover:shadow-md ${
-                      isMine
-                        ? "bg-gradient-to-br from-primary to-teal-500 text-white rounded-tr-sm border border-primary/20"
-                        : "bg-white dark:bg-[#1e293b] text-gray-800 dark:text-gray-100 rounded-tl-sm border border-gray-100 dark:border-gray-800 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)]"
-                    }`}
+                    className={`max-w-[80%] md:max-w-[70%] flex flex-col ${isMine ? "items-end" : "items-start"}`}
                   >
-                    {editingMessageId === msg.id ? (
-                      <div className="flex flex-col gap-2">
-                        <input
-                          type="text"
-                          value={editContent}
-                          onChange={(e) => setEditContent(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" && !e.shiftKey) {
-                              e.preventDefault();
-                              handleSaveEdit();
-                            }
-                            if (e.key === "Escape") handleCancelEdit();
-                          }}
-                          className="w-full px-3 py-1.5 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                          autoFocus
-                        />
-                        <div className="flex gap-1.5 justify-end">
-                          <button
-                            onClick={handleCancelEdit}
-                            className="text-[10px] px-2 py-0.5 rounded font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            onClick={handleSaveEdit}
-                            disabled={!editContent.trim()}
-                            className="text-[10px] px-2 py-0.5 rounded font-medium bg-primary/10 text-primary hover:bg-primary/20 disabled:opacity-50 cursor-pointer"
-                          >
-                            Save
-                          </button>
-                        </div>
+                    {showHeader && (
+                      <div
+                        className={`flex items-center gap-2 mb-1.5 ${isMine ? "flex-row-reverse" : "flex-row"}`}
+                      >
+                        <p className="text-[11px] font-semibold text-gray-700 dark:text-gray-300">
+                          {isMine ? "You" : msg.senderName}
+                        </p>
+                        <p className="text-[10px] text-gray-400 font-medium">
+                          {formatMessageTime(msg.createdAt)}
+                        </p>
                       </div>
-                    ) : (
-                      <>
-                        {msg.fileKey && (
-                          <div className="mb-1.5">
-                            {msg.fileType?.startsWith("image/") ? (
-                              <img
-                                src={`/files/${msg.fileKey}`}
-                                alt={msg.fileName || "Image"}
-                                className="max-w-full max-h-48 rounded-lg object-cover cursor-pointer"
-                                onClick={() => window.open(`/files/${msg.fileKey}`, "_blank")}
-                                onError={(e) => { e.target.style.display = "none"; }}
-                              />
-                            ) : (
-                              <a
-                                href={`/files/${msg.fileKey}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs ${
-                                  isMine
-                                    ? "bg-primary-foreground/10 text-primary-foreground"
-                                    : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
-                                }`}
-                              >
-                                <FileText className="w-4 h-4 shrink-0" />
-                                <span className="truncate">{msg.fileName || "File"}</span>
-                              </a>
-                            )}
-                          </div>
-                        )}
-                        <MarkdownContent content={msg.content} />
-                        {!showHeader && (
-                          <p className={`text-[10px] mt-1.5 font-medium ${isMine ? "text-right text-white/70" : "text-left text-gray-400 dark:text-gray-500"}`}>
-                            {msg.editedAt ? `edited ${formatMessageTime(msg.editedAt)}` : formatMessageTime(msg.createdAt)}
-                          </p>
-                        )}
-                      </>
                     )}
-                  </div>
-                  <div className={`flex items-center gap-1.5 mt-1 ${isMine ? "flex-row-reverse" : "flex-row"}`}>
-                    {msg.reactions?.map((r) => (
-                      <button
-                        key={r.emoji}
-                        onClick={() => handleToggleReaction(msg.id, r.emoji)}
-                        className={`text-[11px] font-medium px-2 py-0.5 rounded-full border transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95 ${
-                          r.hasReacted
-                            ? "bg-primary/10 border-primary/30 text-primary shadow-primary/5"
-                            : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300"
-                        }`}
-                      >
-                        {r.emoji} <span className={r.hasReacted ? "font-bold" : "opacity-80"}>{r.count}</span>
-                      </button>
-                    ))}
-                    <div className="relative">
-                      <button
-                        onClick={() => setShowEmojiPicker(showEmojiPicker === msg.id ? null : msg.id)}
-                        className="text-xs p-1 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:border-gray-300 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer hover:scale-110 active:scale-95"
-                      >
-                        <Smile className="w-3.5 h-3.5" />
-                      </button>
-                      {showEmojiPicker === msg.id && (
-                        <EmojiPickerPanel
-                          onSelect={(emoji) => {
-                            handleToggleReaction(msg.id, emoji);
-                            setShowEmojiPicker(null);
-                          }}
-                          onClose={() => setShowEmojiPicker(null)}
-                        />
+                    <div
+                      className={`px-4 py-2.5 rounded-[20px] text-[14px] leading-relaxed shadow-sm transition-all duration-200 hover:shadow-md ${
+                        isMine
+                          ? "bg-gradient-to-br from-primary to-teal-500 text-white rounded-tr-sm border border-primary/20"
+                          : "bg-white dark:bg-[#1e293b] text-gray-800 dark:text-gray-100 rounded-tl-sm border border-gray-100 dark:border-gray-800 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)]"
+                      }`}
+                    >
+                      {editingMessageId === msg.id ? (
+                        <div className="flex flex-col gap-2">
+                          <input
+                            type="text"
+                            value={editContent}
+                            onChange={(e) => setEditContent(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" && !e.shiftKey) {
+                                e.preventDefault();
+                                handleSaveEdit();
+                              }
+                              if (e.key === "Escape") handleCancelEdit();
+                            }}
+                            className="w-full px-3 py-1.5 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                            autoFocus
+                          />
+                          <div className="flex gap-1.5 justify-end">
+                            <button
+                              onClick={handleCancelEdit}
+                              className="text-[10px] px-2 py-0.5 rounded font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer"
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              onClick={handleSaveEdit}
+                              disabled={!editContent.trim()}
+                              className="text-[10px] px-2 py-0.5 rounded font-medium bg-primary/10 text-primary hover:bg-primary/20 disabled:opacity-50 cursor-pointer"
+                            >
+                              Save
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {msg.fileKey && (
+                            <div className="mb-1.5">
+                              {msg.fileType?.startsWith("image/") ? (
+                                <img
+                                  src={`/files/${msg.fileKey}`}
+                                  alt={msg.fileName || "Image"}
+                                  className="max-w-full max-h-48 rounded-lg object-cover cursor-pointer"
+                                  onClick={() =>
+                                    window.open(
+                                      `/files/${msg.fileKey}`,
+                                      "_blank",
+                                    )
+                                  }
+                                  onError={(e) => {
+                                    e.target.style.display = "none";
+                                  }}
+                                />
+                              ) : (
+                                <a
+                                  href={`/files/${msg.fileKey}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs ${
+                                    isMine
+                                      ? "bg-primary-foreground/10 text-primary-foreground"
+                                      : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                                  }`}
+                                >
+                                  <FileText className="w-4 h-4 shrink-0" />
+                                  <span className="truncate">
+                                    {msg.fileName || "File"}
+                                  </span>
+                                </a>
+                              )}
+                            </div>
+                          )}
+                          <MarkdownContent content={msg.content} />
+                          {!showHeader && (
+                            <p
+                              className={`text-[10px] mt-1.5 font-medium ${isMine ? "text-right text-white/70" : "text-left text-gray-400 dark:text-gray-500"}`}
+                            >
+                              {msg.editedAt
+                                ? `edited ${formatMessageTime(msg.editedAt)}`
+                                : formatMessageTime(msg.createdAt)}
+                            </p>
+                          )}
+                        </>
                       )}
                     </div>
-                    <button
-                      onClick={() => handleOpenThread(msg)}
-                      className="text-[11px] font-medium text-gray-500 hover:text-primary transition-colors flex items-center gap-1 px-2 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
+                    <div
+                      className={`flex items-center gap-1.5 mt-1 ${isMine ? "flex-row-reverse" : "flex-row"}`}
                     >
-                      <MessageSquare className="w-3 h-3" />
-                      Reply
-                    </button>
-                    {isMine && editingMessageId !== msg.id && (
-                      <>
+                      {msg.reactions?.map((r) => (
                         <button
-                          onClick={() => handleStartEdit(msg)}
-                          className="text-[11px] font-medium text-gray-500 hover:text-blue-500 transition-colors px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
-                          title="Edit"
+                          key={r.emoji}
+                          onClick={() => handleToggleReaction(msg.id, r.emoji)}
+                          className={`text-[11px] font-medium px-2 py-0.5 rounded-full border transition-all cursor-pointer shadow-sm hover:scale-105 active:scale-95 ${
+                            r.hasReacted
+                              ? "bg-primary/10 border-primary/30 text-primary shadow-primary/5"
+                              : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300"
+                          }`}
                         >
-                          Edit
+                          {r.emoji}{" "}
+                          <span
+                            className={
+                              r.hasReacted ? "font-bold" : "opacity-80"
+                            }
+                          >
+                            {r.count}
+                          </span>
                         </button>
+                      ))}
+                      <div className="relative">
                         <button
-                          onClick={() => handleDeleteMessage(msg.id)}
-                          className="text-[11px] font-medium text-gray-500 hover:text-red-500 transition-colors px-2 py-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
-                          title="Delete"
+                          onClick={() =>
+                            setShowEmojiPicker(
+                              showEmojiPicker === msg.id ? null : msg.id,
+                            )
+                          }
+                          className="text-xs p-1 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:border-gray-300 transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer hover:scale-110 active:scale-95"
                         >
-                          Delete
+                          <Smile className="w-3.5 h-3.5" />
                         </button>
-                      </>
+                        {showEmojiPicker === msg.id && (
+                          <EmojiPickerPanel
+                            onSelect={(emoji) => {
+                              handleToggleReaction(msg.id, emoji);
+                              setShowEmojiPicker(null);
+                            }}
+                            onClose={() => setShowEmojiPicker(null)}
+                          />
+                        )}
+                      </div>
+                      <button
+                        onClick={() => handleOpenThread(msg)}
+                        className="text-[11px] font-medium text-gray-500 hover:text-primary transition-colors flex items-center gap-1 px-2 py-1 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
+                      >
+                        <MessageSquare className="w-3 h-3" />
+                        Reply
+                      </button>
+                      {isMine && editingMessageId !== msg.id && (
+                        <>
+                          <button
+                            onClick={() => handleStartEdit(msg)}
+                            className="text-[11px] font-medium text-gray-500 hover:text-blue-500 transition-colors px-2 py-1 rounded-md hover:bg-blue-50 dark:hover:bg-blue-900/20 opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
+                            title="Edit"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteMessage(msg.id)}
+                            className="text-[11px] font-medium text-gray-500 hover:text-red-500 transition-colors px-2 py-1 rounded-md hover:bg-red-50 dark:hover:bg-red-900/20 opacity-100 md:opacity-0 md:group-hover:opacity-100 cursor-pointer"
+                            title="Delete"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
+                    </div>
+                    {msg.replyCount > 0 && (
+                      <button
+                        onClick={() => handleOpenThread(msg)}
+                        className={`text-[11px] font-semibold flex items-center gap-1.5 transition-colors mt-1 cursor-pointer px-3 py-1 rounded-full ${isMine ? "text-primary bg-primary/5 hover:bg-primary/10" : "text-primary bg-primary/5 hover:bg-primary/10"}`}
+                      >
+                        <MessageSquare className="w-3 h-3" />
+                        {msg.replyCount}{" "}
+                        {msg.replyCount === 1 ? "reply" : "replies"}
+                      </button>
                     )}
                   </div>
-                  {msg.replyCount > 0 && (
-                    <button
-                      onClick={() => handleOpenThread(msg)}
-                      className={`text-[11px] font-semibold flex items-center gap-1.5 transition-colors mt-1 cursor-pointer px-3 py-1 rounded-full ${isMine ? 'text-primary bg-primary/5 hover:bg-primary/10' : 'text-primary bg-primary/5 hover:bg-primary/10'}`}
-                    >
-                      <MessageSquare className="w-3 h-3" />
-                      {msg.replyCount} {msg.replyCount === 1 ? "reply" : "replies"}
-                    </button>
-                  )}
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        )}
         <div ref={messagesEndRef} className="h-4" />
       </div>
 
@@ -990,11 +1176,19 @@ export function ChatThreadClient({
             className="p-2.5 mb-0.5 rounded-xl text-gray-400 hover:text-primary hover:bg-primary/5 transition-colors disabled:opacity-50 cursor-pointer shrink-0"
             title="Attach file"
           >
-            {uploadingFile ? <Loader2 className="w-5 h-5 animate-spin" /> : <Paperclip className="w-5 h-5" />}
+            {uploadingFile ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Paperclip className="w-5 h-5" />
+            )}
           </button>
           <textarea
             ref={inputRef}
-            placeholder={isChannel ? `Message #${convInfo?.name || "channel"}` : "Type a message..."}
+            placeholder={
+              isChannel
+                ? `Message #${convInfo?.name || "channel"}`
+                : "Type a message..."
+            }
             value={newMessage}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
@@ -1006,7 +1200,11 @@ export function ChatThreadClient({
             disabled={!newMessage.trim() || sending}
             className="p-2.5 mb-0.5 rounded-xl bg-gradient-to-br from-primary to-teal-500 text-white hover:opacity-90 transition-all shadow-sm disabled:opacity-50 cursor-pointer shrink-0"
           >
-            {sending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5 translate-x-[-1px] translate-y-[1px]" />}
+            {sending ? (
+              <Loader2 className="w-5 h-5 animate-spin" />
+            ) : (
+              <Send className="w-5 h-5 translate-x-[-1px] translate-y-[1px]" />
+            )}
           </button>
         </div>
       </div>
@@ -1028,22 +1226,36 @@ export function ChatThreadClient({
             </div>
             <div className="flex-1 overflow-y-auto">
               {members.map((m) => (
-                <div key={m.userId} className="flex items-center gap-3 px-4 py-2.5">
+                <div
+                  key={m.userId}
+                  className="flex items-center gap-3 px-4 py-2.5"
+                >
                   <div className="relative w-8 h-8 shrink-0">
-                    <Avatar src={m.profileImageKey ? `/files/${m.profileImageKey}` : null} name={m.name} className="w-8 h-8 rounded-full" />
-                    {m.lastSeenAt && Date.now() - new Date(m.lastSeenAt).getTime() < 120000 && (
-                      <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full" />
-                    )}
+                    <Avatar
+                      src={
+                        m.profileImageKey ? `/files/${m.profileImageKey}` : null
+                      }
+                      name={m.name}
+                      className="w-8 h-8 rounded-full"
+                    />
+                    {m.lastSeenAt &&
+                      Date.now() - new Date(m.lastSeenAt).getTime() <
+                        120000 && (
+                        <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-900 rounded-full" />
+                      )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-medium truncate">{m.name}</p>
                       {m.role === "admin" && (
-                        <span className="text-[10px] font-medium text-amber-600 bg-amber-50 dark:bg-amber-900/20 px-1.5 py-0.5 rounded">Admin</span>
+                        <span className="text-[10px] font-medium text-amber-600 bg-amber-50 dark:bg-amber-900/20 px-1.5 py-0.5 rounded">
+                          Admin
+                        </span>
                       )}
                     </div>
                     <p className="text-xs text-gray-500 truncate">
-                      {m.userRole}{m.team ? ` · ${m.team}` : ""}
+                      {m.userRole}
+                      {m.team ? ` · ${m.team}` : ""}
                     </p>
                   </div>
                 </div>
@@ -1114,27 +1326,43 @@ export function ChatThreadClient({
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
-              {allUsers.filter((u) => u.name?.toLowerCase().includes(memberSearch.toLowerCase())).length === 0 ? (
-                <p className="text-center text-sm text-gray-400 py-8">No users found</p>
+              {allUsers.filter((u) =>
+                u.name?.toLowerCase().includes(memberSearch.toLowerCase()),
+              ).length === 0 ? (
+                <p className="text-center text-sm text-gray-400 py-8">
+                  No users found
+                </p>
               ) : (
                 allUsers
-                  .filter((u) => u.name?.toLowerCase().includes(memberSearch.toLowerCase()))
+                  .filter((u) =>
+                    u.name?.toLowerCase().includes(memberSearch.toLowerCase()),
+                  )
                   .map((u) => (
                     <button
                       key={u.id}
                       onClick={() => handleToggleUser(u.id)}
                       className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors text-left cursor-pointer"
                     >
-                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
-                        selectedUserIds.has(u.id)
-                          ? "bg-primary border-primary"
-                          : "border-gray-300 dark:border-gray-600"
-                      }`}>
+                      <div
+                        className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${
+                          selectedUserIds.has(u.id)
+                            ? "bg-primary border-primary"
+                            : "border-gray-300 dark:border-gray-600"
+                        }`}
+                      >
                         {selectedUserIds.has(u.id) && (
                           <Check className="w-3 h-3 text-white" />
                         )}
                       </div>
-                      <Avatar src={u.profileImageKey ? `/files/${u.profileImageKey}` : null} name={u.name} className="w-8 h-8 rounded-full" />
+                      <Avatar
+                        src={
+                          u.profileImageKey
+                            ? `/files/${u.profileImageKey}`
+                            : null
+                        }
+                        name={u.name}
+                        className="w-8 h-8 rounded-full"
+                      />
                       <div>
                         <p className="text-sm font-medium">{u.name}</p>
                         <p className="text-xs text-gray-500">{u.role}</p>
@@ -1150,7 +1378,9 @@ export function ChatThreadClient({
                   disabled={addingMembers}
                   className="w-full py-2 text-sm font-medium rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer"
                 >
-                  {addingMembers ? "Adding..." : `Add ${selectedUserIds.size} member${selectedUserIds.size > 1 ? "s" : ""}`}
+                  {addingMembers
+                    ? "Adding..."
+                    : `Add ${selectedUserIds.size} member${selectedUserIds.size > 1 ? "s" : ""}`}
                 </button>
               </div>
             )}
@@ -1160,20 +1390,27 @@ export function ChatThreadClient({
 
       {threadParent && (
         <>
-          <div className="fixed inset-0 bg-black/20 z-40 md:hidden" onClick={handleCloseThread} />
           <div
-            className={`fixed z-50 flex flex-col bg-white dark:bg-gray-900 ${
-              "inset-0 md:inset-y-4 md:right-4 md:left-auto md:w-[380px] md:rounded-xl md:shadow-xl md:border md:border-gray-200 dark:md:border-gray-700"
-            }`}
+            className="fixed inset-0 bg-black/20 z-40 md:hidden"
+            onClick={handleCloseThread}
+          />
+          <div
+            className={`fixed z-50 flex flex-col bg-white dark:bg-gray-900 ${"inset-0 md:inset-y-4 md:right-4 md:left-auto md:w-[380px] md:rounded-xl md:shadow-xl md:border md:border-gray-200 dark:md:border-gray-700"}`}
           >
             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 shrink-0">
               <div className="flex items-center gap-2">
-                <button onClick={handleCloseThread} className="md:hidden p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+                <button
+                  onClick={handleCloseThread}
+                  className="md:hidden p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+                >
                   <ArrowLeft className="w-5 h-5" />
                 </button>
                 <h3 className="text-sm font-semibold">Thread</h3>
               </div>
-              <button onClick={handleCloseThread} className="hidden md:block p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer">
+              <button
+                onClick={handleCloseThread}
+                className="hidden md:block p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+              >
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -1181,16 +1418,30 @@ export function ChatThreadClient({
             <div className="overflow-y-auto flex-1 px-4 py-3 space-y-3">
               <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <Avatar src={threadParent.senderProfileImageKey ? `/files/${threadParent.senderProfileImageKey}` : null} name={threadParent.senderName} className="w-6 h-6 rounded-full" />
-                  <p className="text-xs font-medium">{threadParent.senderName}</p>
-                  <p className="text-[10px] text-gray-400">{formatMessageTime(threadParent.createdAt)}</p>
+                  <Avatar
+                    src={
+                      threadParent.senderProfileImageKey
+                        ? `/files/${threadParent.senderProfileImageKey}`
+                        : null
+                    }
+                    name={threadParent.senderName}
+                    className="w-6 h-6 rounded-full"
+                  />
+                  <p className="text-xs font-medium">
+                    {threadParent.senderName}
+                  </p>
+                  <p className="text-[10px] text-gray-400">
+                    {formatMessageTime(threadParent.createdAt)}
+                  </p>
                 </div>
                 <MarkdownContent content={threadParent.content} />
               </div>
 
               <div className="border-t border-gray-100 dark:border-gray-800 pt-3 space-y-3">
                 {threadReplies.length === 0 && (
-                  <p className="text-center text-xs text-gray-400 py-4">No replies yet</p>
+                  <p className="text-center text-xs text-gray-400 py-4">
+                    No replies yet
+                  </p>
                 )}
                 {threadReplies.map((reply) => {
                   const isMine = String(reply.senderId) === String(userId);
@@ -1200,9 +1451,17 @@ export function ChatThreadClient({
                   return (
                     <div key={reply.id}>
                       <div className="flex items-center gap-2 mb-1">
-                        <Avatar src={avatarUrl} name={isMine ? "You" : reply.senderName} className="w-6 h-6 rounded-full" />
-                        <p className="text-xs font-medium">{isMine ? "You" : reply.senderName}</p>
-                        <p className="text-[10px] text-gray-400">{formatMessageTime(reply.createdAt)}</p>
+                        <Avatar
+                          src={avatarUrl}
+                          name={isMine ? "You" : reply.senderName}
+                          className="w-6 h-6 rounded-full"
+                        />
+                        <p className="text-xs font-medium">
+                          {isMine ? "You" : reply.senderName}
+                        </p>
+                        <p className="text-[10px] text-gray-400">
+                          {formatMessageTime(reply.createdAt)}
+                        </p>
                       </div>
                       <div className="ml-8">
                         <MarkdownContent content={reply.content} />
@@ -1210,7 +1469,9 @@ export function ChatThreadClient({
                           {reply.reactions?.map((r) => (
                             <button
                               key={r.emoji}
-                              onClick={() => handleToggleReaction(reply.id, r.emoji)}
+                              onClick={() =>
+                                handleToggleReaction(reply.id, r.emoji)
+                              }
                               className={`text-xs px-1.5 py-0.5 rounded-full border transition-colors cursor-pointer ${
                                 r.hasReacted
                                   ? "bg-primary/10 border-primary/30 text-primary"
@@ -1229,24 +1490,29 @@ export function ChatThreadClient({
               </div>
             </div>
 
-      {showScrollBtn && (
-        <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10">
-          <button
-            onClick={() => messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })}
-            className="px-3 py-1.5 text-xs font-medium rounded-full bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 shadow-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors cursor-pointer"
-          >
-            Scroll to bottom
-          </button>
-        </div>
-      )}
+            {showScrollBtn && (
+              <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-10">
+                <button
+                  onClick={() =>
+                    messagesEndRef.current?.scrollIntoView({
+                      behavior: "smooth",
+                    })
+                  }
+                  className="px-3 py-1.5 text-xs font-medium rounded-full bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 shadow-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors cursor-pointer"
+                >
+                  Scroll to bottom
+                </button>
+              </div>
+            )}
 
-      {typingUsers.length > 0 && (
-        <div className="px-4 py-1 text-xs text-gray-400 italic shrink-0">
-          {typingUsers.map((u) => u.name).join(", ")} {typingUsers.length === 1 ? "is" : "are"} typing...
-        </div>
-      )}
+            {typingUsers.length > 0 && (
+              <div className="px-4 py-1 text-xs text-gray-400 italic shrink-0">
+                {typingUsers.map((u) => u.name).join(", ")}{" "}
+                {typingUsers.length === 1 ? "is" : "are"} typing...
+              </div>
+            )}
 
-      <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 shrink-0">
+            <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-700 shrink-0">
               <div className="flex items-center gap-2">
                 <input
                   type="text"
@@ -1266,7 +1532,11 @@ export function ChatThreadClient({
                   disabled={!threadReplyText.trim() || sendingThreadReply}
                   className="p-2.5 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 cursor-pointer"
                 >
-                  {sendingThreadReply ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                  {sendingThreadReply ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
                 </button>
               </div>
             </div>

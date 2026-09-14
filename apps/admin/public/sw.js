@@ -19,7 +19,7 @@ self.addEventListener("push", function (event) {
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
   const targetUrl = event.notification.data.url;
-  
+
   event.waitUntil(
     clients.matchAll({ type: "window" }).then((windowClients) => {
       // Check if there is already a window/tab open with the target URL
@@ -33,6 +33,6 @@ self.addEventListener("notificationclick", function (event) {
       if (clients.openWindow) {
         return clients.openWindow(targetUrl);
       }
-    })
+    }),
   );
 });

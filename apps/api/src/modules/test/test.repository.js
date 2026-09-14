@@ -1,4 +1,4 @@
-import { testLeads, testSessions } from "@repo/db"; 
+import { testLeads, testSessions } from "@repo/db";
 import { eq, desc } from "drizzle-orm";
 import { sanityClient } from "@/lib/sanity/client";
 import questionVariants from "./question-variants.json" with { type: "json" };
@@ -6,7 +6,8 @@ export async function findLeadByEmail(db, email) {
   console.log("Finding lead by email:", email);
 
   return db.query.testLeads.findFirst({
-    where: (t, { eq, and, isNull }) => and(eq(t.email, email), isNull(t.archivedAt)),
+    where: (t, { eq, and, isNull }) =>
+      and(eq(t.email, email), isNull(t.archivedAt)),
   });
 }
 
@@ -45,7 +46,8 @@ export async function getLatestSessionByLeadId(db, leadId) {
 
 export async function getLeadById(db, leadId) {
   return db.query.testLeads.findFirst({
-    where: (t, { eq, and, isNull }) => and(eq(t.id, leadId), isNull(t.archivedAt)),
+    where: (t, { eq, and, isNull }) =>
+      and(eq(t.id, leadId), isNull(t.archivedAt)),
   });
 }
 
@@ -75,7 +77,9 @@ export async function getRandomActiveQuestions(topics, maxCount = 30) {
   let selected = [];
 
   for (const topic of topics) {
-    const topicQuestions = await sanityClient.fetch(SANITY_QUESTIONS_QUERY, { topic });
+    const topicQuestions = await sanityClient.fetch(SANITY_QUESTIONS_QUERY, {
+      topic,
+    });
 
     const shuffled = shuffleArray(topicQuestions);
     const picked = shuffled.slice(0, questionsPerTopic);

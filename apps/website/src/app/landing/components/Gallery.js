@@ -232,7 +232,9 @@ export default function Gallery() {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setActiveIndex((activeIndex - 1 + photos.length) % photos.length);
+                setActiveIndex(
+                  (activeIndex - 1 + photos.length) % photos.length,
+                );
               }}
               aria-label="Previous photo"
               className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center text-2xl transition-all duration-300 active:scale-95"

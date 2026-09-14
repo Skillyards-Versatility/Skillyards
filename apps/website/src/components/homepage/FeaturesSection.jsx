@@ -63,10 +63,12 @@ export default function FeaturesSection() {
       <div className="max-w-6xl mx-auto relative z-10">
         <div className="text-center mb-16 sm:mb-20 px-6">
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-foreground leading-[1.1] mb-4">
-            The SkillYards <span className="text-primary italic font-serif">Advantage</span>
+            The SkillYards{" "}
+            <span className="text-primary italic font-serif">Advantage</span>
           </h2>
           <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
-            Here&apos;s why students trust us to launch their careers in tech and business.
+            Here&apos;s why students trust us to launch their careers in tech
+            and business.
           </p>
         </div>
 

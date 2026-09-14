@@ -1,8 +1,22 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Coffee, Clock, ChevronLeft, ChevronRight, X, Pencil, Trash2, Loader2 } from "lucide-react";
-import { getAllBreaks, getBreakStats, updateBreak, deleteBreak } from "@/actions/breaks";
+import {
+  Coffee,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Pencil,
+  Trash2,
+  Loader2,
+} from "lucide-react";
+import {
+  getAllBreaks,
+  getBreakStats,
+  updateBreak,
+  deleteBreak,
+} from "@/actions/breaks";
 import { getMyBreaks, savePushSubscription } from "@/actions/breaks";
 import { getIstDate } from "@/lib/ist";
 import { subscribeToPushNotifications } from "@/lib/push";
@@ -84,24 +98,38 @@ function DateNavigator({ selectedDate, onPrev, onNext, onToday, isToday }) {
   );
 }
 
-function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick }) {
-  const activeBreakCount = allBreaks.filter(b => !b.endedAt).length;
+function StatsCards({
+  stats,
+  allBreaks,
+  totalUsers,
+  onBreakClick,
+  onFlaggedClick,
+}) {
+  const activeBreakCount = allBreaks.filter((b) => !b.endedAt).length;
   const totalBreaks = stats.reduce((sum, s) => sum + s.breakCount, 0);
   const totalDuration = stats.reduce((sum, s) => sum + s.totalDuration, 0);
-  const avgDuration = totalBreaks > 0 ? Math.round(totalDuration / totalBreaks) : 0;
+  const avgDuration =
+    totalBreaks > 0 ? Math.round(totalDuration / totalBreaks) : 0;
   // Calculate flagged users based on 15-minute (900s) PER BREAK limit OR 30-minute (1800s) DAILY limit
   const flaggedUsersSet = new Set();
-  
+
   // Group breaks by user
   const userBreaks = {};
   for (const b of allBreaks) {
     if (!userBreaks[b.userId]) {
-      userBreaks[b.userId] = { total: 0, breaks: [], userTeam: b.userTeam, userName: b.userName };
+      userBreaks[b.userId] = {
+        total: 0,
+        breaks: [],
+        userTeam: b.userTeam,
+        userName: b.userName,
+      };
     }
-    const dur = b.endedAt ? b.duration : Math.floor((new Date() - new Date(b.startedAt)) / 1000);
+    const dur = b.endedAt
+      ? b.duration
+      : Math.floor((new Date() - new Date(b.startedAt)) / 1000);
     userBreaks[b.userId].total += dur;
     userBreaks[b.userId].breaks.push({ ...b, calculatedDuration: dur });
-    
+
     // Flag if any single break exceeds 15 minutes
     if (dur > 900) {
       flaggedUsersSet.add(b.userId);
@@ -120,27 +148,58 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
   const topUser = stats.length > 0 ? stats[0] : null;
 
   const cards = [
-    { label: "Active Employees", value: totalUsers - activeBreakCount, color: "text-green-600" },
-    { label: "Inactive Employees", value: activeBreakCount, color: "text-orange-600", clickable: true },
-    { label: "Avg Duration", value: formatDuration(avgDuration), color: "text-blue-600" },
-    { label: "Most Breaks", value: topUser ? topUser.userName : "—", sub: topUser ? `${topUser.breakCount} breaks` : "", color: "text-purple-600" },
-    { label: "Flagged (Overage)", value: flaggedCount, color: "text-red-600", clickable: true },
+    {
+      label: "Active Employees",
+      value: totalUsers - activeBreakCount,
+      color: "text-green-600",
+    },
+    {
+      label: "Inactive Employees",
+      value: activeBreakCount,
+      color: "text-orange-600",
+      clickable: true,
+    },
+    {
+      label: "Avg Duration",
+      value: formatDuration(avgDuration),
+      color: "text-blue-600",
+    },
+    {
+      label: "Most Breaks",
+      value: topUser ? topUser.userName : "—",
+      sub: topUser ? `${topUser.breakCount} breaks` : "",
+      color: "text-purple-600",
+    },
+    {
+      label: "Flagged (Overage)",
+      value: flaggedCount,
+      color: "text-red-600",
+      clickable: true,
+    },
   ];
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
       {cards.map((card) => (
-        <div 
-          key={card.label} 
-          onClick={card.label === "Inactive Employees" ? onBreakClick : card.label === "Flagged (Overage)" ? onFlaggedClick : undefined}
+        <div
+          key={card.label}
+          onClick={
+            card.label === "Inactive Employees"
+              ? onBreakClick
+              : card.label === "Flagged (Overage)"
+                ? onFlaggedClick
+                : undefined
+          }
           className={`bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4 ${
-            card.clickable 
-              ? `cursor-pointer hover:shadow-md hover:ring-1 hover:ring-${card.color.split('-')[1]}-500/50 transition-all active:scale-[0.98]` 
+            card.clickable
+              ? `cursor-pointer hover:shadow-md hover:ring-1 hover:ring-${card.color.split("-")[1]}-500/50 transition-all active:scale-[0.98]`
               : ""
           }`}
         >
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-800 ${card.color}`}>
+            <div
+              className={`p-2 rounded-lg bg-gray-100 dark:bg-gray-800 ${card.color}`}
+            >
               <Coffee className="w-5 h-5" />
             </div>
             <div>
@@ -156,14 +215,22 @@ function StatsCards({ stats, allBreaks, totalUsers, onBreakClick, onFlaggedClick
 }
 
 function UserCard({ s, myBreaks, onUserClick }) {
-  const activeBreak = myBreaks.find(b => !b.endedAt);
+  const activeBreak = myBreaks.find((b) => !b.endedAt);
   const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
     if (activeBreak) {
-      setElapsed(Math.floor((Date.now() - new Date(activeBreak.startedAt).getTime()) / 1000));
+      setElapsed(
+        Math.floor(
+          (Date.now() - new Date(activeBreak.startedAt).getTime()) / 1000,
+        ),
+      );
       const interval = setInterval(() => {
-        setElapsed(Math.floor((Date.now() - new Date(activeBreak.startedAt).getTime()) / 1000));
+        setElapsed(
+          Math.floor(
+            (Date.now() - new Date(activeBreak.startedAt).getTime()) / 1000,
+          ),
+        );
       }, 1000);
       return () => clearInterval(interval);
     } else {
@@ -172,18 +239,32 @@ function UserCard({ s, myBreaks, onUserClick }) {
   }, [activeBreak]);
 
   const currentTotalDuration = s.totalDuration + (activeBreak ? elapsed : 0);
-  
+
   // Calculate visual slots
   const visualSlots = [];
-  const sortedBreaks = [...myBreaks].sort((a, b) => new Date(a.startedAt) - new Date(b.startedAt));
+  const sortedBreaks = [...myBreaks].sort(
+    (a, b) => new Date(a.startedAt) - new Date(b.startedAt),
+  );
   for (const b of sortedBreaks) {
-    const dur = b.endedAt ? b.duration : (b.id === activeBreak?.id ? elapsed : 0);
+    const dur = b.endedAt ? b.duration : b.id === activeBreak?.id ? elapsed : 0;
     const isOverage = dur >= 900;
     if (isOverage) {
-      visualSlots.push({ label: formatDuration(dur), type: "overage", isActive: !b.endedAt });
-      visualSlots.push({ label: "2nd Slot", type: "overage-linked", isActive: !b.endedAt });
+      visualSlots.push({
+        label: formatDuration(dur),
+        type: "overage",
+        isActive: !b.endedAt,
+      });
+      visualSlots.push({
+        label: "2nd Slot",
+        type: "overage-linked",
+        isActive: !b.endedAt,
+      });
     } else {
-      visualSlots.push({ label: b.endedAt ? formatDuration(dur) : formatDuration(elapsed), type: b.endedAt ? "normal" : "active", isActive: !b.endedAt });
+      visualSlots.push({
+        label: b.endedAt ? formatDuration(dur) : formatDuration(elapsed),
+        type: b.endedAt ? "normal" : "active",
+        isActive: !b.endedAt,
+      });
     }
   }
   while (visualSlots.length < 3) {
@@ -218,30 +299,45 @@ function UserCard({ s, myBreaks, onUserClick }) {
             )}
           </h4>
           {s.userTeam && (
-            <p className="text-xs text-muted-foreground capitalize mt-0.5">{s.userTeam.replace("_", " ")}</p>
+            <p className="text-xs text-muted-foreground capitalize mt-0.5">
+              {s.userTeam.replace("_", " ")}
+            </p>
           )}
         </div>
         <div className="text-right">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Breaks</span>
-          <p className="text-base font-black text-foreground">{s.breakCount}{activeBreak ? " (active)" : ""}</p>
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+            Breaks
+          </span>
+          <p className="text-base font-black text-foreground">
+            {s.breakCount}
+            {activeBreak ? " (active)" : ""}
+          </p>
         </div>
       </div>
 
       <div className="space-y-1.5">
-        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">Break Slots (Max 3)</span>
+        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider block">
+          Break Slots (Max 3)
+        </span>
         <div className="flex gap-1.5">
           {displaySlots.map((slot, idx) => {
-            let badgeClass = "text-[10px] font-semibold px-2 py-1 rounded-lg border text-center flex-1 truncate ";
+            let badgeClass =
+              "text-[10px] font-semibold px-2 py-1 rounded-lg border text-center flex-1 truncate ";
             if (slot.type === "unused") {
-              badgeClass += "bg-gray-50/50 dark:bg-gray-800/30 text-gray-400/80 border-dashed border-gray-200 dark:border-gray-700/80";
+              badgeClass +=
+                "bg-gray-50/50 dark:bg-gray-800/30 text-gray-400/80 border-dashed border-gray-200 dark:border-gray-700/80";
             } else if (slot.type === "normal") {
-              badgeClass += "bg-green-50/60 dark:bg-green-950/20 text-green-700 dark:text-green-400 border-green-100 dark:border-green-900/30";
+              badgeClass +=
+                "bg-green-50/60 dark:bg-green-950/20 text-green-700 dark:text-green-400 border-green-100 dark:border-green-900/30";
             } else if (slot.type === "active") {
-              badgeClass += "bg-orange-50/80 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-100 dark:border-orange-900/30 animate-pulse";
+              badgeClass +=
+                "bg-orange-50/80 dark:bg-orange-950/30 text-orange-700 dark:text-orange-400 border-orange-100 dark:border-orange-900/30 animate-pulse";
             } else if (slot.type === "overage") {
-              badgeClass += "bg-red-50/80 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-100 dark:border-red-900/30 font-bold";
+              badgeClass +=
+                "bg-red-50/80 dark:bg-red-950/30 text-red-700 dark:text-red-400 border-red-100 dark:border-red-900/30 font-bold";
             } else if (slot.type === "overage-linked") {
-              badgeClass += "bg-red-50/40 dark:bg-red-950/10 text-red-500/80 border-dotted border-red-100/50 dark:border-red-900/20 text-[9px]";
+              badgeClass +=
+                "bg-red-50/40 dark:bg-red-950/10 text-red-500/80 border-dotted border-red-100/50 dark:border-red-900/20 text-[9px]";
             }
             return (
               <div key={idx} className={badgeClass} title={slot.label}>
@@ -255,20 +351,22 @@ function UserCard({ s, myBreaks, onUserClick }) {
       <div className="space-y-1.5">
         <div className="flex justify-between text-xs">
           <span className="text-muted-foreground">Daily Allowance:</span>
-          <span className={`font-semibold ${isDailyOverage ? "text-red-500 animate-pulse" : "text-foreground"}`}>
-            {isDailyOverage 
-              ? `+${formatDuration(overageTime)} over limit` 
+          <span
+            className={`font-semibold ${isDailyOverage ? "text-red-500 animate-pulse" : "text-foreground"}`}
+          >
+            {isDailyOverage
+              ? `+${formatDuration(overageTime)} over limit`
               : `${formatDuration(currentTotalDuration)} / 30m`}
           </span>
         </div>
         <div className="w-full bg-muted/60 dark:bg-gray-800/60 rounded-full h-2 overflow-hidden shadow-inner">
           <div
             className={`h-full rounded-full transition-all duration-300 ${
-              isDailyOverage 
-                ? "bg-red-500 animate-pulse" 
-                : percent > 70 
-                ? "bg-amber-500" 
-                : "bg-green-500"
+              isDailyOverage
+                ? "bg-red-500 animate-pulse"
+                : percent > 70
+                  ? "bg-amber-500"
+                  : "bg-green-500"
             }`}
             style={{ width: `${percent}%` }}
           />
@@ -291,7 +389,7 @@ function UserBreakCards({ stats, allBreaks, onUserClick }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
       {stats.map((s) => {
-        const myBreaks = allBreaks.filter(b => b.userId === s.userId);
+        const myBreaks = allBreaks.filter((b) => b.userId === s.userId);
         return (
           <UserCard
             key={s.userId}
@@ -328,9 +426,12 @@ function BreakTimeline({ breaks, showUser, isAdmin, onEdit, onDelete }) {
                 <Coffee className="w-4 h-4 text-orange-600" />
               </div>
               <div>
-                {showUser && <p className="font-medium text-sm">{b.userName}</p>}
+                {showUser && (
+                  <p className="font-medium text-sm">{b.userName}</p>
+                )}
                 <p className="text-xs text-gray-500">
-                  {formatTime(b.startedAt)} — {b.endedAt ? formatTime(b.endedAt) : "Active"}
+                  {formatTime(b.startedAt)} —{" "}
+                  {b.endedAt ? formatTime(b.endedAt) : "Active"}
                 </p>
               </div>
             </div>
@@ -356,11 +457,13 @@ function BreakTimeline({ breaks, showUser, isAdmin, onEdit, onDelete }) {
               <div className="text-right">
                 {b.endedAt ? (
                   <div className="flex flex-col items-end gap-1">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      b.duration > 900 
-                        ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50' 
-                        : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300'
-                    }`}>
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                        b.duration > 900
+                          ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50"
+                          : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+                      }`}
+                    >
                       {formatDuration(b.duration)}
                     </span>
                     {b.duration > 900 && showUser && (
@@ -375,12 +478,14 @@ function BreakTimeline({ breaks, showUser, isAdmin, onEdit, onDelete }) {
                       Active
                     </span>
                     {(() => {
-                      const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
+                      const activeSeconds = Math.floor(
+                        (new Date() - new Date(b.startedAt)) / 1000,
+                      );
                       if (activeSeconds > 900 && showUser) {
                         return (
-                           <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider animate-pulse">
-                             Flagged (Overage)
-                           </span>
+                          <span className="text-[10px] font-bold text-red-600 dark:text-red-400 flex items-center uppercase tracking-wider animate-pulse">
+                            Flagged (Overage)
+                          </span>
                         );
                       }
                       return null;
@@ -396,7 +501,14 @@ function BreakTimeline({ breaks, showUser, isAdmin, onEdit, onDelete }) {
   );
 }
 
-function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today }) {
+function MyBreaksView({
+  selectedDate,
+  onPrev,
+  onNext,
+  onToday,
+  isToday,
+  today,
+}) {
   const [breaks, setBreaks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pushStatus, setPushStatus] = useState("unknown"); // unknown, unsupported, denied, granted
@@ -404,10 +516,10 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
   useEffect(() => {
     if (typeof window !== "undefined" && "Notification" in window) {
       setPushStatus(Notification.permission);
-      
+
       // Always ensure service worker is registered if they are already granted
       if (Notification.permission === "granted") {
-        import("@/lib/push").then(m => m.registerServiceWorker());
+        import("@/lib/push").then((m) => m.registerServiceWorker());
       }
     } else {
       setPushStatus("unsupported");
@@ -445,9 +557,15 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
   }, [fetchData]);
 
   const completedBreaks = breaks.filter((b) => b.endedAt);
-  const totalDuration = completedBreaks.reduce((sum, b) => sum + (b.duration || 0), 0);
+  const totalDuration = completedBreaks.reduce(
+    (sum, b) => sum + (b.duration || 0),
+    0,
+  );
   const activeBreak = breaks.find((b) => !b.endedAt);
-  const completedBreaksCount = completedBreaks.reduce((sum, b) => sum + ((b.duration || 0) >= 900 ? 2 : 1), 0);
+  const completedBreaksCount = completedBreaks.reduce(
+    (sum, b) => sum + ((b.duration || 0) >= 900 ? 2 : 1),
+    0,
+  );
   const remainingTime = Math.max(0, 1800 - totalDuration);
 
   return (
@@ -467,11 +585,15 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
               <Bell className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-300">Enable Notifications</h3>
-              <p className="text-xs text-blue-700/80 dark:text-blue-400/80 mt-1">Get an alert 1 minute before your break time runs out.</p>
+              <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-300">
+                Enable Notifications
+              </h3>
+              <p className="text-xs text-blue-700/80 dark:text-blue-400/80 mt-1">
+                Get an alert 1 minute before your break time runs out.
+              </p>
             </div>
           </div>
-          <button 
+          <button
             onClick={handleEnablePush}
             className="shrink-0 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
           >
@@ -491,7 +613,10 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
           <p className="text-xs text-gray-500">Breaks Taken</p>
-          <p className="text-2xl font-bold">{completedBreaksCount}{activeBreak ? " + 1 active" : ""}</p>
+          <p className="text-2xl font-bold">
+            {completedBreaksCount}
+            {activeBreak ? " + 1 active" : ""}
+          </p>
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
           <p className="text-xs text-gray-500">Total Time</p>
@@ -499,14 +624,19 @@ function MyBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, today })
         </div>
         <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 p-4">
           <p className="text-xs text-gray-500">Daily Remaining Time</p>
-          <p className="text-2xl font-bold">{formatDuration(remainingTime)} / 30m</p>
+          <p className="text-2xl font-bold">
+            {formatDuration(remainingTime)} / 30m
+          </p>
         </div>
       </div>
 
       {loading ? (
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-16 rounded-xl bg-gray-200 dark:bg-gray-800 animate-pulse" />
+            <div
+              key={i}
+              className="h-16 rounded-xl bg-gray-200 dark:bg-gray-800 animate-pulse"
+            />
           ))}
         </div>
       ) : (
@@ -540,7 +670,15 @@ function toLocalInput(date) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
-function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users, isAdmin = false }) {
+function AdminBreaksView({
+  selectedDate,
+  onPrev,
+  onNext,
+  onToday,
+  isToday,
+  users,
+  isAdmin = false,
+}) {
   const [stats, setStats] = useState([]);
   const [allBreaks, setAllBreaks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -591,11 +729,15 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
     try {
       const res = await updateBreak(editingBreak.id, {
         startedAt: new Date(editBreakForm.startedAt).toISOString(),
-        endedAt: editBreakForm.endedAt ? new Date(editBreakForm.endedAt).toISOString() : "",
+        endedAt: editBreakForm.endedAt
+          ? new Date(editBreakForm.endedAt).toISOString()
+          : "",
       });
       if (res.success) {
-        setAllBreaks(prev =>
-          prev.map(b => (b.id === editingBreak.id ? { ...b, ...res.break } : b))
+        setAllBreaks((prev) =>
+          prev.map((b) =>
+            b.id === editingBreak.id ? { ...b, ...res.break } : b,
+          ),
         );
         setEditingBreak(null);
         setEditBreakForm(null);
@@ -619,7 +761,7 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
     try {
       const res = await deleteBreak(b.id);
       if (res.success) {
-        setAllBreaks(prev => prev.filter(x => x.id !== b.id));
+        setAllBreaks((prev) => prev.filter((x) => x.id !== b.id));
         toast.success("Break deleted");
         fetchData();
       } else {
@@ -637,7 +779,9 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
           <Coffee className="w-6 h-6 text-orange-600" />
           Break Tracker
         </h1>
-        <p className="text-sm text-gray-500 mt-1">Track team breaks and time usage</p>
+        <p className="text-sm text-gray-500 mt-1">
+          Track team breaks and time usage
+        </p>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -655,7 +799,9 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
           onChange={(e) => setTeamFilter(e.target.value)}
         >
           {TEAM_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
           ))}
         </select>
 
@@ -668,8 +814,18 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <svg className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          <svg
+            className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
         </div>
 
@@ -701,31 +857,40 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-20 rounded-xl bg-gray-200 dark:bg-gray-800 animate-pulse" />
+              <div
+                key={i}
+                className="h-20 rounded-xl bg-gray-200 dark:bg-gray-800 animate-pulse"
+              />
             ))}
           </div>
           <div className="h-48 rounded-xl bg-gray-200 dark:bg-gray-800 animate-pulse" />
         </div>
       ) : (
         (() => {
-          const filteredStats = stats.filter(s => {
+          const filteredStats = stats.filter((s) => {
             const matchesTeam = !teamFilter || s.userTeam === teamFilter;
-            const matchesSearch = !searchQuery || s.userName.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesSearch =
+              !searchQuery ||
+              s.userName.toLowerCase().includes(searchQuery.toLowerCase());
             return matchesTeam && matchesSearch;
           });
-          const filteredBreaks = allBreaks.filter(b => {
+          const filteredBreaks = allBreaks.filter((b) => {
             const matchesTeam = !teamFilter || b.userTeam === teamFilter;
-            const matchesSearch = !searchQuery || b.userName.toLowerCase().includes(searchQuery.toLowerCase());
+            const matchesSearch =
+              !searchQuery ||
+              b.userName.toLowerCase().includes(searchQuery.toLowerCase());
             return matchesTeam && matchesSearch;
           });
-          const filteredUsersCount = teamFilter ? users.filter(u => u.team === teamFilter).length : users.length;
-          
+          const filteredUsersCount = teamFilter
+            ? users.filter((u) => u.team === teamFilter).length
+            : users.length;
+
           return (
             <>
-              <StatsCards 
-                stats={filteredStats} 
-                allBreaks={filteredBreaks} 
-                totalUsers={filteredUsersCount} 
+              <StatsCards
+                stats={filteredStats}
+                allBreaks={filteredBreaks}
+                totalUsers={filteredUsersCount}
                 onBreakClick={() => setShowActiveModal(true)}
                 onFlaggedClick={() => setShowFlaggedModal(true)}
               />
@@ -735,10 +900,12 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                   <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
                     Per-User Summary
                   </h2>
-                  <UserBreakCards 
-                    stats={filteredStats} 
+                  <UserBreakCards
+                    stats={filteredStats}
                     allBreaks={allBreaks}
-                    onUserClick={(userStats) => setSelectedUserTimeline(userStats)}
+                    onUserClick={(userStats) =>
+                      setSelectedUserTimeline(userStats)
+                    }
                   />
                 </div>
               ) : (
@@ -746,62 +913,98 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                   <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
                     Break Timeline ({filteredBreaks.length})
                   </h2>
-                  <BreakTimeline breaks={filteredBreaks} showUser={true} isAdmin={isAdmin} onEdit={openBreakEdit} onDelete={handleBreakDelete} />
+                  <BreakTimeline
+                    breaks={filteredBreaks}
+                    showUser={true}
+                    isAdmin={isAdmin}
+                    onEdit={openBreakEdit}
+                    onDelete={handleBreakDelete}
+                  />
                 </div>
               )}
             </>
           );
         })()
       )}
-      
+
       {showActiveModal && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200">
           <div className="bg-white dark:bg-gray-900 w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh] animate-in slide-in-from-bottom sm:zoom-in-95 duration-300">
             <div className="flex items-center justify-between p-5 border-b border-gray-200 dark:border-gray-800">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 <Coffee className="w-5 h-5 text-orange-600" />
-                Currently On Break ({allBreaks.filter(b => !b.endedAt && (!teamFilter || b.userTeam === teamFilter)).length})
+                Currently On Break (
+                {
+                  allBreaks.filter(
+                    (b) =>
+                      !b.endedAt && (!teamFilter || b.userTeam === teamFilter),
+                  ).length
+                }
+                )
               </h2>
-              <button 
+              <button
                 onClick={() => setShowActiveModal(false)}
                 className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="overflow-y-auto p-5 space-y-3 flex-1">
               {(() => {
-                const active = allBreaks.filter(b => !b.endedAt && (!teamFilter || b.userTeam === teamFilter) && (!searchQuery || b.userName.toLowerCase().includes(searchQuery.toLowerCase())));
+                const active = allBreaks.filter(
+                  (b) =>
+                    !b.endedAt &&
+                    (!teamFilter || b.userTeam === teamFilter) &&
+                    (!searchQuery ||
+                      b.userName
+                        .toLowerCase()
+                        .includes(searchQuery.toLowerCase())),
+                );
                 if (active.length === 0) {
-                  return <div className="text-center py-8 text-gray-500">No one is currently on break.</div>;
-                }
-                return active.sort((a,b) => new Date(a.startedAt) - new Date(b.startedAt)).map(b => {
-                  const activeSeconds = Math.floor((new Date() - new Date(b.startedAt)) / 1000);
-                  const isFlagged = activeSeconds > 900;
                   return (
-                    <div key={b.id} className="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50">
-                      <div>
-                        <p className="font-medium text-sm">{b.userName}</p>
-                        <p className="text-xs text-gray-500 capitalize">{b.userTeam?.replace("_", " ") || "No Team"}</p>
-                      </div>
-                      <div className="text-right flex flex-col items-end gap-1">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          isFlagged 
-                            ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50"
-                            : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 animate-pulse"
-                        }`}>
-                          {formatDuration(activeSeconds)}
-                        </span>
-                        {isFlagged && (
-                          <span className="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider animate-pulse">
-                            Flagged
-                          </span>
-                        )}
-                      </div>
+                    <div className="text-center py-8 text-gray-500">
+                      No one is currently on break.
                     </div>
                   );
-                });
+                }
+                return active
+                  .sort((a, b) => new Date(a.startedAt) - new Date(b.startedAt))
+                  .map((b) => {
+                    const activeSeconds = Math.floor(
+                      (new Date() - new Date(b.startedAt)) / 1000,
+                    );
+                    const isFlagged = activeSeconds > 900;
+                    return (
+                      <div
+                        key={b.id}
+                        className="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50"
+                      >
+                        <div>
+                          <p className="font-medium text-sm">{b.userName}</p>
+                          <p className="text-xs text-gray-500 capitalize">
+                            {b.userTeam?.replace("_", " ") || "No Team"}
+                          </p>
+                        </div>
+                        <div className="text-right flex flex-col items-end gap-1">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              isFlagged
+                                ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50"
+                                : "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 animate-pulse"
+                            }`}
+                          >
+                            {formatDuration(activeSeconds)}
+                          </span>
+                          {isFlagged && (
+                            <span className="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider animate-pulse">
+                              Flagged
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  });
               })()}
             </div>
           </div>
@@ -816,72 +1019,107 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                 <Coffee className="w-5 h-5 text-red-600" />
                 Flagged Employees
               </h2>
-              <button 
+              <button
                 onClick={() => setShowFlaggedModal(false)}
                 className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="overflow-y-auto p-5 space-y-3 flex-1">
               {(() => {
-                // We already grouped by user in StatsCards, but that was scoped locally. 
+                // We already grouped by user in StatsCards, but that was scoped locally.
                 // We can recalculate here since it's cheap, or just do it again.
                 const flaggedUsersMap = new Map();
                 for (const b of allBreaks) {
                   if (teamFilter && b.userTeam !== teamFilter) continue;
-                  if (searchQuery && !b.userName.toLowerCase().includes(searchQuery.toLowerCase())) continue;
-                  
+                  if (
+                    searchQuery &&
+                    !b.userName
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase())
+                  )
+                    continue;
+
                   if (!flaggedUsersMap.has(b.userId)) {
-                    flaggedUsersMap.set(b.userId, { total: 0, userName: b.userName, userTeam: b.userTeam, isActive: false, hasOverage: false, overageSeconds: 0 });
+                    flaggedUsersMap.set(b.userId, {
+                      total: 0,
+                      userName: b.userName,
+                      userTeam: b.userTeam,
+                      isActive: false,
+                      hasOverage: false,
+                      overageSeconds: 0,
+                    });
                   }
-                  
-                  const dur = b.endedAt ? b.duration : Math.floor((new Date() - new Date(b.startedAt)) / 1000);
+
+                  const dur = b.endedAt
+                    ? b.duration
+                    : Math.floor((new Date() - new Date(b.startedAt)) / 1000);
                   const data = flaggedUsersMap.get(b.userId);
                   data.total += dur;
                   if (!b.endedAt) data.isActive = true;
                   if (dur > 900) {
                     data.hasOverage = true;
-                    data.overageSeconds += (dur - 900);
+                    data.overageSeconds += dur - 900;
                   }
                 }
-                
+
                 for (const data of flaggedUsersMap.values()) {
                   if (data.total > 1800) {
                     data.hasOverage = true;
                     const dailyOverage = data.total - 1800;
-                    data.overageSeconds = Math.max(data.overageSeconds, dailyOverage);
+                    data.overageSeconds = Math.max(
+                      data.overageSeconds,
+                      dailyOverage,
+                    );
                   }
                 }
-                
-                const flagged = Array.from(flaggedUsersMap.values()).filter(u => u.hasOverage);
+
+                const flagged = Array.from(flaggedUsersMap.values()).filter(
+                  (u) => u.hasOverage,
+                );
 
                 if (flagged.length === 0) {
-                  return <div className="text-center py-8 text-gray-500">No flagged employees for this date.</div>;
-                }
-                
-                return flagged.sort((a,b) => b.total - a.total).map(u => {
                   return (
-                    <div key={u.userName} className="flex items-center justify-between p-3 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-900/10">
-                      <div>
-                        <p className="font-medium text-sm text-red-900 dark:text-red-300">{u.userName}</p>
-                        <p className="text-xs text-red-700/70 dark:text-red-400/70 capitalize">{u.userTeam?.replace("_", " ") || "No Team"}</p>
-                      </div>
-                      <div className="text-right flex flex-col items-end gap-1">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50">
-                          {u.isActive ? "Active Break" : `+ ${formatDuration(u.overageSeconds)}`}
-                        </span>
-                      </div>
+                    <div className="text-center py-8 text-gray-500">
+                      No flagged employees for this date.
                     </div>
                   );
-                });
+                }
+
+                return flagged
+                  .sort((a, b) => b.total - a.total)
+                  .map((u) => {
+                    return (
+                      <div
+                        key={u.userName}
+                        className="flex items-center justify-between p-3 rounded-xl border border-red-200 dark:border-red-900/50 bg-red-50/50 dark:bg-red-900/10"
+                      >
+                        <div>
+                          <p className="font-medium text-sm text-red-900 dark:text-red-300">
+                            {u.userName}
+                          </p>
+                          <p className="text-xs text-red-700/70 dark:text-red-400/70 capitalize">
+                            {u.userTeam?.replace("_", " ") || "No Team"}
+                          </p>
+                        </div>
+                        <div className="text-right flex flex-col items-end gap-1">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 ring-1 ring-inset ring-red-200 dark:ring-red-900/50">
+                            {u.isActive
+                              ? "Active Break"
+                              : `+ ${formatDuration(u.overageSeconds)}`}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  });
               })()}
             </div>
           </div>
         </div>
       )}
-      
+
       {selectedUserTimeline && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm p-0 sm:p-4 animate-in fade-in duration-200">
           <div className="bg-white dark:bg-gray-900 w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh] animate-in slide-in-from-bottom sm:zoom-in-95 duration-300">
@@ -890,18 +1128,20 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                 <Clock className="w-5 h-5 text-blue-600" />
                 {selectedUserTimeline.userName}&apos;s Timeline
               </h2>
-              <button 
+              <button
                 onClick={() => setSelectedUserTimeline(null)}
                 className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="overflow-y-auto p-5 space-y-3 flex-1">
-              <BreakTimeline 
-                breaks={allBreaks.filter(b => b.userId === selectedUserTimeline.userId)} 
-                showUser={false} 
+              <BreakTimeline
+                breaks={allBreaks.filter(
+                  (b) => b.userId === selectedUserTimeline.userId,
+                )}
+                showUser={false}
                 isAdmin={isAdmin}
                 onEdit={openBreakEdit}
                 onDelete={handleBreakDelete}
@@ -919,7 +1159,7 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                 <Pencil className="w-5 h-5 text-primary" />
                 Edit Break Time
               </h2>
-              <button 
+              <button
                 onClick={() => {
                   setEditingBreak(null);
                   setEditBreakForm(null);
@@ -929,34 +1169,56 @@ function AdminBreaksView({ selectedDate, onPrev, onNext, onToday, isToday, users
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
-            <form onSubmit={handleBreakEditSubmit} className="p-5 space-y-4 overflow-y-auto">
+
+            <form
+              onSubmit={handleBreakEditSubmit}
+              className="p-5 space-y-4 overflow-y-auto"
+            >
               <p className="text-xs text-gray-500 font-medium uppercase tracking-wider">
-                User: <span className="text-foreground font-bold">{editingBreak.userName}</span>
+                User:{" "}
+                <span className="text-foreground font-bold">
+                  {editingBreak.userName}
+                </span>
               </p>
-              
+
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">Start Time</label>
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
+                  Start Time
+                </label>
                 <input
                   type="datetime-local"
                   required
                   className="w-full p-2.5 text-base sm:text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-foreground outline-none focus:ring-1 focus:ring-primary"
                   value={editBreakForm.startedAt}
-                  onChange={(e) => setEditBreakForm(prev => ({ ...prev, startedAt: e.target.value }))}
+                  onChange={(e) =>
+                    setEditBreakForm((prev) => ({
+                      ...prev,
+                      startedAt: e.target.value,
+                    }))
+                  }
                 />
               </div>
-              
+
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">End Time (Optional)</label>
+                <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider block">
+                  End Time (Optional)
+                </label>
                 <input
                   type="datetime-local"
                   className="w-full p-2.5 text-base sm:text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-foreground outline-none focus:ring-1 focus:ring-primary"
                   value={editBreakForm.endedAt}
-                  onChange={(e) => setEditBreakForm(prev => ({ ...prev, endedAt: e.target.value }))}
+                  onChange={(e) =>
+                    setEditBreakForm((prev) => ({
+                      ...prev,
+                      endedAt: e.target.value,
+                    }))
+                  }
                 />
-                <span className="text-[10px] text-gray-400 block">Leave blank if the break is still ongoing.</span>
+                <span className="text-[10px] text-gray-400 block">
+                  Leave blank if the break is still ongoing.
+                </span>
               </div>
-              
+
               <div className="flex items-center gap-3 pt-3">
                 <button
                   type="button"

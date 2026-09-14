@@ -7,4 +7,3 @@ export const PRESS_MENTIONS = [
     publishedAt: "2026-05-12",
   },
 ];
-

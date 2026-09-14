@@ -3,17 +3,35 @@ import AboutSection from "@/components/homepage/AboutSection";
 import BatchFeeInfo from "@/components/programspage/BatchFeeInfo";
 import dynamic from "next/dynamic";
 
-const ProblemSection = dynamic(() => import("@/components/homepage/ProblemSection"));
-const FeaturesSection = dynamic(() => import("@/components/homepage/FeaturesSection"));
-const LeadersSection = dynamic(() => import("@/components/common/LeadersSection"));
+const ProblemSection = dynamic(
+  () => import("@/components/homepage/ProblemSection"),
+);
+const FeaturesSection = dynamic(
+  () => import("@/components/homepage/FeaturesSection"),
+);
+const LeadersSection = dynamic(
+  () => import("@/components/common/LeadersSection"),
+);
 const CTASection = dynamic(() => import("@/components/homepage/CTASection"));
 const FAQSection = dynamic(() => import("@/components/common/FAQSection"));
-const BlogSection = dynamic(() => import("@/components/homepage/BlogSection").then(mod => mod.BlogSection));
-const PartnersSlider = dynamic(() => import("@/components/common/PartnersSlider"));
-const ProgramsShowcase = dynamic(() => import("@/components/homepage/ProgrammeShowcase"));
-const WhatStudentsBuild = dynamic(() => import("@/components/homepage/WhatStudentsBuild"));
-const FeaturedRoles = dynamic(() => import("@/components/homepage/FeaturedRoles"));
-const SkillTestSection = dynamic(() => import("@/components/homepage/SkillTestSection"));
+const BlogSection = dynamic(() =>
+  import("@/components/homepage/BlogSection").then((mod) => mod.BlogSection),
+);
+const PartnersSlider = dynamic(
+  () => import("@/components/common/PartnersSlider"),
+);
+const ProgramsShowcase = dynamic(
+  () => import("@/components/homepage/ProgrammeShowcase"),
+);
+const WhatStudentsBuild = dynamic(
+  () => import("@/components/homepage/WhatStudentsBuild"),
+);
+const FeaturedRoles = dynamic(
+  () => import("@/components/homepage/FeaturedRoles"),
+);
+const SkillTestSection = dynamic(
+  () => import("@/components/homepage/SkillTestSection"),
+);
 
 import { buildSEO } from "@/lib/seo/buildSEO";
 import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
@@ -71,10 +89,7 @@ export default async function Home() {
 
   return (
     <>
-      <JsonLd
-        data={combinedSchema}
-        id="homepage-schema"
-      />
+      <JsonLd data={combinedSchema} id="homepage-schema" />
 
       <div className="min-h-screen w-full bg-background text-foreground transition-colors duration-500">
         <HeroCarousel />

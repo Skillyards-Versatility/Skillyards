@@ -8,30 +8,55 @@ async function putHandler(req, { ctx, context }) {
     const { id } = await context.params;
 
     if (ctx.session.role !== "ADMIN") {
-      return Response.json({ success: false, message: "Admin access required to edit sessions" }, { status: 403 });
+      return Response.json(
+        { success: false, message: "Admin access required to edit sessions" },
+        { status: 403 },
+      );
     }
 
     const [existing] = await db
-      .select({ id: counsellingSessions.id, imageKey: counsellingSessions.imageKey, counselorId: counsellingSessions.counselorId, bookedById: counsellingSessions.bookedById })
+      .select({
+        id: counsellingSessions.id,
+        imageKey: counsellingSessions.imageKey,
+        counselorId: counsellingSessions.counselorId,
+        bookedById: counsellingSessions.bookedById,
+      })
       .from(counsellingSessions)
       .where(eq(counsellingSessions.id, id))
       .limit(1);
 
     if (!existing) {
-      return Response.json({ success: false, message: "Session not found" }, { status: 404 });
+      return Response.json(
+        { success: false, message: "Session not found" },
+        { status: 404 },
+      );
     }
 
-    const { studentName, phone, ageOrClass, courseInterest, source, outcome, notes, sessionDate, nextFollowUpDate, counselorId, bookedById, imageKey } = await req.json();
+    const {
+      studentName,
+      phone,
+      ageOrClass,
+      courseInterest,
+      source,
+      outcome,
+      notes,
+      sessionDate,
+      nextFollowUpDate,
+      counselorId,
+      bookedById,
+      imageKey,
+    } = await req.json();
 
     if (!studentName || !sessionDate) {
       return Response.json(
         { success: false, message: "studentName and sessionDate are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const oldImageKey = existing.imageKey;
-    const finalImageKey = imageKey === undefined ? existing.imageKey : (imageKey || null);
+    const finalImageKey =
+      imageKey === undefined ? existing.imageKey : imageKey || null;
 
     const [updated] = await db
       .update(counsellingSessions)
@@ -44,9 +69,11 @@ async function putHandler(req, { ctx, context }) {
         outcome: outcome || "follow_up",
         notes: notes || null,
         sessionDate,
-        nextFollowUpDate: outcome && outcome !== "follow_up" ? null : (nextFollowUpDate || null),
+        nextFollowUpDate:
+          outcome && outcome !== "follow_up" ? null : nextFollowUpDate || null,
         counselorId: counselorId || existing.counselorId,
-        bookedById: bookedById === undefined ? existing.bookedById : (bookedById || null),
+        bookedById:
+          bookedById === undefined ? existing.bookedById : bookedById || null,
         imageKey: finalImageKey,
       })
       .where(eq(counsellingSessions.id, id))
@@ -61,7 +88,10 @@ async function putHandler(req, { ctx, context }) {
     return Response.json({ success: true, session: updated[0] });
   } catch (error) {
     ctx.error("COUNSELLING_SESSION_UPDATE_FAILED", { error: error.message });
-    return Response.json({ success: false, message: "Failed to update session" }, { status: 500 });
+    return Response.json(
+      { success: false, message: "Failed to update session" },
+      { status: 500 },
+    );
   }
 }
 
@@ -70,17 +100,26 @@ async function deleteHandler(req, { ctx, context }) {
     const { id } = await context.params;
 
     if (ctx.session.role !== "ADMIN") {
-      return Response.json({ success: false, message: "Admin access required to delete sessions" }, { status: 403 });
+      return Response.json(
+        { success: false, message: "Admin access required to delete sessions" },
+        { status: 403 },
+      );
     }
 
     const [existing] = await db
-      .select({ id: counsellingSessions.id, imageKey: counsellingSessions.imageKey })
+      .select({
+        id: counsellingSessions.id,
+        imageKey: counsellingSessions.imageKey,
+      })
       .from(counsellingSessions)
       .where(eq(counsellingSessions.id, id))
       .limit(1);
 
     if (!existing) {
-      return Response.json({ success: false, message: "Session not found" }, { status: 404 });
+      return Response.json(
+        { success: false, message: "Session not found" },
+        { status: 404 },
+      );
     }
 
     await db.delete(counsellingSessions).where(eq(counsellingSessions.id, id));
@@ -94,7 +133,10 @@ async function deleteHandler(req, { ctx, context }) {
     return Response.json({ success: true, message: "Session deleted" });
   } catch (error) {
     ctx.error("COUNSELLING_SESSION_DELETE_FAILED", { error: error.message });
-    return Response.json({ success: false, message: "Failed to delete session" }, { status: 500 });
+    return Response.json(
+      { success: false, message: "Failed to delete session" },
+      { status: 500 },
+    );
   }
 }
 

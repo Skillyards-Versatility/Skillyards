@@ -10,7 +10,7 @@ export default async function EodPage() {
   if (settings.eod_feature === false) redirect("/dashboard");
 
   const session = await getSession();
-  
+
   if (session?.role === "ADMIN") {
     redirect("/eod/history");
   }

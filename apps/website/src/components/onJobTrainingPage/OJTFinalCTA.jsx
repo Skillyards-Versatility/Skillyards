@@ -18,7 +18,8 @@ export default function OJTFinalCTA() {
           viewport={{ once: true }}
           className="font-serif text-3xl font-extrabold leading-tight text-primary-foreground sm:text-4xl md:text-5xl"
         >
-          Still Confused Between <span className="opacity-80">Full-Stack and Digital Marketing?</span>
+          Still Confused Between{" "}
+          <span className="opacity-80">Full-Stack and Digital Marketing?</span>
         </motion.h2>
 
         <motion.p
@@ -28,7 +29,9 @@ export default function OJTFinalCTA() {
           transition={{ delay: 0.1 }}
           className="mx-auto mt-5 max-w-2xl text-base text-primary-foreground/75"
         >
-          Book a free demo class or counselling session and we&apos;ll help you choose the right OJT program based on your interests, career goals, and learning style.
+          Book a free demo class or counselling session and we&apos;ll help you
+          choose the right OJT program based on your interests, career goals,
+          and learning style.
         </motion.p>
 
         <motion.div

@@ -4,7 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 const STATS = [
   { id: 1, end: 700, suffix: "+", label: "Students Trained in Agra" },
-  { id: 2, end: 50, suffix: "+", label: "Live Projects Completed By Our Students" },
+  {
+    id: 2,
+    end: 50,
+    suffix: "+",
+    label: "Live Projects Completed By Our Students",
+  },
   { id: 3, end: 5, suffix: "+", label: "Programmes Offered" },
   { id: 4, end: 50, suffix: "+", label: "Tool and Technlogy Taught" },
 ];
@@ -73,7 +78,7 @@ export default function StatsStrip() {
           observer.disconnect();
         }
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
 
     observer.observe(node);

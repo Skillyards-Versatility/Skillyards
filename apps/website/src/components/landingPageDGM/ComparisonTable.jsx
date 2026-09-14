@@ -23,7 +23,8 @@ export function DGMComparisonTable() {
             <span className="italic text-primary">Course Fee</span>
           </h2>
           <p className="mx-auto mt-4 max-w-3xl text-sm text-muted-foreground sm:text-base">
-            The Digital Marketing OJT program fee is ₹35,000. EMI/installment options are available, with plans starting from ₹5.5k/month.
+            The Digital Marketing OJT program fee is ₹35,000. EMI/installment
+            options are available, with plans starting from ₹5.5k/month.
           </p>
         </div>
 
@@ -38,20 +39,29 @@ export function DGMComparisonTable() {
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 sm:h-11 sm:w-11">
                 <IndianRupee size={18} className="text-primary sm:h-5 sm:w-5" />
               </div>
-              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Full Program Fee</p>
-              <p className="mt-2 text-2xl font-extrabold text-foreground sm:text-3xl">₹35,000</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                Full Program Fee
+              </p>
+              <p className="mt-2 text-2xl font-extrabold text-foreground sm:text-3xl">
+                ₹35,000
+              </p>
             </div>
             <div className="rounded-2xl bg-secondary/10 p-5 sm:p-6">
               <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 sm:h-11 sm:w-11">
                 <CreditCard size={18} className="text-primary sm:h-5 sm:w-5" />
               </div>
-              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Installment Option</p>
-              <p className="mt-2 text-2xl font-extrabold leading-tight text-foreground sm:text-3xl">Starting from ₹5.5k/month</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                Installment Option
+              </p>
+              <p className="mt-2 text-2xl font-extrabold leading-tight text-foreground sm:text-3xl">
+                Starting from ₹5.5k/month
+              </p>
             </div>
           </div>
 
           <p className="mx-auto mt-6 max-w-2xl text-center text-sm leading-relaxed text-muted-foreground">
-            Want to understand the course, fee plan, and batch schedule? Book a free demo class at SkillYards.
+            Want to understand the course, fee plan, and batch schedule? Book a
+            free demo class at SkillYards.
           </p>
 
           <div className="mt-6 flex justify-center">

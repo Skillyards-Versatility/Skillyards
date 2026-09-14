@@ -20,7 +20,10 @@ export function FSDFinalCTA() {
           className="mb-3 flex flex-wrap items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-[0.16em] text-primary-foreground/60 sm:text-xs sm:tracking-widest"
         >
           <Calendar size={13} />
-          Next batch starting soon, <span className="text-primary-foreground">contact us for the upcoming schedule</span>
+          Next batch starting soon,{" "}
+          <span className="text-primary-foreground">
+            contact us for the upcoming schedule
+          </span>
         </motion.div>
 
         <motion.h2
@@ -30,7 +33,8 @@ export function FSDFinalCTA() {
           transition={{ delay: 0.1 }}
           className="font-serif text-2xl font-extrabold leading-tight text-primary-foreground sm:text-4xl md:text-5xl"
         >
-          Start Learning Full-Stack Web Development in Agra <span className="opacity-80">with SkillYards</span>
+          Start Learning Full-Stack Web Development in Agra{" "}
+          <span className="opacity-80">with SkillYards</span>
         </motion.h2>
 
         <motion.p
@@ -40,7 +44,9 @@ export function FSDFinalCTA() {
           transition={{ delay: 0.15 }}
           className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-primary-foreground/75 sm:text-base"
         >
-          Book a free demo class and see how SkillYards teaches full-stack development, MERN stack, GitHub, deployment, practical projects, and AI-assisted coding workflows through offline classroom training.
+          Book a free demo class and see how SkillYards teaches full-stack
+          development, MERN stack, GitHub, deployment, practical projects, and
+          AI-assisted coding workflows through offline classroom training.
         </motion.p>
 
         <motion.div

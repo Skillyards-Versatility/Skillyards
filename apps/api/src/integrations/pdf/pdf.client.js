@@ -12,7 +12,7 @@ export async function generatePdf(html, key, jobId) {
 
   if (USE_PDF_SHIFT) {
     console.log("[PDF_CLIENT] Generating PDF using PDFShift:", { key, jobId });
-    
+
     try {
       const pdfBuffer = await callPdfShift({
         source: html,
@@ -31,7 +31,9 @@ export async function generatePdf(html, key, jobId) {
         receiptKey: key,
       });
 
-      console.log("[PDF_CLIENT] PDFShift generation and upload complete:", { paymentId });
+      console.log("[PDF_CLIENT] PDFShift generation and upload complete:", {
+        paymentId,
+      });
       return { message: "Generation complete via PDFShift" };
     } catch (err) {
       console.error("[PDF_CLIENT] PDFShift generation failed:", err);
@@ -49,7 +51,10 @@ export async function generatePdf(html, key, jobId) {
     throw new Error("PDF_SERVICE_URL is not configured");
   }
 
-  console.log("[PDF_CLIENT] Sending request to Railway Puppeteer service:", { key, jobId });
+  console.log("[PDF_CLIENT] Sending request to Railway Puppeteer service:", {
+    key,
+    jobId,
+  });
 
   try {
     const res = await fetch(`${PDF_SERVICE_URL}/generate`, {
@@ -69,7 +74,7 @@ export async function generatePdf(html, key, jobId) {
       } catch (e) {
         errorData = { message: errorText };
       }
-      
+
       console.error("[PDF_CLIENT] Service error:", errorData);
       throw new Error(`PDF service failed: ${res.status}`);
     }

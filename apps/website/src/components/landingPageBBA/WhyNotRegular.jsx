@@ -37,10 +37,12 @@ export function WhyNotRegular() {
             Why not just do a regular BBA?
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
-            A regular BBA teaches you management theory and gives you a degree. That&apos;s useful. But
-            employers hiring for digital marketing roles don&apos;t ask for your BBA grade, they ask
-            if you&apos;ve run a Google Ads campaign, managed an SEO audit or tracked Meta Ad performance.
-            SkillYards adds that practical layer to your BBA, every single day for three years.
+            A regular BBA teaches you management theory and gives you a degree.
+            That&apos;s useful. But employers hiring for digital marketing roles
+            don&apos;t ask for your BBA grade, they ask if you&apos;ve run a
+            Google Ads campaign, managed an SEO audit or tracked Meta Ad
+            performance. SkillYards adds that practical layer to your BBA, every
+            single day for three years.
           </p>
         </div>
 
@@ -54,8 +56,12 @@ export function WhyNotRegular() {
               transition={{ delay: i * 0.1 }}
               className="flex flex-col rounded-2xl border border-border/50 bg-card p-6 shadow-sm"
             >
-              <span className="mb-4 text-5xl font-black text-primary/15">{card.number}</span>
-              <h3 className="mb-3 font-serif text-lg font-extrabold text-foreground">{card.title}</h3>
+              <span className="mb-4 text-5xl font-black text-primary/15">
+                {card.number}
+              </span>
+              <h3 className="mb-3 font-serif text-lg font-extrabold text-foreground">
+                {card.title}
+              </h3>
               <p
                 className="text-sm leading-relaxed text-muted-foreground"
                 dangerouslySetInnerHTML={{ __html: card.body }}

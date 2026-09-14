@@ -1,9 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import {
   Table,
@@ -14,72 +9,65 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
-
-
 export default function DigitalMarketingContent() {
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-16 space-y-20">
-
       {/* Hero */}
 
       <section className="space-y-8">
-
         <div className="space-y-5">
-
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
             Why Skill-Based Learning Matters for Students in Agra
           </h2>
 
           <p className="text-lg md:text-xl text-muted-foreground leading-8">
-            A recognised degree opens the door — it's what makes you eligible, what parents rightly expect, and what most employers still ask for first. The question isn't whether to do a degree. For students choosing the best BBA program in Agra or the best BCA program in Agra, the real question is what you'll have alongside that degree by the time you graduate.
-
+            A recognised degree opens the door — it's what makes you eligible,
+            what parents rightly expect, and what most employers still ask for
+            first. The question isn't whether to do a degree. For students
+            choosing the best BBA program in Agra or the best BCA program in
+            Agra, the real question is what you'll have alongside that degree by
+            the time you graduate.
           </p>
-
-          
-
         </div>
-
       </section>
 
       {/* Programs */}
 
       <section className="space-y-10">
-
         <div className="space-y-4">
-
           <h3 className="text-3xl font-bold">
             Our Digital Marketing Programmes
           </h3>
 
           <p className="text-muted-foreground text-lg leading-8">
-            Every year Agra produces thousands of BBA, BCA, B.Com and BA graduates, all holding valid degrees. What separates candidates in an interview is evidence — a campaign you actually ran, an application you actually deployed, a portfolio someone can open. This is why students looking for the best digital marketing institute in Agra increasingly ask what practical work is included, not just what the syllabus covers. Our On-Job Degree programs are built so you finish with both a DBRAU degree and real work behind you.
-
+            Every year Agra produces thousands of BBA, BCA, B.Com and BA
+            graduates, all holding valid degrees. What separates candidates in
+            an interview is evidence — a campaign you actually ran, an
+            application you actually deployed, a portfolio someone can open.
+            This is why students looking for the best digital marketing
+            institute in Agra increasingly ask what practical work is included,
+            not just what the syllabus covers. Our On-Job Degree programs are
+            built so you finish with both a DBRAU degree and real work behind
+            you.
           </p>
-
         </div>
-
-        
-
       </section>
 
       {/* Course Details */}
 
       <section className="space-y-8">
-
         <div>
-
           <h2 className="text-3xl font-bold mb-3">
             Practical exposure is harder to find here than in metros
           </h2>
 
           <p className="text-muted-foreground text-lg leading-8">
-            In Delhi or Bangalore, a student can find an internship at a working agency or product company relatively easily. In Agra, those opportunities are limited.
-
+            In Delhi or Bangalore, a student can find an internship at a working
+            agency or product company relatively easily. In Agra, those
+            opportunities are limited.
           </p>
-
         </div>
-{/* 
+        {/* 
         <Table>
 
           <TableHeader>
@@ -183,37 +171,37 @@ export default function DigitalMarketingContent() {
           </TableBody>
 
         </Table> */}
-
       </section>
       {/* SEO Course */}
 
-<section className="space-y-10">
+      <section className="space-y-10">
+        <div className="space-y-5">
+          <h3 className="text-3xl font-bold">
+            In Delhi or Bangalore, a student can find an internship at a working
+            agency or product company relatively easily. In Agra, those
+            opportunities are limited.
+          </h3>
 
-  <div className="space-y-5">
+          <p className="text-lg text-muted-foreground leading-8">
+            That's why the best full stack institute in Agra, or the best
+            digital marketing institute near you, has to build practical work
+            into the program itself rather than leave it to chance. Our On-Job
+            Degree model does exactly that - live projects running alongside
+            your semesters from year one. Search Engine Optimization (SEO) is
+            one of the most valuable digital marketing skills for anyone looking
+            to build a career in online marketing. Our SEO Course in Agra
+            teaches students how search engines work and how websites can rank
+            higher on Google through ethical, long-term optimization techniques.
+          </p>
 
-    <h3 className="text-3xl font-bold">
-      In Delhi or Bangalore, a student can find an internship at a working agency or product company relatively easily. In Agra, those opportunities are limited.
-    </h3>
-
-    <p className="text-lg text-muted-foreground leading-8">
-      That's why the best full stack institute in Agra, or the best digital marketing institute near you, has to build practical work into the program itself rather than leave it to chance. Our On-Job Degree model does exactly that - live projects running alongside your semesters from year one.
-
-      Search Engine Optimization (SEO) is one of the most valuable digital
-      marketing skills for anyone looking to build a career in online
-      marketing. Our SEO Course in Agra teaches students how search engines
-      work and how websites can rank higher on Google through ethical,
-      long-term optimization techniques.
-    </p>
-
-    {/* <p className="text-lg text-muted-foreground leading-8">
+          {/* <p className="text-lg text-muted-foreground leading-8">
       Rather than only learning concepts, students work on live websites,
       perform keyword research, optimize pages, build backlinks, and analyze
       website performance using professional SEO tools.
     </p> */}
+        </div>
 
-  </div>
-
-  {/* <div className="grid lg:grid-cols-2 gap-6">
+        {/* <div className="grid lg:grid-cols-2 gap-6">
 
     <Card>
       <CardHeader>
@@ -285,7 +273,7 @@ export default function DigitalMarketingContent() {
     </Card>
 
   </div> */}
-{/* 
+        {/* 
   <Table>
 
     <TableHeader>
@@ -355,26 +343,27 @@ export default function DigitalMarketingContent() {
     </TableBody>
 
   </Table> */}
+      </section>
 
-</section>
+      {/* Google Ads */}
 
-{/* Google Ads */}
+      <section className="space-y-10">
+        <div className="space-y-5">
+          <h3 className="text-3xl font-bold">
+            Local businesses need these skills too
+          </h3>
 
-<section className="space-y-10">
+          <p className="text-lg text-muted-foreground leading-8">
+            Agra's hotels, manufacturers, exporters, retailers and coaching
+            institutes all need websites that work and marketing that brings
+            enquiries. Whether you want a job, freelance clients, or to grow a
+            business your family already runs, both our BBA with Digital
+            Marketing in Agra and BCA with Full Stack in Agra tracks apply
+            directly.
+          </p>
+        </div>
 
-  <div className="space-y-5">
-
-    <h3 className="text-3xl font-bold">
-      Local businesses need these skills too
-    </h3>
-
-    <p className="text-lg text-muted-foreground leading-8">
-      Agra's hotels, manufacturers, exporters, retailers and coaching institutes all need websites that work and marketing that brings enquiries. Whether you want a job, freelance clients, or to grow a business your family already runs, both our BBA with Digital Marketing in Agra and BCA with Full Stack in Agra tracks apply directly.
-    </p>
-
-  </div>
-
-  {/* <div className="grid md:grid-cols-2 gap-6">
+        {/* <div className="grid md:grid-cols-2 gap-6">
 
     <Card>
 
@@ -436,26 +425,22 @@ export default function DigitalMarketingContent() {
     </Card>
 
   </div> */}
+      </section>
 
-</section>
+      {/* Social Media */}
 
-{/* Social Media */}
-
-<section className="space-y-10">
-
-  <div className="space-y-5">
-
-    {/* <h2 className="text-3xl font-bold">
+      <section className="space-y-10">
+        <div className="space-y-5">
+          {/* <h2 className="text-3xl font-bold">
       Local businesses need these skills too
     </h2>
 
     <p className="text-lg text-muted-foreground leading-8">
       Agra's hotels, manufacturers, exporters, retailers and coaching institutes all need websites that work and marketing that brings enquiries. Whether you want a job, freelance clients, or to grow a business your family already runs, both our BBA with Digital Marketing in Agra and BCA with Full Stack in Agra tracks apply directly.
     </p> */}
+        </div>
 
-  </div>
-
-  {/* <div className="grid lg:grid-cols-3 gap-6">
+        {/* <div className="grid lg:grid-cols-3 gap-6">
 
     <Card>
 
@@ -536,115 +521,132 @@ export default function DigitalMarketingContent() {
     </Card>
 
   </div> */}
+      </section>
 
-</section>
+      {/* WordPress */}
 
-{/* WordPress */}
+      <section className="space-y-10">
+        <div className="space-y-5">
+          <h2 className="text-3xl font-bold">WordPress Website Development</h2>
 
-<section className="space-y-10">
+          <p className="text-lg text-muted-foreground leading-8">
+            Every digital marketer should understand how websites work. Our
+            WordPress training enables students to build professional websites
+            and landing pages without coding, while understanding hosting,
+            SEO-friendly structure and conversion optimisation.
+          </p>
+        </div>
 
-  <div className="space-y-5">
+        <table className="w-full border-collapse text-left font-serif">
+          <thead>
+            <tr className="border-b border-gray-400/50 dark:border-gray-600">
+              <th className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
+                Module
+              </th>
 
-    <h2 className="text-3xl font-bold">
-      WordPress Website Development
-    </h2>
+              <th className="px-4 py-3 text-base font-semibold text-foreground">
+                Topics
+              </th>
 
-    <p className="text-lg text-muted-foreground leading-8">
-      Every digital marketer should understand how websites work. Our WordPress training enables students to build professional websites and landing pages without coding, while understanding hosting, SEO-friendly structure and conversion optimisation.
+              <th className="px-4 py-3 text-base font-semibold text-foreground">
+                What You'll Build
+              </th>
+            </tr>
+          </thead>
 
-    </p>
+          <tbody>
+            <tr className="border-b border-gray-400/50 dark:border-gray-600">
+              <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
+                Website Basics
+              </td>
 
-  </div>
+              <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                Domains, hosting, SSL
+              </td>
 
-<table className="w-full border-collapse text-left font-serif">
-  <thead>
-    <tr className="border-b border-gray-400/50 dark:border-gray-600">
-      <th className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
-        Module
-      </th>
+              <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                A live site on your own domain
+              </td>
+            </tr>
 
-      <th className="px-4 py-3 text-base font-semibold text-foreground">
-        Topics
-      </th>
+            <tr className="border-b border-gray-400/50 dark:border-gray-600">
+              <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
+                WordPress
+              </td>
 
-      <th className="px-4 py-3 text-base font-semibold text-foreground">
-        What You'll Build
-      </th>
-    </tr>
-  </thead>
+              <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                Themes, plugins, Elementor
+              </td>
 
-  <tbody>
-    <tr className="border-b border-gray-400/50 dark:border-gray-600">
-      <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
-        Website Basics
-      </td>
+              <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                A complete multi-page website
+              </td>
+            </tr>
 
-      <td className="px-4 py-3 align-top text-base text-muted-foreground">
-        Domains, hosting, SSL
-      </td>
+            <tr className="border-b border-gray-400/50 dark:border-gray-600">
+              <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
+                Landing Pages
+              </td>
 
-      <td className="px-4 py-3 align-top text-base text-muted-foreground">
-        A live site on your own domain
-      </td>
-    </tr>
+              <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                Forms, CTAs, page speed
+              </td>
 
-    <tr className="border-b border-gray-400/50 dark:border-gray-600">
-      <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
-        WordPress
-      </td>
+              <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                A working lead-capture page
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          <em>
+            Want to build websites from code rather than page builders? Our{" "}
+            <a href="/bca-full-stack">BCA Full Stack Development</a> track
+            covers React, Next.js, Node.js and MongoDB at the same campus.
+          </em>
+        </p>
+      </section>
 
-      <td className="px-4 py-3 align-top text-base text-muted-foreground">
-        Themes, plugins, Elementor
-      </td>
+      {/* AI Tools */}
 
-      <td className="px-4 py-3 align-top text-base text-muted-foreground">
-        A complete multi-page website
-      </td>
-    </tr>
+      <section className="space-y-10">
+        <div className="space-y-5">
+          <h2 className="text-3xl font-bold">AI Tools for Digital Marketing</h2>
 
-    <tr className="border-b border-gray-400/50 dark:border-gray-600">
-      <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
-        Landing Pages
-      </td>
-
-      <td className="px-4 py-3 align-top text-base text-muted-foreground">
-        Forms, CTAs, page speed
-      </td>
-
-      <td className="px-4 py-3 align-top text-base text-muted-foreground">
-        A working lead-capture page
-      </td>
-    </tr>
-  </tbody>
-</table>
- <p><em>Want to build websites from code rather than page builders? Our <a href="/bca-full-stack">BCA Full Stack Development</a> track covers React, Next.js, Node.js and MongoDB at the same campus.</em></p>
-</section>
-
-{/* AI Tools */}
-
-<section className="space-y-10">
-
-  <div className="space-y-5">
-
-    <h2 className="text-3xl font-bold">
-      AI Tools for Digital Marketing
-    </h2>
-
-    <p className="text-lg text-muted-foreground leading-8">
-      Artificial intelligence is changing how marketing work gets done. Our course introduces students to AI-powered tools that support content creation, campaign optimisation, research and customer engagement — and, just as importantly, where those tools get things wrong.
-    </p>
-
-  </div>
-<h3 className="text-lg text-muted-foreground leading-8">What's covered</h3>
-<ul>
-  <li className="text-lg text-muted-foreground leading-8">Using AI for content drafting, ad copy variations and keyword research</li>
-  <li className="text-lg text-muted-foreground leading-8">Prompt writing for marketing tasks</li>
-  <li className="text-lg text-muted-foreground leading-8">Reviewing and fact-checking AI output before it goes live</li>
-  <li className="text-lg text-muted-foreground leading-8">Where AI helps and where human judgement is still required</li>
-</ul>
-<p className="text-lg text-muted-foreground leading-8">AI isn't only a marketing skill. Our free <a href="/quick-skill">Quick Skill Program</a> bootcamps are open to all students in Agra — marketing, development, or neither — and cover AI fundamentals at no cost.</p>
-{/* <p className="text-lg text-muted-foreground leading-8">[CONFIRM: specific tools taught]</p> */}
-  {/* <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <p className="text-lg text-muted-foreground leading-8">
+            Artificial intelligence is changing how marketing work gets done.
+            Our course introduces students to AI-powered tools that support
+            content creation, campaign optimisation, research and customer
+            engagement — and, just as importantly, where those tools get things
+            wrong.
+          </p>
+        </div>
+        <h3 className="text-lg text-muted-foreground leading-8">
+          What's covered
+        </h3>
+        <ul>
+          <li className="text-lg text-muted-foreground leading-8">
+            Using AI for content drafting, ad copy variations and keyword
+            research
+          </li>
+          <li className="text-lg text-muted-foreground leading-8">
+            Prompt writing for marketing tasks
+          </li>
+          <li className="text-lg text-muted-foreground leading-8">
+            Reviewing and fact-checking AI output before it goes live
+          </li>
+          <li className="text-lg text-muted-foreground leading-8">
+            Where AI helps and where human judgement is still required
+          </li>
+        </ul>
+        <p className="text-lg text-muted-foreground leading-8">
+          AI isn't only a marketing skill. Our free{" "}
+          <a href="/quick-skill">Quick Skill Program</a> bootcamps are open to
+          all students in Agra — marketing, development, or neither — and cover
+          AI fundamentals at no cost.
+        </p>
+        {/* <p className="text-lg text-muted-foreground leading-8">[CONFIRM: specific tools taught]</p> */}
+        {/* <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
 
     <Card>
       <CardHeader>
@@ -703,711 +705,642 @@ export default function DigitalMarketingContent() {
     </Card>
 
   </div> */}
-
-</section>
-{/* WHY CHOOSE US */}
-
-<section className="space-y-12">
-
-  <div className="space-y-5">
-
-    <h2 className="text-3xl font-bold">
-      Why Choose Our Digital Marketing Institute in Agra?
-    </h2>
-
-    <p className="text-lg text-muted-foreground leading-8">
-      Choosing the right digital marketing institute is one of the more important decisions you will make early in your career. At SkillYards Versatilitty Pvt. Ltd., we focus on practical learning, industry exposure, live projects and career support rather than classroom theory alone. Our structured training methodology is built so students develop the confidence and practical skills required to work in agencies, startups, corporate teams or as freelancers.
-    </p>
-
-  </div>
-
-  <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle>
-          <h3>Live Practical Training</h3>
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent>
-
-        <p className="text-muted-foreground leading-7">
-          Every module includes hands-on implementation on live websites,
-          advertising campaigns and real business case studies. Students learn
-          by doing instead of simply watching presentations.
-        </p>
-
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle>
-          <h3>Experienced Industry Trainers</h3>
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent>
-
-        <p className="text-muted-foreground leading-7">
-          Learn from digital marketing professionals who have managed SEO, Google Ads, Meta Ads and branding campaigns across multiple industries.
-
-        </p>
-
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle>
-          <h3>Live Client Projects</h3>
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent>
-
-        <p className="text-muted-foreground leading-7">
-          Gain real-world experience by working on actual business websites,
-          SEO projects and paid advertising campaigns before completing the
-          course.
-        </p>
-
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle>
-          <h3>Placement Assistance</h3>
-          
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent>
-
-        <p className="text-muted-foreground leading-7">
-          Resume preparation, portfolio development, mock interviews and interview opportunities help students apply for digital marketing roles with confidence.
-        </p>
-
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle>
-          <h3>Industry Certifications</h3>
-          
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent>
-
-        <p className="text-muted-foreground leading-7">
-          Prepare for globally recognised certifications from Google, HubSpot, Meta and other platforms alongside your coursework.
-        </p>
-
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle>
-          <h3>Small Batch Size</h3>
-          
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent>
-
-        <p className="text-muted-foreground leading-7">
-          Limited students per batch means personalised attention and faster doubt resolution. [CONFIRM: batch cap]
-        </p>
-
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle>
-          Degree or Short Course, Your Choice
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent>
-
-        <p className="text-muted-foreground leading-7">
-          Take digital marketing as a 3-year DBRAU-affiliated BBA On-Job Degree, a shorter On-Job Training program, or a free AI bootcamp. The same campus also runs BCA Full Stack Development, so you can compare tracks before committing.
-        </p>
-
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle>
-          <h3>Career-Focused Curriculum</h3>
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent>
-
-        <p className="text-muted-foreground leading-7">
-          Our curriculum across both digital marketing and full-stack development is updated in line with industry changes, including AI tools, new ad formats and algorithm updates.
-        </p>
-
-      </CardContent>
-
-    </Card>
-
-  </div>
-
-</section>
-
-{/* THE INSTITUTE ADVANTAGE */}
-
-<section className="space-y-10">
-
-  <div className="space-y-4">
-
-    <h2 className="text-3xl font-bold">
-      The SkillYards Advantage
-    </h2>
-
-    <p className="text-lg text-muted-foreground leading-8">
-      Our Digital Marketing Course in Agra combines practical implementation,
-      expert mentorship and career support to provide a complete learning
-      experience.
-    </p>
-
-  </div>
-
-  <table className="w-full border-collapse text-left">
-    <thead>
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <th className="px-0 py-4 pr-6 text-sm font-semibold text-foreground">
-          Feature
-        </th>
-
-        <th className="px-4 py-4 text-sm font-semibold text-foreground">
-          Free Online
-          <br />
-          Tutorials
-        </th>
-
-        <th className="px-4 py-4 text-sm font-semibold text-foreground">
-          Typical Classroom
-          <br />
-          Course
-        </th>
-
-        <th className="px-4 py-4 text-sm font-semibold text-foreground">
-          SkillYards
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
-          Live ad spend
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✗
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          Sometimes
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✓ Real budgets
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
-          Work reviewed by a
-          <br />
-          mentor
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✗
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✓
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✓
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
-          Client projects before
-          <br />
-          completion
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✗
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✗
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✓
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
-          Certification preparation
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✗
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          Sometimes
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✓
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
-          Placement support
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✗
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          Varies
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✓ Resume + mock
-          <br />
-          interviews
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
-          Degree option available
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✗
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✗
-        </td>
-
-        <td className="px-4 py-4 text-sm text-muted-foreground">
-          ✓ DBRAU-affiliated BBA
-          <br />
-          or BCA
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-</section>
-
-{/* COURSE STRUCTURE */}
-
-<section className="space-y-10">
-
-  <div>
-
-    <h2 className="text-3xl font-bold mb-4">
-      Course Structure
-    </h2>
-
-    <p className="text-lg text-muted-foreground leading-8">
-      Our digital marketing training program is divided into planned stages so students build skills progressively while gaining practical exposure.
-    </p>
-
-  </div>
-
-  <div className="w-full overflow-x-auto">
-  <table className="min-w-[700px] w-full border-collapse text-left font-serif">
-    <thead>
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <th className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
-          Stage
-        </th>
-
-        <th className="px-4 py-3 text-base font-semibold text-foreground">
-          Focus Area
-        </th>
-
-        <th className="px-4 py-3 text-base font-semibold text-foreground">
-          What You'll Be Able to Do
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
-          Foundation
-        </td>
-
-        <td className="px-4 py-3 align-top text-base text-muted-foreground">
-          Marketing fundamentals, website basics,
-          <br />
-          domains and hosting
-        </td>
-
-        <td className="px-4 py-3 align-top text-base text-muted-foreground">
-          Set up a website and understand
-          <br />
-          how traffic reaches it
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
-          Core Skills
-        </td>
-
-        <td className="px-4 py-3 align-top text-base text-muted-foreground">
-          SEO, Google Ads, Meta Ads, social media
-        </td>
-
-        <td className="px-4 py-3 align-top text-base text-muted-foreground">
-          Run and optimise live campaigns
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
-          Advanced
-          <br />
-          Training
-        </td>
-
-        <td className="px-4 py-3 align-top text-base text-muted-foreground">
-          Analytics, automation, AI tools
-        </td>
-
-        <td className="px-4 py-3 align-top text-base text-muted-foreground">
-          Measure performance and report
-          <br />
-          on it
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
-          Career
-          <br />
-          Development
-        </td>
-
-        <td className="px-4 py-3 align-top text-base text-muted-foreground">
-          Portfolio, resume and interview
-          <br />
-          preparation
-        </td>
-
-        <td className="px-4 py-3 align-top text-base text-muted-foreground">
-          Apply for roles with work you can
-          <br />
-          show
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-</section>
-
-{/* CERTIFICATIONS */}
-
-<section className="space-y-10">
-
-  <div>
-
-    <h2 className="text-3xl font-bold">
-      Industry Certifications
-    </h2>
-
-    <p className="text-lg text-muted-foreground leading-8 mt-4">
-      Throughout the course, students prepare for globally recognised certifications that strengthen a resume and improve employment opportunities.
-    </p>
-
-  </div>
-
-  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-    <Card>
-       
-
-      <CardHeader>
-        <CardTitle><h3>Google Certifications</h3></CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        <p>Search Ads, Analytics, Display &amp; Measurement</p>
-      </CardContent>
-
-    </Card>
-
-
-
-
-
-
-
-
-
-
-
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle><h3>Meta Blueprint</h3></CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        <p>Facebook &amp; Instagram advertising</p>
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle><h3>HubSpot</h3></CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        <p>Content marketing &amp; email marketing</p>
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle><h3>SkillYards Certificate</h3></CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        <p>Course completion certificate</p>
-      </CardContent>
-
-    </Card>
-
-  </div>
-
-</section>
-
-{/* TOOLS */}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<section className="space-y-10">
-
-  <div>
-
-    <h2 className="text-3xl font-bold">
-      Digital Marketing Tools You'll Work With
-    </h2>
-
-    <p className="text-lg text-muted-foreground leading-8 mt-4">
-      Students receive practical training on the industry's most widely used marketing tools — on live accounts, not demo dashboards.
-
-    </p>
-
-  </div>
-
-  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-
-    <Card>
-       
-
-      <CardHeader>
-        <CardTitle><h3>Analytics &amp; Search</h3></CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        <p>Google Analytics 4 · Google Search Console · Google Tag Manager</p>
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle><h3>Advertising</h3></CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        <p>Google Ads · Meta Ads Manager</p>
-
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle><h3>SEO</h3></CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        <p>Semrush,Ahrefs</p>
-      </CardContent>
-
-    </Card>
-
-    <Card>
-
-      <CardHeader>
-        <CardTitle><h3>Content &amp; Design</h3></CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        <p>Canva,WordPress,Elementor</p>
-      </CardContent>
-
-    </Card>
-    
-
-  
-   
-    <Card>
-
-      <CardHeader>
-        <CardTitle><h3>AI Tools</h3></CardTitle>
-      </CardHeader>
-
-      <CardContent>
-        <p>ChatGPT,Gemini Advance etc.</p>
-      </CardContent>
-
-    </Card>
-
-  </div>
-
-</section>
-
-{/* WHO CAN JOIN */}
-
-<section className="space-y-10">
-
-  <div>
-
-    <h2 className="text-3xl font-bold">
-      Who Can Join This Course?
-    </h2>
-
-    <p className="text-lg text-muted-foreground mt-4 leading-8">
-      Our Digital Marketing Course in Agra is suitable for learners from
-      different educational and professional backgrounds.
-    </p>
-
-  </div>
-
-  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    <Card><CardHeader><CardTitle><h3>Students</h3></CardTitle></CardHeader><CardContent ><p>Build job-ready digital marketing skills before graduation.</p></CardContent></Card>
-
-    <Card><CardHeader><CardTitle><h3>Fresh Graduates</h3></CardTitle></CardHeader><CardContent><p>Start a career in digital marketing, SEO or performance marketing.</p></CardContent></Card>
-
-    <Card><CardHeader><CardTitle><h3>Working Professionals</h3></CardTitle></CardHeader><CardContent><p>Add a high-demand skill or move into a marketing role.</p></CardContent></Card>
-
-    <Card><CardHeader><CardTitle><h3>Business Owners</h3></CardTitle></CardHeader><CardContent><p>Generate leads, increase sales and grow your business online.</p></CardContent></Card>
-
-    <Card><CardHeader><CardTitle><h3>Freelancer</h3></CardTitle></CardHeader><CardContent><p>Offer SEO, PPC and social media services to clients anywhere.</p></CardContent></Card>
-
-    <Card><CardHeader><CardTitle><h3>Content Creators</h3></CardTitle></CardHeader><CardContent><p>Build a personal brand and monetise digital platforms.</p></CardContent></Card>
-    <Card><CardHeader><CardTitle><h3>12th Pass Students</h3></CardTitle></CardHeader><CardContent><p>Take digital marketing as a full BBA degree, or compare it with our BCA Full Stack track.</p></CardContent></Card>
-    <p>Eligibility: [CONFIRM] · Prior experience: none required.</p>
-  </div>
-
-</section>
+      </section>
+      {/* WHY CHOOSE US */}
+
+      <section className="space-y-12">
+        <div className="space-y-5">
+          <h2 className="text-3xl font-bold">
+            Why Choose Our Digital Marketing Institute in Agra?
+          </h2>
+
+          <p className="text-lg text-muted-foreground leading-8">
+            Choosing the right digital marketing institute is one of the more
+            important decisions you will make early in your career. At
+            SkillYards Versatilitty Pvt. Ltd., we focus on practical learning,
+            industry exposure, live projects and career support rather than
+            classroom theory alone. Our structured training methodology is built
+            so students develop the confidence and practical skills required to
+            work in agencies, startups, corporate teams or as freelancers.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Live Practical Training</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-muted-foreground leading-7">
+                Every module includes hands-on implementation on live websites,
+                advertising campaigns and real business case studies. Students
+                learn by doing instead of simply watching presentations.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Experienced Industry Trainers</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-muted-foreground leading-7">
+                Learn from digital marketing professionals who have managed SEO,
+                Google Ads, Meta Ads and branding campaigns across multiple
+                industries.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Live Client Projects</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-muted-foreground leading-7">
+                Gain real-world experience by working on actual business
+                websites, SEO projects and paid advertising campaigns before
+                completing the course.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Placement Assistance</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-muted-foreground leading-7">
+                Resume preparation, portfolio development, mock interviews and
+                interview opportunities help students apply for digital
+                marketing roles with confidence.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Industry Certifications</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-muted-foreground leading-7">
+                Prepare for globally recognised certifications from Google,
+                HubSpot, Meta and other platforms alongside your coursework.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Small Batch Size</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-muted-foreground leading-7">
+                Limited students per batch means personalised attention and
+                faster doubt resolution. [CONFIRM: batch cap]
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Degree or Short Course, Your Choice</CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-muted-foreground leading-7">
+                Take digital marketing as a 3-year DBRAU-affiliated BBA On-Job
+                Degree, a shorter On-Job Training program, or a free AI
+                bootcamp. The same campus also runs BCA Full Stack Development,
+                so you can compare tracks before committing.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Career-Focused Curriculum</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p className="text-muted-foreground leading-7">
+                Our curriculum across both digital marketing and full-stack
+                development is updated in line with industry changes, including
+                AI tools, new ad formats and algorithm updates.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* THE INSTITUTE ADVANTAGE */}
+
+      <section className="space-y-10">
+        <div className="space-y-4">
+          <h2 className="text-3xl font-bold">The SkillYards Advantage</h2>
+
+          <p className="text-lg text-muted-foreground leading-8">
+            Our Digital Marketing Course in Agra combines practical
+            implementation, expert mentorship and career support to provide a
+            complete learning experience.
+          </p>
+        </div>
+
+        <table className="w-full border-collapse text-left">
+          <thead>
+            <tr className="border-b border-gray-400/50 dark:border-gray-600">
+              <th className="px-0 py-4 pr-6 text-sm font-semibold text-foreground">
+                Feature
+              </th>
+
+              <th className="px-4 py-4 text-sm font-semibold text-foreground">
+                Free Online
+                <br />
+                Tutorials
+              </th>
+
+              <th className="px-4 py-4 text-sm font-semibold text-foreground">
+                Typical Classroom
+                <br />
+                Course
+              </th>
+
+              <th className="px-4 py-4 text-sm font-semibold text-foreground">
+                SkillYards
+              </th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr className="border-b border-gray-400/50 dark:border-gray-600">
+              <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
+                Live ad spend
+              </td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✗</td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">
+                Sometimes
+              </td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">
+                ✓ Real budgets
+              </td>
+            </tr>
+
+            <tr className="border-b border-gray-400/50 dark:border-gray-600">
+              <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
+                Work reviewed by a
+                <br />
+                mentor
+              </td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✗</td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✓</td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✓</td>
+            </tr>
+
+            <tr className="border-b border-gray-400/50 dark:border-gray-600">
+              <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
+                Client projects before
+                <br />
+                completion
+              </td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✗</td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✗</td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✓</td>
+            </tr>
+
+            <tr className="border-b border-gray-400/50 dark:border-gray-600">
+              <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
+                Certification preparation
+              </td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✗</td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">
+                Sometimes
+              </td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✓</td>
+            </tr>
+
+            <tr className="border-b border-gray-400/50 dark:border-gray-600">
+              <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
+                Placement support
+              </td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✗</td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">
+                Varies
+              </td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">
+                ✓ Resume + mock
+                <br />
+                interviews
+              </td>
+            </tr>
+
+            <tr className="border-b border-gray-400/50 dark:border-gray-600">
+              <td className="px-0 py-4 pr-6 text-sm text-muted-foreground">
+                Degree option available
+              </td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✗</td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">✗</td>
+
+              <td className="px-4 py-4 text-sm text-muted-foreground">
+                ✓ DBRAU-affiliated BBA
+                <br />
+                or BCA
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      {/* COURSE STRUCTURE */}
+
+      <section className="space-y-10">
+        <div>
+          <h2 className="text-3xl font-bold mb-4">Course Structure</h2>
+
+          <p className="text-lg text-muted-foreground leading-8">
+            Our digital marketing training program is divided into planned
+            stages so students build skills progressively while gaining
+            practical exposure.
+          </p>
+        </div>
+
+        <div className="w-full overflow-x-auto">
+          <table className="min-w-[700px] w-full border-collapse text-left font-serif">
+            <thead>
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <th className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
+                  Stage
+                </th>
+
+                <th className="px-4 py-3 text-base font-semibold text-foreground">
+                  Focus Area
+                </th>
+
+                <th className="px-4 py-3 text-base font-semibold text-foreground">
+                  What You'll Be Able to Do
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
+                  Foundation
+                </td>
+
+                <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                  Marketing fundamentals, website basics,
+                  <br />
+                  domains and hosting
+                </td>
+
+                <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                  Set up a website and understand
+                  <br />
+                  how traffic reaches it
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
+                  Core Skills
+                </td>
+
+                <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                  SEO, Google Ads, Meta Ads, social media
+                </td>
+
+                <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                  Run and optimise live campaigns
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
+                  Advanced
+                  <br />
+                  Training
+                </td>
+
+                <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                  Analytics, automation, AI tools
+                </td>
+
+                <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                  Measure performance and report
+                  <br />
+                  on it
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 align-top text-base text-muted-foreground">
+                  Career
+                  <br />
+                  Development
+                </td>
+
+                <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                  Portfolio, resume and interview
+                  <br />
+                  preparation
+                </td>
+
+                <td className="px-4 py-3 align-top text-base text-muted-foreground">
+                  Apply for roles with work you can
+                  <br />
+                  show
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* CERTIFICATIONS */}
+
+      <section className="space-y-10">
+        <div>
+          <h2 className="text-3xl font-bold">Industry Certifications</h2>
+
+          <p className="text-lg text-muted-foreground leading-8 mt-4">
+            Throughout the course, students prepare for globally recognised
+            certifications that strengthen a resume and improve employment
+            opportunities.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Google Certifications</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p>Search Ads, Analytics, Display &amp; Measurement</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Meta Blueprint</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p>Facebook &amp; Instagram advertising</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>HubSpot</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p>Content marketing &amp; email marketing</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>SkillYards Certificate</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p>Course completion certificate</p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* TOOLS */}
+
+      <section className="space-y-10">
+        <div>
+          <h2 className="text-3xl font-bold">
+            Digital Marketing Tools You'll Work With
+          </h2>
+
+          <p className="text-lg text-muted-foreground leading-8 mt-4">
+            Students receive practical training on the industry's most widely
+            used marketing tools — on live accounts, not demo dashboards.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Analytics &amp; Search</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p>
+                Google Analytics 4 · Google Search Console · Google Tag Manager
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Advertising</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p>Google Ads · Meta Ads Manager</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>SEO</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p>Semrush,Ahrefs</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Content &amp; Design</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p>Canva,WordPress,Elementor</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>AI Tools</h3>
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent>
+              <p>ChatGPT,Gemini Advance etc.</p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* WHO CAN JOIN */}
+
+      <section className="space-y-10">
+        <div>
+          <h2 className="text-3xl font-bold">Who Can Join This Course?</h2>
+
+          <p className="text-lg text-muted-foreground mt-4 leading-8">
+            Our Digital Marketing Course in Agra is suitable for learners from
+            different educational and professional backgrounds.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Students</h3>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Build job-ready digital marketing skills before graduation.</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Fresh Graduates</h3>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                Start a career in digital marketing, SEO or performance
+                marketing.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Working Professionals</h3>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Add a high-demand skill or move into a marketing role.</p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Business Owners</h3>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                Generate leads, increase sales and grow your business online.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Freelancer</h3>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                Offer SEO, PPC and social media services to clients anywhere.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>Content Creators</h3>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Build a personal brand and monetise digital platforms.</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <h3>12th Pass Students</h3>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>
+                Take digital marketing as a full BBA degree, or compare it with
+                our BCA Full Stack track.
+              </p>
+            </CardContent>
+          </Card>
+          <p>Eligibility: [CONFIRM] · Prior experience: none required.</p>
+        </div>
+      </section>
 
       {/* COURSE FEES */}
 
-{/* <section className="space-y-10">
+      {/* <section className="space-y-10">
 
   <div className="space-y-5">
 
@@ -1516,425 +1449,413 @@ export default function DigitalMarketingContent() {
 
 </section> */}
 
-{/* CAREER OPPORTUNITIES */}
-
-<section className="space-y-10">
-
-  <div>
-
-    <h2 className="text-3xl font-bold mb-4">
-      Career Opportunities After Completing the Course
-    </h2>
-
-    <p className="text-lg text-muted-foreground leading-8">
-Digital marketing roles exist across startups, agencies, multinational companies, e-commerce businesses and freelance marketplaces.
-    </p>
-
-  </div>
-
-  <div className="w-full overflow-x-auto">
-  <table className="w-full min-w-[700px] border-collapse text-left font-serif">
-    <colgroup>
-      <col className="w-[30%]" />
-      <col className="w-[70%]" />
-    </colgroup>
-
-    <thead>
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <th className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
-          Role
-        </th>
-
-        <th className="px-4 py-3 text-base font-semibold text-foreground">
-          What You'd Do
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
-          SEO Executive
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          Optimise websites, improve search rankings, grow organic traffic
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
-          Digital Marketing Executive
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          Manage complete marketing campaigns for a business
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
-          Google Ads Specialist
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          Create, optimise and scale paid advertising campaigns
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
-          Social Media Manager
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          Build brands through content and advertising strategy
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
-          Performance Marketer
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          Focus on ROI-driven marketing across paid channels
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
-          Freelancer
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          Offer digital marketing services to clients anywhere
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-<p className="text-muted-foreground leading-8">
-    Where these roles exist for Agra students: local businesses, hotels and exporters in Agra itself; agencies in Delhi NCR and Noida; and remote roles that don't require relocating at all.
-  </p>
-
-</section>
-
-{/* PLACEMENT PROCESS */}
-
-<section className="space-y-10">
-
-  <div>
-
-    <h2 className="text-3xl font-bold">
-      Placement Assistance
-    </h2>
-
-    <p className="text-lg text-muted-foreground leading-8 mt-4">
-      Our career support team works with students across all SkillYards programs — digital marketing and full-stack development alike. Every student receives:
-    </p>
-
-  </div>
-
-  <ul className="list-disc text-lg text-muted-foreground leading-8 mt-4">
-  <li>Resume and LinkedIn profile review</li>
-  <li>Portfolio development from their live project work</li>
-  <li>Mock interviews with feedback</li>
-  <li>Interview opportunities with hiring companies</li>
-  <li>Guidance on freelancing, for students who prefer that route</li>
-</ul>
-
-  
-  <p className="text-lg text-muted-foreground leading-8 mt-4">
-      Our career support team works with students across all SkillYards programs — digital marketing and full-stack development alike. Every student receives:
-    </p>
-
-</section>
-
-{/* DIGITAL MARKETING SALARY */}
-
-<section className="space-y-10">
-
-  <div>
-
-    <h2 className="text-3xl font-bold">
-      Digital Marketing Salary in India
-    </h2>
-  
-
-    <p className="text-lg text-muted-foreground leading-8 mt-4">
-    Salaries vary widely depending on skills, experience, certifications, location and company size. Figures below are broad industry ranges reported by public salary platforms — they are not SkillYards placement data and not a projection of what any individual student will earn.
-    </p>
-
-  </div>
-
-<div className="w-full overflow-x-auto">
-  <table className="w-full min-w-[650px] border-collapse text-left font-serif">
-    <colgroup>
-      <col className="w-[48%]" />
-      <col className="w-[23%]" />
-      <col className="w-[29%]" />
-    </colgroup>
-
-    <thead>
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <th className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
-          Role
-        </th>
-
-        <th className="px-4 py-3 text-base font-semibold text-foreground">
-          Experience
-        </th>
-
-        <th className="px-4 py-3 text-base font-semibold text-foreground">
-          Typical Range*
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
-          Digital Marketing Executive
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          Fresher
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          ₹2.5–4.5 LPA
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
-          SEO Executive
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          1–2 years
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          ₹3–6 LPA
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
-          Performance Marketer
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          2–4 years
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          ₹6–12 LPA
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
-          Digital Marketing Manager
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          5+ years
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          ₹10+ LPA
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-  
-
-</section>
-
-
-<section className="space-y-10">
-   <div>
-
-    <h2 className="text-3xl font-bold">
-      <h2>Not Sure If Digital Marketing Is the Right Track?</h2>
-    </h2>
-  
-
-    <p className="text-lg text-muted-foreground leading-8 mt-4">
-    Digital marketing is one of two tracks we run from our Agra campus. Both lead to real work; they suit different people.
-    </p>
-
-    <div className="w-full overflow-x-auto">
-  <table className="w-full min-w-[650px] border-collapse text-left font-serif">
-    <colgroup>
-      <col className="w-[15%]" />
-      <col className="w-[42.5%]" />
-      <col className="w-[42.5%]" />
-    </colgroup>
-
-    <thead>
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <th className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
-        </th>
-
-        <th className="px-4 py-3 text-base font-semibold text-foreground">
-          Digital Marketing
-        </th>
-
-        <th className="px-4 py-3 text-base font-semibold text-foreground">
-          Full Stack Development
-        </th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
-          Suits you if
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          You like strategy, writing, design sense
-          <br />
-          and reading numbers
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          You like building things and solving
-          <br />
-          logical problems
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
-          You'll work
-          <br />
-          with
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          Google Ads, GA4, Meta Ads, SEO tools,
-          <br />
-          WordPress
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          React, Next.js, Node.js, MongoDB, Git
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
-          Feedback
-          <br />
-          speed
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          Days — campaigns show performance
-          <br />
-          fast
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          Weeks — you build, then ship
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
-          Degree
-          <br />
-          option
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          <span className="underline">BBA Digital Marketing</span>, 3 years, DBRAU
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          <span className="underline">BCA Full Stack</span>, 3 years, DBRAU
-        </td>
-      </tr>
-
-      <tr className="border-b border-gray-400/50 dark:border-gray-600">
-        <td className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
-          Short option
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          <span className="underline">Digital Marketing OJT</span>, 7–9 months
-        </td>
-
-        <td className="px-4 py-3 text-base text-muted-foreground">
-          <span className="underline">Full Stack OJT</span>, 7–9 months
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
-  </div>
-
-</section>
-
-{/* CONTACT */}
-
-<section className="space-y-10">
-
-  <div>
-
-    <h2 className="text-3xl font-bold">
-      Visit Our Digital Marketing Institute in Agra
-    </h2>
-
-    <p className="text-lg text-muted-foreground leading-8 mt-4">
-      Join one of the leading Digital Marketing institutes in Agra and begin
-      your journey toward a rewarding career in online marketing. Our counselors
-      are available to guide you in selecting the right course based on your
-      career goals.
-    </p>
-
-  </div>
-
-  <Table>
-
-    <TableBody>
-
-      <TableRow>
-        <TableCell className="font-medium">Address</TableCell>
-        <TableCell>A-3, behind Manoj Dhaba, Bhagwan Talkies crossing, Indra Puri, New Agra Colony, Agra, Uttar Pradesh 282005</TableCell>
-      </TableRow>
-
-      <TableRow>
-        <TableCell className="font-medium">Phone</TableCell>
-        <TableCell>070601 00562</TableCell>
-      </TableRow>
-
-      <TableRow>
-        <TableCell className="font-medium">Email</TableCell>
-        <TableCell></TableCell>
-      </TableRow>
-
-      <TableRow>
-        <TableCell className="font-medium">Timings</TableCell>
-        <TableCell>Monday – Saturday | 9:00 AM – 7:00 PM</TableCell>
-      </TableRow>
-
-    </TableBody>
-
-  </Table>
-
-</section>
-
-{/* FAQ */}
-
-
+      {/* CAREER OPPORTUNITIES */}
+
+      <section className="space-y-10">
+        <div>
+          <h2 className="text-3xl font-bold mb-4">
+            Career Opportunities After Completing the Course
+          </h2>
+
+          <p className="text-lg text-muted-foreground leading-8">
+            Digital marketing roles exist across startups, agencies,
+            multinational companies, e-commerce businesses and freelance
+            marketplaces.
+          </p>
+        </div>
+
+        <div className="w-full overflow-x-auto">
+          <table className="w-full min-w-[700px] border-collapse text-left font-serif">
+            <colgroup>
+              <col className="w-[30%]" />
+              <col className="w-[70%]" />
+            </colgroup>
+
+            <thead>
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <th className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
+                  Role
+                </th>
+
+                <th className="px-4 py-3 text-base font-semibold text-foreground">
+                  What You'd Do
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
+                  SEO Executive
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  Optimise websites, improve search rankings, grow organic
+                  traffic
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
+                  Digital Marketing Executive
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  Manage complete marketing campaigns for a business
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
+                  Google Ads Specialist
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  Create, optimise and scale paid advertising campaigns
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
+                  Social Media Manager
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  Build brands through content and advertising strategy
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
+                  Performance Marketer
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  Focus on ROI-driven marketing across paid channels
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
+                  Freelancer
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  Offer digital marketing services to clients anywhere
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p className="text-muted-foreground leading-8">
+          Where these roles exist for Agra students: local businesses, hotels
+          and exporters in Agra itself; agencies in Delhi NCR and Noida; and
+          remote roles that don't require relocating at all.
+        </p>
+      </section>
+
+      {/* PLACEMENT PROCESS */}
+
+      <section className="space-y-10">
+        <div>
+          <h2 className="text-3xl font-bold">Placement Assistance</h2>
+
+          <p className="text-lg text-muted-foreground leading-8 mt-4">
+            Our career support team works with students across all SkillYards
+            programs — digital marketing and full-stack development alike. Every
+            student receives:
+          </p>
+        </div>
+
+        <ul className="list-disc text-lg text-muted-foreground leading-8 mt-4">
+          <li>Resume and LinkedIn profile review</li>
+          <li>Portfolio development from their live project work</li>
+          <li>Mock interviews with feedback</li>
+          <li>Interview opportunities with hiring companies</li>
+          <li>Guidance on freelancing, for students who prefer that route</li>
+        </ul>
+
+        <p className="text-lg text-muted-foreground leading-8 mt-4">
+          Our career support team works with students across all SkillYards
+          programs — digital marketing and full-stack development alike. Every
+          student receives:
+        </p>
+      </section>
+
+      {/* DIGITAL MARKETING SALARY */}
+
+      <section className="space-y-10">
+        <div>
+          <h2 className="text-3xl font-bold">
+            Digital Marketing Salary in India
+          </h2>
+
+          <p className="text-lg text-muted-foreground leading-8 mt-4">
+            Salaries vary widely depending on skills, experience,
+            certifications, location and company size. Figures below are broad
+            industry ranges reported by public salary platforms — they are not
+            SkillYards placement data and not a projection of what any
+            individual student will earn.
+          </p>
+        </div>
+
+        <div className="w-full overflow-x-auto">
+          <table className="w-full min-w-[650px] border-collapse text-left font-serif">
+            <colgroup>
+              <col className="w-[48%]" />
+              <col className="w-[23%]" />
+              <col className="w-[29%]" />
+            </colgroup>
+
+            <thead>
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <th className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
+                  Role
+                </th>
+
+                <th className="px-4 py-3 text-base font-semibold text-foreground">
+                  Experience
+                </th>
+
+                <th className="px-4 py-3 text-base font-semibold text-foreground">
+                  Typical Range*
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
+                  Digital Marketing Executive
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  Fresher
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  ₹2.5–4.5 LPA
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
+                  SEO Executive
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  1–2 years
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  ₹3–6 LPA
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
+                  Performance Marketer
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  2–4 years
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  ₹6–12 LPA
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                <td className="px-0 py-3 pr-6 text-base text-muted-foreground">
+                  Digital Marketing Manager
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  5+ years
+                </td>
+
+                <td className="px-4 py-3 text-base text-muted-foreground">
+                  ₹10+ LPA
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="space-y-10">
+        <div>
+          <h2 className="text-3xl font-bold">
+            <h2>Not Sure If Digital Marketing Is the Right Track?</h2>
+          </h2>
+
+          <p className="text-lg text-muted-foreground leading-8 mt-4">
+            Digital marketing is one of two tracks we run from our Agra campus.
+            Both lead to real work; they suit different people.
+          </p>
+
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-[650px] border-collapse text-left font-serif">
+              <colgroup>
+                <col className="w-[15%]" />
+                <col className="w-[42.5%]" />
+                <col className="w-[42.5%]" />
+              </colgroup>
+
+              <thead>
+                <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                  <th className="px-0 py-3 pr-6 text-base font-semibold text-foreground"></th>
+
+                  <th className="px-4 py-3 text-base font-semibold text-foreground">
+                    Digital Marketing
+                  </th>
+
+                  <th className="px-4 py-3 text-base font-semibold text-foreground">
+                    Full Stack Development
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                  <td className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
+                    Suits you if
+                  </td>
+
+                  <td className="px-4 py-3 text-base text-muted-foreground">
+                    You like strategy, writing, design sense
+                    <br />
+                    and reading numbers
+                  </td>
+
+                  <td className="px-4 py-3 text-base text-muted-foreground">
+                    You like building things and solving
+                    <br />
+                    logical problems
+                  </td>
+                </tr>
+
+                <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                  <td className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
+                    You'll work
+                    <br />
+                    with
+                  </td>
+
+                  <td className="px-4 py-3 text-base text-muted-foreground">
+                    Google Ads, GA4, Meta Ads, SEO tools,
+                    <br />
+                    WordPress
+                  </td>
+
+                  <td className="px-4 py-3 text-base text-muted-foreground">
+                    React, Next.js, Node.js, MongoDB, Git
+                  </td>
+                </tr>
+
+                <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                  <td className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
+                    Feedback
+                    <br />
+                    speed
+                  </td>
+
+                  <td className="px-4 py-3 text-base text-muted-foreground">
+                    Days — campaigns show performance
+                    <br />
+                    fast
+                  </td>
+
+                  <td className="px-4 py-3 text-base text-muted-foreground">
+                    Weeks — you build, then ship
+                  </td>
+                </tr>
+
+                <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                  <td className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
+                    Degree
+                    <br />
+                    option
+                  </td>
+
+                  <td className="px-4 py-3 text-base text-muted-foreground">
+                    <span className="underline">BBA Digital Marketing</span>, 3
+                    years, DBRAU
+                  </td>
+
+                  <td className="px-4 py-3 text-base text-muted-foreground">
+                    <span className="underline">BCA Full Stack</span>, 3 years,
+                    DBRAU
+                  </td>
+                </tr>
+
+                <tr className="border-b border-gray-400/50 dark:border-gray-600">
+                  <td className="px-0 py-3 pr-6 text-base font-semibold text-foreground">
+                    Short option
+                  </td>
+
+                  <td className="px-4 py-3 text-base text-muted-foreground">
+                    <span className="underline">Digital Marketing OJT</span>,
+                    7–9 months
+                  </td>
+
+                  <td className="px-4 py-3 text-base text-muted-foreground">
+                    <span className="underline">Full Stack OJT</span>, 7–9
+                    months
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTACT */}
+
+      <section className="space-y-10">
+        <div>
+          <h2 className="text-3xl font-bold">
+            Visit Our Digital Marketing Institute in Agra
+          </h2>
+
+          <p className="text-lg text-muted-foreground leading-8 mt-4">
+            Join one of the leading Digital Marketing institutes in Agra and
+            begin your journey toward a rewarding career in online marketing.
+            Our counselors are available to guide you in selecting the right
+            course based on your career goals.
+          </p>
+        </div>
+
+        <Table>
+          <TableBody>
+            <TableRow>
+              <TableCell className="font-medium">Address</TableCell>
+              <TableCell>
+                A-3, behind Manoj Dhaba, Bhagwan Talkies crossing, Indra Puri,
+                New Agra Colony, Agra, Uttar Pradesh 282005
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell className="font-medium">Phone</TableCell>
+              <TableCell>070601 00562</TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell className="font-medium">Email</TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell className="font-medium">Timings</TableCell>
+              <TableCell>Monday – Saturday | 9:00 AM – 7:00 PM</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </section>
+
+      {/* FAQ */}
     </div>
-  )
+  );
 }

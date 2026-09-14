@@ -29,9 +29,13 @@ export default function LifeAtSkillYards({ images }) {
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  const displayImages = images && images.length > 0
-    ? images.map(img => ({ src: img.src, alt: img.title || "Life at SkillYards" }))
-    : allImages;
+  const displayImages =
+    images && images.length > 0
+      ? images.map((img) => ({
+          src: img.src,
+          alt: img.title || "Life at SkillYards",
+        }))
+      : allImages;
 
   return (
     <section className="bg-background py-8 transition-colors">
@@ -43,8 +47,9 @@ export default function LifeAtSkillYards({ images }) {
               Life at SkillYards
             </h2>
             <p className="mt-2 max-w-2xl text-muted-foreground">
-              A look at the classrooms, mentor interactions, student energy, and everyday learning environment
-              that make SkillYards feel structured, practical, and human.
+              A look at the classrooms, mentor interactions, student energy, and
+              everyday learning environment that make SkillYards feel
+              structured, practical, and human.
             </p>
           </div>
 
@@ -75,9 +80,9 @@ export default function LifeAtSkillYards({ images }) {
         style={{
           position: "relative",
           width: "100%",
-          height: isMobile 
-  ? "clamp(450px, 75vh, 800px)" 
-  : "clamp(550px, 75vh, 900px)", 
+          height: isMobile
+            ? "clamp(450px, 75vh, 800px)"
+            : "clamp(550px, 75vh, 900px)",
         }}
       >
         <DomeGallery
@@ -85,7 +90,7 @@ export default function LifeAtSkillYards({ images }) {
           fit={isMobile ? 0.9 : 0.8}
           minRadius={isMobile ? 200 : 240}
           maxVerticalRotationDeg={6}
-          segments={isMobile ? 16 : 20}                    
+          segments={isMobile ? 16 : 20}
           dragDampening={1}
           grayscale={false}
           overlayBlurColor="transparent"
@@ -97,25 +102,78 @@ export default function LifeAtSkillYards({ images }) {
           className="md:hidden pointer-events-none"
           style={{ position: "absolute", inset: 0, zIndex: 20 }}
         >
-          <div style={{
-            position: "absolute", top: 0, left: 0, right: 0, height: "18%",
-            background: "linear-gradient(to bottom, var(--background) 55%, transparent 10%)",
-          }} />
-          <div style={{
-            position: "absolute", bottom: 0, left: 0, right: 0, height: "18%",
-            background: "linear-gradient(to top, var(--background) 55%, transparent 100%)",
-          }} />
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: "18%",
+              background:
+                "linear-gradient(to bottom, var(--background) 55%, transparent 10%)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: "18%",
+              background:
+                "linear-gradient(to top, var(--background) 55%, transparent 100%)",
+            }}
+          />
         </div>
 
-        
         <div
           className="opacity-0 dark:opacity-100 pointer-events-none"
           style={{ position: "absolute", inset: 0, zIndex: 9 }}
         >
-          <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "30%", background: "linear-gradient(to bottom, var(--background), transparent)" }} />
-          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "30%", background: "linear-gradient(to top, var(--background), transparent)" }} />
-          <div style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: "15%", background: "linear-gradient(to right, var(--background), transparent)" }} />
-          <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, width: "15%", background: "linear-gradient(to left, var(--background), transparent)" }} />
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: "30%",
+              background:
+                "linear-gradient(to bottom, var(--background), transparent)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: "30%",
+              background:
+                "linear-gradient(to top, var(--background), transparent)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              bottom: 0,
+              width: "15%",
+              background:
+                "linear-gradient(to right, var(--background), transparent)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              bottom: 0,
+              width: "15%",
+              background:
+                "linear-gradient(to left, var(--background), transparent)",
+            }}
+          />
         </div>
       </div>
     </section>

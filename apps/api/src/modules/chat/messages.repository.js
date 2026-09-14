@@ -1,14 +1,21 @@
 import { eq, desc, asc, and, isNull, or, sql } from "drizzle-orm";
 import { messages, messageReactions } from "@repo/db";
 
-export async function getMessagesByChannel(db, channelId, { limit = 50, before } = {}) {
+export async function getMessagesByChannel(
+  db,
+  channelId,
+  { limit = 50, before } = {},
+) {
   let conditions = and(
     eq(messages.conversationId, channelId),
     isNull(messages.deletedAt),
     isNull(messages.parentId),
   );
   if (before) {
-    conditions = and(conditions, sql`${messages.createdAt} < ${before}::timestamp`);
+    conditions = and(
+      conditions,
+      sql`${messages.createdAt} < ${before}::timestamp`,
+    );
   }
   return db
     .select()
@@ -18,14 +25,21 @@ export async function getMessagesByChannel(db, channelId, { limit = 50, before }
     .limit(limit);
 }
 
-export async function getMessagesByConversation(db, conversationId, { limit = 50, before } = {}) {
+export async function getMessagesByConversation(
+  db,
+  conversationId,
+  { limit = 50, before } = {},
+) {
   let conditions = and(
     eq(messages.conversationId, conversationId),
     isNull(messages.deletedAt),
     isNull(messages.parentId),
   );
   if (before) {
-    conditions = and(conditions, sql`${messages.createdAt} < ${before}::timestamp`);
+    conditions = and(
+      conditions,
+      sql`${messages.createdAt} < ${before}::timestamp`,
+    );
   }
   return db
     .select()

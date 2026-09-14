@@ -1,6 +1,10 @@
 import { db } from "@repo/db";
 import { validateAddReaction } from "@/modules/chat/chat.schema";
-import { addReaction, removeReaction, getReactions } from "@/modules/chat/reactions.service";
+import {
+  addReaction,
+  removeReaction,
+  getReactions,
+} from "@/modules/chat/reactions.service";
 import { createProtectedRoute } from "@/lib/middleware";
 
 async function getHandler(req, { ctx, context }) {
@@ -17,9 +21,17 @@ async function postHandler(req, { ctx, context }) {
     return Response.json({ error: result.error.flatten() }, { status: 400 });
   }
   try {
-    const reaction = await addReaction(db, id, ctx.session.userId, result.data.emoji);
+    const reaction = await addReaction(
+      db,
+      id,
+      ctx.session.userId,
+      result.data.emoji,
+    );
     if (!reaction) {
-      return Response.json({ error: "Reaction already exists" }, { status: 409 });
+      return Response.json(
+        { error: "Reaction already exists" },
+        { status: 409 },
+      );
     }
     return Response.json(reaction, { status: 201 });
   } catch (err) {

@@ -9,5 +9,4 @@ export const SEO_CONFIG = {
     "SkillYards helps students build real-world skills with industry-focused programs.",
 
   defaultOGImage: "/images/opengraph/home-og.jpg",
-
 };

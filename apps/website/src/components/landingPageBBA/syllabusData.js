@@ -10,8 +10,8 @@ export const syllabusData = [
         "Google Search Console, Analytics & SEO Reporting",
         "Google Ads (Search Engine Marketing)",
         "Social Media (Paid Ads)",
-        "Social Media Marketing (Organic)"
-      ]
+        "Social Media Marketing (Organic)",
+      ],
     },
     coreSubjects: {
       title: "BBA Academic Focus (Months 5–6)",
@@ -21,9 +21,9 @@ export const syllabusData = [
         "Business Communication 1",
         "Fundamentals of Computers & IT",
         "Fundamentals of Accounting",
-        "Business Environment"
-      ]
-    }
+        "Business Environment",
+      ],
+    },
   },
   {
     semester: "2nd Semester",
@@ -36,8 +36,8 @@ export const syllabusData = [
         "Video Editing",
         "Interview Preparation",
         "Graphic Designing Using Canva",
-        "E-Commerce Landscape & Strategies (Affiliate Marketing)"
-      ]
+        "E-Commerce Landscape & Strategies (Affiliate Marketing)",
+      ],
     },
     coreSubjects: {
       title: "BBA Academic Focus (Months 5–6)",
@@ -47,9 +47,9 @@ export const syllabusData = [
         "Cost Accounting",
         "Legal & Regulatory Framework of Business",
         "Business Communication 2",
-        "Business Statistics"
-      ]
-    }
+        "Business Statistics",
+      ],
+    },
   },
   {
     semester: "3rd Semester",
@@ -62,8 +62,8 @@ export const syllabusData = [
         "International Freelancing",
         "Ads on OTT Platforms",
         "Online Reputation Management (ORM)",
-        "Inbound Marketing Strategies"
-      ]
+        "Inbound Marketing Strategies",
+      ],
     },
     coreSubjects: {
       title: "BBA Academic Focus (Months 5–6)",
@@ -73,9 +73,9 @@ export const syllabusData = [
         "Macro-Economics for Business",
         "Principles of Management",
         "Organizational Behaviour",
-        "Management Accounting"
-      ]
-    }
+        "Management Accounting",
+      ],
+    },
   },
   {
     semester: "4th Semester",
@@ -88,8 +88,8 @@ export const syllabusData = [
         "Native Advertising (Taboola, Outbrain)",
         "Data-Driven Decisions (Power BI)",
         "Digital Marketing Freelance & Business Basics",
-        "Management & Strategy Models"
-      ]
+        "Management & Strategy Models",
+      ],
     },
     coreSubjects: {
       title: "BBA Academic Focus (Months 5–6)",
@@ -99,9 +99,9 @@ export const syllabusData = [
         "Research Methodology",
         "Human Resource Management",
         "Taxation Laws",
-        "Production & Operations Management"
-      ]
-    }
+        "Production & Operations Management",
+      ],
+    },
   },
   {
     semester: "5th Semester",
@@ -112,8 +112,8 @@ export const syllabusData = [
         "Real-Client Freelancing Work",
         "Internship with Performance Reporting",
         "LinkedIn & Portfolio Finalization",
-        "Resume Showcasing Digital + Core Skills"
-      ]
+        "Resume Showcasing Digital + Core Skills",
+      ],
     },
     coreSubjects: {
       title: "BBA Academic Focus (Months 5–6)",
@@ -121,10 +121,10 @@ export const syllabusData = [
         "Operations Research",
         "Sales & Distribution Management",
         "Business Policy",
-        "Entrepreneurship Development"
-      ]
+        "Entrepreneurship Development",
+      ],
     },
-    special: "Industry-Integrated BBA Final Year with Guaranteed Placement"
+    special: "Industry-Integrated BBA Final Year with Guaranteed Placement",
   },
   {
     semester: "6th Semester",
@@ -135,8 +135,8 @@ export const syllabusData = [
         "Mock Interviews with Industry Experts",
         "Final Freelancing Projects",
         "Networking & Client Outreach Campaigns",
-        "Certification Finalization"
-      ]
+        "Certification Finalization",
+      ],
     },
     coreSubjects: {
       title: "BBA Academic Focus (Months 5–6)",
@@ -145,9 +145,9 @@ export const syllabusData = [
         "Advertising Management",
         "Management of Financial Institutions & Services",
         "International Business Management",
-        "Major Project"
-      ]
+        "Major Project",
+      ],
     },
-    special: "Industry-Integrated BBA Final Year with Guaranteed Placement"
-  }
+    special: "Industry-Integrated BBA Final Year with Guaranteed Placement",
+  },
 ];

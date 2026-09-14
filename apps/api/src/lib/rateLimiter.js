@@ -42,7 +42,10 @@ export function getRedisClient() {
     redisClient = new Redis({ url, token });
     console.log("[RATE_LIMITER] backend: upstash");
   } catch (err) {
-    console.error("[RATE_LIMITER] Failed to initialize Upstash Redis:", err.message);
+    console.error(
+      "[RATE_LIMITER] Failed to initialize Upstash Redis:",
+      err.message,
+    );
     redisClient = null;
   }
   return redisClient;
@@ -74,7 +77,14 @@ function yyyymmddHH(date) {
  *        all requests share one counter so IP rotation cannot bypass it
  * @returns {Promise<{limited:boolean,retryAfterMs?:number}>}
  */
-export async function checkRateLimit({ prefix, identity, burst, hourly, daily, global: globalCap }) {
+export async function checkRateLimit({
+  prefix,
+  identity,
+  burst,
+  hourly,
+  daily,
+  global: globalCap,
+}) {
   const now = new Date();
   const layers = [];
 
@@ -135,7 +145,10 @@ async function checkWithRedis(redis, layers) {
         await redis.expire(layer.key, layer.ttlSeconds);
       }
     } catch (err) {
-      console.error("[RATE_LIMITER] Redis check failed — failing open:", err.message);
+      console.error(
+        "[RATE_LIMITER] Redis check failed — failing open:",
+        err.message,
+      );
       return { limited: false };
     }
 

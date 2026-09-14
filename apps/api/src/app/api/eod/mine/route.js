@@ -15,7 +15,7 @@ async function getHandler(req, { ctx }) {
     ctx.error("EOD_MINE_FETCH_FAILED", { error: error.message });
     return Response.json(
       { success: false, message: "Failed to fetch submissions" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

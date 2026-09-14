@@ -28,7 +28,7 @@ async function getMegaData(id) {
 async function StudentDetailContent({ studentId }) {
   const [data, batches] = await Promise.all([
     getMegaData(studentId),
-    getBatches()
+    getBatches(),
   ]);
   const session = await getSession();
   const canEdit = session?.role === "ADMIN";
@@ -37,7 +37,9 @@ async function StudentDetailContent({ studentId }) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <h1 className="text-xl font-bold text-foreground">Student Not Found</h1>
-        <Link href="/students" className="mt-4 text-primary">← Back to Students</Link>
+        <Link href="/students" className="mt-4 text-primary">
+          ← Back to Students
+        </Link>
       </div>
     );
   }
@@ -53,7 +55,9 @@ async function StudentDetailContent({ studentId }) {
           </Link>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground">{student.name}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+                {student.name}
+              </h1>
               {student.courseName && (
                 <span className="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider rounded border border-primary/20">
                   {student.courseName}
@@ -61,14 +65,22 @@ async function StudentDetailContent({ studentId }) {
               )}
             </div>
             {student.email && (
-              <p className="text-muted-foreground text-sm mt-0.5">{student.email}</p>
+              <p className="text-muted-foreground text-sm mt-0.5">
+                {student.email}
+              </p>
             )}
           </div>
         </div>
       </div>
 
       <LedgerSection ledger={ledger} />
-      <StudentDataSection student={student} plan={plan} payments={transactions} canEdit={canEdit} batches={batches} />
+      <StudentDataSection
+        student={student}
+        plan={plan}
+        payments={transactions}
+        canEdit={canEdit}
+        batches={batches}
+      />
     </div>
   );
 }
@@ -77,15 +89,16 @@ export default async function StudentDetailPage({ params }) {
   const { id } = await params;
 
   return (
-    <Suspense fallback={
-      <div className="space-y-6">
-        <div className="h-20 bg-muted animate-pulse rounded-lg" />
-        <LedgerSkeleton />
-        <DetailsSkeleton />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="space-y-6">
+          <div className="h-20 bg-muted animate-pulse rounded-lg" />
+          <LedgerSkeleton />
+          <DetailsSkeleton />
+        </div>
+      }
+    >
       <StudentDetailContent studentId={id} />
     </Suspense>
   );
 }
-

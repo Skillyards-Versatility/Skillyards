@@ -8,7 +8,10 @@ export function WhoIsThisFor() {
     { label: "Stream", value: "Science (required)" },
     { label: "Eligibility", value: "12th pass, 50% minimum" },
     { label: "Duration", value: "3 years (6 semesters)" },
-    { label: "Tech stack", value: "MERN (MongoDB, Express.js, React, Node.js)" },
+    {
+      label: "Tech stack",
+      value: "MERN (MongoDB, Express.js, React, Node.js)",
+    },
     { label: "Daily schedule", value: "Practical coding + theory classes" },
     { label: "Fee", value: "Starting Rs 5,000/month (T&C apply)" },
     { label: "Mode", value: "Offline, Agra campus only" },
@@ -34,11 +37,11 @@ export function WhoIsThisFor() {
 
         <div className="max-w-3xl mx-auto">
           <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mb-10 text-center">
-            The BCA with Full-Stack Development at SkillYards is for 12th pass students from a
-            Science stream who want a university-affiliated computer science degree and practical
-            MERN stack skills. You write code every day alongside your degree
-            subjects. Minimum eligibility: 12th Science with 50% marks. No prior coding experience
-            required.
+            The BCA with Full-Stack Development at SkillYards is for 12th pass
+            students from a Science stream who want a university-affiliated
+            computer science degree and practical MERN stack skills. You write
+            code every day alongside your degree subjects. Minimum eligibility:
+            12th Science with 50% marks. No prior coding experience required.
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">

@@ -12,7 +12,7 @@ import { createStudent } from "@/actions/student";
 export default function EnrollStudentPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
@@ -65,37 +65,47 @@ export default function EnrollStudentPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3 border-b border-border pb-4">
-        <Link href="/students" className="p-2 -ml-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer">
+        <Link
+          href="/students"
+          className="p-2 -ml-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+        >
           <ChevronLeft className="w-5 h-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Enroll New Student</h1>
-          <p className="text-muted-foreground text-sm font-medium mt-0.5">Register a student, assign a batch, and define their fee structure.</p>
+          <h1 className="text-2xl font-bold text-foreground">
+            Enroll New Student
+          </h1>
+          <p className="text-muted-foreground text-sm font-medium mt-0.5">
+            Register a student, assign a batch, and define their fee structure.
+          </p>
         </div>
       </div>
 
       <div className="max-w-2xl">
         <form onSubmit={handleSubmit} className="card p-6 bg-card space-y-8">
-          
           <IdentityForm formData={formData} setFormData={setFormData} />
-          
+
           <FeeStructureForm formData={formData} setFormData={setFormData} />
 
           <div className="pt-4 border-t border-border flex justify-end gap-3">
-            <Link 
+            <Link
               href="/students"
               className="px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted border border-border rounded-lg transition-colors"
             >
               Cancel
             </Link>
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={isSubmitting}
               className="flex items-center justify-center min-w-[140px] px-4 py-2.5 bg-primary hover:opacity-90 text-primary-foreground font-bold rounded-lg transition-colors focus:ring-4 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
-                <><Loader2 className="animate-spin mr-2 h-4 w-4" /> Enrolling...</>
-              ) : "Enroll Student"}
+                <>
+                  <Loader2 className="animate-spin mr-2 h-4 w-4" /> Enrolling...
+                </>
+              ) : (
+                "Enroll Student"
+              )}
             </button>
           </div>
         </form>

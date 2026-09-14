@@ -32,8 +32,7 @@ const getTilt = (slug) => {
 const getPalette = (name) =>
   AVATAR_PALETTES[getHash(name) % AVATAR_PALETTES.length];
 
-const getPinColor = (slug) =>
-  PIN_COLORS[getHash(slug) % PIN_COLORS.length];
+const getPinColor = (slug) => PIN_COLORS[getHash(slug) % PIN_COLORS.length];
 
 const CONTENT_TYPE_LABELS = {
   "pillar-brand": "Guide",
@@ -78,7 +77,15 @@ const Highlight = ({ text, query }) => {
 };
 
 const BlogCard = ({ post, searchQuery, onTagClick }) => {
-  const { title, slug, publishedAt, author, coverImage, contentType, category } = post;
+  const {
+    title,
+    slug,
+    publishedAt,
+    author,
+    coverImage,
+    contentType,
+    category,
+  } = post;
   const tags = Array.isArray(post.tags) ? post.tags : [];
 
   const hrefSlug = typeof slug === "string" ? slug : slug?.current;
@@ -93,10 +100,10 @@ const BlogCard = ({ post, searchQuery, onTagClick }) => {
 
   const dateLabel = publishedAt
     ? new Date(publishedAt).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      })
     : "Recent";
 
   const tiltAngle = getTilt(slug);
@@ -115,8 +122,9 @@ const BlogCard = ({ post, searchQuery, onTagClick }) => {
     <article
       style={{ "--tilt": `${tiltAngle}deg` }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = `rotate(${tiltAngle * -0.4
-          }deg) translateY(-8px) scale(1.02)`;
+        e.currentTarget.style.transform = `rotate(${
+          tiltAngle * -0.4
+        }deg) translateY(-8px) scale(1.02)`;
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = `rotate(${tiltAngle}deg)`;
@@ -194,7 +202,10 @@ const BlogCard = ({ post, searchQuery, onTagClick }) => {
               {tags.slice(0, 2).map((tag) => (
                 <button
                   key={tag.slug}
-                  onClick={(e) => { e.preventDefault(); onTagClick?.(tag.title); }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onTagClick?.(tag.title);
+                  }}
                   className="text-[9px] px-1.5 py-0.5 rounded-full border border-black/10 dark:border-white/10 text-[#5f5e5a] hover:text-[#2c2c2a] dark:hover:text-white transition-colors bg-white/50 dark:bg-black/20 backdrop-blur-sm"
                 >
                   {tag.title}

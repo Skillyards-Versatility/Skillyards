@@ -10,7 +10,10 @@ import { canAccessStudent } from "@/lib/permissions";
  */
 async function patchHandler(req, { context, ctx, resource: student }) {
   if (ctx.session.role !== "ADMIN") {
-    return Response.json({ error: "Admin access required to edit installments" }, { status: 403 });
+    return Response.json(
+      { error: "Admin access required to edit installments" },
+      { status: 403 },
+    );
   }
 
   const { id: studentId, installmentId } = await context.params;
@@ -34,11 +37,20 @@ async function patchHandler(req, { context, ctx, resource: student }) {
     .limit(1);
 
   if (!plan || existing.planId !== plan.id) {
-    return Response.json({ error: "Installment does not belong to this student's plan" }, { status: 404 });
+    return Response.json(
+      { error: "Installment does not belong to this student's plan" },
+      { status: 404 },
+    );
   }
 
-  if (amountDue !== undefined && (Number(amountDue) <= 0 || !Number.isInteger(Number(amountDue)))) {
-    return Response.json({ error: "Amount must be a positive integer" }, { status: 400 });
+  if (
+    amountDue !== undefined &&
+    (Number(amountDue) <= 0 || !Number.isInteger(Number(amountDue)))
+  ) {
+    return Response.json(
+      { error: "Amount must be a positive integer" },
+      { status: 400 },
+    );
   }
 
   if (dueDate !== undefined && Number.isNaN(new Date(dueDate).getTime())) {

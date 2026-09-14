@@ -58,9 +58,10 @@ export default function WhySkillYardsBuilt() {
             transition={{ delay: 0.08 }}
             className="mt-5 text-lg leading-relaxed text-muted-foreground"
           >
-            Traditional education often focuses only on theory. SkillYards was built to bridge the gap
-            between classroom learning and practical career preparation through structured programs,
-            mentor guidance, project-based learning, and industry-relevant skills.
+            Traditional education often focuses only on theory. SkillYards was
+            built to bridge the gap between classroom learning and practical
+            career preparation through structured programs, mentor guidance,
+            project-based learning, and industry-relevant skills.
           </motion.p>
           <motion.p
             initial={false}
@@ -69,8 +70,9 @@ export default function WhySkillYardsBuilt() {
             transition={{ delay: 0.12 }}
             className="mt-4 text-lg leading-relaxed text-muted-foreground"
           >
-            Our programs are designed to help students move from theory to practical skills, from confusion
-            to career clarity, and from passive learning to real-world exposure.
+            Our programs are designed to help students move from theory to
+            practical skills, from confusion to career clarity, and from passive
+            learning to real-world exposure.
           </motion.p>
         </div>
 
@@ -85,7 +87,9 @@ export default function WhySkillYardsBuilt() {
               className={`rounded-[2rem] border border-border/50 bg-linear-to-br ${column.tone} p-8 shadow-lg backdrop-blur-sm h-full`}
             >
               <div className="flex items-center justify-between gap-4 border-b border-border/40 pb-5">
-                <h3 className="text-2xl font-bold text-foreground">{column.title}</h3>
+                <h3 className="text-2xl font-bold text-foreground">
+                  {column.title}
+                </h3>
                 <span className="rounded-full border border-border/40 bg-background/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {index === 0 ? "Common" : "SkillYards"}
                 </span>

@@ -48,14 +48,18 @@ export async function generateStaticParams() {
   const slugs = await sanityClient.fetch(
     `*[_type == "post"]{ "slug": slug.current }`,
     {},
-    { next: { revalidate: 3600 } }
+    { next: { revalidate: 3600 } },
   );
 
   return slugs.map((post) => ({ slug: post.slug }));
 }
 
 const getPost = cache(async (slug) =>
-  sanityClient.fetch(POST_BY_SLUG_QUERY, { slug }, { next: { revalidate: 3600 } })
+  sanityClient.fetch(
+    POST_BY_SLUG_QUERY,
+    { slug },
+    { next: { revalidate: 3600 } },
+  ),
 );
 
 function buildMetadataForPost(post, slug) {
@@ -121,9 +125,13 @@ function MetaRow({ post, readingTime }) {
           {post.author?.name || "SkillYards Team"}
         </span>
       </span>
-      <span aria-hidden="true" className="text-foreground/30">·</span>
+      <span aria-hidden="true" className="text-foreground/30">
+        ·
+      </span>
       <span>{formatDate(post.publishedAt)}</span>
-      <span aria-hidden="true" className="text-foreground/30">·</span>
+      <span aria-hidden="true" className="text-foreground/30">
+        ·
+      </span>
       <span>{readingTime} min read</span>
     </div>
   );
@@ -161,8 +169,9 @@ export default async function BlogPostPage({ params }) {
     });
 
     // Fetch all news articles ordered by publication date to resolve pagination index and full sibling articles
-    const allNews = await sanityClient.fetch(
-      `*[_type == "post" && contentType == "news"] | order(publishedAt desc){
+    const allNews = await sanityClient
+      .fetch(
+        `*[_type == "post" && contentType == "news"] | order(publishedAt desc){
         _id,
         title,
         "slug": slug.current,
@@ -194,8 +203,9 @@ export default async function BlogPostPage({ params }) {
           path,
           linkContext
         }
-      }`
-    ).catch(() => []);
+      }`,
+      )
+      .catch(() => []);
 
     const currentIndex = allNews.findIndex((n) => n.slug === slug);
     const resolvedCurrentIndex = currentIndex !== -1 ? currentIndex : 0;
@@ -207,8 +217,13 @@ export default async function BlogPostPage({ params }) {
     const story2 = allNews[groupStart + 1] || null;
     const story3 = allNews[groupStart + 2] || null;
 
-    const nextPageSlug = allNews[groupStart + 3] ? allNews[groupStart + 3].slug : null;
-    const prevPageSlug = groupStart >= 3 && allNews[groupStart - 3] ? allNews[groupStart - 3].slug : null;
+    const nextPageSlug = allNews[groupStart + 3]
+      ? allNews[groupStart + 3].slug
+      : null;
+    const prevPageSlug =
+      groupStart >= 3 && allNews[groupStart - 3]
+        ? allNews[groupStart - 3].slug
+        : null;
     const pageNum = Math.floor(groupStart / 3) + 1;
 
     // Dynamically calculate headings and reading time from the resolved Column 1 story content
@@ -216,8 +231,13 @@ export default async function BlogPostPage({ params }) {
     const resolvedReadingTime = calculateReadingTime(story1.content);
 
     // Calculate Mobile 1-by-1 pagination properties
-    const nextStorySlug = allNews[resolvedCurrentIndex + 1] ? allNews[resolvedCurrentIndex + 1].slug : null;
-    const prevStorySlug = resolvedCurrentIndex > 0 && allNews[resolvedCurrentIndex - 1] ? allNews[resolvedCurrentIndex - 1].slug : null;
+    const nextStorySlug = allNews[resolvedCurrentIndex + 1]
+      ? allNews[resolvedCurrentIndex + 1].slug
+      : null;
+    const prevStorySlug =
+      resolvedCurrentIndex > 0 && allNews[resolvedCurrentIndex - 1]
+        ? allNews[resolvedCurrentIndex - 1].slug
+        : null;
 
     return (
       <>
@@ -321,7 +341,8 @@ export default async function BlogPostPage({ params }) {
             )}
 
             {/* Article Content */}
-            <article className="
+            <article
+              className="
               prose dark:prose-invert max-w-none
               prose-headings:font-serif prose-headings:font-black prose-headings:tracking-tight prose-headings:text-foreground
               prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-6 prose-h2:pb-4 prose-h2:border-b prose-h2:border-border/50
@@ -333,15 +354,17 @@ export default async function BlogPostPage({ params }) {
               prose-blockquote:border-l-4 prose-blockquote:border-primary prose-blockquote:bg-primary/5 prose-blockquote:px-8 prose-blockquote:py-2 prose-blockquote:rounded-r-3xl prose-blockquote:not-italic prose-blockquote:text-foreground
               prose-img:rounded-[2rem] prose-img:shadow-xl
               prose-code:text-primary prose-code:bg-primary/5 prose-code:px-2 prose-code:py-0.5 prose-code:rounded
-            ">
-              <PortableText value={post.content || []} components={portableTextComponents} />
+            "
+            >
+              <PortableText
+                value={post.content || []}
+                components={portableTextComponents}
+              />
             </article>
 
             <ParentPillarCallout pillar={post.parentPillar} />
             <RelatedMoneyPages pages={post.relatedMoneyPages} />
             <SiblingArticles articles={post.siblingArticles} />
-
-
 
             {/* Discussion */}
             <div className="mt-20 border-t border-border/50 pt-10">
@@ -353,12 +376,17 @@ export default async function BlogPostPage({ params }) {
           <aside className="hidden lg:flex lg:flex-col gap-8 sticky top-32 self-start">
             {/* Author Card */}
             <div className="rounded-[2.5rem] border border-border/50 bg-white dark:bg-white/[0.02] p-8 backdrop-blur-md shadow-xl shadow-black/[0.02]">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-6">Article Author</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/60 mb-6">
+                Article Author
+              </p>
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-16 h-16 rounded-2xl overflow-hidden border border-border shadow-sm">
                   {post.author?.image ? (
                     <Image
-                      src={urlFor(post.author.image).width(100).height(100).url()}
+                      src={urlFor(post.author.image)
+                        .width(100)
+                        .height(100)
+                        .url()}
                       alt=""
                       aria-hidden="true"
                       width={64}
@@ -381,7 +409,8 @@ export default async function BlogPostPage({ params }) {
                 </div>
               </div>
               <p className="text-sm text-muted-foreground/90 leading-relaxed font-medium">
-                {post.author?.shortBio || "Expert insights on career growth and modern technology trends."}
+                {post.author?.shortBio ||
+                  "Expert insights on career growth and modern technology trends."}
               </p>
               {isValidLinkedInUrl(post.author?.linkedinUrl) && (
                 <a
@@ -408,7 +437,9 @@ export default async function BlogPostPage({ params }) {
             {/* Promo Card */}
             <div className="rounded-[2.5rem] bg-foreground p-8 text-primary-foreground relative overflow-hidden group shadow-2xl shadow-primary/20">
               <div className="relative z-10">
-                <h4 className="font-serif text-2xl font-black leading-tight mb-3">Launch Your Career.</h4>
+                <h4 className="font-serif text-2xl font-black leading-tight mb-3">
+                  Launch Your Career.
+                </h4>
                 <p className="text-primary-foreground/80 text-sm font-medium mb-6 leading-relaxed">
                   Join our high-impact training programs in Agra.
                 </p>

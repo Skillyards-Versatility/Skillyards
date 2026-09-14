@@ -24,7 +24,9 @@ export default async function EodSubmitPage() {
   const [existing] = await db
     .select()
     .from(eodReports)
-    .where(and(eq(eodReports.userId, session.userId), eq(eodReports.date, today)))
+    .where(
+      and(eq(eodReports.userId, session.userId), eq(eodReports.date, today)),
+    )
     .limit(1);
 
   // Auto-populate counselling counts from session logs
@@ -36,7 +38,12 @@ export default async function EodSubmitPage() {
       booked: sql`sum(case when outcome in ('session_booked', 'enrolled') then 1 else 0 end)::int`,
     })
     .from(counsellingSessions)
-    .where(and(eq(counsellingSessions.counselorId, session.userId), eq(counsellingSessions.sessionDate, today)));
+    .where(
+      and(
+        eq(counsellingSessions.counselorId, session.userId),
+        eq(counsellingSessions.sessionDate, today),
+      ),
+    );
 
   const counsellingDefaults = {
     counsellingDone: counsellingCounts?.phoneReferral || 0,
@@ -47,10 +54,19 @@ export default async function EodSubmitPage() {
   if (!user?.team) {
     return (
       <div className="card p-12 text-center">
-        <p className="text-muted-foreground">You are not assigned to a team. Please contact an admin.</p>
+        <p className="text-muted-foreground">
+          You are not assigned to a team. Please contact an admin.
+        </p>
       </div>
     );
   }
 
-  return <EodFormClient team={user.team} role={user.role} existingReport={existing || null} counsellingDefaults={counsellingDefaults} />;
+  return (
+    <EodFormClient
+      team={user.team}
+      role={user.role}
+      existingReport={existing || null}
+      counsellingDefaults={counsellingDefaults}
+    />
+  );
 }

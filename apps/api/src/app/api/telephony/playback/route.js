@@ -17,7 +17,9 @@ export async function GET(request) {
     });
 
     const s3Response = await s3Client.send(command);
-    const audioBuffer = Buffer.from(await s3Response.Body.transformToByteArray());
+    const audioBuffer = Buffer.from(
+      await s3Response.Body.transformToByteArray(),
+    );
 
     // Detect Content-Type based on file extension
     let contentType = "audio/mpeg";

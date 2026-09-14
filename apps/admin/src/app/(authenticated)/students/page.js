@@ -7,22 +7,30 @@ import { StudentsDirectoryClient } from "@/components/students/StudentsDirectory
 
 async function getStudents(limit = 100, offset = 0) {
   try {
-    const res = await fetch(`${API}/api/students?limit=${limit}&offset=${offset}`, {
-      headers: await getAuthHeaders(),
-      next: {
-        revalidate: 60,
-        tags: ['students']
-      }
-    });
+    const res = await fetch(
+      `${API}/api/students?limit=${limit}&offset=${offset}`,
+      {
+        headers: await getAuthHeaders(),
+        next: {
+          revalidate: 60,
+          tags: ["students"],
+        },
+      },
+    );
 
     if (!res.ok) {
-      console.error(`[ADMIN][ERROR] Failed to fetch students: ${res.status} ${res.statusText}`);
+      console.error(
+        `[ADMIN][ERROR] Failed to fetch students: ${res.status} ${res.statusText}`,
+      );
       return [];
     }
 
     return await res.json();
   } catch (err) {
-    console.error("[ADMIN][ERROR] Network error fetching students:", err.message);
+    console.error(
+      "[ADMIN][ERROR] Network error fetching students:",
+      err.message,
+    );
     return [];
   }
 }
@@ -33,18 +41,23 @@ async function getBatches() {
       headers: await getAuthHeaders(),
       next: {
         revalidate: 60,
-        tags: ['batches']
-      }
+        tags: ["batches"],
+      },
     });
 
     if (!res.ok) {
-      console.error(`[ADMIN][ERROR] Failed to fetch batches: ${res.status} ${res.statusText}`);
+      console.error(
+        `[ADMIN][ERROR] Failed to fetch batches: ${res.status} ${res.statusText}`,
+      );
       return [];
     }
 
     return await res.json();
   } catch (err) {
-    console.error("[ADMIN][ERROR] Network error fetching batches:", err.message);
+    console.error(
+      "[ADMIN][ERROR] Network error fetching batches:",
+      err.message,
+    );
     return [];
   }
 }
@@ -59,16 +72,22 @@ export default async function StudentsListPage({ searchParams }) {
     getBatches(),
     (async () => {
       try {
-        const statsRes = await fetch(`${API}/api/students/stats`, { headers: await getAuthHeaders(), cache: "no-store" });
+        const statsRes = await fetch(`${API}/api/students/stats`, {
+          headers: await getAuthHeaders(),
+          cache: "no-store",
+        });
         return statsRes.ok ? await statsRes.json() : { totalStudents: 0 };
       } catch (err) {
-        console.error("[ADMIN][ERROR] Failed to fetch students stats:", err.message);
+        console.error(
+          "[ADMIN][ERROR] Failed to fetch students stats:",
+          err.message,
+        );
         return { totalStudents: 0 };
       }
     })(),
   ]);
   const totalStudents = stats.totalStudents;
-  
+
   const session = await getSession();
   const canEdit = session?.role === "ADMIN";
 
@@ -76,7 +95,9 @@ export default async function StudentsListPage({ searchParams }) {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Students Directory</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Students Directory
+          </h1>
           <p className="text-sm text-muted-foreground mt-1">
             Manage student records, batches, and track financial ledgers.
           </p>
@@ -89,10 +110,10 @@ export default async function StudentsListPage({ searchParams }) {
         </Link>
       </div>
 
-      <StudentsDirectoryClient 
-        initialStudents={students} 
-        initialBatches={batches} 
-        canEdit={canEdit} 
+      <StudentsDirectoryClient
+        initialStudents={students}
+        initialBatches={batches}
+        canEdit={canEdit}
         totalStudents={totalStudents}
         limit={limit}
         offset={offset}

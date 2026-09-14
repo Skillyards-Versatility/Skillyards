@@ -34,7 +34,8 @@ export const courses = {
     certification: "Digital Marketing Certification",
 
     seo: {
-      title: "Digital Marketing Course in Agra with AI & Placement Assistance | SkillYards",
+      title:
+        "Digital Marketing Course in Agra with AI & Placement Assistance | SkillYards",
       description:
         "Join SkillYards' 6-month AI-integrated Digital Marketing Course in Agra. Learn SEO, Google Ads, Meta Ads, social media, analytics, reporting, AI tools, portfolio projects, and placement assistance. Starting from ₹5.5k/month.",
       path: "/digital-marketing-course-in-agra",

@@ -3,7 +3,7 @@ import { corsHeaders } from "./utils/cors";
 
 /**
  * GLOBAL API PROXY (Next.js 16+)
- * 
+ *
  * Specifically handles:
  * 1. CORS Preflight (OPTIONS) requests which bypass route handlers.
  * 2. Injection of CORS headers into all API responses.

@@ -28,7 +28,13 @@ export async function PATCH(request) {
 
     const { id, updates } = body;
 
-    const allowedFields = ["firstName", "lastName", "email", "phone", "message"];
+    const allowedFields = [
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "message",
+    ];
     const sanitized = {};
     for (const field of allowedFields) {
       if (updates[field] !== undefined) {
@@ -37,7 +43,10 @@ export async function PATCH(request) {
     }
 
     if (Object.keys(sanitized).length === 0) {
-      return Response.json({ error: "No editable fields provided" }, { status: 400 });
+      return Response.json(
+        { error: "No editable fields provided" },
+        { status: 400 },
+      );
     }
 
     if (sanitized.firstName !== undefined && sanitized.firstName === "") {
@@ -67,11 +76,17 @@ export async function PATCH(request) {
   const { ids, status } = body;
 
   if (!Array.isArray(ids) || ids.length === 0) {
-    return Response.json({ error: "ids must be a non-empty array" }, { status: 400 });
+    return Response.json(
+      { error: "ids must be a non-empty array" },
+      { status: 400 },
+    );
   }
 
   if (!VALID_STATUSES.includes(status)) {
-    return Response.json({ error: `status must be one of: ${VALID_STATUSES.join(", ")}` }, { status: 400 });
+    return Response.json(
+      { error: `status must be one of: ${VALID_STATUSES.join(", ")}` },
+      { status: 400 },
+    );
   }
 
   const result = await db
@@ -96,10 +111,15 @@ export async function DELETE(request) {
   const id = searchParams.get("id");
 
   if (!id) {
-    return Response.json({ error: "id query param is required" }, { status: 400 });
+    return Response.json(
+      { error: "id query param is required" },
+      { status: 400 },
+    );
   }
 
-  const result = await db.delete(enquiriesTable).where(eq(enquiriesTable.id, id));
+  const result = await db
+    .delete(enquiriesTable)
+    .where(eq(enquiriesTable.id, id));
 
   invalidateCache();
 

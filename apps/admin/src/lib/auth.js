@@ -1,7 +1,8 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
-const secretKey = process.env.JWT_SECRET || "skillyards_secret_key_change_me_in_prod";
+const secretKey =
+  process.env.JWT_SECRET || "skillyards_secret_key_change_me_in_prod";
 const encodedKey = new TextEncoder().encode(secretKey);
 
 export async function encrypt(payload) {
@@ -54,7 +55,8 @@ export async function updateSession() {
     expires: parsed.expires,
     sameSite: "lax",
     path: "/",
-    domain: process.env.NODE_ENV === "production" ? ".skillyards.in" : undefined,
+    domain:
+      process.env.NODE_ENV === "production" ? ".skillyards.in" : undefined,
   });
 }
 
@@ -79,7 +81,8 @@ export async function updateSessionCookie(updates) {
     expires: parsed.expires,
     sameSite: "lax",
     path: "/",
-    domain: process.env.NODE_ENV === "production" ? ".skillyards.in" : undefined,
+    domain:
+      process.env.NODE_ENV === "production" ? ".skillyards.in" : undefined,
   });
 }
 
@@ -91,6 +94,6 @@ export async function getAuthHeaders() {
   const token = await getRawToken();
   return {
     "Content-Type": "application/json",
-    ...(token ? { "Cookie": `session=${token}` } : {}),
+    ...(token ? { Cookie: `session=${token}` } : {}),
   };
 }

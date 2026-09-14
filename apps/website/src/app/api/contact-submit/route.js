@@ -6,7 +6,7 @@ export async function POST(request) {
   if (!ENQUIRY_API_URL) {
     return NextResponse.json(
       { message: "Contact service is unavailable right now." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 
@@ -15,7 +15,10 @@ export async function POST(request) {
   try {
     payload = await request.json();
   } catch {
-    return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
+    return NextResponse.json(
+      { message: "Invalid request body." },
+      { status: 400 },
+    );
   }
 
   let enquiryResponse;
@@ -31,7 +34,11 @@ export async function POST(request) {
     // Proxies append to x-forwarded-for, so the last entry is the real client;
     // earlier entries are client-controlled and spoofable.
     const forwardedFor = request.headers.get("x-forwarded-for");
-    const clientIp = (forwardedFor?.split(",").pop() || request.headers.get("x-real-ip") || "").trim();
+    const clientIp = (
+      forwardedFor?.split(",").pop() ||
+      request.headers.get("x-real-ip") ||
+      ""
+    ).trim();
     if (clientIp) headers["x-forwarded-for"] = clientIp;
 
     enquiryResponse = await fetch(`${ENQUIRY_API_URL}/api/enquiries`, {
@@ -43,7 +50,7 @@ export async function POST(request) {
   } catch {
     return NextResponse.json(
       { message: "Unable to submit your enquiry right now." },
-      { status: 502 }
+      { status: 502 },
     );
   }
 
@@ -58,7 +65,7 @@ export async function POST(request) {
   if (!enquiryResponse.ok) {
     return NextResponse.json(
       { message: enquiryData?.message || "Something went wrong" },
-      { status: enquiryResponse.status }
+      { status: enquiryResponse.status },
     );
   }
 
@@ -90,7 +97,7 @@ export async function POST(request) {
         enquirySubmitted: true,
         thankYouAccessGranted: false,
       },
-      { status: 201 }
+      { status: 201 },
     );
   }
 }

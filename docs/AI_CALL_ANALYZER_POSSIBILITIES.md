@@ -40,13 +40,13 @@ Every completed call lasting longer than 15 seconds is queued for auditing. The 
 
 ### Key Auditing Metrics Extracted
 
-| Metric | Description | Gemini Implementation Strategy |
-| :--- | :--- | :--- |
-| **Verbatim Transcript** | Verbatim transcript in Hinglish/English/Hindi. | Gemini's native audio-to-text decoding. |
-| **Talk-to-Listen Ratio** | Percentage of time the agent spoke vs. the customer. | Gemini estimates block-by-block audio speech ratio. |
-| **Sentiment Analysis** | Positive, neutral, or negative customer reaction. | Gemini evaluates voice tone shifts and final interest. |
-| **Script Adherence** | Checking if the agent hit mandatory pitch points. | Gemini compares speech against configured sales script. |
-| **Objection Resolution** | Rating how effectively the agent handled pushbacks. | Gemini grades agent responses following customer objections. |
+| Metric                   | Description                                          | Gemini Implementation Strategy                               |
+| :----------------------- | :--------------------------------------------------- | :----------------------------------------------------------- |
+| **Verbatim Transcript**  | Verbatim transcript in Hinglish/English/Hindi.       | Gemini's native audio-to-text decoding.                      |
+| **Talk-to-Listen Ratio** | Percentage of time the agent spoke vs. the customer. | Gemini estimates block-by-block audio speech ratio.          |
+| **Sentiment Analysis**   | Positive, neutral, or negative customer reaction.    | Gemini evaluates voice tone shifts and final interest.       |
+| **Script Adherence**     | Checking if the agent hit mandatory pitch points.    | Gemini compares speech against configured sales script.      |
+| **Objection Resolution** | Rating how effectively the agent handled pushbacks.  | Gemini grades agent responses following customer objections. |
 
 ---
 
@@ -55,15 +55,19 @@ Every completed call lasting longer than 15 seconds is queued for auditing. The 
 Aggregated analytics compiled by automated workers show team-wide performance trends over time.
 
 ### A. Weekly Agent Snapshots
+
 A weekly scheduled job collects all audited call records for a given telecaller to generate:
-*   **Average Scorecard**: Average talk time, average sentiment score, and average lead interest score.
-*   **Objection Log**: A ranked breakdown of the top 3 objections they faced (e.g., price, competitor features, distance).
-*   **AI Training Tip**: Focused feedback (e.g., *"Agent handled the 'too expensive' objection well, but did not transition to the discount offer. Suggest practicing trial-closing"*).
+
+- **Average Scorecard**: Average talk time, average sentiment score, and average lead interest score.
+- **Objection Log**: A ranked breakdown of the top 3 objections they faced (e.g., price, competitor features, distance).
+- **AI Training Tip**: Focused feedback (e.g., _"Agent handled the 'too expensive' objection well, but did not transition to the discount offer. Suggest practicing trial-closing"_).
 
 ### B. Monthly Executive Summaries
+
 Correlates call transcripts with actual sales conversions from the `enquiries` table:
-*   **Winning Pitch Extraction**: Compares transcripts of won conversions against lost ones to find successful keywords and phrases.
-*   **Churn & Drop-off Analysis**: Flags enquiries that are likely to fail based on hesitation markers or objections in the call logs.
+
+- **Winning Pitch Extraction**: Compares transcripts of won conversions against lost ones to find successful keywords and phrases.
+- **Churn & Drop-off Analysis**: Flags enquiries that are likely to fail based on hesitation markers or objections in the call logs.
 
 ---
 
@@ -75,7 +79,14 @@ Create these schemas in your database to persist individual call audits and perf
 
 ```javascript
 // packages/db/src/schema/followUpAudits.js
-import { pgTable, uuid, text, integer, jsonb, timestamp } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  integer,
+  jsonb,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { followUps } from "./followUps";
 
 export const followUpAudits = pgTable("follow_up_audits", {
@@ -83,18 +94,18 @@ export const followUpAudits = pgTable("follow_up_audits", {
   followUpId: uuid("follow_up_id")
     .references(() => followUps.id, { onDelete: "cascade" })
     .notNull(),
-  
+
   // Auditing Metrics
   talkRatioAgent: integer("talk_ratio_agent").notNull(), // e.g. 60 for 60%
   talkRatioCustomer: integer("talk_ratio_customer").notNull(), // e.g. 40 for 40%
-  
+
   // Script checklist (e.g., {"intro": true, "pricing_explained": false})
   scriptAdherence: jsonb("script_adherence").notNull(),
-  
+
   // Detailed feedback and coaching points
   objectionHandlingScore: integer("objection_handling_score"), // 1-10
-  coachingFeedback: text("coaching_feedback"), 
-  
+  coachingFeedback: text("coaching_feedback"),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 ```
@@ -103,7 +114,15 @@ export const followUpAudits = pgTable("follow_up_audits", {
 
 ```javascript
 // packages/db/src/schema/performanceSnapshots.js
-import { pgTable, uuid, text, integer, jsonb, date, timestamp } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  integer,
+  jsonb,
+  date,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { employees } from "./employees";
 
 export const performanceSnapshots = pgTable("performance_snapshots", {
@@ -114,19 +133,19 @@ export const performanceSnapshots = pgTable("performance_snapshots", {
   type: text("type").notNull(), // 'weekly' | 'monthly'
   startDate: date("start_date").notNull(),
   endDate: date("end_date").notNull(),
-  
+
   // Aggregated Stats
   totalCalls: integer("total_calls").notNull(),
   reachedCalls: integer("reached_calls").notNull(),
   avgDurationSeconds: integer("avg_duration_seconds").notNull(),
   conversionRate: integer("conversion_rate"), // percentage
-  
+
   // AI Derived Analysis
   strengths: text("strengths").array(),
   weaknesses: text("weaknesses").array(),
   objectionsEncountered: jsonb("objections_encountered"), // e.g. [{"name": "price", "count": 12}]
   overallScore: integer("overall_score"), // 1-100 rating
-  
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 ```
@@ -206,13 +225,13 @@ export async function auditCallWithGemini(recordingKey) {
         role: "user",
         text: `You are a sales auditor. Analyze the provided audio recording of a sales call.
         Provide a complete verbatim transcription, and analyze compliance and performance.
-        Return the final audit strictly formatted matching the requested JSON schema.`
-      }
+        Return the final audit strictly formatted matching the requested JSON schema.`,
+      },
     ],
     config: {
       responseMimeType: "application/json",
       responseSchema: responseSchema,
-    }
+    },
   });
 
   // 5. Parse and return the structured audit data

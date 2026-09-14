@@ -29,15 +29,22 @@ export function LatestStudentsTable({
   const handleApply = (e) => {
     e.preventDefault();
     if (!startDate) return;
-    router.push(`/dashboard?enrolledIn=custom&startDate=${startDate}&endDate=${endDate}&latestPage=1`, { scroll: false });
+    router.push(
+      `/dashboard?enrolledIn=custom&startDate=${startDate}&endDate=${endDate}&latestPage=1`,
+      { scroll: false },
+    );
   };
 
   return (
     <div className="card overflow-hidden">
       <div className="px-4 sm:px-6 py-4 sm:py-5 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between bg-card text-card-foreground gap-3">
         <div>
-          <h2 className="text-base sm:text-lg font-bold text-foreground">Latest Enrolled Students</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">Students registered in the selected period.</p>
+          <h2 className="text-base sm:text-lg font-bold text-foreground">
+            Latest Enrolled Students
+          </h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Students registered in the selected period.
+          </p>
         </div>
         <div className="flex flex-wrap gap-2 shrink-0">
           <Link
@@ -88,7 +95,9 @@ export function LatestStudentsTable({
       </div>
 
       <div className="px-4 sm:px-6 py-2.5 border-b border-border bg-muted/20 flex flex-wrap items-center gap-1.5 text-xs">
-        <span className="text-muted-foreground font-semibold mr-1">Laptop:</span>
+        <span className="text-muted-foreground font-semibold mr-1">
+          Laptop:
+        </span>
         {[
           { value: "all", label: "All" },
           { value: "opted", label: "Opted" },
@@ -110,9 +119,14 @@ export function LatestStudentsTable({
       </div>
 
       {enrolledIn === "custom" && (
-        <form onSubmit={handleApply} className="p-4 border-b border-border bg-muted/20 flex flex-wrap items-end gap-3 text-xs">
+        <form
+          onSubmit={handleApply}
+          className="p-4 border-b border-border bg-muted/20 flex flex-wrap items-end gap-3 text-xs"
+        >
           <div className="flex flex-col gap-1.5">
-            <span className="font-semibold text-muted-foreground">Start Date</span>
+            <span className="font-semibold text-muted-foreground">
+              Start Date
+            </span>
             <input
               type="date"
               value={startDate}
@@ -122,7 +136,9 @@ export function LatestStudentsTable({
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <span className="font-semibold text-muted-foreground">End Date</span>
+            <span className="font-semibold text-muted-foreground">
+              End Date
+            </span>
             <input
               type="date"
               value={endDate}
@@ -148,19 +164,31 @@ export function LatestStudentsTable({
                   <th className="px-4 sm:px-6 py-3 font-semibold">Student</th>
                   <th className="px-4 sm:px-6 py-3 font-semibold">Course</th>
                   <th className="px-4 sm:px-6 py-3 font-semibold">Laptop</th>
-                  <th className="px-4 sm:px-6 py-3 font-semibold">Enrolled On</th>
-                  <th className="px-4 sm:px-6 py-3 font-semibold text-right">Fee</th>
+                  <th className="px-4 sm:px-6 py-3 font-semibold">
+                    Enrolled On
+                  </th>
+                  <th className="px-4 sm:px-6 py-3 font-semibold text-right">
+                    Fee
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
                 {students.map((s) => (
-                  <tr key={s.id} className="hover:bg-muted/50 transition-colors">
+                  <tr
+                    key={s.id}
+                    className="hover:bg-muted/50 transition-colors"
+                  >
                     <td className="px-4 sm:px-6 py-4 font-semibold text-foreground">
-                      <Link href={`/students/${s.id}`} className="hover:text-primary transition-colors">
+                      <Link
+                        href={`/students/${s.id}`}
+                        className="hover:text-primary transition-colors"
+                      >
                         {s.name}
                       </Link>
                     </td>
-                    <td className="px-4 sm:px-6 py-4 text-muted-foreground">{s.courseName || "—"}</td>
+                    <td className="px-4 sm:px-6 py-4 text-muted-foreground">
+                      {s.courseName || "—"}
+                    </td>
                     <td className="px-4 sm:px-6 py-4">
                       {s.laptopOpted ? (
                         <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/60 text-xs font-bold">
@@ -172,7 +200,9 @@ export function LatestStudentsTable({
                         </span>
                       )}
                     </td>
-                    <td className="px-4 sm:px-6 py-4 text-muted-foreground">{formatDate(s.createdAt)}</td>
+                    <td className="px-4 sm:px-6 py-4 text-muted-foreground">
+                      {formatDate(s.createdAt)}
+                    </td>
                     <td className="px-4 sm:px-6 py-4 text-right font-medium text-primary">
                       ₹{(s.finalFee || 0).toLocaleString()}
                     </td>
@@ -212,7 +242,9 @@ export function LatestStudentsTable({
       ) : (
         <div className="px-6 py-12 flex flex-col items-center justify-center text-center bg-card">
           <UserCheck className="w-10 h-10 text-muted-foreground/50 mb-3" />
-          <h3 className="text-base font-semibold text-foreground">No students enrolled</h3>
+          <h3 className="text-base font-semibold text-foreground">
+            No students enrolled
+          </h3>
           <p className="text-sm text-muted-foreground mt-1 max-w-sm">
             There are no enrollments for the selected period.
           </p>

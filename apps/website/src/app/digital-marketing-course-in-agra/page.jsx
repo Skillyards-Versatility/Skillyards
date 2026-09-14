@@ -4,7 +4,11 @@ import { buildSEO } from "@/lib/seo/buildSEO";
 export const revalidate = 86400;
 import { getAllOgImages } from "@/lib/sanity/getSiteSettings";
 import { resolveOgImage } from "@/lib/seo/og";
-const DGMLandingPage = dynamic(() => import("@/components/landingPageDGM/LandingPage").then(m => m.DGMLandingPage));
+const DGMLandingPage = dynamic(() =>
+  import("@/components/landingPageDGM/LandingPage").then(
+    (m) => m.DGMLandingPage,
+  ),
+);
 import JsonLd from "@/components/JsonLd";
 import { getCourseSchema } from "@/lib/seo/schema/courseSchema";
 import { courses } from "@/data/courses";
@@ -20,7 +24,11 @@ export async function generateMetadata() {
   return buildSEO({
     ...courses.digitalmarketing.seo,
     path: "/digital-marketing-course-in-agra",
-    ogImage: resolveOgImage(ogImages, "digitalmarketing", courses.digitalmarketing.seo.ogImage),
+    ogImage: resolveOgImage(
+      ogImages,
+      "digitalmarketing",
+      courses.digitalmarketing.seo.ogImage,
+    ),
   });
 }
 
@@ -28,14 +36,20 @@ export default async function DigitalMarketingPage() {
   const course = courses.digitalmarketing;
   const courseSchema = getCourseSchema(course);
   const faqs = await getPageFaqs("digitalmarketing", 8);
-  const faqSchema = getFAQSchema(faqs, absoluteUrl("/digital-marketing-course-in-agra"));
+  const faqSchema = getFAQSchema(
+    faqs,
+    absoluteUrl("/digital-marketing-course-in-agra"),
+  );
   const dgmEducators = await getTeamMembersByGroup("dgmEducators");
 
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: "Home", url: "/" },
     { name: "Programs", url: "/programs" },
     { name: "On-Job Training", url: "/programs/on-job-training" },
-    { name: course.programName || course.title, url: "/digital-marketing-course-in-agra" },
+    {
+      name: course.programName || course.title,
+      url: "/digital-marketing-course-in-agra",
+    },
   ]);
 
   const webPageSchema = getWebPageSchema({
@@ -45,7 +59,12 @@ export default async function DigitalMarketingPage() {
     keywords: course.seo.keywords,
   });
 
-  const combinedSchema = [courseSchema, breadcrumbSchema, faqSchema, webPageSchema].filter(Boolean);
+  const combinedSchema = [
+    courseSchema,
+    breadcrumbSchema,
+    faqSchema,
+    webPageSchema,
+  ].filter(Boolean);
 
   return (
     <>

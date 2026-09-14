@@ -9,13 +9,16 @@ This document provides the exact code specifications, file paths, and steps to i
 We will create a separate Node.js server inside the `apps` directory that communicates via HTTP API on port `3005`.
 
 ### 1. Create the Directory and Files
+
 Create the following structure:
-*   `apps/ai-service/`
-*   `apps/ai-service/package.json`
-*   `apps/ai-service/src/server.js`
-*   `apps/ai-service/src/call-analyzer.js`
+
+- `apps/ai-service/`
+- `apps/ai-service/package.json`
+- `apps/ai-service/src/server.js`
+- `apps/ai-service/src/call-analyzer.js`
 
 ### 2. Configure `apps/ai-service/package.json`
+
 ```json
 {
   "name": "ai-service",
@@ -46,7 +49,14 @@ We will add columns for the transcript and AI metrics directly into the `follow_
 2. Update the schema definition to include the new AI columns:
 
 ```javascript
-import { pgTable, uuid, text, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  integer,
+  timestamp,
+  jsonb,
+} from "drizzle-orm/pg-core";
 import { employees } from "./employees";
 
 export const followUps = pgTable("follow_ups", {
@@ -57,15 +67,15 @@ export const followUps = pgTable("follow_ups", {
     .notNull(),
   duration: integer("duration").notNull(),
   recordingUrl: text("recording_url"), // R2 Key
-  outcome: text("outcome").notNull(),  // 'reached' or 'not_reached'
+  outcome: text("outcome").notNull(), // 'reached' or 'not_reached'
   type: text("type").default("call").notNull(),
   contactedAt: timestamp("contacted_at").notNull(),
-  
+
   // === NEW AI COLUMNS ===
   aiStatus: text("ai_status").default("pending").notNull(), // 'pending' | 'processing' | 'completed' | 'failed'
   transcription: text("transcription"),
   analysis: jsonb("analysis"), // Holds structured audit object
-  
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 ```
@@ -84,6 +94,7 @@ export const followUps = pgTable("follow_ups", {
 We configure Express, S3 connection, and Gemini 1.5 Flash structured auditing.
 
 ### 1. Write the Auditing Logic (`apps/ai-service/src/call-analyzer.js`)
+
 ```javascript
 import { GoogleGenAI } from "@google/genai";
 import { s3Client } from "./r2-client.js"; // Helper mapping standard R2 connection
@@ -134,8 +145,8 @@ export async function auditCall(recordingKey) {
       },
       {
         role: "user",
-        text: "Perform the auditing process for this call recording."
-      }
+        text: "Perform the auditing process for this call recording.",
+      },
     ],
     config: {
       systemInstruction: SYSTEM_INSTRUCTION,
@@ -145,7 +156,10 @@ export async function auditCall(recordingKey) {
         properties: {
           transcription: { type: "STRING" },
           summary: { type: "STRING" },
-          sentiment: { type: "STRING", enum: ["Positive", "Neutral", "Negative"] },
+          sentiment: {
+            type: "STRING",
+            enum: ["Positive", "Neutral", "Negative"],
+          },
           leadScore: { type: "INTEGER" },
           talkRatioAgent: { type: "INTEGER" },
           talkRatioCustomer: { type: "INTEGER" },
@@ -156,7 +170,11 @@ export async function auditCall(recordingKey) {
               background_discovery: { type: "BOOLEAN" },
               counselling_pitched: { type: "BOOLEAN" },
             },
-            required: ["professional_greeting", "background_discovery", "counselling_pitched"],
+            required: [
+              "professional_greeting",
+              "background_discovery",
+              "counselling_pitched",
+            ],
           },
           objectionsHandled: {
             type: "ARRAY",
@@ -186,6 +204,7 @@ export async function auditCall(recordingKey) {
 ```
 
 ### 2. Write the Express Server (`apps/ai-service/src/server.js`)
+
 ```javascript
 import express from "express";
 import { auditCall } from "./call-analyzer.js";
@@ -210,20 +229,29 @@ app.post("/api/audit", async (req, res) => {
 
   // Process asynchronously in background
   try {
-    await db.update(followUps).set({ aiStatus: "processing" }).where(eq(followUps.id, followUpId));
+    await db
+      .update(followUps)
+      .set({ aiStatus: "processing" })
+      .where(eq(followUps.id, followUpId));
 
     const result = await auditCall(recordingUrl);
 
-    await db.update(followUps).set({
-      aiStatus: "completed",
-      transcription: result.transcription,
-      analysis: result
-    }).where(eq(followUps.id, followUpId));
+    await db
+      .update(followUps)
+      .set({
+        aiStatus: "completed",
+        transcription: result.transcription,
+        analysis: result,
+      })
+      .where(eq(followUps.id, followUpId));
 
     console.log(`Successfully audited call ID: ${followUpId}`);
   } catch (error) {
     console.error(`Auditing failed for call ID ${followUpId}:`, error);
-    await db.update(followUps).set({ aiStatus: "failed" }).where(eq(followUps.id, followUpId));
+    await db
+      .update(followUps)
+      .set({ aiStatus: "failed" })
+      .where(eq(followUps.id, followUpId));
   }
 });
 
@@ -243,41 +271,43 @@ In the telephony callback route, trigger the microservice asynchronously.
 2. Trigger the HTTP POST to the microservice inside the insert callback block:
 
 ```javascript
-    // (Existing code) insert database row
-    const [inserted] = await db
-      .insert(followUps)
-      .values({
-        leadPhone: cleanPhone,
-        telecallerId: telecaller_id,
-        duration: call_duration_seconds,
-        recordingUrl: recordingUrl,
-        outcome: outcome,
-        type: "call",
-        contactedAt: new Date(call_start_time),
-      })
-      .returning();
+// (Existing code) insert database row
+const [inserted] = await db
+  .insert(followUps)
+  .values({
+    leadPhone: cleanPhone,
+    telecallerId: telecaller_id,
+    duration: call_duration_seconds,
+    recordingUrl: recordingUrl,
+    outcome: outcome,
+    type: "call",
+    contactedAt: new Date(call_start_time),
+  })
+  .returning();
 
-    // Trigger background AI microservice
-    if (recordingUrl && outcome === "reached") {
-      (async () => {
-        try {
-          const aiServiceUrl = process.env.AI_SERVICE_URL || "http://localhost:3005";
-          
-          // Fire-and-forget request
-          fetch(`${aiServiceUrl}/api/audit`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              followUpId: inserted.id,
-              recordingUrl: recordingUrl
-            })
-          }).catch(err => console.error("AI service dispatcher connection failed:", err));
-          
-        } catch (dispatchErr) {
-          console.error("AI service trigger dispatch failed:", dispatchErr);
-        }
-      })();
+// Trigger background AI microservice
+if (recordingUrl && outcome === "reached") {
+  (async () => {
+    try {
+      const aiServiceUrl =
+        process.env.AI_SERVICE_URL || "http://localhost:3005";
+
+      // Fire-and-forget request
+      fetch(`${aiServiceUrl}/api/audit`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          followUpId: inserted.id,
+          recordingUrl: recordingUrl,
+        }),
+      }).catch((err) =>
+        console.error("AI service dispatcher connection failed:", err),
+      );
+    } catch (dispatchErr) {
+      console.error("AI service trigger dispatch failed:", dispatchErr);
     }
+  })();
+}
 
-    return Response.json({ success: true, message: "Call Logged" });
+return Response.json({ success: true, message: "Call Logged" });
 ```

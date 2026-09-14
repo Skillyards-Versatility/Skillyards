@@ -5,10 +5,10 @@ import { createProtectedRoute } from "@/lib/middleware";
 
 async function getHandler(req, { ctx, context }) {
   const { id: parentId } = await context.params;
-  
+
   try {
     const rawReplies = await getThreadMessages(db, parentId);
-    
+
     if (rawReplies.length === 0) {
       return Response.json([]);
     }
@@ -18,7 +18,7 @@ async function getHandler(req, { ctx, context }) {
       .select({ id: users.id, name: users.name })
       .from(users)
       .where(inArray(users.id, senderIds));
-      
+
     const senderMap = Object.fromEntries(senders.map((s) => [s.id, s]));
 
     const replyIds = rawReplies.map((r) => r.id);
@@ -44,7 +44,7 @@ async function getHandler(req, { ctx, context }) {
       });
     }
 
-    const replies = rawReplies.map(r => ({
+    const replies = rawReplies.map((r) => ({
       ...r,
       sender: senderMap[r.senderId] || { id: r.senderId, name: "Unknown" },
       createdAt: r.createdAt?.toISOString?.() || r.createdAt,

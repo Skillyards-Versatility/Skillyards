@@ -15,14 +15,11 @@ async function main() {
     .select({
       id: followUps.id,
       recordingUrl: followUps.recordingUrl,
-      aiStatus: followUps.aiStatus
+      aiStatus: followUps.aiStatus,
     })
     .from(followUps)
     .where(
-      and(
-        isNotNull(followUps.recordingUrl),
-        eq(followUps.aiStatus, "failed")
-      )
+      and(isNotNull(followUps.recordingUrl), eq(followUps.aiStatus, "failed")),
     );
 
   if (failedCalls.length === 0) {
@@ -30,11 +27,13 @@ async function main() {
     return;
   }
 
-  console.log(`🚀 Found ${failedCalls.length} failed audits. Retrying them now...`);
+  console.log(
+    `🚀 Found ${failedCalls.length} failed audits. Retrying them now...`,
+  );
 
   for (const call of failedCalls) {
     console.log(`🔄 Triggering audit retry for Call ID: ${call.id}...`);
-    
+
     // Set status to pending in DB so it can be audited cleanly
     await db
       .update(followUps)
@@ -47,15 +46,15 @@ async function main() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           followUpId: call.id,
-          recordingUrl: call.recordingUrl
-        })
+          recordingUrl: call.recordingUrl,
+        }),
       });
       const data = await response.json();
       console.log(`   Response for ${call.id}:`, data);
     } catch (err) {
       console.error(`   Failed to send trigger for ${call.id}:`, err.message);
     }
-    
+
     // Sleep a bit between requests to avoid rate limits
     await new Promise((r) => setTimeout(r, 2000));
   }

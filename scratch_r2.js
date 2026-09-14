@@ -1,4 +1,4 @@
-require('dotenv').config({ path: 'apps/admin/.env.local' });
+require("dotenv").config({ path: "apps/admin/.env.local" });
 const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
 const s3Client = new S3Client({
   region: "auto",
@@ -15,7 +15,10 @@ async function test() {
       Key: "counselling/2dcd32b1-5428-4ab2-bf1d-43b3815ec5e8-1785477626837.jpeg",
     });
     const response = await s3Client.send(command);
-    console.log("Has transformToWebStream:", typeof response.Body.transformToWebStream);
+    console.log(
+      "Has transformToWebStream:",
+      typeof response.Body.transformToWebStream,
+    );
     if (typeof response.Body.transformToWebStream === "function") {
       const webStream = response.Body.transformToWebStream();
       console.log("Got webStream:", typeof webStream);

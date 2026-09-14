@@ -21,12 +21,13 @@ const ROLE_LABEL = {
 export function Header({ user }) {
   const { openMobile } = useSidebar();
 
-  const initials = user?.name
-    ?.split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2) || "?";
+  const initials =
+    user?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) || "?";
 
   return (
     <header className="sticky top-0 z-30 h-16 bg-card border-b border-border flex items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -39,7 +40,10 @@ export function Header({ user }) {
       </button>
 
       <div className="flex items-center gap-3 ml-auto">
-        <UserStatus initialEmoji={user?.statusEmoji} initialText={user?.statusText} />
+        <UserStatus
+          initialEmoji={user?.statusEmoji}
+          initialText={user?.statusText}
+        />
         <ThemeToggle />
         <Link
           href="/profile"

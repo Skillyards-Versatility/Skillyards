@@ -103,7 +103,7 @@ export default function FAQSection({
                   initial={false}
                   animate={{
                     height: isOpen ? "auto" : 0,
-                    opacity: isOpen ? 1 : 0
+                    opacity: isOpen ? 1 : 0,
                   }}
                   transition={{ duration: 0.3, ease: "easeInOut" }}
                   className="overflow-hidden"

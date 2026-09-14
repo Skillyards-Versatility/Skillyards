@@ -1,5 +1,8 @@
 import { validateEnquiry } from "@/modules/enquiries/enquiry.schema";
-import { createEnquiryService, getAllEnquiriesService } from "@/modules/enquiries/enquiry.service";
+import {
+  createEnquiryService,
+  getAllEnquiriesService,
+} from "@/modules/enquiries/enquiry.service";
 import { success, error } from "@/utils/response";
 import { createProtectedRoute } from "@/lib/middleware";
 import { publicAllow, canAccessEnquiry } from "@/lib/permissions";
@@ -30,10 +33,12 @@ async function postHandler(req, { ctx }) {
   const validation = validateEnquiry(body);
 
   if (!validation.success) {
-    ctx.warn("ENQUIRY_VALIDATION_FAILURE", { errors: validation.error.flatten() });
+    ctx.warn("ENQUIRY_VALIDATION_FAILURE", {
+      errors: validation.error.flatten(),
+    });
     return Response.json(
       error("Validation failed", validation.error.flatten()),
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -41,16 +46,17 @@ async function postHandler(req, { ctx }) {
     const enquiry = await createEnquiryService(validation.data);
     ctx.log("ENQUIRY_SUBMITTED", { enquiryId: enquiry.id });
 
-    return Response.json(
-      success(enquiry, "Enquiry submitted successfully"),
-      { status: 201 }
-    );
+    return Response.json(success(enquiry, "Enquiry submitted successfully"), {
+      status: 201,
+    });
   } catch (err) {
     const message = err.message || "Failed to submit enquiry";
 
     if (message.includes("Captcha verification failed")) {
       ctx.warn("ENQUIRY_CAPTCHA_FAILURE", { email: validation.data.email });
-      return Response.json(error("Captcha verification failed"), { status: 400 });
+      return Response.json(error("Captcha verification failed"), {
+        status: 400,
+      });
     }
 
     throw err;
@@ -61,7 +67,7 @@ async function postHandler(req, { ctx }) {
 
 // GET: Strictly protected for staff/admins
 export const GET = createProtectedRoute(getHandler, {
-  policy: canAccessEnquiry
+  policy: canAccessEnquiry,
 });
 
 // POST: Publicly accessible but still through the structural wrapper
@@ -69,5 +75,5 @@ export const GET = createProtectedRoute(getHandler, {
 export const POST = createProtectedRoute(postHandler, {
   policy: publicAllow,
   isPublic: true,
-  rateLimit: ENQUIRY_POST_RATE_LIMIT
+  rateLimit: ENQUIRY_POST_RATE_LIMIT,
 });

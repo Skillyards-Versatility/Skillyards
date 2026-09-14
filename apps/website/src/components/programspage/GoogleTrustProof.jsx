@@ -8,7 +8,7 @@ export default function GoogleTrustProof() {
     <section className="bg-background py-10 relative overflow-hidden border-t border-b border-border/30 bg-slate-50/20 dark:bg-white/[0.01]">
       <div className="mx-auto max-w-4xl px-6 relative z-10">
         <LazyMotion features={domAnimation}>
-          <m.div 
+          <m.div
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -24,7 +24,9 @@ export default function GoogleTrustProof() {
                 <span className="text-green-500">l</span>
                 <span className="text-red-500">e</span>
               </span>
-              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground">Reviews</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground">
+                Reviews
+              </span>
             </div>
 
             {/* Divider on desktop */}
@@ -35,23 +37,38 @@ export default function GoogleTrustProof() {
               <div className="space-y-1.5 text-center md:text-left">
                 <div className="flex items-center justify-center md:justify-start gap-1">
                   {[...Array(4)].map((_, i) => (
-                    <Star key={i} size={18} className="fill-amber-400 text-amber-400" />
+                    <Star
+                      key={i}
+                      size={18}
+                      className="fill-amber-400 text-amber-400"
+                    />
                   ))}
                   {/* 4.8 Star (mostly filled) */}
                   <div className="relative inline-block w-[18px] h-[18px]">
-                    <Star size={18} className="text-amber-400/25 absolute top-0 left-0" />
+                    <Star
+                      size={18}
+                      className="text-amber-400/25 absolute top-0 left-0"
+                    />
                     <div className="absolute top-0 left-0 overflow-hidden w-[80%]">
-                      <Star size={18} className="fill-amber-400 text-amber-400" />
+                      <Star
+                        size={18}
+                        className="fill-amber-400 text-amber-400"
+                      />
                     </div>
                   </div>
-                  <span className="ml-2 text-sm font-black text-foreground">4.8 / 5</span>
+                  <span className="ml-2 text-sm font-black text-foreground">
+                    4.8 / 5
+                  </span>
                 </div>
-                
+
                 <h3 className="font-serif text-lg md:text-xl font-bold text-foreground leading-snug">
-                  Rated <span className="text-primary italic">4.8/5 on Google</span> with 116 genuine reviews
+                  Rated{" "}
+                  <span className="text-primary italic">4.8/5 on Google</span>{" "}
+                  with 116 genuine reviews
                 </h3>
                 <p className="text-xs font-semibold text-muted-foreground">
-                  Verified feedback shared directly by our students and parents in Agra.
+                  Verified feedback shared directly by our students and parents
+                  in Agra.
                 </p>
               </div>
 

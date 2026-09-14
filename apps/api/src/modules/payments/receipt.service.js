@@ -72,13 +72,19 @@ export async function getPaymentReceipt(db, paymentId) {
   const [ledger, studentRecord, allocationRecords] = await Promise.all([
     getStudentLedger(db, paymentRecord.studentId),
     studentRepository.getStudentById(db, paymentRecord.studentId),
-    paymentRepository.getAllocationsByPaymentId(db, paymentId)
+    paymentRepository.getAllocationsByPaymentId(db, paymentId),
   ]);
 
   // 3. Fetch installment details if needed
-  const installmentIds = allocationRecords.map((a) => a.installmentId).filter(Boolean);
-  const installmentRecords = installmentIds.length > 0
-      ? await db.select().from(installments).where(inArray(installments.id, installmentIds))
+  const installmentIds = allocationRecords
+    .map((a) => a.installmentId)
+    .filter(Boolean);
+  const installmentRecords =
+    installmentIds.length > 0
+      ? await db
+          .select()
+          .from(installments)
+          .where(inArray(installments.id, installmentIds))
       : [];
 
   const installmentMap = new Map(installmentRecords.map((i) => [i.id, i]));
@@ -94,7 +100,10 @@ export async function getPaymentReceipt(db, paymentId) {
     };
   });
 
-  const totalAllocated = allocationRecords.reduce((sum, a) => sum + a.amount, 0);
+  const totalAllocated = allocationRecords.reduce(
+    (sum, a) => sum + a.amount,
+    0,
+  );
   const unallocatedAmount = paymentRecord.amount - totalAllocated;
 
   return {
@@ -133,11 +142,19 @@ export function generateReceiptHTML(receiptData) {
     receiptNumber,
   } = receiptData;
 
-  const formatCurrency = (amount) => `&#8377;${amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-  const formatDate = (dateString) => new Date(dateString).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" });
+  const formatCurrency = (amount) =>
+    `&#8377;${amount.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const formatDate = (dateString) =>
+    new Date(dateString).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
 
   const isFullyPaid = ledgerSnapshot.pending === 0;
-  const allocatedInstallments = allocationBreakdown.filter((a) => a.installmentId);
+  const allocatedInstallments = allocationBreakdown.filter(
+    (a) => a.installmentId,
+  );
   const allAllocatedInstallmentsPaid =
     allocatedInstallments.length > 0 &&
     allocatedInstallments.every((a) => a.installmentStatus === "paid");
@@ -163,8 +180,8 @@ export function generateReceiptHTML(receiptData) {
       return `
         <tr class="table-row">
           <td>
-            <p class="item-title">${isInstallment ? 'Scheduled Installment' : 'General Course Fees'}</p>
-            <p class="item-desc">${isInstallment ? `Due: ${formatDate(alloc.installmentDueDate)}` : 'Tuition &amp; Lab Access'}</p>
+            <p class="item-title">${isInstallment ? "Scheduled Installment" : "General Course Fees"}</p>
+            <p class="item-desc">${isInstallment ? `Due: ${formatDate(alloc.installmentDueDate)}` : "Tuition &amp; Lab Access"}</p>
           </td>
           <td class="text-right item-value">${formatCurrency(isInstallment && alloc.installmentAmountDue ? alloc.installmentAmountDue : alloc.allocatedAmount)}</td>
         </tr>`;
@@ -179,13 +196,17 @@ export function generateReceiptHTML(receiptData) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Receipt_${paymentId.slice(-8).toUpperCase()}</title>
         <style>
-          ${notoSansBase64 ? `@font-face {
+          ${
+            notoSansBase64
+              ? `@font-face {
             font-family: 'Noto Sans';
             src: url('data:font/truetype;base64,${notoSansBase64}') format('truetype');
             font-weight: 100 900;
             font-style: normal;
             unicode-range: U+20B9;
-          }` : ''}
+          }`
+              : ""
+          }
 
           :root {
             --blue-900: #1e3a8a;
@@ -596,7 +617,7 @@ export function generateReceiptHTML(receiptData) {
                 <span class="card-label">Billed To Student</span>
                 <p class="entity-data"><strong>Name:</strong> ${studentDetails.studentName}</p>
                 <p class="entity-data"><strong>Email:</strong> ${studentDetails.studentEmail}</p>
-                <p class="entity-data"><strong>Phone:</strong> ${studentDetails.studentPhone || 'Unlisted'}</p>
+                <p class="entity-data"><strong>Phone:</strong> ${studentDetails.studentPhone || "Unlisted"}</p>
               </div>
               <div class="info-card">
                 <span class="card-label">Payment Details</span>
@@ -624,17 +645,30 @@ export function generateReceiptHTML(receiptData) {
             <div class="summary-wrapper">
               <div class="summary-block">
                 ${(() => {
-                  const installmentTotal = allocationBreakdown.reduce((sum, a) => sum + (a.installmentAmountDue || a.allocatedAmount), 0);
-                  const showInstallmentTotal = installmentTotal !== receiptData.paymentAmount;
+                  const installmentTotal = allocationBreakdown.reduce(
+                    (sum, a) =>
+                      sum + (a.installmentAmountDue || a.allocatedAmount),
+                    0,
+                  );
+                  const showInstallmentTotal =
+                    installmentTotal !== receiptData.paymentAmount;
                   return `
-                  ${showInstallmentTotal ? `<div class="summary-row">
+                  ${
+                    showInstallmentTotal
+                      ? `<div class="summary-row">
                     <span>Installment Total</span>
                     <span>${formatCurrency(installmentTotal)}</span>
-                  </div>` : ''}
-                  ${receiptData.unallocatedAmount > 0 ? `<div class="summary-row">
+                  </div>`
+                      : ""
+                  }
+                  ${
+                    receiptData.unallocatedAmount > 0
+                      ? `<div class="summary-row">
                     <span>Unallocated</span>
                     <span>${formatCurrency(receiptData.unallocatedAmount)}</span>
-                  </div>` : ''}
+                  </div>`
+                      : ""
+                  }
                   <div class="summary-row total-row">
                     <span>Amount Paid</span>
                     <span>${formatCurrency(receiptData.paymentAmount)}</span>
@@ -650,7 +684,7 @@ export function generateReceiptHTML(receiptData) {
                 Fees once paid are non-refundable. This is a system-generated receipt; for discrepancies contact the admin desk within 48 hours.
               </div>
               <div class="signature-container">
-                ${stampBase64 ? `<img src="${stampBase64}" class="sig-stamp" alt="Company Stamp">` : ''}
+                ${stampBase64 ? `<img src="${stampBase64}" class="sig-stamp" alt="Company Stamp">` : ""}
                 <div class="signature-box">
                   <div class="sig-line"></div>
                   <p class="sig-name">Chief Executive Officer</p>

@@ -10,11 +10,11 @@ async function getHandler() {
 
   return Response.json({
     success: true,
-    data: result
+    data: result,
   });
 }
 
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
-  policy: canAccessEnquiry
+  policy: canAccessEnquiry,
 });

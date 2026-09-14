@@ -13,7 +13,8 @@ const MIME_MAP = {
   "application/pdf": "pdf",
   "text/plain": "txt",
   "application/msword": "doc",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+    "docx",
   "application/vnd.ms-excel": "xls",
   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "xlsx",
 };
@@ -33,14 +34,14 @@ async function postHandler(req, { ctx }) {
     if (!file || !conversationId) {
       return Response.json(
         { success: false, message: "File and conversationId are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (file.size > MAX_SIZE) {
       return Response.json(
         { success: false, message: "File size must be under 10MB" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -59,7 +60,13 @@ async function postHandler(req, { ctx }) {
 
     await s3Client.send(command);
 
-    ctx.log("CHAT_FILE_UPLOADED", { key, conversationId, userId, fileName: file.name, fileType: contentType });
+    ctx.log("CHAT_FILE_UPLOADED", {
+      key,
+      conversationId,
+      userId,
+      fileName: file.name,
+      fileType: contentType,
+    });
 
     return Response.json({
       success: true,
@@ -71,7 +78,7 @@ async function postHandler(req, { ctx }) {
     ctx.error("CHAT_FILE_UPLOAD_FAILED", { error: error.message });
     return Response.json(
       { success: false, message: "Upload failed" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

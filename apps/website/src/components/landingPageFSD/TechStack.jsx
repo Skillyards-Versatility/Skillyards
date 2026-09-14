@@ -2,7 +2,17 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Briefcase, Bug, FileText, FolderGit2, Globe, Layers, LayoutTemplate, ServerCog, Sparkles } from "lucide-react";
+import {
+  Briefcase,
+  Bug,
+  FileText,
+  FolderGit2,
+  Globe,
+  Layers,
+  LayoutTemplate,
+  ServerCog,
+  Sparkles,
+} from "lucide-react";
 
 const layers = [
   {
@@ -78,10 +88,15 @@ export function FSDTechStack() {
             Practical Training
           </motion.div>
           <h2 className="font-serif text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Practical Full-Stack Training, <span className="italic text-primary">Not Just Theory.</span>
+            Practical Full-Stack Training,{" "}
+            <span className="italic text-primary">Not Just Theory.</span>
           </h2>
           <p className="mx-auto mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            Students work on mentor-guided practical projects, full-stack application builds, GitHub-based code practice, code reviews, deployment exercises, and portfolio-ready project work. Selected students may also get exposure to live/internal projects where available.
+            Students work on mentor-guided practical projects, full-stack
+            application builds, GitHub-based code practice, code reviews,
+            deployment exercises, and portfolio-ready project work. Selected
+            students may also get exposure to live/internal projects where
+            available.
           </p>
         </div>
 
@@ -105,8 +120,12 @@ export function FSDTechStack() {
                     Practical
                   </span>
                 </div>
-                <h3 className="mb-2 font-serif text-lg font-extrabold leading-snug text-foreground">{layer.layer}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{layer.note}</p>
+                <h3 className="mb-2 font-serif text-lg font-extrabold leading-snug text-foreground">
+                  {layer.layer}
+                </h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {layer.note}
+                </p>
               </motion.div>
             );
           })}

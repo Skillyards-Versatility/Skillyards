@@ -16,16 +16,28 @@ async function postHandler(req, { ctx }) {
     const file = formData.get("file");
 
     if (!file) {
-      return Response.json({ success: false, message: "No file provided" }, { status: 400 });
+      return Response.json(
+        { success: false, message: "No file provided" },
+        { status: 400 },
+      );
     }
 
     if (file.size > MAX_SIZE) {
-      return Response.json({ success: false, message: "File size must be under 5MB" }, { status: 400 });
+      return Response.json(
+        { success: false, message: "File size must be under 5MB" },
+        { status: 400 },
+      );
     }
 
     const contentType = file.type;
     if (!ALLOWED_TYPES[contentType]) {
-      return Response.json({ success: false, message: "Only PNG, JPEG, and WebP images are allowed" }, { status: 400 });
+      return Response.json(
+        {
+          success: false,
+          message: "Only PNG, JPEG, and WebP images are allowed",
+        },
+        { status: 400 },
+      );
     }
 
     const ext = ALLOWED_TYPES[contentType];
@@ -39,7 +51,10 @@ async function postHandler(req, { ctx }) {
     return Response.json({ success: true, imageKey: key }, { status: 201 });
   } catch (error) {
     ctx.error("COUNSELLING_IMAGE_UPLOAD_FAILED", { error: error.message });
-    return Response.json({ success: false, message: "Failed to upload image" }, { status: 500 });
+    return Response.json(
+      { success: false, message: "Failed to upload image" },
+      { status: 500 },
+    );
   }
 }
 

@@ -20,5 +20,5 @@ async function getHandler(req, { context, ctx, resource: student }) {
 // ── STRUCTURAL ENFORCEMENT ──
 export const GET = createProtectedRoute(getHandler, {
   policy: canAccessStudent,
-  resourceLoader: (id) => getStudentById(db, id)
+  resourceLoader: (id) => getStudentById(db, id),
 });

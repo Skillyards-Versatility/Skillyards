@@ -1,53 +1,43 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 export const createStudentSchema = z
-    .object({
-        name: z
-            .string()
-            .trim()
-            .min(1, "Name is required")
-            .max(100, "Name must be at most 100 characters"),
+  .object({
+    name: z
+      .string()
+      .trim()
+      .min(1, "Name is required")
+      .max(100, "Name must be at most 100 characters"),
 
-        phone: z
-            .string()
-            .trim()
-            .max(10, "Phone number must be at most 10 digits")
-            .optional(),
+    phone: z
+      .string()
+      .trim()
+      .max(10, "Phone number must be at most 10 digits")
+      .optional(),
 
-        email: z
-            .string()
-            .trim()
-            .email("Invalid email")
-            .optional(),
-        
-        courseName: z
-            .string()
-            .trim()
-            .max(100, "Course name must be at most 100 characters")
-            .optional(),
+    email: z.string().trim().email("Invalid email").optional(),
 
-        batchId: z.string().uuid("Invalid batch ID").optional().nullable(),
-        batchName: z.string().trim().optional().nullable(),
-        assignedTo: z.string().uuid("Invalid user ID").optional().nullable(),
+    courseName: z
+      .string()
+      .trim()
+      .max(100, "Course name must be at most 100 characters")
+      .optional(),
 
-        totalFee: z
-            .number()
-            .int()
-            .positive("Total fee must be a positive integer"),
+    batchId: z.string().uuid("Invalid batch ID").optional().nullable(),
+    batchName: z.string().trim().optional().nullable(),
+    assignedTo: z.string().uuid("Invalid user ID").optional().nullable(),
 
-        finalFee: z
-            .number()
-            .int()
-            .positive("Final fee must be a positive integer"),
+    totalFee: z.number().int().positive("Total fee must be a positive integer"),
 
-        laptopOpted: z.boolean().default(false),
-        laptopOptedAt: z.string().datetime().nullable().optional(),
-    })
-    .refine((data) => data.finalFee <= data.totalFee, {
-        message: "Final fee cannot exceed total fee",
-        path: ["finalFee"],
-    });
+    finalFee: z.number().int().positive("Final fee must be a positive integer"),
+
+    laptopOpted: z.boolean().default(false),
+    laptopOptedAt: z.string().datetime().nullable().optional(),
+  })
+  .refine((data) => data.finalFee <= data.totalFee, {
+    message: "Final fee cannot exceed total fee",
+    path: ["finalFee"],
+  });
 
 export function validateCreateStudent(data) {
-    return createStudentSchema.safeParse(data);
+  return createStudentSchema.safeParse(data);
 }

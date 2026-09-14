@@ -12,11 +12,11 @@ export const getWebPageSchema = (page) => {
     ...(page.description && { description: page.description }),
     ...(page.keywords && { keywords: page.keywords }),
     isPartOf: {
-      "@id": WEBSITE_ID
+      "@id": WEBSITE_ID,
     },
     about: {
-      "@id": ORGANIZATION_ID
-    }
+      "@id": ORGANIZATION_ID,
+    },
   };
 };
 
@@ -40,7 +40,7 @@ export const getCollectionPageSchema = (page) => {
   if (!page) return null;
   return {
     ...getWebPageSchema(page),
-    "@type": ["WebPage", "CollectionPage"]
+    "@type": ["WebPage", "CollectionPage"],
   };
 };
 
@@ -72,6 +72,6 @@ export const getVideoGallerySchema = (page) => {
   if (!page) return null;
   return {
     ...getWebPageSchema(page),
-    "@type": ["WebPage", "VideoGallery"]
+    "@type": ["WebPage", "VideoGallery"],
   };
 };

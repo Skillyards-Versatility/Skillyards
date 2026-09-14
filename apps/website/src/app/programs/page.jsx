@@ -35,7 +35,11 @@ export async function generateMetadata() {
       "Career courses after 12th in Agra",
       "SkillYards programs",
     ],
-    ogImage: resolveOgImage(ogImages, "programs", "/images/opengraph/programs-og.jpg"),
+    ogImage: resolveOgImage(
+      ogImages,
+      "programs",
+      "/images/opengraph/programs-og.jpg",
+    ),
   });
 }
 
@@ -47,7 +51,7 @@ export default async function ProgramsPage() {
     url: "/programs",
     name: "SkillYards Programs | OJD & OJT IT Training in Agra",
     description:
-      "Explore SkillYards On Job Degree and On Job Training programs in Agra, including BCA, BBA, Full-Stack Development and Digital Marketing with practical projects and 100% placement assistance."
+      "Explore SkillYards On Job Degree and On Job Training programs in Agra, including BCA, BBA, Full-Stack Development and Digital Marketing with practical projects and 100% placement assistance.",
   });
 
   const breadcrumbSchema = getBreadcrumbSchema([
@@ -57,7 +61,9 @@ export default async function ProgramsPage() {
 
   const faqSchema = getFAQSchema(faqs, absoluteUrl("/programs"));
 
-  const combinedSchema = [collectionSchema, breadcrumbSchema, faqSchema].filter(Boolean);
+  const combinedSchema = [collectionSchema, breadcrumbSchema, faqSchema].filter(
+    Boolean,
+  );
 
   return (
     <main>

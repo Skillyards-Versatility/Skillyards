@@ -1,12 +1,7 @@
 "use client";
 
 import React from "react";
-import {
-  Rocket,
-  BookOpen,
-  Briefcase,
-  Award,
-} from "lucide-react";
+import { Rocket, BookOpen, Briefcase, Award } from "lucide-react";
 import Timeline from "@/components/common/Timeline";
 
 const phases = [

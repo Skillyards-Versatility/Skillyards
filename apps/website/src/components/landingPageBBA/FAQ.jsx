@@ -53,7 +53,8 @@ const defaultFaqs = [
       "The next batch starts in August 2026. There are 35 seats available. Once the batch is full, the next intake is a year away.",
   },
   {
-    question: "I'm interested in coding, not marketing, should I do BCA instead?",
+    question:
+      "I'm interested in coding, not marketing, should I do BCA instead?",
     answer:
       "If you enjoy coding and want to build software, BCA with Full-Stack Development is a better fit. <a href='/programs/on-job-degree' class='font-bold text-primary underline underline-offset-4 hover:opacity-80'>Compare both programs</a>.",
   },
@@ -109,10 +110,14 @@ export function BBAFAQ({ faqs: faqsProp }) {
                     onClick={() => setOpenIndex(isOpen ? null : idx)}
                     className="flex w-full items-center justify-between p-5 text-left"
                   >
-                    <span className={`text-sm font-bold transition-colors sm:text-base ${isOpen ? "text-primary" : "text-foreground"}`}>
+                    <span
+                      className={`text-sm font-bold transition-colors sm:text-base ${isOpen ? "text-primary" : "text-foreground"}`}
+                    >
                       {faq.question}
                     </span>
-                    <span className={`ml-4 shrink-0 rounded-full p-1.5 transition-all ${isOpen ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                    <span
+                      className={`ml-4 shrink-0 rounded-full p-1.5 transition-all ${isOpen ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}
+                    >
                       {isOpen ? <Minus size={14} /> : <Plus size={14} />}
                     </span>
                   </button>
@@ -125,7 +130,7 @@ export function BBAFAQ({ faqs: faqsProp }) {
                   initial={false}
                   animate={{
                     height: isOpen ? "auto" : 0,
-                    opacity: isOpen ? 1 : 0
+                    opacity: isOpen ? 1 : 0,
                   }}
                   transition={{ duration: 0.25, ease: "easeInOut" }}
                   className="overflow-hidden"
@@ -141,7 +146,10 @@ export function BBAFAQ({ faqs: faqsProp }) {
 
         <p className="mt-8 text-center text-sm text-muted-foreground">
           Still have questions?{" "}
-          <Link href="/contact" className="font-bold text-primary underline underline-offset-4 hover:opacity-80">
+          <Link
+            href="/contact"
+            className="font-bold text-primary underline underline-offset-4 hover:opacity-80"
+          >
             Talk to our team
           </Link>
         </p>

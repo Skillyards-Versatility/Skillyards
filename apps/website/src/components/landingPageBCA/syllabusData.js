@@ -59,7 +59,7 @@ export const syllabusData = [
     },
     coreSubjects: {
       title: "BCA Academic Focus (Months 5–6)",
-        courses: [
+      courses: [
         "Computer Networks",
         "Theory of Computation",
         "Discrete Mathematics",

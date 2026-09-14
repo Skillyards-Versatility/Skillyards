@@ -32,7 +32,10 @@ export default function OnJobTrainingHero() {
           className="font-serif text-4xl font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl md:text-6xl"
         >
           Learn Job-Ready Skills Through{" "}
-          <span className="italic text-primary">AI-Integrated On-Job Training</span> in Agra
+          <span className="italic text-primary">
+            AI-Integrated On-Job Training
+          </span>{" "}
+          in Agra
         </motion.h1>
 
         <motion.p
@@ -41,7 +44,10 @@ export default function OnJobTrainingHero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-lg"
         >
-          SkillYards OJT programs combine practical classroom learning, mentor-guided projects, portfolio building, and AI-assisted workflows to help students build real-world skills in Full-Stack Web Development and Digital Marketing.
+          SkillYards OJT programs combine practical classroom learning,
+          mentor-guided projects, portfolio building, and AI-assisted workflows
+          to help students build real-world skills in Full-Stack Web Development
+          and Digital Marketing.
         </motion.p>
 
         <motion.div
@@ -56,7 +62,8 @@ export default function OnJobTrainingHero() {
             className="w-full rounded-full bg-primary px-8 py-6 text-sm font-extrabold text-primary-foreground shadow-xl shadow-primary/20 transition-all hover:scale-105 hover:bg-primary/90 sm:w-auto"
           >
             <Link href="#training-programs">
-              Find the Right OJT Course <ArrowRight size={18} className="ml-2" />
+              Find the Right OJT Course{" "}
+              <ArrowRight size={18} className="ml-2" />
             </Link>
           </Button>
 
@@ -72,7 +79,8 @@ export default function OnJobTrainingHero() {
           transition={{ duration: 0.5, delay: 0.35 }}
           className="mx-auto mt-6 max-w-3xl text-sm font-semibold leading-relaxed text-foreground/80"
         >
-          Offline training • AI-integrated learning • Practical projects • Placement assistance
+          Offline training • AI-integrated learning • Practical projects •
+          Placement assistance
         </motion.p>
       </div>
     </section>

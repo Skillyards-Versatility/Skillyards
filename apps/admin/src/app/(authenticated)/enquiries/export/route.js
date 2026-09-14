@@ -95,7 +95,10 @@ function writeUInt32(buffer, offset, value) {
 }
 
 function zipDateTime(date = new Date()) {
-  const time = (date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2);
+  const time =
+    (date.getHours() << 11) |
+    (date.getMinutes() << 5) |
+    Math.floor(date.getSeconds() / 2);
   const day = date.getDate();
   const month = date.getMonth() + 1;
   const year = Math.max(date.getFullYear() - 1980, 0);
@@ -177,7 +180,16 @@ function createZip(files) {
 
 function workbookBytes(enquiries) {
   const rows = [
-    ["First Name", "Last Name", "Email", "Phone", "Message", "Source", "Status", "Submitted At"],
+    [
+      "First Name",
+      "Last Name",
+      "Email",
+      "Phone",
+      "Message",
+      "Source",
+      "Status",
+      "Submitted At",
+    ],
     ...enquiries.map((enquiry) => [
       enquiry.firstName,
       enquiry.lastName,
@@ -186,7 +198,9 @@ function workbookBytes(enquiries) {
       enquiry.message,
       enquiry.source || "website",
       enquiry.status || "new",
-      enquiry.createdAt ? new Date(enquiry.createdAt).toLocaleString("en-IN") : "",
+      enquiry.createdAt
+        ? new Date(enquiry.createdAt).toLocaleString("en-IN")
+        : "",
     ]),
   ];
 
@@ -240,16 +254,20 @@ export async function GET() {
     .from(enquiriesTable)
     .orderBy(desc(enquiriesTable.createdAt));
 
-  const all = enquiryRows.map(normalizeRow).sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  const all = enquiryRows
+    .map(normalizeRow)
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
 
   const bytes = workbookBytes(all);
   const date = new Date().toISOString().slice(0, 10);
 
   return new Response(bytes, {
     headers: {
-      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Type":
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "Content-Disposition": `attachment; filename="skillyards-enquiries-${date}.xlsx"`,
       "Cache-Control": "no-store",
     },
@@ -272,7 +290,10 @@ export async function POST(request) {
   const { ids } = body;
 
   if (!Array.isArray(ids) || ids.length === 0) {
-    return Response.json({ error: "ids must be a non-empty array" }, { status: 400 });
+    return Response.json(
+      { error: "ids must be a non-empty array" },
+      { status: 400 },
+    );
   }
 
   const enquiryRows = await db
@@ -281,16 +302,20 @@ export async function POST(request) {
     .where(inArray(enquiriesTable.id, ids))
     .orderBy(desc(enquiriesTable.createdAt));
 
-  const all = enquiryRows.map(normalizeRow).sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  const all = enquiryRows
+    .map(normalizeRow)
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
 
   const bytes = workbookBytes(all);
   const date = new Date().toISOString().slice(0, 10);
 
   return new Response(bytes, {
     headers: {
-      "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "Content-Type":
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       "Content-Disposition": `attachment; filename="skillyards-enquiries-selected-${date}.xlsx"`,
       "Cache-Control": "no-store",
     },

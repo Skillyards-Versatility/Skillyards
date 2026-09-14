@@ -21,7 +21,7 @@ export function FinalCTA() {
           transition={{ delay: 0.1 }}
           className="font-serif text-3xl font-extrabold leading-tight text-primary-foreground sm:text-4xl md:text-5xl"
         >
-           Not sure if BBA is right for you?
+          Not sure if BBA is right for you?
         </motion.h2>
 
         <motion.p
@@ -31,8 +31,9 @@ export function FinalCTA() {
           transition={{ delay: 0.15 }}
           className="mx-auto mt-4 max-w-lg text-sm text-primary-foreground/70 sm:text-base"
         >
-            Talk to our counselling team. They&apos;ll ask a few questions about your background and
-            interests and give you an honest recommendation. The call is free and takes about 15 minutes.
+          Talk to our counselling team. They&apos;ll ask a few questions about
+          your background and interests and give you an honest recommendation.
+          The call is free and takes about 15 minutes.
         </motion.p>
 
         <motion.div

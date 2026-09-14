@@ -30,7 +30,7 @@ async function postHandler(req, { ctx }) {
     if (!email || !resetLink) {
       return NextResponse.json(
         { success: false, message: "Email and reset link are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -65,8 +65,14 @@ async function postHandler(req, { ctx }) {
         retryAfterMs,
       });
       return NextResponse.json(
-        { success: false, message: "Too many reset requests. Please try again later." },
-        { status: 429, headers: { "Retry-After": String(Math.ceil(retryAfterMs / 1000)) } }
+        {
+          success: false,
+          message: "Too many reset requests. Please try again later.",
+        },
+        {
+          status: 429,
+          headers: { "Retry-After": String(Math.ceil(retryAfterMs / 1000)) },
+        },
       );
     }
 
@@ -77,7 +83,7 @@ async function postHandler(req, { ctx }) {
     console.error("Send Reset Email Error:", error);
     return NextResponse.json(
       { success: false, message: "Failed to send email" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

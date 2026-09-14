@@ -30,6 +30,4 @@ export const LinkedinIcon = (props) => (
   <Base label="LinkedIn" path={LINKEDIN_PATH} {...props} />
 );
 
-export const XIcon = (props) => (
-  <Base label="X" path={X_PATH} {...props} />
-);
+export const XIcon = (props) => <Base label="X" path={X_PATH} {...props} />;

@@ -99,7 +99,10 @@ export function TransactionsTable({ transactions = [] }) {
         <div className="flex items-start gap-2 rounded-md bg-amber-50 border border-amber-200 px-3 py-2 dark:bg-amber-950/30 dark:border-amber-800">
           <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
           <p className="text-sm text-amber-700 dark:text-amber-400 leading-snug">
-            Receipts are generated in the background. Allow up to <span className="font-semibold">1 minute</span> after recording a payment before <span className="font-semibold">Viewing</span> or <span className="font-semibold">Downloading</span>
+            Receipts are generated in the background. Allow up to{" "}
+            <span className="font-semibold">1 minute</span> after recording a
+            payment before <span className="font-semibold">Viewing</span> or{" "}
+            <span className="font-semibold">Downloading</span>
           </p>
         </div>
       </div>
@@ -120,8 +123,13 @@ export function TransactionsTable({ transactions = [] }) {
             {transactions.map((txn) => {
               const loading = loadingRows[txn.id];
               return (
-                <tr key={txn.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-5 py-4 text-muted-foreground">{txn.date}</td>
+                <tr
+                  key={txn.id}
+                  className="hover:bg-muted/30 transition-colors"
+                >
+                  <td className="px-5 py-4 text-muted-foreground">
+                    {txn.date}
+                  </td>
 
                   <td className="px-5 py-4 font-semibold text-foreground">
                     ₹{txn.amount.toLocaleString()}

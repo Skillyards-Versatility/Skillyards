@@ -1,7 +1,6 @@
 export default function StudentDetailLoading() {
   return (
     <div className="space-y-6 animate-pulse">
-
       {/* Header */}
       <div className="flex items-start justify-between gap-4 border-b border-border pb-4">
         <div className="flex items-center gap-3">
@@ -65,7 +64,6 @@ export default function StudentDetailLoading() {
           ))}
         </div>
       </div>
-
     </div>
   );
 }

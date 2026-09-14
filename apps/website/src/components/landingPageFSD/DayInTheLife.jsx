@@ -43,10 +43,13 @@ export function FSDDayInTheLife() {
             Course Fee
           </motion.div>
           <h2 className="font-serif text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Full-Stack Web Development <span className="italic text-primary">Course Fee</span>
+            Full-Stack Web Development{" "}
+            <span className="italic text-primary">Course Fee</span>
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-            The Full-Stack Web Development OJT program fee is ₹50,000. EMI/installment options are available, with plans starting from ₹5k/month.
+            The Full-Stack Web Development OJT program fee is ₹50,000.
+            EMI/installment options are available, with plans starting from
+            ₹5k/month.
           </p>
         </div>
 
@@ -62,12 +65,20 @@ export function FSDDayInTheLife() {
                 transition={{ delay: i * 0.08 }}
                 className="rounded-3xl border border-border bg-card p-5 shadow-sm"
               >
-                <div className={`mb-4 flex h-11 w-11 items-center justify-center rounded-2xl ${item.color}`}>
+                <div
+                  className={`mb-4 flex h-11 w-11 items-center justify-center rounded-2xl ${item.color}`}
+                >
                   <Icon size={18} className="text-white" />
                 </div>
-                <p className="mb-2 text-xs font-bold uppercase tracking-widest text-primary">{item.time}</p>
-                <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground">{item.title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
+                <p className="mb-2 text-xs font-bold uppercase tracking-widest text-primary">
+                  {item.time}
+                </p>
+                <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground">
+                  {item.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {item.desc}
+                </p>
               </motion.div>
             );
           })}

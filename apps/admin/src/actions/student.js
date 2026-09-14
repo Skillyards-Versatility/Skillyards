@@ -29,7 +29,7 @@ export async function updateStudent(studentId, studentData) {
       throw new Error(
         data?.error?.fieldErrors
           ? Object.values(data.error.fieldErrors).flat().join(", ")
-          : data?.error || "Failed to update student"
+          : data?.error || "Failed to update student",
       );
     }
 
@@ -93,15 +93,22 @@ export async function updateStudentPlan(studentId, planData) {
   }
 }
 
-export async function updateInstallment(studentId, installmentId, installmentData) {
+export async function updateInstallment(
+  studentId,
+  installmentId,
+  installmentData,
+) {
   try {
     await requireAdmin();
 
-    const res = await fetch(`${API}/api/students/${studentId}/plan/installments/${installmentId}`, {
-      method: "PATCH",
-      headers: await getAuthHeaders(),
-      body: JSON.stringify(installmentData),
-    });
+    const res = await fetch(
+      `${API}/api/students/${studentId}/plan/installments/${installmentId}`,
+      {
+        method: "PATCH",
+        headers: await getAuthHeaders(),
+        body: JSON.stringify(installmentData),
+      },
+    );
 
     const data = await res.json();
 
@@ -132,7 +139,7 @@ export async function createStudent(studentData) {
       throw new Error(
         data?.error?.fieldErrors
           ? Object.values(data.error.fieldErrors).flat().join(", ")
-          : data?.error || "Something went wrong"
+          : data?.error || "Something went wrong",
       );
     }
 
@@ -170,11 +177,14 @@ export async function createStudentPlan(studentId, planData) {
 
 export async function addFlexibleInstallment(studentId, installmentData) {
   try {
-    const res = await fetch(`${API}/api/students/${studentId}/plan/installments`, {
-      method: "POST",
-      headers: await getAuthHeaders(),
-      body: JSON.stringify(installmentData),
-    });
+    const res = await fetch(
+      `${API}/api/students/${studentId}/plan/installments`,
+      {
+        method: "POST",
+        headers: await getAuthHeaders(),
+        body: JSON.stringify(installmentData),
+      },
+    );
 
     const data = await res.json();
 
@@ -206,9 +216,9 @@ export async function addStudentPayment(studentId, paymentData) {
           ? data.error
           : data.error?.fieldErrors
             ? Object.values(data.error.fieldErrors).flat().join(", ")
-            : data.error?.formErrors?.join(", ")
-            || data.message
-            || "Failed to record payment";
+            : data.error?.formErrors?.join(", ") ||
+              data.message ||
+              "Failed to record payment";
       throw new Error(errMsg);
     }
 

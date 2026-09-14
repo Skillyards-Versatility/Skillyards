@@ -29,25 +29,33 @@ async function getHandler(req, { ctx, context }) {
           const newMsgs = await getNewChannelMessages(db, id, since);
           for (const msg of newMsgs) {
             if (closed) return;
-            controller.enqueue(`event: new_message\ndata: ${JSON.stringify(msg)}\n\n`);
+            controller.enqueue(
+              `event: new_message\ndata: ${JSON.stringify(msg)}\n\n`,
+            );
           }
 
           const editedMsgs = await getEditedChannelMessages(db, id, since);
           for (const msg of editedMsgs) {
             if (closed) return;
-            controller.enqueue(`event: message_updated\ndata: ${JSON.stringify(msg)}\n\n`);
+            controller.enqueue(
+              `event: message_updated\ndata: ${JSON.stringify(msg)}\n\n`,
+            );
           }
 
           const deletedMsgs = await getDeletedChannelMessages(db, id, since);
           for (const msg of deletedMsgs) {
             if (closed) return;
-            controller.enqueue(`event: message_deleted\ndata: ${JSON.stringify({ messageId: msg.id })}\n\n`);
+            controller.enqueue(
+              `event: message_deleted\ndata: ${JSON.stringify({ messageId: msg.id })}\n\n`,
+            );
           }
 
           const reactions = await getNewChannelReactions(db, id, since);
           for (const r of reactions) {
             if (closed) return;
-            controller.enqueue(`event: reaction_added\ndata: ${JSON.stringify(r)}\n\n`);
+            controller.enqueue(
+              `event: reaction_added\ndata: ${JSON.stringify(r)}\n\n`,
+            );
           }
 
           controller.enqueue(`event: heartbeat\ndata: {}\n\n`);
@@ -84,8 +92,8 @@ async function getNewChannelMessages(db, channelId, since) {
       and(
         eq(messages.conversationId, channelId),
         gt(messages.createdAt, new Date(since)),
-        isNull(messages.deletedAt)
-      )
+        isNull(messages.deletedAt),
+      ),
     )
     .orderBy(sql`${messages.createdAt} ASC`);
 
@@ -93,7 +101,12 @@ async function getNewChannelMessages(db, channelId, since) {
 
   const senderIds = [...new Set(rows.map((r) => r.senderId))];
   const senders = await db
-    .select({ id: users.id, name: users.name, role: users.role, profileImageKey: users.profileImageKey })
+    .select({
+      id: users.id,
+      name: users.name,
+      role: users.role,
+      profileImageKey: users.profileImageKey,
+    })
     .from(users)
     .where(inArray(users.id, senderIds));
   const senderMap = Object.fromEntries(senders.map((s) => [s.id, s]));
@@ -116,7 +129,7 @@ async function getEditedChannelMessages(db, channelId, since) {
         eq(messages.conversationId, channelId),
         gt(messages.editedAt, new Date(since)),
         isNull(messages.deletedAt),
-      )
+      ),
     )
     .orderBy(sql`${messages.createdAt} ASC`);
 
@@ -135,7 +148,7 @@ async function getDeletedChannelMessages(db, channelId, since) {
       and(
         eq(messages.conversationId, channelId),
         gt(messages.deletedAt, new Date(since)),
-      )
+      ),
     );
   return rows;
 }
@@ -156,7 +169,7 @@ async function getNewChannelReactions(db, channelId, since) {
         eq(messages.conversationId, channelId),
         gt(messageReactions.createdAt, new Date(since)),
         isNull(messages.deletedAt),
-      )
+      ),
     );
   return rows.map((r) => ({
     ...r,

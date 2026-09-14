@@ -2,11 +2,18 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { MessageCircle, ArrowRight, CheckCircle2, Shield, GraduationCap, ArrowUpRight } from "lucide-react";
+import {
+  MessageCircle,
+  ArrowRight,
+  CheckCircle2,
+  Shield,
+  GraduationCap,
+  ArrowUpRight,
+} from "lucide-react";
 
 export default function WhatsAppCampaignClient({ whatsappNumber }) {
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    "Hi, I'm interested in the BCA/BBA program at Skillyards."
+    "Hi, I'm interested in the BCA/BBA program at Skillyards.",
   )}`;
 
   return (
@@ -39,7 +46,6 @@ export default function WhatsAppCampaignClient({ whatsappNumber }) {
       {/* Content Area */}
       <main className="w-full max-w-md flex-1 flex flex-col justify-center items-center z-10 py-6">
         <div className="w-full bg-white border border-zinc-200/70 backdrop-blur-xl rounded-[2rem] p-6 sm:p-8 md:p-10 shadow-xl shadow-zinc-200/55 flex flex-col items-center text-center relative overflow-hidden">
-          
           {/* Subtle green ambient accent glow in card */}
           <div className="absolute -top-16 -right-16 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
@@ -74,8 +80,8 @@ export default function WhatsAppCampaignClient({ whatsappNumber }) {
 
       {/* Footer */}
       <footer className="w-full text-center py-4 z-10 flex flex-col gap-2">
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           id="whatsapp-campaign-footer-link"
           className="text-xs text-emerald-600 hover:text-emerald-700 font-bold hover:underline inline-flex items-center justify-center gap-1 mx-auto"
         >
@@ -83,7 +89,8 @@ export default function WhatsAppCampaignClient({ whatsappNumber }) {
           <ArrowUpRight className="w-3 h-3" />
         </Link>
         <p className="text-[10px] text-zinc-400 uppercase tracking-widest mt-1 font-medium">
-          © {new Date().getFullYear()} SkillYards Versatility. All rights reserved.
+          © {new Date().getFullYear()} SkillYards Versatility. All rights
+          reserved.
         </p>
       </footer>
     </div>

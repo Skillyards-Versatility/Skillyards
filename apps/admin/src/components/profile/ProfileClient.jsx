@@ -18,7 +18,12 @@ import {
   Building2,
   Trash2,
 } from "lucide-react";
-import { updateProfile, changePassword, uploadProfilePhoto, removeProfilePhoto } from "@/actions/profile";
+import {
+  updateProfile,
+  changePassword,
+  uploadProfilePhoto,
+  removeProfilePhoto,
+} from "@/actions/profile";
 
 const ROLE_LABELS = {
   ADMIN: "Administrator",
@@ -57,7 +62,9 @@ export function ProfileClient({ user }) {
 
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [removingPhoto, setRemovingPhoto] = useState(false);
-  const [photoPreview, setPhotoPreview] = useState(user.profileImageKey ? `/files/${user.profileImageKey}` : null);
+  const [photoPreview, setPhotoPreview] = useState(
+    user.profileImageKey ? `/files/${user.profileImageKey}` : null,
+  );
 
   const initials = user.name
     .split(" ")
@@ -94,7 +101,11 @@ export function ProfileClient({ user }) {
       return;
     }
 
-    if (!["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(file.type)) {
+    if (
+      !["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(
+        file.type,
+      )
+    ) {
       toast.error("Only PNG, JPEG, and WebP images are allowed");
       return;
     }
@@ -180,7 +191,9 @@ export function ProfileClient({ user }) {
     <div className="max-w-2xl mx-auto space-y-8">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Profile</h1>
-        <p className="text-muted-foreground mt-1">Manage your personal information and security settings.</p>
+        <p className="text-muted-foreground mt-1">
+          Manage your personal information and security settings.
+        </p>
       </div>
 
       {/* Photo */}
@@ -189,7 +202,11 @@ export function ProfileClient({ user }) {
         <div className="relative shrink-0">
           <div className="h-28 w-28 sm:h-24 sm:w-24 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-4xl sm:text-3xl overflow-hidden ring-4 ring-background shadow-xl">
             {photoPreview ? (
-              <img src={photoPreview} alt={user.name} className="h-full w-full object-cover" />
+              <img
+                src={photoPreview}
+                alt={user.name}
+                className="h-full w-full object-cover"
+              />
             ) : (
               initials
             )}
@@ -310,7 +327,11 @@ export function ProfileClient({ user }) {
             disabled={saving}
             className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground py-3 sm:py-2.5 text-base sm:text-sm rounded-xl font-medium hover:bg-primary/90 transition-all disabled:opacity-50 active:scale-[0.98] cursor-pointer shadow-sm hover:shadow"
           >
-            {saving ? <Loader2 className="h-5 w-5 sm:h-4 sm:w-4 animate-spin" /> : <Save className="h-5 w-5 sm:h-4 sm:w-4" />}
+            {saving ? (
+              <Loader2 className="h-5 w-5 sm:h-4 sm:w-4 animate-spin" />
+            ) : (
+              <Save className="h-5 w-5 sm:h-4 sm:w-4" />
+            )}
             Save Changes
           </button>
         </div>
@@ -326,55 +347,54 @@ export function ProfileClient({ user }) {
         </h2>
 
         <div className="space-y-4 pt-1">
+          {passwordSuccess && (
+            <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 rounded-xl">
+              <CheckCircle2 className="h-4 w-4 shrink-0" />
+              Password changed successfully
+            </div>
+          )}
 
-        {passwordSuccess && (
-          <div className="flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-3 rounded-xl">
-            <CheckCircle2 className="h-4 w-4 shrink-0" />
-            Password changed successfully
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Current Password</label>
+            <div className="relative">
+              <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <input
+                type="password"
+                className="input pl-10"
+                placeholder="Enter current password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+              />
+            </div>
           </div>
-        )}
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Current Password</label>
-          <div className="relative">
-            <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <input
-              type="password"
-              className="input pl-10"
-              placeholder="Enter current password"
-              value={currentPassword}
-              onChange={(e) => setCurrentPassword(e.target.value)}
-            />
+          <div className="space-y-2">
+            <label className="text-sm font-medium">New Password</label>
+            <div className="relative">
+              <KeyRound className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <input
+                type="password"
+                className="input pl-10"
+                placeholder="Min 6 characters"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
 
-        <div className="space-y-2">
-          <label className="text-sm font-medium">New Password</label>
-          <div className="relative">
-            <KeyRound className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <input
-              type="password"
-              className="input pl-10"
-              placeholder="Min 6 characters"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Confirm New Password</label>
+            <div className="relative">
+              <KeyRound className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <input
+                type="password"
+                className="input pl-10"
+                placeholder="Repeat new password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="text-sm font-medium">Confirm New Password</label>
-          <div className="relative">
-            <KeyRound className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <input
-              type="password"
-              className="input pl-10"
-              placeholder="Repeat new password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </div>
-        </div>
         </div>
 
         <div className="pt-2">
@@ -383,7 +403,11 @@ export function ProfileClient({ user }) {
             disabled={changingPassword}
             className="w-full flex items-center justify-center gap-2 bg-amber-500 text-white py-3 sm:py-2.5 text-base sm:text-sm rounded-xl font-medium hover:bg-amber-600 transition-all disabled:opacity-50 active:scale-[0.98] cursor-pointer shadow-sm hover:shadow"
           >
-            {changingPassword ? <Loader2 className="h-5 w-5 sm:h-4 sm:w-4 animate-spin" /> : <KeyRound className="h-5 w-5 sm:h-4 sm:w-4" />}
+            {changingPassword ? (
+              <Loader2 className="h-5 w-5 sm:h-4 sm:w-4 animate-spin" />
+            ) : (
+              <KeyRound className="h-5 w-5 sm:h-4 sm:w-4" />
+            )}
             Update Password
           </button>
         </div>

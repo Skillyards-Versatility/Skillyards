@@ -10,9 +10,18 @@ const rows = [
   { label: "Type", values: ["University Degree", "University Degree"] },
   { label: "On-Job Training", values: ["Guaranteed", "Guaranteed"] },
   { label: "Eligibility", values: ["12th pass (50%+)", "12th pass (50%+)"] },
-  { label: "Certification", values: ["UG Degree + Industrial Certs", "UG Degree + Marketing Certs"] },
-  { label: "Core Skills", values: ["Coding, Dev, Cloud", "Management, Digital Marketing"] },
-  { label: "Placement Support", values: ["100% Assistance", "100% Assistance"] },
+  {
+    label: "Certification",
+    values: ["UG Degree + Industrial Certs", "UG Degree + Marketing Certs"],
+  },
+  {
+    label: "Core Skills",
+    values: ["Coding, Dev, Cloud", "Management, Digital Marketing"],
+  },
+  {
+    label: "Placement Support",
+    values: ["100% Assistance", "100% Assistance"],
+  },
   { label: "Mode", values: ["Offline (Campus)", "Offline (Campus)"] },
   { label: "Ideal For", values: ["Tech Careers", "Business & Marketing"] },
   { label: "EMI Available", values: ["Yes", "Yes"] },
@@ -33,11 +42,12 @@ export default function OnJobComparisonTable() {
             Side-by-Side Comparison
           </motion.div>
           <h2 className="font-serif text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Choose the Best Path for {" "}
+            Choose the Best Path for{" "}
             <span className="italic text-primary">Your Future.</span>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-base text-muted-foreground">
-            Both programs offer university degrees with guaranteed on-job training. Compare the specifics to decide.
+            Both programs offer university degrees with guaranteed on-job
+            training. Compare the specifics to decide.
           </p>
         </div>
 
@@ -50,7 +60,9 @@ export default function OnJobComparisonTable() {
           <table className="w-full min-w-[640px] border-collapse text-sm">
             <thead>
               <tr className="bg-primary text-primary-foreground">
-                <th className="rounded-tl-3xl px-6 py-4 text-left font-bold">Feature</th>
+                <th className="rounded-tl-3xl px-6 py-4 text-left font-bold">
+                  Feature
+                </th>
                 {programs.map((p, i) => (
                   <th
                     key={p}
@@ -67,11 +79,19 @@ export default function OnJobComparisonTable() {
                   key={ri}
                   className={`border-t border-border transition-colors hover:bg-primary/5 ${ri % 2 === 0 ? "bg-background" : "bg-card/50"}`}
                 >
-                  <td className="px-6 py-4 font-semibold text-foreground">{row.label}</td>
+                  <td className="px-6 py-4 font-semibold text-foreground">
+                    {row.label}
+                  </td>
                   {row.values.map((val, vi) => (
-                    <td key={vi} className="px-5 py-4 text-center text-muted-foreground">
+                    <td
+                      key={vi}
+                      className="px-5 py-4 text-center text-muted-foreground"
+                    >
                       {val === "Yes" ? (
-                        <CheckCircle size={16} className="mx-auto text-green-500" />
+                        <CheckCircle
+                          size={16}
+                          className="mx-auto text-green-500"
+                        />
                       ) : (
                         val
                       )}

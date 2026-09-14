@@ -19,7 +19,8 @@ export async function savePushSubscription(subscription) {
   if (!session) return { success: false, error: "Not authenticated" };
 
   try {
-    await db.update(users)
+    await db
+      .update(users)
       .set({ pushSubscription: subscription })
       .where(eq(users.id, session.userId));
     return { success: true };
@@ -47,24 +48,43 @@ export async function startBreak() {
   const date = getIstDate();
 
   if (!isIstWithinBreakHours()) {
-    return { success: false, error: "Breaks can only be taken between 11:00 AM and 6:30 PM." };
+    return {
+      success: false,
+      error: "Breaks can only be taken between 11:00 AM and 6:30 PM.",
+    };
   }
 
   try {
     const [existing] = await db
       .select()
       .from(breaks)
-      .where(and(eq(breaks.userId, userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NULL`))
+      .where(
+        and(
+          eq(breaks.userId, userId),
+          eq(breaks.date, date),
+          sql`${breaks.endedAt} IS NULL`,
+        ),
+      )
       .limit(1);
 
     if (existing) {
-      return { success: false, error: "You already have an active break. End it before starting a new one." };
+      return {
+        success: false,
+        error:
+          "You already have an active break. End it before starting a new one.",
+      };
     }
 
     const [lastBreak] = await db
       .select()
       .from(breaks)
-      .where(and(eq(breaks.userId, userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NOT NULL`))
+      .where(
+        and(
+          eq(breaks.userId, userId),
+          eq(breaks.date, date),
+          sql`${breaks.endedAt} IS NOT NULL`,
+        ),
+      )
       .orderBy(desc(breaks.endedAt))
       .limit(1);
 
@@ -76,7 +96,10 @@ export async function startBreak() {
 
       if (diffMs < cooldownMs) {
         const remainingMin = Math.ceil((cooldownMs - diffMs) / 60000);
-        return { success: false, error: `Cooldown active: Please wait ${remainingMin}m before taking another break.` };
+        return {
+          success: false,
+          error: `Cooldown active: Please wait ${remainingMin}m before taking another break.`,
+        };
       }
     }
 
@@ -86,18 +109,33 @@ export async function startBreak() {
         effectiveCount: sql`coalesce(sum(case when ${breaks.duration} >= 900 then 2 else 1 end), 0)::int`,
       })
       .from(breaks)
-      .where(and(eq(breaks.userId, userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NOT NULL`));
+      .where(
+        and(
+          eq(breaks.userId, userId),
+          eq(breaks.date, date),
+          sql`${breaks.endedAt} IS NOT NULL`,
+        ),
+      );
 
     const totalDur = statsRow?.totalDuration || 0;
     const effectiveCount = statsRow?.effectiveCount || 0;
 
-    const remainingDailySeconds = Math.max(0, MAX_DAILY_BREAK_SECONDS - totalDur);
+    const remainingDailySeconds = Math.max(
+      0,
+      MAX_DAILY_BREAK_SECONDS - totalDur,
+    );
     if (remainingDailySeconds <= 0) {
-      return { success: false, error: "You have exhausted your daily 30-minute break limit." };
+      return {
+        success: false,
+        error: "You have exhausted your daily 30-minute break limit.",
+      };
     }
 
     if (effectiveCount >= MAX_BREAKS_PER_DAY) {
-      return { success: false, error: `You have already taken your maximum of ${MAX_BREAKS_PER_DAY} breaks for today.` };
+      return {
+        success: false,
+        error: `You have already taken your maximum of ${MAX_BREAKS_PER_DAY} breaks for today.`,
+      };
     }
 
     const [record] = await db
@@ -109,7 +147,10 @@ export async function startBreak() {
     if (effectiveCount >= 2) {
       maxSecondsForThisBreak = Math.min(899, remainingDailySeconds);
     } else {
-      maxSecondsForThisBreak = Math.min(MAX_BREAK_SECONDS, remainingDailySeconds);
+      maxSecondsForThisBreak = Math.min(
+        MAX_BREAK_SECONDS,
+        remainingDailySeconds,
+      );
     }
 
     // Schedule QStash Notifications
@@ -120,7 +161,12 @@ export async function startBreak() {
         if (maxSecondsForThisBreak > 540) {
           await qstashClient.publishJSON({
             url: `${API_BASE}/api/breaks/check-limit`,
-            body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak, triggerType: "9min" },
+            body: {
+              breakId: record.id,
+              userId,
+              maxSeconds: maxSecondsForThisBreak,
+              triggerType: "9min",
+            },
             delay: "540s",
           });
         }
@@ -129,7 +175,12 @@ export async function startBreak() {
         if (maxSecondsForThisBreak > 840) {
           await qstashClient.publishJSON({
             url: `${API_BASE}/api/breaks/check-limit`,
-            body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak, triggerType: "14min" },
+            body: {
+              breakId: record.id,
+              userId,
+              maxSeconds: maxSecondsForThisBreak,
+              triggerType: "14min",
+            },
             delay: "840s",
           });
         }
@@ -139,13 +190,23 @@ export async function startBreak() {
         if (finalWarningDelay > 0) {
           await qstashClient.publishJSON({
             url: `${API_BASE}/api/breaks/check-limit`,
-            body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak, triggerType: "final" },
+            body: {
+              breakId: record.id,
+              userId,
+              maxSeconds: maxSecondsForThisBreak,
+              triggerType: "final",
+            },
             delay: `${finalWarningDelay}s`,
           });
         } else if (maxSecondsForThisBreak <= 60) {
           await qstashClient.publishJSON({
             url: `${API_BASE}/api/breaks/check-limit`,
-            body: { breakId: record.id, userId, maxSeconds: maxSecondsForThisBreak, triggerType: "final" },
+            body: {
+              breakId: record.id,
+              userId,
+              maxSeconds: maxSecondsForThisBreak,
+              triggerType: "final",
+            },
             delay: `${maxSecondsForThisBreak}s`,
           });
         }
@@ -155,7 +216,13 @@ export async function startBreak() {
       }
     }
 
-    return { success: true, break: record, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: maxSecondsForThisBreak, qstashFailed };
+    return {
+      success: true,
+      break: record,
+      maxBreaks: MAX_BREAKS_PER_DAY,
+      maxSeconds: maxSecondsForThisBreak,
+      qstashFailed,
+    };
   } catch (err) {
     console.error("Start break error:", err);
     return { success: false, error: "Failed to start break" };
@@ -184,15 +251,17 @@ export async function endBreak(breakId) {
     }
 
     const now = new Date();
-    const durationSec = Math.floor((now.getTime() - new Date(record.startedAt).getTime()) / 1000);
+    const durationSec = Math.floor(
+      (now.getTime() - new Date(record.startedAt).getTime()) / 1000,
+    );
 
     const [updated] = await db
       .update(breaks)
       .set({ endedAt: now, duration: durationSec })
       .where(eq(breaks.id, breakId))
       .returning();
-      
-    // QStash cancellation: We don't need to cancel! 
+
+    // QStash cancellation: We don't need to cancel!
     // The webhook will fire, and our `/check-limit` route will see `endedAt !== null` and just exit quietly.
 
     return { success: true, break: updated };
@@ -212,7 +281,13 @@ export async function getActiveBreak() {
     const [active] = await db
       .select()
       .from(breaks)
-      .where(and(eq(breaks.userId, session.userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NULL`))
+      .where(
+        and(
+          eq(breaks.userId, session.userId),
+          eq(breaks.date, date),
+          sql`${breaks.endedAt} IS NULL`,
+        ),
+      )
       .limit(1);
 
     return active || null;
@@ -224,7 +299,17 @@ export async function getActiveBreak() {
 
 export async function getDailyBreakTotal() {
   const session = await getSession();
-  if (!session) return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, lastEndedAt: null, lastDuration: 0, remainingDailySeconds: MAX_DAILY_BREAK_SECONDS };
+  if (!session)
+    return {
+      breakCount: 0,
+      maxBreaks: MAX_BREAKS_PER_DAY,
+      maxSeconds: MAX_BREAK_SECONDS,
+      totalDuration: 0,
+      totalOverage: 0,
+      lastEndedAt: null,
+      lastDuration: 0,
+      remainingDailySeconds: MAX_DAILY_BREAK_SECONDS,
+    };
 
   const date = getIstDate();
 
@@ -238,42 +323,76 @@ export async function getDailyBreakTotal() {
         lastEndedAt: sql`max(${breaks.endedAt})`,
       })
       .from(breaks)
-      .where(and(eq(breaks.userId, session.userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NOT NULL`));
+      .where(
+        and(
+          eq(breaks.userId, session.userId),
+          eq(breaks.date, date),
+          sql`${breaks.endedAt} IS NOT NULL`,
+        ),
+      );
 
     // To prevent lockout from accidental breaks, we also need the duration of that last break.
     let lastDuration = 0;
     if (statsRow?.lastEndedAt) {
       const lastEndedDate = new Date(statsRow.lastEndedAt);
-      const [lastB] = await db.select({ duration: breaks.duration }).from(breaks).where(and(eq(breaks.userId, session.userId), eq(breaks.endedAt, lastEndedDate))).limit(1);
+      const [lastB] = await db
+        .select({ duration: breaks.duration })
+        .from(breaks)
+        .where(
+          and(
+            eq(breaks.userId, session.userId),
+            eq(breaks.endedAt, lastEndedDate),
+          ),
+        )
+        .limit(1);
       if (lastB) lastDuration = lastB.duration;
     }
 
     const [activeRow] = await db
       .select({ count: sql`count(*)::int` })
       .from(breaks)
-      .where(and(eq(breaks.userId, session.userId), eq(breaks.date, date), sql`${breaks.endedAt} IS NULL`));
+      .where(
+        and(
+          eq(breaks.userId, session.userId),
+          eq(breaks.date, date),
+          sql`${breaks.endedAt} IS NULL`,
+        ),
+      );
 
-    const totalCount = (statsRow?.effectiveCount || 0) + (activeRow?.count || 0);
+    const totalCount =
+      (statsRow?.effectiveCount || 0) + (activeRow?.count || 0);
     const totalDuration = statsRow?.totalDur || 0;
-    const remainingDailySeconds = Math.max(0, MAX_DAILY_BREAK_SECONDS - totalDuration);
+    const remainingDailySeconds = Math.max(
+      0,
+      MAX_DAILY_BREAK_SECONDS - totalDuration,
+    );
     let maxSeconds = Math.min(MAX_BREAK_SECONDS, remainingDailySeconds);
     if ((statsRow?.effectiveCount || 0) >= 2) {
       maxSeconds = Math.min(899, remainingDailySeconds);
     }
 
-    return { 
-      breakCount: totalCount, 
-      maxBreaks: MAX_BREAKS_PER_DAY, 
+    return {
+      breakCount: totalCount,
+      maxBreaks: MAX_BREAKS_PER_DAY,
       maxSeconds: maxSeconds,
       totalDuration: totalDuration,
       totalOverage: statsRow?.overage || 0,
       lastEndedAt: statsRow?.lastEndedAt || null,
       lastDuration: lastDuration,
-      remainingDailySeconds: remainingDailySeconds
+      remainingDailySeconds: remainingDailySeconds,
     };
   } catch (err) {
     console.error("Get daily break total error:", err);
-    return { breakCount: 0, maxBreaks: MAX_BREAKS_PER_DAY, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, lastEndedAt: null, lastDuration: 0, remainingDailySeconds: MAX_DAILY_BREAK_SECONDS };
+    return {
+      breakCount: 0,
+      maxBreaks: MAX_BREAKS_PER_DAY,
+      maxSeconds: MAX_BREAK_SECONDS,
+      totalDuration: 0,
+      totalOverage: 0,
+      lastEndedAt: null,
+      lastDuration: 0,
+      remainingDailySeconds: MAX_DAILY_BREAK_SECONDS,
+    };
   }
 }
 
@@ -287,7 +406,9 @@ export async function getMyBreaks(date) {
     const records = await db
       .select()
       .from(breaks)
-      .where(and(eq(breaks.userId, session.userId), eq(breaks.date, targetDate)))
+      .where(
+        and(eq(breaks.userId, session.userId), eq(breaks.date, targetDate)),
+      )
       .orderBy(desc(breaks.startedAt));
 
     return records;
@@ -345,7 +466,10 @@ export async function getBreakStats(date) {
   const privileged = isPrivilegedRole(session.role);
 
   try {
-    const conditions = [eq(breaks.date, targetDate), sql`${breaks.endedAt} IS NOT NULL`];
+    const conditions = [
+      eq(breaks.date, targetDate),
+      sql`${breaks.endedAt} IS NOT NULL`,
+    ];
 
     if (!privileged) {
       conditions.push(eq(breaks.userId, session.userId));
@@ -391,7 +515,12 @@ export async function updateBreak(breakId, { startedAt, endedAt }) {
     }
 
     const start = startedAt ? new Date(startedAt) : existing.startedAt;
-    const end = endedAt !== undefined && endedAt !== null && endedAt !== "" ? new Date(endedAt) : (endedAt === "" ? null : existing.endedAt);
+    const end =
+      endedAt !== undefined && endedAt !== null && endedAt !== ""
+        ? new Date(endedAt)
+        : endedAt === ""
+          ? null
+          : existing.endedAt;
 
     if (Number.isNaN(start.getTime())) {
       return { success: false, error: "Invalid start time" };
@@ -408,7 +537,10 @@ export async function updateBreak(breakId, { startedAt, endedAt }) {
       endedAt: end ?? null,
     };
     if (end) {
-      patch.duration = Math.max(0, Math.floor((end.getTime() - start.getTime()) / 1000));
+      patch.duration = Math.max(
+        0,
+        Math.floor((end.getTime() - start.getTime()) / 1000),
+      );
     } else {
       patch.duration = null;
     }

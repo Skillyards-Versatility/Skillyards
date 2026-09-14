@@ -20,9 +20,7 @@ export async function getBatchesWithCount(db, courseName = null) {
     query = query.where(eq(batches.courseName, courseName));
   }
 
-  return query
-    .groupBy(batches.id)
-    .orderBy(desc(batches.createdAt));
+  return query.groupBy(batches.id).orderBy(desc(batches.createdAt));
 }
 
 export async function createBatchRecord(db, data) {
@@ -41,6 +39,10 @@ export async function createBatchRecord(db, data) {
 }
 
 export async function getBatchById(db, batchId) {
-  const res = await db.select().from(batches).where(eq(batches.id, batchId)).limit(1);
+  const res = await db
+    .select()
+    .from(batches)
+    .where(eq(batches.id, batchId))
+    .limit(1);
   return res[0] || null;
 }

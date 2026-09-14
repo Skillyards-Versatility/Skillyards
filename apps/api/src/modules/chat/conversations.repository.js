@@ -17,7 +17,9 @@ export async function addParticipants(db, conversationId, userIds) {
   if (userIds.length === 0) return [];
   return db
     .insert(conversationParticipants)
-    .values(userIds.map((userId) => ({ conversationId, userId, role: "member" })))
+    .values(
+      userIds.map((userId) => ({ conversationId, userId, role: "member" })),
+    )
     .returning();
 }
 
@@ -67,7 +69,8 @@ export async function getUserConversations(db, userId) {
 
   const participantsByConv = {};
   for (const p of participantUserIds) {
-    if (!participantsByConv[p.conversationId]) participantsByConv[p.conversationId] = [];
+    if (!participantsByConv[p.conversationId])
+      participantsByConv[p.conversationId] = [];
     participantsByConv[p.conversationId].push(p);
   }
 
@@ -98,9 +101,7 @@ export async function findDirectConversation(db, userId1, userId2) {
   const rows = await db
     .select({ conversationId: conversationParticipants.conversationId })
     .from(conversationParticipants)
-    .where(
-      inArray(conversationParticipants.userId, userIds)
-    );
+    .where(inArray(conversationParticipants.userId, userIds));
 
   const convCounts = {};
   for (const row of rows) {

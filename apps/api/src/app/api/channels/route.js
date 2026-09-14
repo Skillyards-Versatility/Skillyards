@@ -21,7 +21,10 @@ async function postHandler(req, { ctx }) {
     return Response.json(channel, { status: 201 });
   } catch (err) {
     if (err.message === "CHANNEL_NAME_TAKEN") {
-      return Response.json({ error: "Channel name already taken" }, { status: 409 });
+      return Response.json(
+        { error: "Channel name already taken" },
+        { status: 409 },
+      );
     }
     throw err;
   }

@@ -25,15 +25,20 @@ function Counter({ value, suffix = "+", prefix = "" }) {
         }, 16);
         observer.disconnect();
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
   }, [value]);
 
   return (
-    <span ref={ref} className="text-3xl font-extrabold text-primary sm:text-4xl">
-      {prefix}{count}{suffix}
+    <span
+      ref={ref}
+      className="text-3xl font-extrabold text-primary sm:text-4xl"
+    >
+      {prefix}
+      {count}
+      {suffix}
     </span>
   );
 }

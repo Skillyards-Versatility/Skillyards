@@ -13,7 +13,9 @@ export async function GET(_, { params }) {
     const { key } = await params;
     const fileKey = key.join("/");
 
-    const { body, contentType, contentLength } = await getObjectFromR2({ key: fileKey });
+    const { body, contentType, contentLength } = await getObjectFromR2({
+      key: fileKey,
+    });
 
     const ext = fileKey.split(".").pop().toLowerCase();
     const MIME_MAP = {
@@ -26,7 +28,7 @@ export async function GET(_, { params }) {
       wav: "audio/wav",
     };
     const mime = MIME_MAP[ext] || contentType || "application/octet-stream";
-    
+
     // AWS SDK v3 returns a Node.js stream for Body. Next.js Response requires Web stream or Buffer.
     const webStream = body.transformToWebStream();
 

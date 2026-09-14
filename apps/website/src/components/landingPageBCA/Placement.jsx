@@ -5,7 +5,12 @@ import { Users, Building2, Code, IndianRupee } from "lucide-react";
 
 const metrics = [
   { icon: Users, value: "15", label: "students placed, first batch" },
-  { icon: Building2, value: "SN Digitech & 7th Triangle", label: "companies hiring our graduates", small: true },
+  {
+    icon: Building2,
+    value: "SN Digitech & 7th Triangle",
+    label: "companies hiring our graduates",
+    small: true,
+  },
   { icon: Code, value: "Frontend & Full-Stack", label: "developer roles" },
   { icon: IndianRupee, value: "5.5 LPA", label: "average starting package" },
 ];
@@ -27,8 +32,9 @@ export function Placement() {
             Where our graduates are working
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm sm:text-base text-muted-foreground leading-relaxed">
-            SkillYards started in 2023. Our first batch is still in progress. 15 students from
-            our program are already placed. Here is exactly where they work and what they do.
+            SkillYards started in 2023. Our first batch is still in progress. 15
+            students from our program are already placed. Here is exactly where
+            they work and what they do.
           </p>
         </div>
 
@@ -49,10 +55,14 @@ export function Placement() {
                     <Icon size={20} className="text-primary" />
                   </div>
                 </div>
-                <div className={`font-serif font-extrabold text-foreground ${m.small ? "text-sm" : "text-2xl sm:text-3xl"}`}>
+                <div
+                  className={`font-serif font-extrabold text-foreground ${m.small ? "text-sm" : "text-2xl sm:text-3xl"}`}
+                >
                   {m.value}
                 </div>
-                <div className="mt-1 text-xs text-muted-foreground">{m.label}</div>
+                <div className="mt-1 text-xs text-muted-foreground">
+                  {m.label}
+                </div>
               </motion.div>
             );
           })}
@@ -60,9 +70,9 @@ export function Placement() {
 
         <div className="mt-6 sm:mt-8 rounded-2xl border border-border/50 bg-card p-4 sm:p-5 text-center">
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Resume building, GitHub portfolio review, mock technical interviews and direct referrals.
-            We work with you until you&apos;re placed, not just until you graduate. Support begins
-            from your second year.
+            Resume building, GitHub portfolio review, mock technical interviews
+            and direct referrals. We work with you until you&apos;re placed, not
+            just until you graduate. Support begins from your second year.
           </p>
         </div>
 

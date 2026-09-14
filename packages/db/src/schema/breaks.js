@@ -1,4 +1,11 @@
-import { pgTable, uuid, text, timestamp, integer, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  integer,
+  index,
+} from "drizzle-orm/pg-core";
 import { users } from "./users.js";
 
 export const breaks = pgTable(
@@ -22,5 +29,5 @@ export const breaks = pgTable(
   },
   (table) => ({
     userDateIdx: index("breaks_user_date_idx").on(table.userId, table.date),
-  })
+  }),
 );

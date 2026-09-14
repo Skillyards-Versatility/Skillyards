@@ -1,7 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, FileText, Mic, Code, Users, BadgeCheck, Briefcase } from "lucide-react";
+import {
+  ArrowRight,
+  FileText,
+  Mic,
+  Code,
+  Users,
+  BadgeCheck,
+  Briefcase,
+} from "lucide-react";
 
 const trustStats = [
   { value: "₹3.5 LPA", label: "Average starting package" },
@@ -48,7 +56,8 @@ const programs = [
       "Social Media Manager",
       "Marketing Analyst",
     ],
-    badgeBg: "bg-secondary/20 text-secondary-foreground border border-secondary/20",
+    badgeBg:
+      "bg-secondary/20 text-secondary-foreground border border-secondary/20",
     skillDot: "bg-secondary",
     roleBg: "bg-secondary/10 text-secondary-foreground border-secondary/20",
   },
@@ -91,7 +100,6 @@ export default function PlacementOutcomes() {
   return (
     <section className="bg-card/20 py-20">
       <div className="mx-auto max-w-5xl px-6">
-
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -103,8 +111,8 @@ export default function PlacementOutcomes() {
             <span className="italic text-primary">real doors.</span>
           </h2>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            Every hour of practical training maps to a skill employers hire for. Here is exactly
-            what you graduate with and where it takes you.
+            Every hour of practical training maps to a skill employers hire for.
+            Here is exactly what you graduate with and where it takes you.
           </p>
         </motion.div>
 
@@ -116,8 +124,12 @@ export default function PlacementOutcomes() {
         >
           {trustStats.map((stat) => (
             <div key={stat.label} className="px-6 py-5 text-center">
-              <p className="text-2xl font-extrabold text-primary sm:text-3xl">{stat.value}</p>
-              <p className="mt-1 text-xs text-muted-foreground sm:text-sm">{stat.label}</p>
+              <p className="text-2xl font-extrabold text-primary sm:text-3xl">
+                {stat.value}
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+                {stat.label}
+              </p>
             </div>
           ))}
         </motion.div>
@@ -133,11 +145,17 @@ export default function PlacementOutcomes() {
               className="flex flex-col rounded-3xl border border-border bg-card shadow-sm overflow-hidden"
             >
               <div className="border-b border-border px-6 py-5">
-                <span className={`mb-3 inline-block rounded-full px-3 py-1 text-xs font-bold ${prog.badgeBg}`}>
+                <span
+                  className={`mb-3 inline-block rounded-full px-3 py-1 text-xs font-bold ${prog.badgeBg}`}
+                >
                   {prog.degree}
                 </span>
-                <h3 className="font-serif text-xl font-extrabold text-foreground">{prog.label}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{prog.tagline}</p>
+                <h3 className="font-serif text-xl font-extrabold text-foreground">
+                  {prog.label}
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {prog.tagline}
+                </p>
               </div>
 
               <div className="flex flex-1 flex-col gap-6 p-6 sm:flex-row">
@@ -147,8 +165,13 @@ export default function PlacementOutcomes() {
                   </p>
                   <ul className="space-y-2">
                     {prog.skills.map((s) => (
-                      <li key={s} className="flex items-start gap-2 text-sm text-foreground">
-                        <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${prog.skillDot}`} />
+                      <li
+                        key={s}
+                        className="flex items-start gap-2 text-sm text-foreground"
+                      >
+                        <span
+                          className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${prog.skillDot}`}
+                        />
                         {s}
                       </li>
                     ))}
@@ -166,7 +189,9 @@ export default function PlacementOutcomes() {
                   <ul className="space-y-2">
                     {prog.roles.map((r) => (
                       <li key={r}>
-                        <span className={`inline-block rounded-lg border px-3 py-1.5 text-xs font-semibold ${prog.roleBg}`}>
+                        <span
+                          className={`inline-block rounded-lg border px-3 py-1.5 text-xs font-semibold ${prog.roleBg}`}
+                        >
                           {r}
                         </span>
                       </li>
@@ -189,8 +214,8 @@ export default function PlacementOutcomes() {
               We don&apos;t stop at graduation.
             </h3>
             <p className="mt-2 text-sm text-primary-foreground/70">
-              Getting placed takes more than a degree. Here is what we do with every student,
-              from the final semester until they have an offer.
+              Getting placed takes more than a degree. Here is what we do with
+              every student, from the final semester until they have an offer.
             </p>
           </div>
 
@@ -207,14 +232,17 @@ export default function PlacementOutcomes() {
                   className="rounded-2xl bg-primary-foreground/10 p-5"
                 >
                   <Icon size={20} className="mb-3 text-primary-foreground/80" />
-                  <p className="mb-1 text-sm font-bold text-primary-foreground">{item.title}</p>
-                  <p className="text-xs leading-relaxed text-primary-foreground/65">{item.desc}</p>
+                  <p className="mb-1 text-sm font-bold text-primary-foreground">
+                    {item.title}
+                  </p>
+                  <p className="text-xs leading-relaxed text-primary-foreground/65">
+                    {item.desc}
+                  </p>
                 </motion.div>
               );
             })}
           </div>
         </motion.div>
-
       </div>
     </section>
   );

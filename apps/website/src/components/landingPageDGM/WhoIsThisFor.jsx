@@ -4,17 +4,41 @@ import { motion } from "framer-motion";
 import { CheckCircle, Target, XCircle } from "lucide-react";
 
 const forList = [
-  { label: "College students, graduates, and early-career learners", sub: "Best fit for students who want a structured start in digital marketing." },
-  { label: "12th-pass students", sub: "Can join if they want practical digital skills without coding." },
-  { label: "Business owners and family-business learners", sub: "Useful for improving local visibility, content planning, and campaign thinking." },
-  { label: "Homemakers and career returners", sub: "Good for learners who want guidance, confidence, and portfolio-ready case work." },
-  { label: "Working professionals", sub: "Helpful for people adding SEO, ads, reporting, or social media skills to current work." },
+  {
+    label: "College students, graduates, and early-career learners",
+    sub: "Best fit for students who want a structured start in digital marketing.",
+  },
+  {
+    label: "12th-pass students",
+    sub: "Can join if they want practical digital skills without coding.",
+  },
+  {
+    label: "Business owners and family-business learners",
+    sub: "Useful for improving local visibility, content planning, and campaign thinking.",
+  },
+  {
+    label: "Homemakers and career returners",
+    sub: "Good for learners who want guidance, confidence, and portfolio-ready case work.",
+  },
+  {
+    label: "Working professionals",
+    sub: "Helpful for people adding SEO, ads, reporting, or social media skills to current work.",
+  },
 ];
 
 const notForList = [
-  { label: "Someone who wants only shortcuts without learning marketing fundamentals" },
-  { label: "Someone unwilling to practice project work, reporting, and portfolio presentation" },
-  { label: "Someone looking for a fully online or completely self-paced course without classroom participation" },
+  {
+    label:
+      "Someone who wants only shortcuts without learning marketing fundamentals",
+  },
+  {
+    label:
+      "Someone unwilling to practice project work, reporting, and portfolio presentation",
+  },
+  {
+    label:
+      "Someone looking for a fully online or completely self-paced course without classroom participation",
+  },
 ];
 
 export function DGMWhoIsThisFor() {
@@ -33,7 +57,9 @@ export function DGMWhoIsThisFor() {
           </motion.div>
           <h2 className="font-serif text-2xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             Built for many backgrounds,{" "}
-            <span className="italic text-primary">best for serious learners.</span>
+            <span className="italic text-primary">
+              best for serious learners.
+            </span>
           </h2>
         </div>
 
@@ -50,9 +76,14 @@ export function DGMWhoIsThisFor() {
             <ul className="space-y-4">
               {forList.map((item) => (
                 <li key={item.label} className="flex gap-3">
-                  <CheckCircle size={16} className="mt-0.5 shrink-0 text-green-500" />
+                  <CheckCircle
+                    size={16}
+                    className="mt-0.5 shrink-0 text-green-500"
+                  />
                   <div>
-                    <p className="text-sm font-semibold text-foreground">{item.label}</p>
+                    <p className="text-sm font-semibold text-foreground">
+                      {item.label}
+                    </p>
                     <p className="text-xs text-muted-foreground">{item.sub}</p>
                   </div>
                 </li>

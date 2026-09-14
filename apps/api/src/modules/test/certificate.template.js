@@ -25,7 +25,7 @@ export function certificateTemplate({
   const topicBadges = topics
     .map(
       (t) =>
-        `<span style="display:inline-block;padding:4px 14px;margin:3px 4px;background:#EDE9FF;color:#1B2A8A;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.5px;border:1px solid #C8BFF5;">${t}</span>`
+        `<span style="display:inline-block;padding:4px 14px;margin:3px 4px;background:#EDE9FF;color:#1B2A8A;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.5px;border:1px solid #C8BFF5;">${t}</span>`,
     )
     .join("");
 

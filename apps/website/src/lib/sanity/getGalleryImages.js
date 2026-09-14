@@ -7,7 +7,7 @@ export async function getGalleryImages() {
     const images = await sanityClient.fetch(
       GALLERY_IMAGES_QUERY,
       {},
-      { next: { revalidate: 3600 } }
+      { next: { revalidate: 3600 } },
     );
     return (images || []).map((img) => ({
       id: img._id,

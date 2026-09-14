@@ -34,7 +34,8 @@ export function FSDHero() {
           className="font-serif text-3xl font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
         >
           Learn Full-Stack Web Development in Agra and Build{" "}
-          <span className="italic text-primary">Job-Ready Projects</span> in 6 Months
+          <span className="italic text-primary">Job-Ready Projects</span> in 6
+          Months
         </motion.h1>
 
         <motion.p
@@ -43,7 +44,9 @@ export function FSDHero() {
           transition={{ delay: 0.2 }}
           className="mx-auto mt-6 max-w-3xl text-sm leading-relaxed text-muted-foreground sm:text-lg"
         >
-          Learn HTML, CSS, JavaScript, React, Node.js, Express, MongoDB, Git/GitHub, deployment, and AI-assisted coding workflows through mentor-guided practical projects at SkillYards.
+          Learn HTML, CSS, JavaScript, React, Node.js, Express, MongoDB,
+          Git/GitHub, deployment, and AI-assisted coding workflows through
+          mentor-guided practical projects at SkillYards.
         </motion.p>
 
         <motion.div
@@ -64,7 +67,8 @@ export function FSDHero() {
           transition={{ delay: 0.35 }}
           className="mx-auto mt-6 max-w-3xl text-sm font-semibold leading-relaxed text-foreground/80"
         >
-          Offline training in Agra • AI-integrated curriculum • Max 20 students per batch • Starting from ₹5k/month
+          Offline training in Agra • AI-integrated curriculum • Max 20 students
+          per batch • Starting from ₹5k/month
         </motion.p>
       </div>
     </section>

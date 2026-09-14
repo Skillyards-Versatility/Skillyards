@@ -9,12 +9,17 @@ export const getQuizSchema = (quiz) => {
     "@id": withFragment(absoluteUrl(quiz.url), "#quiz"),
     name: quiz.name,
     description: quiz.description,
-    keywords: quiz.keywords || ["skill test", "quiz", "Agra", "IT training institute in Agra"],
+    keywords: quiz.keywords || [
+      "skill test",
+      "quiz",
+      "Agra",
+      "IT training institute in Agra",
+    ],
     learningResourceType: "Quiz",
     educationalLevel: "Beginner to Advanced",
     assesses: quiz.assesses || "HTML, CSS, JavaScript, SEO",
     publisher: {
-      "@id": ORGANIZATION_ID
-    }
+      "@id": ORGANIZATION_ID,
+    },
   };
 };

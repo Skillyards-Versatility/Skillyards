@@ -31,7 +31,9 @@ async function getBrowser() {
 }
 
 // Pre-launch browser instance
-getBrowser().catch(err => console.error("FAILED TO PRE-LAUNCH BROWSER:", err));
+getBrowser().catch((err) =>
+  console.error("FAILED TO PRE-LAUNCH BROWSER:", err),
+);
 
 export async function generatePdfFromHtml(html) {
   const browser = await getBrowser();
@@ -40,14 +42,14 @@ export async function generatePdfFromHtml(html) {
   try {
     await page.setContent(html, {
       waitUntil: "domcontentloaded",
-      timeout: 10000, 
+      timeout: 10000,
     });
 
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
       displayHeaderFooter: false,
-      margin: { top: "0px", right: "0px", bottom: "0px", left: "0px" }
+      margin: { top: "0px", right: "0px", bottom: "0px", left: "0px" },
     });
 
     return pdfBuffer;

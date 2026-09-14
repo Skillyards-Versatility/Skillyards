@@ -3,9 +3,7 @@ import { urlFor } from "./image";
 import { getHeadingId } from "./slugifyHeading";
 
 export const portableTextComponents = {
-
   block: {
-
     h2: ({ children, value }) => {
       const id = getHeadingId(value);
 
@@ -25,11 +23,9 @@ export const portableTextComponents = {
         </h3>
       );
     },
-
   },
 
   types: {
-
     /**
      * Image Renderer
      */
@@ -64,7 +60,6 @@ export const portableTextComponents = {
     code: ({ value }) => {
       return (
         <div className="my-10 rounded-xl overflow-hidden border border-gray-200 dark:border-white/10">
-
           {value.language && (
             <div className="px-4 py-2 text-xs font-medium bg-gray-100 dark:bg-white/5 border-b border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400">
               {value.language}
@@ -72,14 +67,10 @@ export const portableTextComponents = {
           )}
 
           <pre className="overflow-x-auto p-4 text-sm leading-relaxed bg-gray-50 dark:bg-[#0f0f0f]">
-            <code className="font-mono">
-              {value.code}
-            </code>
+            <code className="font-mono">{value.code}</code>
           </pre>
-
         </div>
       );
-    }
-
-  }
+    },
+  },
 };

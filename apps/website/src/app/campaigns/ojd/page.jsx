@@ -14,8 +14,8 @@ const MENTOR_FALLBACKS = {
     slug: "narendra-singh",
     name: TEAM_MEMBERS.narendraSingh.name,
     role: TEAM_MEMBERS.narendraSingh.role,
-    bio: TEAM_MEMBERS.narendraSingh.bio, 
-    
+    bio: TEAM_MEMBERS.narendraSingh.bio,
+
     image: TEAM_MEMBERS.narendraSingh.image,
   },
 };
@@ -32,4 +32,3 @@ export default async function OJDCampaign() {
 
   return <OJDCampaignPage mentorMembers={mentorMembers} />;
 }
-

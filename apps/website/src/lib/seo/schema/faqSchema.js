@@ -9,11 +9,7 @@ import { getFaqAnchorId } from "../faqUtils";
  */
 export const getFAQSchema = (faqs = [], baseUrl = "") => {
   const validFaqs = faqs
-    .filter(
-      (faq) =>
-        (faq?.question || faq?.q) &&
-        (faq?.answer || faq?.a)
-    )
+    .filter((faq) => (faq?.question || faq?.q) && (faq?.answer || faq?.a))
     .map((faq) => {
       const anchorId = getFaqAnchorId(faq);
       return {
@@ -21,9 +17,7 @@ export const getFAQSchema = (faqs = [], baseUrl = "") => {
         name: (faq.question || faq.q).trim(),
         acceptedAnswer: {
           "@type": "Answer",
-          text: (faq.answer || faq.a)
-            .replace(/<[^>]*>/g, "")
-            .trim(),
+          text: (faq.answer || faq.a).replace(/<[^>]*>/g, "").trim(),
         },
         ...(baseUrl && anchorId ? { url: `${baseUrl}#${anchorId}` } : {}),
       };

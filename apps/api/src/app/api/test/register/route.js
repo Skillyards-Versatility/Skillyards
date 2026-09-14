@@ -1,6 +1,9 @@
 import { createHash } from "node:crypto";
 import { db } from "@repo/db";
-import { registerTestSchema, HONEYPOT_FIELDS } from "@/modules/test/test.schema";
+import {
+  registerTestSchema,
+  HONEYPOT_FIELDS,
+} from "@/modules/test/test.schema";
 import { registerTestLead } from "@/modules/test/test.service";
 import { verifyCaptcha } from "@/integrations/captcha/captcha";
 import { createProtectedRoute } from "@/lib/middleware";
@@ -46,7 +49,8 @@ async function postHandler(req, { ctx }) {
 
   // ── HONEYPOT: silent reject, indistinguishable from a valid response ──
   const honeypotFilled = HONEYPOT_FIELDS.some(
-    (field) => typeof body?.[field] === "string" && body[field].trim().length > 0
+    (field) =>
+      typeof body?.[field] === "string" && body[field].trim().length > 0,
   );
   if (honeypotFilled) {
     ctx.warn("ASSESSMENT_REG_HONEYPOT_HIT", {
@@ -55,7 +59,10 @@ async function postHandler(req, { ctx }) {
       result: "rejected",
       reason: "honeypot",
     });
-    return Response.json({ success: true, leadId: "00000000-0000-0000-0000-000000000000" });
+    return Response.json({
+      success: true,
+      leadId: "00000000-0000-0000-0000-000000000000",
+    });
   }
 
   const parsed = registerTestSchema.safeParse(body);
@@ -75,7 +82,9 @@ async function postHandler(req, { ctx }) {
   const emailHash = hashEmail(email);
 
   // ── CAPTCHA ──
-  const isValidCaptcha = await verifyCaptcha(captchaToken, { action: "test_register" });
+  const isValidCaptcha = await verifyCaptcha(captchaToken, {
+    action: "test_register",
+  });
   if (!isValidCaptcha) {
     ctx.warn("ASSESSMENT_REG_CAPTCHA_FAILURE", {
       ip,
@@ -84,7 +93,10 @@ async function postHandler(req, { ctx }) {
       result: "rejected",
       reason: "captcha",
     });
-    return Response.json({ error: "Captcha verification failed" }, { status: 400 });
+    return Response.json(
+      { error: "Captcha verification failed" },
+      { status: 400 },
+    );
   }
 
   const result = await registerTestLead({ db, data: { ...leadData, email } });

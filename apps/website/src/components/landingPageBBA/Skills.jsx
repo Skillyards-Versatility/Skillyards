@@ -15,14 +15,34 @@ import {
 
 /* Per-card accent colours purely decorative, not theme tokens */
 const ACCENTS = [
-  { bg: "bg-blue-500/10",    border: "border-blue-500/25",    text: "text-blue-500"    },
-  { bg: "bg-violet-500/10",  border: "border-violet-500/25",  text: "text-violet-500"  },
-  { bg: "bg-emerald-500/10", border: "border-emerald-500/25", text: "text-emerald-500" },
-  { bg: "bg-amber-500/10",   border: "border-amber-500/25",   text: "text-amber-500"   },
-  { bg: "bg-pink-500/10",    border: "border-pink-500/25",    text: "text-pink-500"    },
-  { bg: "bg-indigo-500/10",  border: "border-indigo-500/25",  text: "text-indigo-500"  },
-  { bg: "bg-orange-500/10",  border: "border-orange-500/25",  text: "text-orange-500"  },
-  { bg: "bg-teal-500/10",    border: "border-teal-500/25",    text: "text-teal-500"    },
+  { bg: "bg-blue-500/10", border: "border-blue-500/25", text: "text-blue-500" },
+  {
+    bg: "bg-violet-500/10",
+    border: "border-violet-500/25",
+    text: "text-violet-500",
+  },
+  {
+    bg: "bg-emerald-500/10",
+    border: "border-emerald-500/25",
+    text: "text-emerald-500",
+  },
+  {
+    bg: "bg-amber-500/10",
+    border: "border-amber-500/25",
+    text: "text-amber-500",
+  },
+  { bg: "bg-pink-500/10", border: "border-pink-500/25", text: "text-pink-500" },
+  {
+    bg: "bg-indigo-500/10",
+    border: "border-indigo-500/25",
+    text: "text-indigo-500",
+  },
+  {
+    bg: "bg-orange-500/10",
+    border: "border-orange-500/25",
+    text: "text-orange-500",
+  },
+  { bg: "bg-teal-500/10", border: "border-teal-500/25", text: "text-teal-500" },
 ];
 
 function SkillCard({ icon, label, index }) {
@@ -66,20 +86,19 @@ function SkillCard({ icon, label, index }) {
 
 export const Skills = () => {
   const skills = [
-    { icon: <BarChart3 />, label: "Data Analytics",  level: 90 },
-    { icon: <Globe />,     label: "Global Business", level: 85 },
-    { icon: <PieChart />,  label: "Finance",          level: 80 },
-    { icon: <Briefcase />, label: "Management",       level: 95 },
-    { icon: <TrendingUp />,label: "Marketing",        level: 88 },
-    { icon: <Search />,    label: "Strategy",         level: 82 },
-    { icon: <MessageSquare />, label: "Communication",level: 92 },
-    { icon: <ShieldCheck />,   label: "Ethics",       level: 85 },
+    { icon: <BarChart3 />, label: "Data Analytics", level: 90 },
+    { icon: <Globe />, label: "Global Business", level: 85 },
+    { icon: <PieChart />, label: "Finance", level: 80 },
+    { icon: <Briefcase />, label: "Management", level: 95 },
+    { icon: <TrendingUp />, label: "Marketing", level: 88 },
+    { icon: <Search />, label: "Strategy", level: 82 },
+    { icon: <MessageSquare />, label: "Communication", level: 92 },
+    { icon: <ShieldCheck />, label: "Ethics", level: 85 },
   ];
 
   return (
     <LazyMotion features={domAnimation} strict>
       <section className="py-16 sm:py-20 lg:py-28 bg-background w-full relative overflow-hidden">
-
         {/* Ambient blobs */}
         <div className="absolute inset-0 pointer-events-none -z-10">
           <div className="absolute top-1/3 -left-40 w-96 h-96 bg-primary/10 rounded-full blur-[120px]" />
@@ -87,7 +106,6 @@ export const Skills = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
-
           {/* Header */}
           <div className="text-center mb-12 sm:mb-16 lg:mb-20 max-w-3xl mx-auto">
             <m.span
@@ -106,8 +124,7 @@ export const Skills = () => {
               transition={{ delay: 0.05 }}
               className="text-3xl sm:text-4xl md:text-5xl font-serif font-extrabold mb-4 sm:mb-6 tracking-tight text-foreground"
             >
-              Future-Ready{" "}
-              <span className="text-primary italic">Skills.</span>
+              Future-Ready <span className="text-primary italic">Skills.</span>
             </m.h2>
 
             <m.p
@@ -118,7 +135,8 @@ export const Skills = () => {
               className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed"
             >
               We don&apos;t just teach business theory we build leaders equipped
-              with the hard and soft skills necessary for the modern digital economy.
+              with the hard and soft skills necessary for the modern digital
+              economy.
             </m.p>
           </div>
 
@@ -130,7 +148,6 @@ export const Skills = () => {
               </div>
             ))}
           </div>
-
         </div>
       </section>
     </LazyMotion>

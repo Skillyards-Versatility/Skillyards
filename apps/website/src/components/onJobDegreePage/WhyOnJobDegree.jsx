@@ -24,7 +24,6 @@ export default function WhyOnJobDegree() {
   return (
     <section className="bg-background py-20">
       <div className="mx-auto max-w-5xl px-6">
-
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -36,12 +35,15 @@ export default function WhyOnJobDegree() {
           </h2>
 
           <p className="mt-5 text-base leading-relaxed text-muted-foreground">
-            Most BCA and BBA colleges in Agra teach you the syllabus. That&apos;s it. You graduate, sit in
-            interviews, and realise you&apos;ve never actually built anything. Employers ask for React, Node.js,
-            or a live campaign you ran, and most fresh graduates have none of that.
+            Most BCA and BBA colleges in Agra teach you the syllabus.
+            That&apos;s it. You graduate, sit in interviews, and realise
+            you&apos;ve never actually built anything. Employers ask for React,
+            Node.js, or a live campaign you ran, and most fresh graduates have
+            none of that.
           </p>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            SkillYards doesn&apos;t replace the degree. It fixes what the degree alone can&apos;t give you.
+            SkillYards doesn&apos;t replace the degree. It fixes what the degree
+            alone can&apos;t give you.
           </p>
         </motion.div>
 
@@ -55,15 +57,18 @@ export default function WhyOnJobDegree() {
               transition={{ delay: i * 0.08 }}
               className="rounded-2xl border border-border bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-md"
             >
-              <p className="mb-4 text-4xl font-black text-primary/20">{pillar.number}</p>
+              <p className="mb-4 text-4xl font-black text-primary/20">
+                {pillar.number}
+              </p>
               <h3 className="font-serif text-lg font-extrabold leading-snug text-foreground">
                 {pillar.title}
               </h3>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{pillar.desc}</p>
+              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                {pillar.desc}
+              </p>
             </motion.div>
           ))}
         </div>
-
       </div>
     </section>
   );

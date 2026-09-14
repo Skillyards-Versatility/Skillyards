@@ -8,7 +8,7 @@ const API_ROOT = path.join(__dirname, "../src/app/api");
 const PROTECTED_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE"];
 const BYPASS_ALLOWED_PATHS = [
   "api/health", // Public health check
-  "api/auth",   // Auth flow is public
+  "api/auth", // Auth flow is public
 ];
 
 function scanRoutes(dir) {
@@ -23,18 +23,25 @@ function scanRoutes(dir) {
       failures += scanRoutes(fullPath);
     } else if (file === "route.js") {
       const relativePath = path.relative(API_ROOT, fullPath);
-      if (BYPASS_ALLOWED_PATHS.some(p => relativePath.includes(p))) continue;
+      if (BYPASS_ALLOWED_PATHS.some((p) => relativePath.includes(p))) continue;
 
       const content = fs.readFileSync(fullPath, "utf8");
-      
+
       for (const method of PROTECTED_METHODS) {
         // Regex to check for 'export async function GET' or 'export function GET'
-        const rawExportRegex = new RegExp(`export\\s+(async\\s+)?function\\s+${method}`, "g");
-        
+        const rawExportRegex = new RegExp(
+          `export\\s+(async\\s+)?function\\s+${method}`,
+          "g",
+        );
+
         if (rawExportRegex.test(content)) {
-          console.error(`❌ SECURITY VULNERABILITY DETECTED: [${relativePath}]`);
+          console.error(
+            `❌ SECURITY VULNERABILITY DETECTED: [${relativePath}]`,
+          );
           console.error(`   - Raw export of ${method} detected.`);
-          console.error(`   - MUST use 'export const ${method} = createProtectedRoute(...)'\n`);
+          console.error(
+            `   - MUST use 'export const ${method} = createProtectedRoute(...)'\n`,
+          );
           failures++;
         }
       }
@@ -51,5 +58,7 @@ if (totalFailures > 0) {
   console.error(`\n🚨 SCAN FAILED: ${totalFailures} unprotected routes found.`);
   process.exit(1);
 } else {
-  console.log("\n✅ SECURITY SCAN PASSED: All routes are structurally protected.");
+  console.log(
+    "\n✅ SECURITY SCAN PASSED: All routes are structurally protected.",
+  );
 }

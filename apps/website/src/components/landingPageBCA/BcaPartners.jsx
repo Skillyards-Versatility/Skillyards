@@ -24,9 +24,9 @@ export function BcaPartners() {
               Companies hiring Full-Stack Developers
             </h2>
             <p className="font-sans text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed tracking-wide">
-              Our first batch hasn&apos;t fully graduated yet. The companies shown below represent
-              the kind of organisations that actively hire Frontend and Full-Stack Developers across
-              India.
+              Our first batch hasn&apos;t fully graduated yet. The companies
+              shown below represent the kind of organisations that actively hire
+              Frontend and Full-Stack Developers across India.
             </p>
           </m.div>
 
@@ -43,7 +43,7 @@ export function BcaPartners() {
               `}</style>
               <div
                 className="flex gap-5 w-max hover:[animation-play-state:paused]"
-                style={{ animation: 'infiniteMarquee 28s linear infinite' }}
+                style={{ animation: "infiniteMarquee 28s linear infinite" }}
               >
                 {track.map((partner, idx) => (
                   <div
@@ -65,8 +65,8 @@ export function BcaPartners() {
 
           <div className="max-w-3xl mx-auto px-6 mt-8 text-center">
             <p className="text-xs text-muted-foreground">
-              Placement support includes resume building, technical interview prep and referrals,
-              starting from your second year.
+              Placement support includes resume building, technical interview
+              prep and referrals, starting from your second year.
             </p>
           </div>
         </div>

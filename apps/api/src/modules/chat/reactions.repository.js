@@ -17,8 +17,8 @@ export async function removeReaction(db, messageId, userId, emoji) {
       and(
         eq(messageReactions.messageId, messageId),
         eq(messageReactions.userId, userId),
-        eq(messageReactions.emoji, emoji)
-      )
+        eq(messageReactions.emoji, emoji),
+      ),
     );
 }
 

@@ -56,8 +56,12 @@ export function FSDComparisonTable() {
                 <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10">
                   <Icon size={18} className="text-primary" />
                 </div>
-                <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground">{row.title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{row.desc}</p>
+                <h3 className="mb-2 font-serif text-lg font-extrabold text-foreground">
+                  {row.title}
+                </h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {row.desc}
+                </p>
               </motion.div>
             );
           })}

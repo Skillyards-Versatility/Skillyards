@@ -16,7 +16,9 @@ async function main() {
     .from(followUps)
     .where(eq(followUps.aiStatus, "processing"));
 
-  console.log(`   Found ${processingCalls.length} calls in 'processing' state.`);
+  console.log(
+    `   Found ${processingCalls.length} calls in 'processing' state.`,
+  );
 
   if (processingCalls.length > 0) {
     console.log("🔄 Resetting their status to 'pending'...");

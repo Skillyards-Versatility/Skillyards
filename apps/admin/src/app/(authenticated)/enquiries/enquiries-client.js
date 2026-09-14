@@ -3,26 +3,58 @@
 import { useState, useEffect, useCallback, useTransition, useRef } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
-  Search, X, Download, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
-  Mail, Phone, Inbox, Loader2, Check, RefreshCw, Pencil, Trash2,
+  Search,
+  X,
+  Download,
+  ChevronDown,
+  ChevronUp,
+  ChevronLeft,
+  ChevronRight,
+  Mail,
+  Phone,
+  Inbox,
+  Loader2,
+  Check,
+  RefreshCw,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/lib/format";
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
 } from "@/components/ui/Dialog";
-import { StatusBadge, StatusSelect, STATUS_OPTIONS } from "@/components/ui/Select";
+import {
+  StatusBadge,
+  StatusSelect,
+  STATUS_OPTIONS,
+} from "@/components/ui/Select";
 import { toast } from "sonner";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 
 const SOURCE_OPTIONS = [
-  { value: "website", label: "Website", color: "border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800" },
+  {
+    value: "website",
+    label: "Website",
+    color:
+      "border-emerald-200 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800",
+  },
 ];
 
 function SourceBadge({ source }) {
-  const option = SOURCE_OPTIONS.find((o) => o.value === source) || SOURCE_OPTIONS[0];
+  const option =
+    SOURCE_OPTIONS.find((o) => o.value === source) || SOURCE_OPTIONS[0];
   return (
-    <span className={cn("inline-flex items-center rounded-md border px-2 py-1 text-[10px] font-bold uppercase tracking-wider", option.color)}>
+    <span
+      className={cn(
+        "inline-flex items-center rounded-md border px-2 py-1 text-[10px] font-bold uppercase tracking-wider",
+        option.color,
+      )}
+    >
       {option.label}
     </span>
   );
@@ -80,17 +112,23 @@ export function EnquiriesClient({
     }
   }, [debouncedSearch]);
 
-  const updateURL = useCallback((updates) => {
-    const params = new URLSearchParams(searchParams);
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value === null || value === undefined || value === "") params.delete(key);
-      else params.set(key, value);
-    });
-    if (updates.page === undefined && !updates.search) params.set("page", "1");
-    startTransition(() => router.push(`${pathname}?${params.toString()}`));
-  }, [searchParams, pathname, router, startTransition]);
+  const updateURL = useCallback(
+    (updates) => {
+      const params = new URLSearchParams(searchParams);
+      Object.entries(updates).forEach(([key, value]) => {
+        if (value === null || value === undefined || value === "")
+          params.delete(key);
+        else params.set(key, value);
+      });
+      if (updates.page === undefined && !updates.search)
+        params.set("page", "1");
+      startTransition(() => router.push(`${pathname}?${params.toString()}`));
+    },
+    [searchParams, pathname, router, startTransition],
+  );
 
-  const allSelected = enquiries.length > 0 && selectedIds.size === enquiries.length;
+  const allSelected =
+    enquiries.length > 0 && selectedIds.size === enquiries.length;
   const someSelected = selectedIds.size > 0;
 
   function toggleSelectAll() {
@@ -117,10 +155,13 @@ export function EnquiriesClient({
   async function executeBulkStatus(status) {
     const ids = Array.from(selectedIds);
     const actionKey = `status:${status}`;
-    const label = STATUS_OPTIONS.find((o) => o.value === status)?.label || status;
+    const label =
+      STATUS_OPTIONS.find((o) => o.value === status)?.label || status;
     const count = ids.length;
     setBusy(actionKey);
-    const toastId = toast.loading(`Marking ${count} enquiry${count > 1 ? "ies" : "y"} as ${label.toLowerCase()}...`);
+    const toastId = toast.loading(
+      `Marking ${count} enquiry${count > 1 ? "ies" : "y"} as ${label.toLowerCase()}...`,
+    );
     try {
       const res = await fetch("/api/enquiries", {
         method: "PATCH",
@@ -128,7 +169,10 @@ export function EnquiriesClient({
         body: JSON.stringify({ ids, status }),
       });
       if (!res.ok) throw new Error("Failed to update");
-      toast.success(`${count} enquiry${count > 1 ? "ies" : "y"} marked as ${label.toLowerCase()}`, { id: toastId });
+      toast.success(
+        `${count} enquiry${count > 1 ? "ies" : "y"} marked as ${label.toLowerCase()}`,
+        { id: toastId },
+      );
       setSelectedIds(new Set());
       router.refresh();
     } catch {
@@ -142,7 +186,9 @@ export function EnquiriesClient({
     const ids = Array.from(selectedIds);
     const count = ids.length;
     setBusy("export-selected");
-    const toastId = toast.loading(`Exporting ${count} enquiry${count > 1 ? "ies" : "y"}...`);
+    const toastId = toast.loading(
+      `Exporting ${count} enquiry${count > 1 ? "ies" : "y"}...`,
+    );
     try {
       const res = await fetch("/enquiries/export", {
         method: "POST",
@@ -157,7 +203,9 @@ export function EnquiriesClient({
       a.download = `skillyards-enquiries-selected-${new Date().toISOString().slice(0, 10)}.xlsx`;
       a.click();
       URL.revokeObjectURL(url);
-      toast.success(`${count} enquiry${count > 1 ? "ies" : "y"} exported`, { id: toastId });
+      toast.success(`${count} enquiry${count > 1 ? "ies" : "y"} exported`, {
+        id: toastId,
+      });
     } catch {
       toast.error("Export failed", { id: toastId });
     } finally {
@@ -167,9 +215,12 @@ export function EnquiriesClient({
 
   async function handleInlineStatus(enquiryId, newStatus) {
     const actionKey = `inline-status:${enquiryId}`;
-    const label = STATUS_OPTIONS.find((o) => o.value === newStatus)?.label || newStatus;
+    const label =
+      STATUS_OPTIONS.find((o) => o.value === newStatus)?.label || newStatus;
     setBusy(actionKey);
-    const toastId = toast.loading(`Updating status to ${label.toLowerCase()}...`);
+    const toastId = toast.loading(
+      `Updating status to ${label.toLowerCase()}...`,
+    );
     try {
       const res = await fetch("/api/enquiries", {
         method: "PATCH",
@@ -177,7 +228,9 @@ export function EnquiriesClient({
         body: JSON.stringify({ ids: [enquiryId], status: newStatus }),
       });
       if (!res.ok) throw new Error("Failed to update");
-      toast.success(`Status updated to ${label.toLowerCase()}`, { id: toastId });
+      toast.success(`Status updated to ${label.toLowerCase()}`, {
+        id: toastId,
+      });
       setEditingStatusId(null);
       router.refresh();
     } catch {
@@ -228,7 +281,9 @@ export function EnquiriesClient({
   async function executeDelete(enquiry) {
     const toastId = toast.loading("Deleting enquiry...");
     try {
-      const res = await fetch(`/api/enquiries?id=${enquiry.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/enquiries?id=${enquiry.id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed to delete");
       toast.success("Enquiry deleted", { id: toastId });
       router.refresh();
@@ -276,7 +331,10 @@ export function EnquiriesClient({
 
   function toggleSort(column) {
     if (initialSort === column) {
-      updateURL({ sort: column, order: initialOrder === "asc" ? "desc" : "asc" });
+      updateURL({
+        sort: column,
+        order: initialOrder === "asc" ? "desc" : "asc",
+      });
     } else {
       updateURL({ sort: column, order: "desc" });
     }
@@ -286,14 +344,31 @@ export function EnquiriesClient({
     const isActive = initialSort === column;
     return (
       <th
-        className={cn("px-5 py-3 font-semibold cursor-pointer select-none hover:text-foreground transition-colors", className)}
+        className={cn(
+          "px-5 py-3 font-semibold cursor-pointer select-none hover:text-foreground transition-colors",
+          className,
+        )}
         onClick={() => toggleSort(column)}
       >
         <div className="flex items-center gap-1.5">
           {label}
           <span className="inline-flex flex-col -space-y-1.5 opacity-40">
-            <ChevronUp className={cn("h-3 w-3", isActive && initialOrder === "asc" && "text-primary opacity-100")} />
-            <ChevronDown className={cn("h-3 w-3", isActive && initialOrder === "desc" && "text-primary opacity-100")} />
+            <ChevronUp
+              className={cn(
+                "h-3 w-3",
+                isActive &&
+                  initialOrder === "asc" &&
+                  "text-primary opacity-100",
+              )}
+            />
+            <ChevronDown
+              className={cn(
+                "h-3 w-3",
+                isActive &&
+                  initialOrder === "desc" &&
+                  "text-primary opacity-100",
+              )}
+            />
           </span>
         </div>
       </th>
@@ -310,7 +385,9 @@ export function EnquiriesClient({
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">Enquiries</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">
+            Enquiries
+          </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Website enquiries from prospective students.
           </p>
@@ -327,7 +404,9 @@ export function EnquiriesClient({
                 : "hover:bg-muted cursor-pointer",
             )}
           >
-            <RefreshCw className={cn("h-4 w-4", busy === "syncing" && "animate-spin")} />
+            <RefreshCw
+              className={cn("h-4 w-4", busy === "syncing" && "animate-spin")}
+            />
             Sync
           </button>
           <button
@@ -369,7 +448,9 @@ export function EnquiriesClient({
           {searchInput && (
             <button
               type="button"
-              onClick={() => { setSearchInput(""); }}
+              onClick={() => {
+                setSearchInput("");
+              }}
               className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
               <X className="h-3.5 w-3.5" />
@@ -379,12 +460,16 @@ export function EnquiriesClient({
         <div className="flex items-center gap-2">
           <select
             value={initialStatusFilter || ""}
-            onChange={(e) => updateURL({ status: e.target.value || null, page: "1" })}
+            onChange={(e) =>
+              updateURL({ status: e.target.value || null, page: "1" })
+            }
             className="input w-auto text-sm py-2 pr-8"
           >
             <option value="">All statuses</option>
             {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
             ))}
           </select>
           <div className="flex items-center rounded-lg border border-border bg-card p-0.5">
@@ -394,7 +479,9 @@ export function EnquiriesClient({
                 <button
                   key={opt.value}
                   type="button"
-                  onClick={() => updateURL({ source: opt.value || null, page: "1" })}
+                  onClick={() =>
+                    updateURL({ source: opt.value || null, page: "1" })
+                  }
                   className={cn(
                     "rounded-md px-2.5 py-1 text-xs font-semibold transition-colors cursor-pointer",
                     isActive
@@ -503,7 +590,9 @@ export function EnquiriesClient({
           {enquiries.length === 0 ? (
             <div className="flex flex-col items-center justify-center px-6 py-16 text-center">
               <Inbox className="mb-4 h-10 w-10 text-muted-foreground/40" />
-              <h2 className="text-base font-semibold text-foreground">No enquiries found</h2>
+              <h2 className="text-base font-semibold text-foreground">
+                No enquiries found
+              </h2>
               <p className="mt-1 max-w-sm text-sm text-muted-foreground">
                 {initialSearch || initialStatusFilter
                   ? "No enquiries match your current filters. Try adjusting your search."
@@ -526,14 +615,24 @@ export function EnquiriesClient({
                     <SortHeader column="firstName" label="Name" />
                     <SortHeader column="email" label="Contact" />
                     <th className="px-5 py-3 font-semibold">Message</th>
-                    <SortHeader column="source" label="Source" className="text-center" />
-                    <SortHeader column="status" label="Status" className="text-center" />
+                    <SortHeader
+                      column="source"
+                      label="Source"
+                      className="text-center"
+                    />
+                    <SortHeader
+                      column="status"
+                      label="Status"
+                      className="text-center"
+                    />
                     <SortHeader column="createdAt" label="Submitted" />
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {enquiries.map((enquiry) => {
-                    const fullName = [enquiry.firstName, enquiry.lastName].filter(Boolean).join(" ");
+                    const fullName = [enquiry.firstName, enquiry.lastName]
+                      .filter(Boolean)
+                      .join(" ");
                     const isSelected = selectedIds.has(enquiry.id);
                     const isEditingStatus = editingStatusId === enquiry.id;
 
@@ -542,7 +641,9 @@ export function EnquiriesClient({
                         key={enquiry.id}
                         className={cn(
                           "align-top transition-colors group",
-                          isSelected ? "bg-primary/[0.03]" : "hover:bg-muted/30",
+                          isSelected
+                            ? "bg-primary/[0.03]"
+                            : "hover:bg-muted/30",
                         )}
                       >
                         {/* Checkbox */}
@@ -596,7 +697,12 @@ export function EnquiriesClient({
                               className="flex items-center gap-2 text-foreground transition-colors hover:text-primary"
                             >
                               <Mail className="h-3.5 w-3.5 shrink-0" />
-                              <span className="truncate max-w-[180px]" title={enquiry.email}>{enquiry.email}</span>
+                              <span
+                                className="truncate max-w-[180px]"
+                                title={enquiry.email}
+                              >
+                                {enquiry.email}
+                              </span>
                             </a>
                             {enquiry.phone && (
                               <a
@@ -629,7 +735,9 @@ export function EnquiriesClient({
                               status={enquiry.status || "new"}
                               onClick={() => {
                                 if (!busy) {
-                                  setEditingStatusId(isEditingStatus ? null : enquiry.id);
+                                  setEditingStatusId(
+                                    isEditingStatus ? null : enquiry.id,
+                                  );
                                 }
                               }}
                             />
@@ -646,14 +754,18 @@ export function EnquiriesClient({
                                 <div className="absolute right-1/2 translate-x-1/2 mt-1.5 z-40 min-w-[125px] rounded-xl border border-border bg-card p-1.5 shadow-xl animate-in fade-in slide-in-from-top-1 duration-150">
                                   <div className="flex flex-col gap-1">
                                     {STATUS_OPTIONS.map((opt) => {
-                                      const isCurrent = (enquiry.status || "new") === opt.value;
+                                      const isCurrent =
+                                        (enquiry.status || "new") === opt.value;
                                       return (
                                         <button
                                           key={opt.value}
                                           type="button"
                                           onClick={() => {
                                             if (!isCurrent) {
-                                              handleInlineStatus(enquiry.id, opt.value);
+                                              handleInlineStatus(
+                                                enquiry.id,
+                                                opt.value,
+                                              );
                                             } else {
                                               setEditingStatusId(null);
                                             }
@@ -662,7 +774,7 @@ export function EnquiriesClient({
                                             "w-full text-left rounded-lg px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider transition-all border",
                                             isCurrent
                                               ? "border-primary/20 bg-primary/10 text-primary font-bold cursor-default"
-                                              : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+                                              : "border-transparent text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer",
                                           )}
                                         >
                                           {opt.label}
@@ -687,10 +799,13 @@ export function EnquiriesClient({
                           <div>{formatDate(enquiry.createdAt)}</div>
                           <div className="text-xs">
                             {enquiry.createdAt
-                              ? new Date(enquiry.createdAt).toLocaleTimeString("en-IN", {
-                                  hour: "2-digit",
-                                  minute: "2-digit",
-                                })
+                              ? new Date(enquiry.createdAt).toLocaleTimeString(
+                                  "en-IN",
+                                  {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  },
+                                )
                               : "—"}
                           </div>
                         </td>
@@ -747,13 +862,20 @@ export function EnquiriesClient({
       )}
 
       {/* Detail Dialog */}
-      <Dialog open={!!detailEnquiry} onOpenChange={(open) => { if (!open) setDetailEnquiry(null); }}>
+      <Dialog
+        open={!!detailEnquiry}
+        onOpenChange={(open) => {
+          if (!open) setDetailEnquiry(null);
+        }}
+      >
         <DialogContent className="sm:max-w-lg">
           {detailEnquiry && (
             <>
               <DialogHeader>
                 <DialogTitle>
-                  {[detailEnquiry.firstName, detailEnquiry.lastName].filter(Boolean).join(" ")}
+                  {[detailEnquiry.firstName, detailEnquiry.lastName]
+                    .filter(Boolean)
+                    .join(" ")}
                 </DialogTitle>
                 <DialogDescription>
                   Enquiry details and contact information
@@ -762,7 +884,10 @@ export function EnquiriesClient({
                   {isAdmin && (
                     <button
                       type="button"
-                      onClick={() => { openEdit(detailEnquiry); setDetailEnquiry(null); }}
+                      onClick={() => {
+                        openEdit(detailEnquiry);
+                        setDetailEnquiry(null);
+                      }}
                       className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors cursor-pointer"
                     >
                       <Pencil className="h-3.5 w-3.5 text-primary" />
@@ -772,7 +897,10 @@ export function EnquiriesClient({
                   {isAdmin && (
                     <button
                       type="button"
-                      onClick={() => { handleDelete(detailEnquiry); setDetailEnquiry(null); }}
+                      onClick={() => {
+                        handleDelete(detailEnquiry);
+                        setDetailEnquiry(null);
+                      }}
                       className="inline-flex items-center gap-1.5 rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors cursor-pointer"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -793,17 +921,22 @@ export function EnquiriesClient({
                     {formatDate(detailEnquiry.createdAt)}
                     {" • "}
                     {detailEnquiry.createdAt
-                      ? new Date(detailEnquiry.createdAt).toLocaleTimeString("en-IN", {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })
+                      ? new Date(detailEnquiry.createdAt).toLocaleTimeString(
+                          "en-IN",
+                          {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          },
+                        )
                       : "—"}
                   </span>
                 </div>
 
                 {/* Contact */}
                 <div className="space-y-2">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Contact</h4>
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Contact
+                  </h4>
                   <div className="space-y-1.5">
                     <a
                       href={`mailto:${detailEnquiry.email}`}
@@ -826,7 +959,9 @@ export function EnquiriesClient({
 
                 {/* Message */}
                 <div className="space-y-2">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Message</h4>
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Message
+                  </h4>
                   <div className="rounded-lg bg-muted/50 p-4">
                     <p className="text-sm whitespace-pre-wrap break-words leading-relaxed text-foreground">
                       {detailEnquiry.message}
@@ -836,11 +971,15 @@ export function EnquiriesClient({
 
                 {/* Quick status change */}
                 <div className="space-y-2">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Update Status</h4>
+                  <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Update Status
+                  </h4>
                   <div className="flex flex-wrap gap-2">
                     {STATUS_OPTIONS.map((opt) => {
-                      const isBusy = busy === `inline-status:${detailEnquiry.id}`;
-                      const isCurrent = (detailEnquiry.status || "new") === opt.value;
+                      const isBusy =
+                        busy === `inline-status:${detailEnquiry.id}`;
+                      const isCurrent =
+                        (detailEnquiry.status || "new") === opt.value;
                       return (
                         <button
                           key={opt.value}
@@ -863,7 +1002,7 @@ export function EnquiriesClient({
                           {isBusy ? (
                             <Loader2 className="h-3 w-3 animate-spin" />
                           ) : isCurrent ? (
-                             <Check className="h-3 w-3" />
+                            <Check className="h-3 w-3" />
                           ) : null}
                           {opt.label}
                         </button>
@@ -877,7 +1016,15 @@ export function EnquiriesClient({
         </DialogContent>
       </Dialog>
       {/* Edit Enquiry Dialog */}
-      <Dialog open={!!editEnquiry} onOpenChange={(open) => { if (!open) { setEditEnquiry(null); setEditForm(null); } }}>
+      <Dialog
+        open={!!editEnquiry}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditEnquiry(null);
+            setEditForm(null);
+          }
+        }}
+      >
         <DialogContent className="sm:max-w-lg">
           {editEnquiry && editForm && (
             <>
@@ -890,60 +1037,83 @@ export function EnquiriesClient({
               <form onSubmit={handleEditSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">First Name</label>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      First Name
+                    </label>
                     <input
                       type="text"
                       required
                       value={editForm.firstName}
-                      onChange={(e) => setEditForm({ ...editForm, firstName: e.target.value })}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, firstName: e.target.value })
+                      }
                       className="input text-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Last Name</label>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Last Name
+                    </label>
                     <input
                       type="text"
                       value={editForm.lastName}
-                      onChange={(e) => setEditForm({ ...editForm, lastName: e.target.value })}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, lastName: e.target.value })
+                      }
                       className="input text-sm"
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Email</label>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Email
+                    </label>
                     <input
                       type="email"
                       required
                       value={editForm.email}
-                      onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, email: e.target.value })
+                      }
                       className="input text-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Phone</label>
+                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Phone
+                    </label>
                     <input
                       type="tel"
                       value={editForm.phone}
-                      onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                      onChange={(e) =>
+                        setEditForm({ ...editForm, phone: e.target.value })
+                      }
                       className="input text-sm"
                     />
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Message</label>
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Message
+                  </label>
                   <textarea
                     required
                     rows={4}
                     value={editForm.message}
-                    onChange={(e) => setEditForm({ ...editForm, message: e.target.value })}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, message: e.target.value })
+                    }
                     className="input text-sm resize-none"
                   />
                 </div>
                 <div className="flex justify-end gap-2 pt-2">
                   <button
                     type="button"
-                    onClick={() => { setEditEnquiry(null); setEditForm(null); }}
+                    onClick={() => {
+                      setEditEnquiry(null);
+                      setEditForm(null);
+                    }}
                     className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted transition-colors"
                   >
                     Cancel

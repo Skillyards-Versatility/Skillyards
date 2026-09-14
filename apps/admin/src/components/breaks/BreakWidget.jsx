@@ -3,7 +3,12 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { Coffee, Square, Clock } from "lucide-react";
-import { startBreak, endBreak, getActiveBreak, getDailyBreakTotal } from "@/actions/breaks";
+import {
+  startBreak,
+  endBreak,
+  getActiveBreak,
+  getDailyBreakTotal,
+} from "@/actions/breaks";
 import { toast } from "sonner";
 
 const MAX_BREAK_SECONDS = 900;
@@ -25,13 +30,20 @@ function formatMinutes(seconds) {
 export function BreakWidget() {
   const [mounted, setMounted] = useState(false);
   const [activeBreak, setActiveBreak] = useState(null);
-  
+
   useEffect(() => {
     setMounted(true);
   }, []);
   const [elapsed, setElapsed] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [dailyInfo, setDailyInfo] = useState({ breakCount: 0, maxBreaks: MAX_BREAKS, maxSeconds: MAX_BREAK_SECONDS, totalDuration: 0, totalOverage: 0, remainingDailySeconds: 1800 });
+  const [dailyInfo, setDailyInfo] = useState({
+    breakCount: 0,
+    maxBreaks: MAX_BREAKS,
+    maxSeconds: MAX_BREAK_SECONDS,
+    totalDuration: 0,
+    totalOverage: 0,
+    remainingDailySeconds: 1800,
+  });
   const [panelOpen, setPanelOpen] = useState(false);
   const [cooldown, setCooldown] = useState({ active: false, remaining: 0 });
   const [pushAvailable, setPushAvailable] = useState(true);
@@ -78,7 +90,10 @@ export function BreakWidget() {
     if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
       draggedRef.current = true;
     }
-    const clamped = clampPosition(offsetRef.current.x + dx, offsetRef.current.y + dy);
+    const clamped = clampPosition(
+      offsetRef.current.x + dx,
+      offsetRef.current.y + dy,
+    );
     setPosition(clamped);
   };
 
@@ -107,7 +122,10 @@ export function BreakWidget() {
       draggedRef.current = true;
     }
     if (e.cancelable) e.preventDefault();
-    const clamped = clampPosition(offsetRef.current.x + dx, offsetRef.current.y + dy);
+    const clamped = clampPosition(
+      offsetRef.current.x + dx,
+      offsetRef.current.y + dy,
+    );
     setPosition(clamped);
   };
 
@@ -139,7 +157,7 @@ export function BreakWidget() {
     }
 
     const t = setTimeout(() => {
-      setCooldown(prev => {
+      setCooldown((prev) => {
         if (prev.active === active && prev.remaining === remaining) return prev;
         return { active, remaining };
       });
@@ -150,7 +168,10 @@ export function BreakWidget() {
         const diff = Date.now() - new Date(dailyInfo.lastEndedAt).getTime();
         const cooldownMs = 30 * 60 * 1000;
         if (diff < cooldownMs) {
-          setCooldown({ active: true, remaining: Math.ceil((cooldownMs - diff) / 60000) });
+          setCooldown({
+            active: true,
+            remaining: Math.ceil((cooldownMs - diff) / 60000),
+          });
         } else {
           setCooldown({ active: false, remaining: 0 });
         }
@@ -179,7 +200,9 @@ export function BreakWidget() {
   const tick = useCallback(() => {
     setActiveBreak((prev) => {
       if (!prev) return prev;
-      const currentElapsed = Math.floor((Date.now() - new Date(prev.startedAt).getTime()) / 1000);
+      const currentElapsed = Math.floor(
+        (Date.now() - new Date(prev.startedAt).getTime()) / 1000,
+      );
       setElapsed(currentElapsed);
 
       // In-app fallback warnings for users without push notifications
@@ -187,15 +210,23 @@ export function BreakWidget() {
         const maxSec = dailyInfo.maxSeconds || MAX_BREAK_SECONDS;
         if (currentElapsed >= 540 && !warnedAt.current.has("9min")) {
           warnedAt.current.add("9min");
-          toast.warning("9-minute break warning — you're halfway through your break time!", { duration: 5000 });
+          toast.warning(
+            "9-minute break warning — you're halfway through your break time!",
+            { duration: 5000 },
+          );
         }
         if (currentElapsed >= 840 && !warnedAt.current.has("14min")) {
           warnedAt.current.add("14min");
-          toast.warning("14-minute break warning — 1 minute remaining! Please wrap up.", { duration: 5000 });
+          toast.warning(
+            "14-minute break warning — 1 minute remaining! Please wrap up.",
+            { duration: 5000 },
+          );
         }
         if (currentElapsed >= maxSec - 60 && !warnedAt.current.has("final")) {
           warnedAt.current.add("final");
-          toast.warning("Break time is almost up! Please return to work.", { duration: 5000 });
+          toast.warning("Break time is almost up! Please return to work.", {
+            duration: 5000,
+          });
         }
       }
 
@@ -206,13 +237,18 @@ export function BreakWidget() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const [b, info] = await Promise.all([getActiveBreak(), getDailyBreakTotal()]);
+      const [b, info] = await Promise.all([
+        getActiveBreak(),
+        getDailyBreakTotal(),
+      ]);
       if (!cancelled) {
         setDailyInfo(info);
         if (b) {
           warnedAt.current.clear();
           setActiveBreak(b);
-          setElapsed(Math.floor((Date.now() - new Date(b.startedAt).getTime()) / 1000));
+          setElapsed(
+            Math.floor((Date.now() - new Date(b.startedAt).getTime()) / 1000),
+          );
         }
       }
     })();
@@ -268,10 +304,16 @@ export function BreakWidget() {
       const allowedSecs = res.maxSeconds || MAX_BREAK_SECONDS;
       const allowedMins = Math.floor(allowedSecs / 60);
       const remainingSecondsPart = allowedSecs % 60;
-      const remainingStr = remainingSecondsPart > 0 ? `${allowedMins}m ${remainingSecondsPart}s` : `${allowedMins}m`;
+      const remainingStr =
+        remainingSecondsPart > 0
+          ? `${allowedMins}m ${remainingSecondsPart}s`
+          : `${allowedMins}m`;
       toast.success(`Break started! ${remainingStr} remaining for this break.`);
       if (res.qstashFailed) {
-        toast.warning("Break reminders unavailable — QStash scheduling failed. Keep an eye on the timer!", { duration: 6000 });
+        toast.warning(
+          "Break reminders unavailable — QStash scheduling failed. Keep an eye on the timer!",
+          { duration: 6000 },
+        );
       }
     } else {
       toast.error(res.error);
@@ -293,10 +335,15 @@ export function BreakWidget() {
       setPanelOpen(false);
       const info = await getDailyBreakTotal();
       setDailyInfo(info);
-      
-      const breakOverage = Math.max(0, dur - (info.maxSeconds || MAX_BREAK_SECONDS));
+
+      const breakOverage = Math.max(
+        0,
+        dur - (info.maxSeconds || MAX_BREAK_SECONDS),
+      );
       if (breakOverage > 0) {
-        toast.warning(`Break ended. You went ${formatMinutes(breakOverage)} over the limit!`);
+        toast.warning(
+          `Break ended. You went ${formatMinutes(breakOverage)} over the limit!`,
+        );
       } else {
         toast.success(`Break ended successfully (${formatTime(dur)}).`);
       }
@@ -309,141 +356,199 @@ export function BreakWidget() {
   const isOngoing = !!activeBreak;
   const maxSec = dailyInfo.maxSeconds || MAX_BREAK_SECONDS;
   const currentOverage = isOngoing ? Math.max(0, elapsed - maxSec) : 0;
-  const isLimitDone = dailyInfo.breakCount >= (dailyInfo.maxBreaks || MAX_BREAKS) || (dailyInfo.remainingDailySeconds !== undefined && dailyInfo.remainingDailySeconds <= 0);
-  
+  const isLimitDone =
+    dailyInfo.breakCount >= (dailyInfo.maxBreaks || MAX_BREAKS) ||
+    (dailyInfo.remainingDailySeconds !== undefined &&
+      dailyInfo.remainingDailySeconds <= 0);
+
   const displayRemaining = Math.max(0, maxSec - elapsed);
 
   return (
     <>
       {/* Strict Lockout Overlay Modal when Break Limit Exceeded (Portalled) */}
-      {mounted && isOngoing && currentOverage > 0 && createPortal(
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200">
-          <div className="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl border border-red-200 dark:border-red-900/50 p-6 space-y-6 text-center animate-in zoom-in-95 duration-200">
-            <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-500 animate-bounce">
-              <Coffee className="w-8 h-8" />
+      {mounted &&
+        isOngoing &&
+        currentOverage > 0 &&
+        createPortal(
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-200">
+            <div className="bg-white dark:bg-gray-900 w-full max-w-md rounded-2xl shadow-2xl border border-red-200 dark:border-red-900/50 p-6 space-y-6 text-center animate-in zoom-in-95 duration-200">
+              <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center text-red-500 animate-bounce">
+                <Coffee className="w-8 h-8" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-xl font-black text-red-600 dark:text-red-500">
+                  Break Limit Exceeded!
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  You have exceeded your break limit by{" "}
+                  <span className="font-bold text-red-500">
+                    {formatTime(currentOverage)}
+                  </span>
+                  . Please return to work immediately.
+                </p>
+              </div>
+              <button
+                onClick={handleEnd}
+                disabled={loading}
+                className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-base font-bold shadow-lg hover:shadow-red-500/20 hover:shadow-xl transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+              >
+                <Square className="w-5 h-5 fill-current" />
+                {loading ? "Ending..." : "Resume Work"}
+              </button>
             </div>
-            <div className="space-y-2">
-              <h2 className="text-xl font-black text-red-600 dark:text-red-500">Break Limit Exceeded!</h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                You have exceeded your break limit by <span className="font-bold text-red-500">{formatTime(currentOverage)}</span>. Please return to work immediately.
-              </p>
-            </div>
-            <button
-              onClick={handleEnd}
-              disabled={loading}
-              className="w-full flex items-center justify-center gap-2 px-5 py-3.5 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-base font-bold shadow-lg hover:shadow-red-500/20 hover:shadow-xl transition-all active:scale-[0.98] disabled:opacity-50 cursor-pointer"
-            >
-              <Square className="w-5 h-5 fill-current" />
-              {loading ? "Ending..." : "Resume Work"}
-            </button>
-          </div>
-        </div>,
-        document.body
-      )}
+          </div>,
+          document.body,
+        )}
 
       {/* Mobile Bottom Sheet (Portalled) */}
-      {mounted && panelOpen && createPortal(
-        <div className="sm:hidden mobile-break-portal">
-          {/* Mobile Bottom Sheet Backdrop */}
-          <div 
-            className="fixed inset-0 z-[99] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
-            onClick={() => setPanelOpen(false)}
-          />
-          {/* Mobile Bottom Sheet Container */}
-          <div 
-            className="fixed bottom-0 left-0 right-0 z-[100] rounded-t-3xl bg-background border-t border-border p-6 pb-8 space-y-6 shadow-2xl animate-in slide-in-from-bottom duration-300"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Drag Handle indicator */}
-            <div className="w-12 h-1.5 bg-muted rounded-full mx-auto -mt-2 mb-2" />
-            
-            {isOngoing ? (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse" />
-                    <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Break {dailyInfo.breakCount || 1} of {dailyInfo.maxBreaks || 3}</span>
-                  </div>
-                  <span className={`text-2xl font-mono font-bold tracking-tight ${currentOverage > 0 ? "text-red-500 animate-pulse" : "text-foreground"}`}>
-                    {currentOverage > 0 ? `+ ${formatTime(currentOverage)}` : formatTime(displayRemaining)}
-                  </span>
-                </div>
-                
-                <div className="w-full bg-muted rounded-full h-3 overflow-hidden shadow-inner">
-                  <div
-                    className={`h-full rounded-full transition-all duration-1000 ${
-                      currentOverage > 0 ? "bg-red-500 animate-pulse" : displayRemaining <= 60 ? "bg-red-500 animate-pulse" : displayRemaining <= 300 ? "bg-amber-500" : "bg-orange-500"
-                    }`}
-                    style={{ width: `${currentOverage > 0 ? 100 : (displayRemaining / maxSec) * 100}%` }}
-                  />
-                </div>
-                
-                <div className="bg-muted/40 p-4 rounded-xl border border-border">
-                  {currentOverage > 0 ? (
-                    <p className="text-sm font-medium text-red-500 text-center">Exceeded limit of {formatMinutes(maxSec)}!</p>
-                  ) : (
-                    <p className="text-sm font-medium text-muted-foreground text-center">{formatTime(displayRemaining)} remaining for this break</p>
-                  )}
-                </div>
-                
-                <button
-                  onClick={handleEnd}
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 px-5 py-4 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-base font-bold shadow-lg hover:shadow-red-500/20 active:scale-[0.98] disabled:opacity-50 cursor-pointer"
-                >
-                  <Square className="w-5 h-5 fill-current" />
-                  End Break
-                </button>
-              </div>
-            ) : (
-              <div className="space-y-5">
-                <div className="flex items-center gap-3 pb-3 border-b border-border">
-                  <div className="p-3 bg-primary/10 rounded-xl text-primary">
-                    <Coffee className="w-6 h-6" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-base text-foreground">Break Time</h3>
-                    <p className="text-xs text-muted-foreground">{isLimitDone ? "Limit Reached" : `Ready for break ${dailyInfo.breakCount + 1}`}</p>
-                  </div>
-                </div>
-                
-                <div className="bg-muted/40 p-4 rounded-xl border border-border space-y-2 text-center">
-                  {isLimitDone ? (
-                    <p className="text-sm font-bold text-muted-foreground">Daily limit of 3 breaks or 30m reached.</p>
-                  ) : (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm font-semibold px-2">
-                        <span className="text-muted-foreground">Breaks Taken:</span>
-                        <span className="text-foreground">{dailyInfo.breakCount} / {dailyInfo.maxBreaks || 3}</span>
-                      </div>
-                      <div className="flex justify-between text-sm font-semibold px-2">
-                        <span className="text-muted-foreground">Remaining:</span>
-                        <span className="text-foreground">{formatMinutes(dailyInfo.remainingDailySeconds !== undefined ? dailyInfo.remainingDailySeconds : 1800)} / 30m</span>
-                      </div>
+      {mounted &&
+        panelOpen &&
+        createPortal(
+          <div className="sm:hidden mobile-break-portal">
+            {/* Mobile Bottom Sheet Backdrop */}
+            <div
+              className="fixed inset-0 z-[99] bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+              onClick={() => setPanelOpen(false)}
+            />
+            {/* Mobile Bottom Sheet Container */}
+            <div
+              className="fixed bottom-0 left-0 right-0 z-[100] rounded-t-3xl bg-background border-t border-border p-6 pb-8 space-y-6 shadow-2xl animate-in slide-in-from-bottom duration-300"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Drag Handle indicator */}
+              <div className="w-12 h-1.5 bg-muted rounded-full mx-auto -mt-2 mb-2" />
+
+              {isOngoing ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse" />
+                      <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                        Break {dailyInfo.breakCount || 1} of{" "}
+                        {dailyInfo.maxBreaks || 3}
+                      </span>
                     </div>
+                    <span
+                      className={`text-2xl font-mono font-bold tracking-tight ${currentOverage > 0 ? "text-red-500 animate-pulse" : "text-foreground"}`}
+                    >
+                      {currentOverage > 0
+                        ? `+ ${formatTime(currentOverage)}`
+                        : formatTime(displayRemaining)}
+                    </span>
+                  </div>
+
+                  <div className="w-full bg-muted rounded-full h-3 overflow-hidden shadow-inner">
+                    <div
+                      className={`h-full rounded-full transition-all duration-1000 ${
+                        currentOverage > 0
+                          ? "bg-red-500 animate-pulse"
+                          : displayRemaining <= 60
+                            ? "bg-red-500 animate-pulse"
+                            : displayRemaining <= 300
+                              ? "bg-amber-500"
+                              : "bg-orange-500"
+                      }`}
+                      style={{
+                        width: `${currentOverage > 0 ? 100 : (displayRemaining / maxSec) * 100}%`,
+                      }}
+                    />
+                  </div>
+
+                  <div className="bg-muted/40 p-4 rounded-xl border border-border">
+                    {currentOverage > 0 ? (
+                      <p className="text-sm font-medium text-red-500 text-center">
+                        Exceeded limit of {formatMinutes(maxSec)}!
+                      </p>
+                    ) : (
+                      <p className="text-sm font-medium text-muted-foreground text-center">
+                        {formatTime(displayRemaining)} remaining for this break
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={handleEnd}
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-2 px-5 py-4 rounded-xl bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-base font-bold shadow-lg hover:shadow-red-500/20 active:scale-[0.98] disabled:opacity-50 cursor-pointer"
+                  >
+                    <Square className="w-5 h-5 fill-current" />
+                    End Break
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  <div className="flex items-center gap-3 pb-3 border-b border-border">
+                    <div className="p-3 bg-primary/10 rounded-xl text-primary">
+                      <Coffee className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-base text-foreground">
+                        Break Time
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {isLimitDone
+                          ? "Limit Reached"
+                          : `Ready for break ${dailyInfo.breakCount + 1}`}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-muted/40 p-4 rounded-xl border border-border space-y-2 text-center">
+                    {isLimitDone ? (
+                      <p className="text-sm font-bold text-muted-foreground">
+                        Daily limit of 3 breaks or 30m reached.
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm font-semibold px-2">
+                          <span className="text-muted-foreground">
+                            Breaks Taken:
+                          </span>
+                          <span className="text-foreground">
+                            {dailyInfo.breakCount} / {dailyInfo.maxBreaks || 3}
+                          </span>
+                        </div>
+                        <div className="flex justify-between text-sm font-semibold px-2">
+                          <span className="text-muted-foreground">
+                            Remaining:
+                          </span>
+                          <span className="text-foreground">
+                            {formatMinutes(
+                              dailyInfo.remainingDailySeconds !== undefined
+                                ? dailyInfo.remainingDailySeconds
+                                : 1800,
+                            )}{" "}
+                            / 30m
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {!isLimitDone && (
+                    <button
+                      onClick={handleStart}
+                      disabled={loading || cooldown.active}
+                      className={`w-full flex items-center justify-center gap-2 px-5 py-4 rounded-xl text-white text-base font-bold shadow-lg transition-all active:scale-[0.98] cursor-pointer ${
+                        cooldown.active
+                          ? "bg-slate-400 cursor-not-allowed opacity-70"
+                          : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-emerald-500/20"
+                      }`}
+                    >
+                      <Coffee className="w-5 h-5" />
+                      {loading
+                        ? "Starting..."
+                        : cooldown.active
+                          ? `Cooldown: Wait ${cooldown.remaining}m`
+                          : "Start Break"}
+                    </button>
                   )}
                 </div>
-                
-                {!isLimitDone && (
-                  <button
-                    onClick={handleStart}
-                    disabled={loading || cooldown.active}
-                    className={`w-full flex items-center justify-center gap-2 px-5 py-4 rounded-xl text-white text-base font-bold shadow-lg transition-all active:scale-[0.98] cursor-pointer ${
-                      cooldown.active
-                        ? "bg-slate-400 cursor-not-allowed opacity-70"
-                        : "bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 hover:shadow-emerald-500/20"
-                    }`}
-                  >
-                    <Coffee className="w-5 h-5" />
-                    {loading ? "Starting..." : cooldown.active ? `Cooldown: Wait ${cooldown.remaining}m` : "Start Break"}
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        </div>,
-        document.body
-      )}
+              )}
+            </div>
+          </div>,
+          document.body,
+        )}
 
       {/* Floating Trigger Widget with Desktop panel inside */}
       <div
@@ -451,7 +556,9 @@ export function BreakWidget() {
         className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 select-none touch-none"
         style={{
           transform: `translate(${position.x}px, ${position.y}px)`,
-          transition: isDraggingRef.current ? "none" : "transform 0.15s ease-out",
+          transition: isDraggingRef.current
+            ? "none"
+            : "transform 0.15s ease-out",
         }}
       >
         {panelOpen && (
@@ -462,25 +569,44 @@ export function BreakWidget() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse" />
-                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Break {dailyInfo.breakCount || 1} of {dailyInfo.maxBreaks || 3}</span>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                      Break {dailyInfo.breakCount || 1} of{" "}
+                      {dailyInfo.maxBreaks || 3}
+                    </span>
                   </div>
-                  <span className={`text-xl font-mono font-bold tracking-tight ${currentOverage > 0 ? "text-red-500" : "text-foreground"}`}>
-                    {currentOverage > 0 ? `+ ${formatTime(currentOverage)}` : formatTime(displayRemaining)}
+                  <span
+                    className={`text-xl font-mono font-bold tracking-tight ${currentOverage > 0 ? "text-red-500" : "text-foreground"}`}
+                  >
+                    {currentOverage > 0
+                      ? `+ ${formatTime(currentOverage)}`
+                      : formatTime(displayRemaining)}
                   </span>
                 </div>
                 <div className="w-full bg-muted/50 rounded-full h-2 overflow-hidden shadow-inner">
                   <div
                     className={`h-full rounded-full transition-all duration-1000 ${
-                      currentOverage > 0 ? "bg-red-500 animate-pulse" : displayRemaining <= 60 ? "bg-red-500" : displayRemaining <= 300 ? "bg-amber-500" : "bg-orange-500"
+                      currentOverage > 0
+                        ? "bg-red-500 animate-pulse"
+                        : displayRemaining <= 60
+                          ? "bg-red-500"
+                          : displayRemaining <= 300
+                            ? "bg-amber-500"
+                            : "bg-orange-500"
                     }`}
-                    style={{ width: `${currentOverage > 0 ? 100 : (displayRemaining / maxSec) * 100}%` }}
+                    style={{
+                      width: `${currentOverage > 0 ? 100 : (displayRemaining / maxSec) * 100}%`,
+                    }}
                   />
                 </div>
                 <div className="bg-muted/30 p-2.5 rounded-xl border border-border/50">
                   {currentOverage > 0 ? (
-                    <p className="text-xs font-medium text-red-500 text-center">Exceeded limit of {formatMinutes(maxSec)}!</p>
+                    <p className="text-xs font-medium text-red-500 text-center">
+                      Exceeded limit of {formatMinutes(maxSec)}!
+                    </p>
                   ) : (
-                    <p className="text-xs font-medium text-muted-foreground text-center">{formatTime(displayRemaining)} remaining for this break</p>
+                    <p className="text-xs font-medium text-muted-foreground text-center">
+                      {formatTime(displayRemaining)} remaining for this break
+                    </p>
                   )}
                 </div>
                 <button
@@ -499,28 +625,49 @@ export function BreakWidget() {
                     <Coffee className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm text-foreground">Break Time</h3>
-                    <p className="text-xs text-muted-foreground">{isLimitDone ? "Limit Reached" : `Ready for break ${dailyInfo.breakCount + 1}`}</p>
+                    <h3 className="font-bold text-sm text-foreground">
+                      Break Time
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      {isLimitDone
+                        ? "Limit Reached"
+                        : `Ready for break ${dailyInfo.breakCount + 1}`}
+                    </p>
                   </div>
                 </div>
-                
+
                 <div className="bg-muted/30 p-3 rounded-xl border border-border/50 space-y-1 text-center">
                   {isLimitDone ? (
-                    <p className="text-xs font-bold text-muted-foreground">Daily limit of 3 breaks or 30m reached.</p>
+                    <p className="text-xs font-bold text-muted-foreground">
+                      Daily limit of 3 breaks or 30m reached.
+                    </p>
                   ) : (
                     <div className="space-y-1.5">
                       <div className="flex justify-between text-xs font-semibold px-2">
-                        <span className="text-muted-foreground">Breaks Taken:</span>
-                        <span className="text-foreground">{dailyInfo.breakCount} / {dailyInfo.maxBreaks || 3}</span>
+                        <span className="text-muted-foreground">
+                          Breaks Taken:
+                        </span>
+                        <span className="text-foreground">
+                          {dailyInfo.breakCount} / {dailyInfo.maxBreaks || 3}
+                        </span>
                       </div>
                       <div className="flex justify-between text-xs font-semibold px-2">
-                        <span className="text-muted-foreground">Remaining:</span>
-                        <span className="text-foreground">{formatMinutes(dailyInfo.remainingDailySeconds !== undefined ? dailyInfo.remainingDailySeconds : 1800)} / 30m</span>
+                        <span className="text-muted-foreground">
+                          Remaining:
+                        </span>
+                        <span className="text-foreground">
+                          {formatMinutes(
+                            dailyInfo.remainingDailySeconds !== undefined
+                              ? dailyInfo.remainingDailySeconds
+                              : 1800,
+                          )}{" "}
+                          / 30m
+                        </span>
                       </div>
                     </div>
                   )}
                 </div>
-                
+
                 {!isLimitDone && (
                   <button
                     onClick={handleStart}
@@ -532,7 +679,11 @@ export function BreakWidget() {
                     }`}
                   >
                     <Coffee className="w-4 h-4" />
-                    {loading ? "Starting..." : cooldown.active ? `Cooldown: Wait ${cooldown.remaining}m` : "Start Break"}
+                    {loading
+                      ? "Starting..."
+                      : cooldown.active
+                        ? `Cooldown: Wait ${cooldown.remaining}m`
+                        : "Start Break"}
                   </button>
                 )}
               </div>
@@ -552,20 +703,26 @@ export function BreakWidget() {
             setPanelOpen(!panelOpen);
           }}
           className={`w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 text-white ${
-            panelOpen ? "ring-2 ring-amber-500 ring-offset-2 ring-offset-background" : ""
+            panelOpen
+              ? "ring-2 ring-amber-500 ring-offset-2 ring-offset-background"
+              : ""
           } ${
             isOngoing
-              ? currentOverage > 0 
-                ? "bg-red-500 hover:bg-red-600 shadow-[0_4px_20px_rgba(239,68,68,0.3)] animate-pulse" 
+              ? currentOverage > 0
+                ? "bg-red-500 hover:bg-red-600 shadow-[0_4px_20px_rgba(239,68,68,0.3)] animate-pulse"
                 : "bg-orange-500 hover:bg-orange-600 shadow-[0_4px_20px_rgba(249,115,22,0.3)] animate-pulse"
               : isLimitDone
-              ? "bg-slate-400 hover:bg-slate-500"
-              : "bg-amber-500 hover:bg-amber-600 shadow-[0_4px_20px_rgba(245,158,11,0.3)]"
+                ? "bg-slate-400 hover:bg-slate-500"
+                : "bg-amber-500 hover:bg-amber-600 shadow-[0_4px_20px_rgba(245,158,11,0.3)]"
           }`}
         >
           {isOngoing ? (
-            <span className={`text-xs font-bold font-mono tracking-tighter ${currentOverage > 0 ? "text-white" : ""}`}>
-              {currentOverage > 0 ? `+${formatTime(currentOverage)}` : formatTime(displayRemaining)}
+            <span
+              className={`text-xs font-bold font-mono tracking-tighter ${currentOverage > 0 ? "text-white" : ""}`}
+            >
+              {currentOverage > 0
+                ? `+${formatTime(currentOverage)}`
+                : formatTime(displayRemaining)}
             </span>
           ) : isLimitDone ? (
             <Clock className="w-6 h-6" />

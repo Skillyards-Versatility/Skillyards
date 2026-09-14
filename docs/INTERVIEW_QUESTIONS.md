@@ -75,7 +75,6 @@
 49. What was a decision you made early that turned out to be wrong? How did you fix it?
 50. You use `Promise.all` extensively. What's the failure mode? Does one failure cancel the others?
 
-
 ---
 
 ## Section 2: Authentication & Authorization (45 Questions)
@@ -144,22 +143,22 @@
 97. What is database normalization? Is your schema normalized? To what normal form?
 98. Why is `totalFee` and `finalFee` stored on the `students` table instead of computed?
 99. What's the difference between `totalFee` and `finalFee`? What does the gap represent?
-100. Why does `payments.installmentId` exist if you also have `payment_allocations`?
-101. Why is `payments.installmentId` nullable with `onDelete: "set null"` but `payment_allocations.installmentId` uses `onDelete: "cascade"`?
-102. What is a self-referencing foreign key? Where do you use one (hint: `plans.previousPlanId`)?
-103. Why does `plans.previousPlanId` exist? What flow does it support?
-104. What is the purpose of the `payment_allocations` table? Why not just link payments directly to installments?
-105. What happens to payments if a student is deleted? (Trace `onDelete: "cascade"`)
-106. Why is `receipt_number` a text field instead of an auto-incrementing integer?
-107. What is the format of `receipt_number`? Why `SY-YYYY-NNNN` instead of a raw number?
-108. How do you generate sequential receipt numbers? Is it thread-safe?
-109. What is a race condition in receipt number generation? How could two payments get the same number?
-110. How would you fix the receipt number race condition? (Database sequence vs atomic counter)
-111. Why store `questionsSnapshot` as JSONB instead of a separate table with foreign keys?
-112. What are the trade-offs of JSONB vs relational tables for test snapshots?
-113. Why is `testQuestions.id` a `text` field instead of UUID?
-114. What is the `pdfFailures` table for? Why is it separate from the `payments` table?
-115. Why does the `payments` table have `receiptJobId`, `receiptRequestedAt`, and `receiptStatus`? What problem do they solve together?
+100.  Why does `payments.installmentId` exist if you also have `payment_allocations`?
+101.  Why is `payments.installmentId` nullable with `onDelete: "set null"` but `payment_allocations.installmentId` uses `onDelete: "cascade"`?
+102.  What is a self-referencing foreign key? Where do you use one (hint: `plans.previousPlanId`)?
+103.  Why does `plans.previousPlanId` exist? What flow does it support?
+104.  What is the purpose of the `payment_allocations` table? Why not just link payments directly to installments?
+105.  What happens to payments if a student is deleted? (Trace `onDelete: "cascade"`)
+106.  Why is `receipt_number` a text field instead of an auto-incrementing integer?
+107.  What is the format of `receipt_number`? Why `SY-YYYY-NNNN` instead of a raw number?
+108.  How do you generate sequential receipt numbers? Is it thread-safe?
+109.  What is a race condition in receipt number generation? How could two payments get the same number?
+110.  How would you fix the receipt number race condition? (Database sequence vs atomic counter)
+111.  Why store `questionsSnapshot` as JSONB instead of a separate table with foreign keys?
+112.  What are the trade-offs of JSONB vs relational tables for test snapshots?
+113.  Why is `testQuestions.id` a `text` field instead of UUID?
+114.  What is the `pdfFailures` table for? Why is it separate from the `payments` table?
+115.  Why does the `payments` table have `receiptJobId`, `receiptRequestedAt`, and `receiptStatus`? What problem do they solve together?
 
 ### Indexes
 
@@ -586,5 +585,5 @@
 
 ---
 
-*Total: **416 questions** across 10 sections.*
-*Every question maps directly to a real implementation decision in the Skillyards codebase.*
+_Total: **416 questions** across 10 sections._
+_Every question maps directly to a real implementation decision in the Skillyards codebase._

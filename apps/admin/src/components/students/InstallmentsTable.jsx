@@ -2,7 +2,14 @@
 
 import { CheckCircle, Clock, AlertCircle, Plus, Pencil } from "lucide-react";
 
-export function InstallmentsTable({ installments = [], onPay, onAddInstallment, onEditInstallment, canEdit, unscheduled }) {
+export function InstallmentsTable({
+  installments = [],
+  onPay,
+  onAddInstallment,
+  onEditInstallment,
+  canEdit,
+  unscheduled,
+}) {
   const getStatus = (inst) => {
     if (inst.paid >= inst.amount) return "paid";
     const due = new Date(inst.dueDate);
@@ -25,13 +32,14 @@ export function InstallmentsTable({ installments = [], onPay, onAddInstallment, 
     overdue: {
       label: "Overdue",
       icon: <AlertCircle className="w-4 h-4" />,
-      className: "bg-destructive/10 text-destructive border border-destructive/20",
+      className:
+        "bg-destructive/10 text-destructive border border-destructive/20",
     },
   };
 
   const STATUS_ORDER = { overdue: 0, pending: 1, paid: 2 };
   const sorted = [...installments].sort(
-    (a, b) => STATUS_ORDER[getStatus(a)] - STATUS_ORDER[getStatus(b)]
+    (a, b) => STATUS_ORDER[getStatus(a)] - STATUS_ORDER[getStatus(b)],
   );
 
   if (!installments.length) {
@@ -44,10 +52,11 @@ export function InstallmentsTable({ installments = [], onPay, onAddInstallment, 
 
   return (
     <div className="card overflow-hidden">
-
       <div className="px-5 py-4 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h3 className="text-sm font-semibold text-foreground">Installments</h3>
+          <h3 className="text-sm font-semibold text-foreground">
+            Installments
+          </h3>
           {unscheduled > 0 && (
             <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 border border-amber-200">
               ₹{unscheduled.toLocaleString()} unscheduled
@@ -82,8 +91,13 @@ export function InstallmentsTable({ installments = [], onPay, onAddInstallment, 
               const ui = statusUI[status];
 
               return (
-                <tr key={inst.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-5 py-4 text-muted-foreground">{inst.dueDate}</td>
+                <tr
+                  key={inst.id}
+                  className="hover:bg-muted/30 transition-colors"
+                >
+                  <td className="px-5 py-4 text-muted-foreground">
+                    {inst.dueDate}
+                  </td>
                   <td className="px-5 py-4 font-semibold text-foreground">
                     ₹{inst.amount.toLocaleString()}
                   </td>
@@ -91,7 +105,9 @@ export function InstallmentsTable({ installments = [], onPay, onAddInstallment, 
                     ₹{inst.paid.toLocaleString()}
                   </td>
                   <td className="px-5 py-4">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold ${ui.className}`}>
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-semibold ${ui.className}`}
+                    >
                       {ui.icon}
                       {ui.label}
                     </span>
@@ -123,7 +139,6 @@ export function InstallmentsTable({ installments = [], onPay, onAddInstallment, 
           </tbody>
         </table>
       </div>
-
     </div>
   );
 }

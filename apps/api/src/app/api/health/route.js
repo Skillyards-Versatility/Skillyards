@@ -12,9 +12,9 @@ async function getHandler(req, { ctx }) {
       service: "skillyards-api",
       version: "1.0.0",
       uptime: process.uptime(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     },
-    "API is healthy"
+    "API is healthy",
   );
 
   return Response.json(payload, { status: 200 });
@@ -27,5 +27,5 @@ async function getHandler(req, { ctx }) {
 // - Automatic rate limiting protection
 export const GET = createProtectedRoute(getHandler, {
   policy: publicAllow,
-  isPublic: true
+  isPublic: true,
 });

@@ -4,7 +4,8 @@ import { ArrowRight, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-const whatsappNumber = process.env.NEXT_PUBLIC_PHONE?.replace(/\D/g, "") || "917060100561";
+const whatsappNumber =
+  process.env.NEXT_PUBLIC_PHONE?.replace(/\D/g, "") || "917060100561";
 
 export function FSDPrimaryDemoCTA({
   label = "Book a Free Demo Class",
@@ -33,7 +34,8 @@ export function FSDPrimaryDemoCTA({
         className={`flex md:hidden ${mobileClassName}`.trim()}
       >
         <a href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-          <span className="truncate">{label}</span> <MessageCircle size={16} className="ml-2 shrink-0" />
+          <span className="truncate">{label}</span>{" "}
+          <MessageCircle size={16} className="ml-2 shrink-0" />
         </a>
       </Button>
     </>

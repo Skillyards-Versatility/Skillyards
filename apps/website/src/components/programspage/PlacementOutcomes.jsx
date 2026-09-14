@@ -10,7 +10,8 @@ const alumni = [
     role: "Junior Frontend Developer",
     company: "TechSpark Noida",
     package: "₹4.2 LPA",
-    quote: "SkillYards didn't just teach me code. I built practical projects during my final year and felt more confident for interviews and early career opportunities.",
+    quote:
+      "SkillYards didn't just teach me code. I built practical projects during my final year and felt more confident for interviews and early career opportunities.",
   },
   {
     name: "Rahul Verma",
@@ -18,7 +19,8 @@ const alumni = [
     role: "Full-Stack Developer",
     company: "StartupBase Delhi",
     package: "₹5.8 LPA",
-    quote: "Coming from a non-tech background, I was nervous. Six months later I'm building production apps. The mentors here are genuinely invested in your success.",
+    quote:
+      "Coming from a non-tech background, I was nervous. Six months later I'm building production apps. The mentors here are genuinely invested in your success.",
   },
   {
     name: "Anjali Singh",
@@ -26,11 +28,10 @@ const alumni = [
     role: "Digital Marketing Executive",
     company: "Brandify Solutions",
     package: "₹3.6 LPA",
-    quote: "I ran a real Google Ads campaign for a local business during training. That experience is what got me the job no other institute does this.",
+    quote:
+      "I ran a real Google Ads campaign for a local business during training. That experience is what got me the job no other institute does this.",
   },
 ];
-
-
 
 export default function PlacementOutcomes() {
   return (
@@ -48,7 +49,8 @@ export default function PlacementOutcomes() {
             Placement & Outcomes
           </motion.div>
           <h2 className="font-serif text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-            Real Results. <span className="italic text-primary">Real Careers.</span>
+            Real Results.{" "}
+            <span className="italic text-primary">Real Careers.</span>
           </h2>
         </div>
 
@@ -102,8 +104,6 @@ export default function PlacementOutcomes() {
             </motion.div>
           ))}
         </div>
-
-      
       </div>
     </section>
   );
