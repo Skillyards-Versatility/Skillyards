@@ -1839,17 +1839,25 @@ export default function DigitalMarketingContent() {
 
             <TableRow>
               <TableCell className="font-medium">Phone</TableCell>
-              <TableCell>070601 00562</TableCell>
+              <TableCell>
+                <a href="tel:+917060100562" className="hover:underline">
+                  070601 00562
+                </a>
+              </TableCell>
             </TableRow>
 
             <TableRow>
               <TableCell className="font-medium">Email</TableCell>
-              <TableCell></TableCell>
+              <TableCell>
+                <a href="mailto:info@skillyards.in" className="hover:underline">
+                  info@skillyards.in
+                </a>
+              </TableCell>
             </TableRow>
 
             <TableRow>
               <TableCell className="font-medium">Timings</TableCell>
-              <TableCell>Monday – Saturday | 9:00 AM – 7:00 PM</TableCell>
+              <TableCell>Monday – Saturday | 9:00 AM – 8:00 PM (Sunday Closed)</TableCell>
             </TableRow>
           </TableBody>
         </Table>

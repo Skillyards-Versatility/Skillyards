@@ -112,9 +112,8 @@ export default function DigitalMarketingPromoCards() {
                 </h3>
 
                 <p className={BODY}>
-                  Our campus sits in Dayal Bagh, near Bhagwan Talkies Crossing —
-                  close enough for a daily commute from most of Agra, and
-                  reachable for students across the district.
+                  Our campus sits at Indra Puri, New Agra Colony, near Bhagwan Talkies Crossing.
+                  It is conveniently accessible for daily commuters across Agra and neighboring districts.
                 </p>
 
                 <p className={`${BODY} mt-4 font-semibold text-white`}>
@@ -131,7 +130,7 @@ export default function DigitalMarketingPromoCards() {
                     • Students also travel in from Mathura, Firozabad, Etah,
                     Etawah and Bharatpur
                   </li>
-                  <li>• Open weekdays from 9:00 AM — walk in any day</li>
+                  <li>• Open Monday to Saturday from 9:00 AM (walk-ins welcome)</li>
                   <li>• Free counselling, no appointment needed</li>
                 </ul>
               </div>
@@ -154,7 +153,7 @@ export default function DigitalMarketingPromoCards() {
 
                 <p className={BODY}>
                   A 3-year, 6-semester degree from Dr. Bhimrao Ambedkar
-                  University, Agra — BBA with Digital Marketing or BCA with Full
+                  University, Agra: BBA with Digital Marketing or BCA with Full
                   Stack Development, both built around live project work from
                   year one.
                 </p>
@@ -183,17 +182,17 @@ export default function DigitalMarketingPromoCards() {
 
                 <ul className={`${BODY} space-y-1.5 list-none`}>
                   <li>
-                    • <strong className="text-white">On-Job Degree</strong> —
+                    • <strong className="text-white">On-Job Degree</strong>:
                     3-year BBA or BCA
                   </li>
                   <li>
-                    • <strong className="text-white">On-Job Training</strong> —
+                    • <strong className="text-white">On-Job Training</strong>:
                     shorter, skill-focused program
                   </li>
                   <li>
                     •{" "}
-                    <strong className="text-white">Quick Skill Program</strong>{" "}
-                    — free AI bootcamp
+                    <strong className="text-white">Quick Skill Program</strong>:
+                    free AI bootcamp
                   </li>
                 </ul>
 
@@ -236,9 +235,9 @@ export default function DigitalMarketingPromoCards() {
                     >
                       {PHONE_DISPLAY}
                     </a>{" "}
-                    · 🕘 Mon–Sat, 9:00 AM–8:00 PM
+                    · 🕘 Mon - Sat, 9:00 AM - 8:00 PM
                   </div>
-                  <div>Sunday — Closed</div>
+                  <div>Sunday: Closed</div>
                 </address>
 
                 <Link

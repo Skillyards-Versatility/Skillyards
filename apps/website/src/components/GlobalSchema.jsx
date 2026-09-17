@@ -27,7 +27,7 @@ export const globalSchema = {
   address: {
     "@type": "PostalAddress",
     streetAddress:
-      "A-3, behind Manoj Dhaba, Bhagwan Talkies crossing, Indra Puri, New Agra Colony, Agra, Uttar Pradesh",
+      "A-3, behind Manoj Dhaba, Bhagwan Talkies crossing, Indra Puri, New Agra Colony",
     addressLocality: "Agra",
     addressRegion: "Uttar Pradesh",
     postalCode: "282005",
@@ -36,8 +36,8 @@ export const globalSchema = {
 
   contactPoint: {
     "@type": "ContactPoint",
-    telephone: "+91 7060166562",
-    contactType: "support",
+    telephone: "+91 70601 00562",
+    contactType: "customer support",
     areaServed: "IN",
     availableLanguage: ["English", "Hindi"],
   },

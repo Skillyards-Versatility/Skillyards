@@ -2,15 +2,15 @@ import { NextResponse } from "next/server";
 
 // High-quality fallback data matching actual ratings of Skillyards Versatility Pvt. Ltd.
 const FALLBACK_DATA = {
-  placeId: process.env.GOOGLE_PLACE_ID || "",
+  placeId: process.env.GOOGLE_PLACE_ID || "ChIJ2WE7P2p3dDkR_Kc5Wi7IbMI",
   rating: 4.9,
-  userRatingCount: 140,
+  userRatingCount: 212,
   reviews: [
     {
       authorAttribution: {
         displayName: "Ankit Sharma",
         photoUri: "",
-        uri: "https://maps.app.goo.gl/P3T3fN9B4TnmU7Yg9", // Placeholder search link
+        uri: "",
       },
       rating: 5,
       relativePublishTimeDescription: "1 week ago",
@@ -22,7 +22,7 @@ const FALLBACK_DATA = {
       authorAttribution: {
         displayName: "Divya Patel",
         photoUri: "",
-        uri: "https://maps.app.goo.gl/P3T3fN9B4TnmU7Yg9",
+        uri: "",
       },
       rating: 5,
       relativePublishTimeDescription: "2 weeks ago",
@@ -34,7 +34,7 @@ const FALLBACK_DATA = {
       authorAttribution: {
         displayName: "Raghav Gupta",
         photoUri: "",
-        uri: "https://maps.app.goo.gl/P3T3fN9B4TnmU7Yg9",
+        uri: "",
       },
       rating: 5,
       relativePublishTimeDescription: "3 weeks ago",
@@ -46,7 +46,7 @@ const FALLBACK_DATA = {
       authorAttribution: {
         displayName: "Shalini Singh",
         photoUri: "",
-        uri: "https://maps.app.goo.gl/P3T3fN9B4TnmU7Yg9",
+        uri: "",
       },
       rating: 5,
       relativePublishTimeDescription: "1 month ago",
@@ -58,7 +58,7 @@ const FALLBACK_DATA = {
       authorAttribution: {
         displayName: "Vicky Jadhav",
         photoUri: "",
-        uri: "https://maps.app.goo.gl/P3T3fN9B4TnmU7Yg9",
+        uri: "",
       },
       rating: 4,
       relativePublishTimeDescription: "1 month ago",
