@@ -12,7 +12,7 @@ const BUSINESS = {
   ],
   phone: "+917060100562",
   phoneDisplay: "070601 00562",
-  timingStatus: "Mon–Sat, 9:00 AM–8:00 PM (Sunday Closed)",
+  timingStatus: "Mon - Sat, 9:00 AM - 8:00 PM (Sunday Closed)",
   features: ["Classroom Training", "Placement Support"],
   mapsUrl:
     "https://www.google.com/maps/place/Skillyards+Versatility+Pvt.+Ltd./@27.211412,78.0053434,17z/data=!3m1!4b1!4m6!3m5!1s0x3974776a3f3b61d9:0xc26cc82e5a39a7fc!8m2!3d27.211412!4d78.0053434!16s%2Fg%2F11y3ff92hf?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D",
@@ -24,27 +24,27 @@ const SLIDES = [
   {
     id: 1,
     src: "/images/carousel/InfoCarousal1.webp",
-    alt: "BCA & BBA programs with live project training",
+    alt: "BCA & BBA degree programs with live project training",
   },
   {
     id: 2,
     src: "/images/carousel/InfoCarousal2.webp",
-    alt: "100% Placement Support - Get interview-ready",
+    alt: "100% Placement Support - Interview preparation and hiring connections",
   },
   {
     id: 3,
     src: "/images/carousel/InfoCarousal3.webp",
-    alt: "Full-Stack Development - Hands-on projects",
+    alt: "Full-Stack Web Development - Real-world coding projects",
   },
   {
     id: 4,
     src: "/images/carousel/InfoCarousal4.webp",
-    alt: "Full-Stack Development - Hands-on projects",
+    alt: "Digital Marketing & Growth - Live campaign management",
   },
   {
     id: 5,
     src: "/images/carousel/InfoCarousal5.webp",
-    alt: "Full-Stack Development - Hands-on projects",
+    alt: "AI-Integrated Workflows & Modern Tech Stack",
   },
 ];
 
@@ -116,11 +116,8 @@ export default function InfoCarouselSection() {
               <p className="text-xs font-bold tracking-wide text-primary transition-colors duration-300">
                 TIMING
               </p>
-              <p className="mt-1 flex flex-wrap items-center gap-2 text-sm text-muted-foreground transition-colors duration-300">
-                <span>{BUSINESS.timingLabel}</span>
-                <span className="text-xs font-semibold text-primary transition-colors duration-300">
-                  {BUSINESS.timingStatus}
-                </span>
+              <p className="mt-1 text-sm font-semibold text-foreground transition-colors duration-300">
+                {BUSINESS.timingStatus}
               </p>
             </div>
           </div>
@@ -140,7 +137,7 @@ export default function InfoCarouselSection() {
             ))}
           </div>
 
-          {/* Call / Navigation — mobile only */}
+          {/* Call / Navigation (mobile only) */}
           <div className="mt-2 grid grid-cols-2 gap-4 lg:hidden">
             <a
               href={`tel:${BUSINESS.phone}`}

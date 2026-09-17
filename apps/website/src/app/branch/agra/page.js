@@ -5,7 +5,6 @@ import SkillyardsAdvantage from "@/app/landing/components/SkillyardsAdvantage.js
 import StatsStrip from "@/app/landing/components/Statsstrip.js";
 import GoogleReviews from "@/app/landing/components/GoogleReviews.js";
 import FaqAccordion from "@/app/landing/components/Faqaccordion.js";
-import DigitalMarketingContent from "@/app/landing/components/DigitalMarketingContent.js";
 
 import JsonLd from "@/components/JsonLd.jsx";
 
@@ -83,13 +82,12 @@ export default function AgraBranchPage() {
     <main className="w-full overflow-x-hidden">
       <JsonLd data={agraBranchSchema} id="agra-branch-schema" />
       <InfoCarouselSection />
-      <FacilitiesSection />
+      <FacilitiesSection renderSchema={false} />
       <PromoCards />
       <SkillyardsAdvantage />
       <StatsStrip />
       <GoogleReviews />
       <FaqAccordion />
-      <DigitalMarketingContent />
     </main>
   );
 }

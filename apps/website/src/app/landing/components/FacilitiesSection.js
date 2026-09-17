@@ -32,24 +32,24 @@ const groups = [
         icon: Wifi,
         label: "Free Wi-Fi",
         description:
-          "Research, upload portfolios and push code without burning your mobile data.",
+          "High-speed internet to push code, research tools, and build portfolios without burning mobile data.",
       },
       {
         icon: Car,
         label: "Student & Visitor Parking",
         description:
-          "Two-wheeler and car parking on-site — arrive, park, get to class.",
+          "Two-wheeler and car parking available on-site for students and visitors.",
       },
       {
         icon: Zap,
         label: "Power Backup",
         description:
-          "	Inverter backup means a power cut never ends a lab session mid-project.",
+          "Full inverter backup ensures power cuts never interrupt a lab session mid-project.",
       },
       {
         icon: Camera,
         label: "CCTV Surveillance",
-        description: "A monitored, secure campus throughout college hours.",
+        description: "A monitored, secure campus throughout training hours.",
       },
       {
         icon: Droplet,
@@ -73,25 +73,25 @@ const groups = [
         icon: Monitor,
         label: "Computer & Dev Lab",
         description:
-          "	Development machines for coding, design, campaign work and live client projects.",
+          "Development machines for coding, design, campaign work and live client projects.",
       },
       {
         icon: Projector,
         label: "Projector & Smart Classes",
         description:
-          "VWatch a campaign or a codebase get built on screen, step by step.",
+          "Watch a campaign or a codebase get built on screen, step by step.",
       },
       {
         icon: BookOpen,
-        label: "Library & Reading Room",
+        label: "Self-Study & Project Desks",
         description:
-          "Quiet space for revision, self-study and semester prep between practicals.",
+          "Dedicated space for project collaboration and revision between practical sessions.",
       },
       {
         icon: FileText,
         label: "Free Study Material",
         description:
-          "Notes, resources and project briefs included across our programs",
+          "Notes, resources and project briefs included across all programs.",
       },
     ],
   },
@@ -102,8 +102,8 @@ const groups = [
     items: [
       {
         icon: Coffee,
-        label: "Cafeteria & Refreshment Area",
-        description: "A break space to recharge between classes.",
+        label: "Student Refreshment Zone",
+        description: "A comfortable break space to recharge between classes.",
       },
       {
         icon: Briefcase,
@@ -115,20 +115,20 @@ const groups = [
         icon: Compass,
         label: "Free Career Counselling",
         description:
-          "Free one-on-one guidance before you commit to any program — no obligation.",
+          "One-on-one guidance with no obligation before enrolling in any program.",
       },
       {
         icon: HelpCircle,
         label: "Doubt-Clearing Support",
         description:
-          "	Trainers stay available after class to work through what didn't land.",
+          "Mentors stay available after class to work through any technical questions.",
       },
     ],
   },
 ];
 
 // Derived from the same `groups` data above, so the visual list and the
-// structured data can never drift out of sync — one source of truth.
+// structured data can never drift out of sync: one source of truth.
 export const facilitiesAmenityFeature = groups.flatMap((group) =>
   group.items.map((item) => ({
     "@type": "LocationFeatureSpecification",
@@ -142,7 +142,7 @@ export const facilitiesAmenityFeature = groups.flatMap((group) =>
  *   JSON-LD script tag. Defaults to true. If your project already renders
  *   organization-level schema elsewhere (e.g. app/layout.jsx), set this to
  *   false here and merge `facilitiesAmenityFeature` (exported above) into
- *   the `amenityFeature` field of that existing schema instead — two
+ *   the `amenityFeature` field of that existing schema instead: two
  *   Organization/EducationalOrganization blocks on the same page is a
  *   duplicate-schema anti-pattern.
  */
@@ -155,7 +155,6 @@ export function FacilitiesSection({ renderSchema = true } = {}) {
       {renderSchema && (
         <script
           type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
@@ -168,7 +167,7 @@ export function FacilitiesSection({ renderSchema = true } = {}) {
       )}
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        {/* Header — matches the eyebrow + heading pattern used across skillyards.in */}
+        {/* Header: matches the eyebrow + heading pattern used across skillyards.in */}
         <div className="max-w-3xl">
           <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-xs font-bold text-primary tracking-wider uppercase mb-3">
             Campus &amp; Facilities
@@ -177,11 +176,11 @@ export function FacilitiesSection({ renderSchema = true } = {}) {
             Everything You Need on Campus, So Nothing Slows Down Your Learning
           </h2>
           <p className="mt-4 text-base sm:text-lg leading-relaxed text-muted-foreground">
-            Whether you're here for a three-year degree, a short skill program,
-            or a weekend AI bootcamp, you're learning by building - writing
+            Whether you&apos;re here for a three-year degree, a short skill program,
+            or a weekend AI bootcamp, you&apos;re learning by building - writing
             code, running live campaigns, shipping real work. That takes proper
             labs, reliable power, quiet study space and mentors you can actually
-            reach. Here's what our Agra campus gives every student who walks in.
+            reach. Here&apos;s what our Agra campus gives every student who walks in.
           </p>
         </div>
 

@@ -7,28 +7,28 @@ const FAQS = [
   {
     question: "Which is the best digital marketing institute in Agra?",
     answer:
-      "Choosing an institute in Agra comes down to whether you learn on live accounts or only from slides. At SkillYards, digital marketing students work on real SEO, Google Ads, Meta Ads and GA4 campaigns from early in the program. We run a DBRAU-affiliated BBA Digital Marketing On-Job Degree, a shorter On-Job Training program, and free AI bootcamps — so you can pick by how much time you have. Visit our Dayal Bagh campus and sit in on a session before deciding.",
+      "Choosing an institute in Agra comes down to whether you learn on live accounts or only from slides. At SkillYards, digital marketing students work on real SEO, Google Ads, Meta Ads and GA4 campaigns from early in the program. We run a DBRAU-affiliated BBA Digital Marketing On-Job Degree, a shorter On-Job Training program, and free AI bootcamps, so you can choose based on your schedule. Visit our Agra campus near Bhagwan Talkies Crossing and sit in on a session before deciding.",
   },
   {
     question: "Is SkillYards a good institute for BBA and BCA in Agra?",
     answer:
-      "Our BBA and BCA programs are affiliated to Dr. Bhimrao Ambedkar University, Agra, so the degree carries the same recognition as any DBRAU-affiliated college. What differs is the structure: the On-Job Degree model puts live project work alongside your semesters from year one. Students in the BBA track run real campaigns; BCA students build and deploy real applications. The best way to judge is to visit — ask to see the dev lab and talk to a current student.",
+      "Our BBA and BCA programs are affiliated to Dr. Bhimrao Ambedkar University, Agra, so the degree carries the same recognition as any DBRAU-affiliated college. What differs is the structure: the On-Job Degree model puts live project work alongside your semesters from year one. Students in the BBA track run real campaigns; BCA students build and deploy real applications. The best way to judge is to visit: tour the dev lab and talk to our current students.",
   },
   {
     question: "Where is SkillYards located in Agra and how do I reach it?",
     answer:
-      "Our campus is at A-3, behind Manoj Dhaba, Bhagwan Talkies crossing, Indra Puri, New Agra Colony, Agra, Uttar Pradesh 282005,near Bhagwan Talkies Crossing. Students commute daily from Sikandra, Kamla Nagar, Shahganj, Tajganj and Bichpuri, and we have on-site parking for two-wheelers and cars. We're open from 9:00 AM - 8:00 PM Monday to Saturday. Call 070601 00562 or get directions on Google Maps.",
+      "Our campus is at A-3, behind Manoj Dhaba, Bhagwan Talkies crossing, Indra Puri, New Agra Colony, Agra, Uttar Pradesh 282005, near Bhagwan Talkies Crossing. Students commute daily from Sikandra, Kamla Nagar, Shahganj, Tajganj and Bichpuri, and we have on-site parking for two-wheelers and cars. We're open from 9:00 AM - 8:00 PM Monday to Saturday. Call 070601 00562 or get directions on Google Maps.",
   },
   {
     question: "Do you offer full-stack development courses near me in Agra?",
     answer:
-      "Yes. We run full-stack training at our Dayal Bagh campus in Agra, covering React, Next.js, Node.js, MongoDB, Git and deployment. You can take it as a 3-year DBRAU-affiliated BCA Full Stack On-Job Degree, or as a shorter 7–9 month On-Job Training program if you already have a degree.",
+      "Yes. We run full-stack training at our Agra campus near Bhagwan Talkies Crossing, covering React, Next.js, Node.js, MongoDB, Git and deployment. You can take it as a 3-year DBRAU-affiliated BCA Full Stack On-Job Degree, or as a shorter 7 to 9 month On-Job Training program if you already have a degree.",
   },
 
   {
     question: "Can I do BBA with digital marketing in Agra?",
     answer:
-      "Yes. Our BBA Digital Marketing On-Job Degree is a 3-year, 6-semester program affiliated to DBRAU, Agra. Alongside your BBA subjects you work on SEO, paid ads, social media and analytics using live accounts — so you finish with a degree and a portfolio.",
+      "Yes. Our BBA Digital Marketing On-Job Degree is a 3-year, 6-semester program affiliated to DBRAU, Agra. Alongside your BBA subjects you work on SEO, paid ads, social media and analytics using live accounts, ensuring you graduate with both a degree and a portfolio.",
   },
   {
     question: "Can I do BCA with full-stack development in Agra?",
@@ -44,22 +44,22 @@ const FAQS = [
     question:
       "What's the difference between an On-Job Degree and a regular BBA or BCA?",
     answer:
-      "The university syllabus and the degree are the same. The difference is what happens outside the syllabus. In a regular program, practical exposure usually means one internship in the final year. In an On-Job Degree, you're working on live projects through all three years — so by the time you graduate you have a portfolio, not just a marksheet. The trade-off is that it's more demanding: you're doing coursework and project work at the same time.",
+      "The university syllabus and the degree are the same. The difference is what happens outside the syllabus. In a regular program, practical exposure usually means one internship in the final year. In an On-Job Degree, you work on live projects through all three years, ensuring you graduate with a verified portfolio rather than just a marksheet. It requires dedication, as coursework and real projects run side by side.",
   },
   {
     question: "What is On Job Training (OJT)?",
     answer:
-      "On Job Training is a 7–9 month program where you learn full-stack development or digital marketing through live projects and real work experience. You don't need a degree — complete the training, build your portfolio, and get placement support.",
+      "On Job Training is a 7 to 9 month program where you learn full-stack development or digital marketing through live projects and real work experience. No prior degree is required; complete the training, build your portfolio, and get placement support.",
   },
   {
     question: "Should I choose digital marketing or full-stack development?",
     answer:
-      "It depends on how you like to work. Digital marketing suits you if you enjoy strategy, writing, analysing numbers and seeing quick results — campaigns show performance within days. Full-stack development suits you if you like building things, solving logical problems and working on something over weeks. Both have hiring demand in Agra, Noida and Delhi NCR. Our free counselling session exists exactly for this question — come in and we'll walk you through both tracks.",
+      "It depends on how you like to work. Digital marketing suits you if you enjoy strategy, writing, analysing numbers and seeing quick results, as campaigns show performance within days. Full-stack development suits you if you like building things, solving logical problems and working on something over weeks. Both have hiring demand in Agra, Noida and Delhi NCR. Our free counselling session exists exactly for this question. Walk in and our mentors will guide you through both tracks.",
   },
   {
     question: "Do I need a degree to join?",
     answer:
-      "Not for every program. On-Job Training and our free Quick Skill bootcamps are open to graduates, working professionals and anyone who wants the skills — no prior degree required. The On-Job Degree is different, since it is a degree: eligibility is 12th pass.",
+      "Not for every program. On-Job Training and our free Quick Skill bootcamps are open to graduates, working professionals and anyone who wants practical skills, with no prior degree required. The On-Job Degree requires 12th pass eligibility.",
   },
   {
     question: "Which technologies and tools do you train in?",
@@ -69,17 +69,13 @@ const FAQS = [
   {
     question: "Do you provide placement assistance?",
     answer:
-      "We have a dedicated placement cell that supports students with resume building, mock interviews, portfolio reviews and interview opportunities with hiring companies. We don't promise guaranteed jobs — what we commit to is preparation and access.",
+      "We have a dedicated placement cell that supports students with resume building, mock interviews, portfolio reviews and interview opportunities with hiring companies. We do not promise guaranteed jobs; what we commit to is rigorous preparation, portfolio building, and direct hiring access.",
   },
   {
     question: "Do you offer free courses or AI bootcamps in Agra?",
     answer:
-      "Yes — our Quick Skill Programs are free AI-focused bootcamps open to students and working professionals in Agra. They're short, practical, and there's no fee. Seats are limited per batch, so ask about the next one when you call.",
+      "Yes. Our Quick Skill Programs are free AI-focused bootcamps open to students and working professionals in Agra. They're short, practical, and there's no fee. Seats are limited per batch, so ask about the next one when you call.",
   },
-  // {
-  //   question: ,
-  //   answer:
-  //      },
 ];
 
 export default function FaqAccordion() {

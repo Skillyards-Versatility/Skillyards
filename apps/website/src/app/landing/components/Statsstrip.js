@@ -11,7 +11,7 @@ const STATS = [
     label: "Live Projects Completed By Our Students",
   },
   { id: 3, end: 5, suffix: "+", label: "Programmes Offered" },
-  { id: 4, end: 50, suffix: "+", label: "Tool and Technlogy Taught" },
+  { id: 4, end: 50, suffix: "+", label: "Tools & Technologies Taught" },
 ];
 
 const DURATION = 1800; // ms
