@@ -6,7 +6,6 @@ import StatsStrip from "@/app/landing/components/Statsstrip.js";
 import GoogleReviews from "@/app/landing/components/GoogleReviews.js";
 import FaqAccordion from "@/app/landing/components/Faqaccordion.js";
 import DigitalMarketingContent from "@/app/landing/components/DigitalMarketingContent.js";
-import SuccessStories from "@/app/landing/components/Successstories.js";
 
 import JsonLd from "@/components/JsonLd.jsx";
 
@@ -91,7 +90,6 @@ export default function AgraBranchPage() {
       <GoogleReviews />
       <FaqAccordion />
       <DigitalMarketingContent />
-      <SuccessStories />
     </main>
   );
 }
