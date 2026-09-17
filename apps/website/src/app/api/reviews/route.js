@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 
 // High-quality fallback data matching actual ratings of Skillyards Versatility Pvt. Ltd.
 const FALLBACK_DATA = {
-  placeId: process.env.GOOGLE_PLACE_ID || "",
+  placeId: process.env.GOOGLE_PLACE_ID || "ChIJ2WE7P2p3dDkR_Kc5Wi7IbMI",
   rating: 4.9,
-  userRatingCount: 140,
+  userRatingCount: 212,
   reviews: [
     {
       authorAttribution: {

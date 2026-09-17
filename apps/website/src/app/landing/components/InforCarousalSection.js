@@ -10,10 +10,9 @@ const BUSINESS = {
   address: [
     "A-3, behind Manoj Dhaba, Bhagwan Talkies crossing, Indra Puri, New Agra Colony, Agra, Uttar Pradesh 282005",
   ],
-  phone: "+9170601 00562",
-  phoneDisplay: "+91 70601 00562",
-  // timingStatus: "Monday to Saturday 9 am-8pm"<br/> "Sunday-Close",
-  timingStatus: "Mon–Sat, 9:00 AM–8:00 PM", // e.g. "Open Now" / "Opening Soon" / "Closed"
+  phone: "+917060100562",
+  phoneDisplay: "070601 00562",
+  timingStatus: "Mon–Sat, 9:00 AM–8:00 PM (Sunday Closed)",
   features: ["Classroom Training", "Placement Support"],
   mapsUrl:
     "https://www.google.com/maps/place/Skillyards+Versatility+Pvt.+Ltd./@27.211412,78.0053434,17z/data=!3m1!4b1!4m6!3m5!1s0x3974776a3f3b61d9:0xc26cc82e5a39a7fc!8m2!3d27.211412!4d78.0053434!16s%2Fg%2F11y3ff92hf?entry=ttu&g_ep=EgoyMDI2MDcyMi4wIKXMDSoASAFQAw%3D%3D",

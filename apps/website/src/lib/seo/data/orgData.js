@@ -63,7 +63,7 @@ export const orgData = {
   },
 
   contact: {
-    telephone: "+91 7060166562",
+    telephone: "+91 70601 00562",
     contactType: "customer support",
     areaServed: "IN",
     availableLanguage: ["English", "Hindi"],

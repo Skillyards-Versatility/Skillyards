@@ -112,7 +112,7 @@ export default function DigitalMarketingPromoCards() {
                 </h3>
 
                 <p className={BODY}>
-                  Our campus sits in Dayal Bagh, near Bhagwan Talkies Crossing —
+                  Our campus sits at Indra Puri, New Agra Colony, near Bhagwan Talkies Crossing —
                   close enough for a daily commute from most of Agra, and
                   reachable for students across the district.
                 </p>
