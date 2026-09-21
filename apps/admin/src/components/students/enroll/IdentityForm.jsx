@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { UserPlus, Layers } from "lucide-react";
 import { getBatches } from "@/actions/batch";
 import { LaptopOptedToggle } from "@/components/ui/LaptopOptedToggle";
+import { StudentPhotoUpload } from "@/components/students/StudentPhotoUpload";
 
 const COURSES = [
   "OJT (Full Stack Development)",
@@ -64,6 +65,17 @@ export function IdentityForm({ formData, setFormData }) {
       </h3>
 
       <div className="space-y-4">
+        <div className="p-3.5 sm:p-4 rounded-xl bg-muted/40 border border-border">
+          <StudentPhotoUpload
+            photoKey={formData.photoKey}
+            name={formData.fullName}
+            onChange={(newKey) =>
+              setFormData((prev) => ({ ...prev, photoKey: newKey }))
+            }
+            size="md"
+          />
+        </div>
+
         <div>
           <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
             Full Name
@@ -71,6 +83,7 @@ export function IdentityForm({ formData, setFormData }) {
           <input
             type="text"
             required
+            suppressHydrationWarning
             value={formData.fullName}
             onChange={(e) =>
               setFormData({ ...formData, fullName: e.target.value })
@@ -80,7 +93,7 @@ export function IdentityForm({ formData, setFormData }) {
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
               Course
@@ -88,11 +101,11 @@ export function IdentityForm({ formData, setFormData }) {
             <select
               value={formData.course}
               onChange={handleCourseChange}
-              className="input"
+              className="input bg-background text-foreground"
             >
-              <option value="">Select a course</option>
+              <option value="" className="bg-card text-foreground">Select a course</option>
               {COURSES.map((c) => (
-                <option key={c} value={c}>
+                <option key={c} value={c} className="bg-card text-foreground">
                   {c}
                 </option>
               ))}
@@ -108,9 +121,9 @@ export function IdentityForm({ formData, setFormData }) {
               value={formData.batchId || ""}
               onChange={handleBatchChange}
               disabled={!formData.course || isLoadingBatches}
-              className="input disabled:opacity-50"
+              className="input bg-background text-foreground disabled:opacity-50"
             >
-              <option value="">
+              <option value="" className="bg-card text-foreground">
                 {!formData.course
                   ? "Select a course first"
                   : isLoadingBatches
@@ -118,7 +131,7 @@ export function IdentityForm({ formData, setFormData }) {
                     : "-- Assign Later (Unassigned) --"}
               </option>
               {batches.map((b) => (
-                <option key={b.id} value={b.id}>
+                <option key={b.id} value={b.id} className="bg-card text-foreground">
                   {b.name}
                 </option>
               ))}
@@ -126,7 +139,7 @@ export function IdentityForm({ formData, setFormData }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
             <label className="block text-xs font-semibold text-muted-foreground mb-1.5">
               Phone Number
@@ -134,6 +147,7 @@ export function IdentityForm({ formData, setFormData }) {
             <input
               type="tel"
               required
+              suppressHydrationWarning
               value={formData.phone}
               onChange={(e) =>
                 setFormData({ ...formData, phone: e.target.value })
@@ -149,6 +163,7 @@ export function IdentityForm({ formData, setFormData }) {
             <input
               type="email"
               required
+              suppressHydrationWarning
               value={formData.email}
               onChange={(e) =>
                 setFormData({ ...formData, email: e.target.value })

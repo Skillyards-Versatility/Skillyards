@@ -67,6 +67,7 @@ export async function getStudentsWithPayments(
       finalFee: students.finalFee,
       createdAt: students.createdAt,
       laptopOpted: students.laptopOpted,
+      photoKey: students.photoKey,
       totalPaid: sql`COALESCE(SUM(${payments.amount}), 0)`,
     })
     .from(students)

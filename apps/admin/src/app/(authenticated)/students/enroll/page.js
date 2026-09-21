@@ -22,6 +22,7 @@ export default function EnrollStudentPage() {
     batchName: "",
     baseAmount: "",
     laptopOpted: false,
+    photoKey: null,
   });
 
   const base = Number(formData.baseAmount) || 0;
@@ -51,6 +52,7 @@ export default function EnrollStudentPage() {
         totalFee: base,
         finalFee: base,
         laptopOpted: formData.laptopOpted,
+        photoKey: formData.photoKey || undefined,
       });
 
       toast.success("Student enrolled successfully.");
@@ -67,37 +69,37 @@ export default function EnrollStudentPage() {
       <div className="flex items-center gap-3 border-b border-border pb-4">
         <Link
           href="/students"
-          className="p-2 -ml-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+          className="p-2 -ml-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer shrink-0"
         >
           <ChevronLeft className="w-5 h-5" />
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground truncate">
             Enroll New Student
           </h1>
-          <p className="text-muted-foreground text-sm font-medium mt-0.5">
+          <p className="text-muted-foreground text-xs sm:text-sm font-medium mt-0.5">
             Register a student, assign a batch, and define their fee structure.
           </p>
         </div>
       </div>
 
-      <div className="max-w-2xl">
-        <form onSubmit={handleSubmit} className="card p-6 bg-card space-y-8">
+      <div className="max-w-3xl w-full">
+        <form onSubmit={handleSubmit} className="card p-4 sm:p-7 bg-card space-y-6 sm:space-y-8 shadow-sm">
           <IdentityForm formData={formData} setFormData={setFormData} />
 
           <FeeStructureForm formData={formData} setFormData={setFormData} />
 
-          <div className="pt-4 border-t border-border flex justify-end gap-3">
+          <div className="pt-4 border-t border-border flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5 sm:gap-3">
             <Link
               href="/students"
-              className="px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted border border-border rounded-lg transition-colors"
+              className="w-full sm:w-auto text-center px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted border border-border rounded-lg transition-colors cursor-pointer"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center justify-center min-w-[140px] px-4 py-2.5 bg-primary hover:opacity-90 text-primary-foreground font-bold rounded-lg transition-colors focus:ring-4 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto flex items-center justify-center min-w-[140px] px-5 py-2.5 bg-primary hover:opacity-90 text-primary-foreground font-bold rounded-lg transition-all focus:ring-4 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed shadow-xs cursor-pointer"
             >
               {isSubmitting ? (
                 <>

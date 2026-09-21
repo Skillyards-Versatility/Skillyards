@@ -3,7 +3,7 @@
 import { revalidatePath, revalidateTag } from "next/cache";
 
 import { API } from "@/lib/api";
-import { getAuthHeaders, getSession } from "@/lib/auth";
+import { getAuthHeaders, getSession, getRawToken } from "@/lib/auth";
 
 async function requireAdmin() {
   const session = await getSession();
@@ -231,3 +231,50 @@ export async function addStudentPayment(studentId, paymentData) {
     throw err;
   }
 }
+
+export async function uploadStudentPhoto(formData) {
+  const session = await getSession();
+  if (!session) return { error: "Not authenticated" };
+
+  const file = formData.get("file");
+  if (!file) return { error: "No file provided" };
+
+  if (file.size > 2 * 1024 * 1024) {
+    return { error: "File must be under 2MB" };
+  }
+
+  try {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const blob = new Blob([buffer], { type: file.type });
+    const uploadFormData = new FormData();
+    uploadFormData.append("file", blob, file.name);
+
+    const token = await getRawToken();
+    const res = await fetch(`${API}/api/students/photo`, {
+      method: "POST",
+      headers: token ? { Cookie: `session=${token}` } : {},
+      body: uploadFormData,
+    });
+
+    const result = await res.json();
+    if (!result.success) {
+      return { error: result.message || "Upload failed" };
+    }
+
+    return { success: true, photoKey: result.photoKey };
+  } catch (err) {
+    console.error("[ADMIN][ERROR] uploadStudentPhoto:", err);
+    return { error: "Upload failed" };
+  }
+}
+
+export async function updateStudentPhoto(studentId, photoKey) {
+  try {
+    await requireAdmin();
+    return await updateStudent(studentId, { photoKey });
+  } catch (err) {
+    console.error("[ADMIN][ERROR] updateStudentPhoto:", err.message);
+    throw err;
+  }
+}
+

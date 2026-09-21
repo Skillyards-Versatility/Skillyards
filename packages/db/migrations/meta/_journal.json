@@ -183,6 +183,13 @@
       "when": 1786180012246,
       "tag": "0025_powerful_mesmero",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1789972592061,
+      "tag": "0026_many_rhino",
+      "breakpoints": true
     }
   ]
 }

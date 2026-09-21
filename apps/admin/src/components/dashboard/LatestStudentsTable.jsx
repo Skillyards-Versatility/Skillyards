@@ -179,12 +179,34 @@ export function LatestStudentsTable({
                     className="hover:bg-muted/50 transition-colors"
                   >
                     <td className="px-4 sm:px-6 py-4 font-semibold text-foreground">
-                      <Link
-                        href={`/students/${s.id}`}
-                        className="hover:text-primary transition-colors"
-                      >
-                        {s.name}
-                      </Link>
+                      <div className="flex items-center gap-3">
+                        <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-primary/20 via-primary/5 to-muted border border-border flex items-center justify-center text-primary font-bold text-xs shrink-0 shadow-sm overflow-hidden select-none">
+                          {s.photoKey ? (
+                            <img
+                              src={`/files/${s.photoKey}`}
+                              alt={s.name}
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <span>
+                              {(s.name || "S")
+                                .trim()
+                                .split(/\s+/)
+                                .map((n) => n[0])
+                                .filter(Boolean)
+                                .join("")
+                                .toUpperCase()
+                                .slice(0, 2)}
+                            </span>
+                          )}
+                        </div>
+                        <Link
+                          href={`/students/${s.id}`}
+                          className="hover:text-primary transition-colors truncate"
+                        >
+                          {s.name}
+                        </Link>
+                      </div>
                     </td>
                     <td className="px-4 sm:px-6 py-4 text-muted-foreground">
                       {s.courseName || "—"}

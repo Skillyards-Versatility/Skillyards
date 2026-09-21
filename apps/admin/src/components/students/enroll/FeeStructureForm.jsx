@@ -14,6 +14,7 @@ export function FeeStructureForm({ formData, setFormData }) {
         <input
           type="number"
           required
+          suppressHydrationWarning
           min="1"
           value={formData.baseAmount}
           onChange={(e) =>
@@ -25,11 +26,11 @@ export function FeeStructureForm({ formData, setFormData }) {
       </div>
 
       {fee > 0 && (
-        <div className="p-4 bg-background border border-border rounded-lg flex items-center justify-between">
+        <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1">
           <span className="text-sm font-bold text-foreground">
             Total Payable
           </span>
-          <span className="text-xl font-bold text-foreground">
+          <span className="text-xl font-bold text-primary">
             ₹{fee.toLocaleString()}
           </span>
         </div>
