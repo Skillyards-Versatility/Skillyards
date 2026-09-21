@@ -32,6 +32,7 @@ export const createStudentSchema = z
 
     laptopOpted: z.boolean().default(false),
     laptopOptedAt: z.string().datetime().nullable().optional(),
+    photoKey: z.string().trim().nullable().optional(),
   })
   .refine((data) => data.finalFee <= data.totalFee, {
     message: "Final fee cannot exceed total fee",

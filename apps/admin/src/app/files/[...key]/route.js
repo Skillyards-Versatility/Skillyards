@@ -1,51 +1,42 @@
-import { getSession } from "@/lib/auth";
-import { getObjectFromR2 } from "@/integrations/r2/r2.client";
+import { API } from "@/lib/api";
+import { getRawToken } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(_, { params }) {
-  const session = await getSession();
-  if (!session) {
-    return new Response("Unauthorized", { status: 401 });
-  }
-
+export async function GET(req, { params }) {
   try {
     const { key } = await params;
-    const fileKey = key.join("/");
+    const fileKey = Array.isArray(key) ? key.join("/") : key;
 
-    const { body, contentType, contentLength } = await getObjectFromR2({
-      key: fileKey,
+    const token = await getRawToken();
+    const res = await fetch(`${API}/api/files/${fileKey}`, {
+      headers: token ? { Cookie: `session=${token}` } : {},
+      cache: "no-store",
     });
 
-    const ext = fileKey.split(".").pop().toLowerCase();
-    const MIME_MAP = {
-      png: "image/png",
-      jpg: "image/jpeg",
-      jpeg: "image/jpeg",
-      webp: "image/webp",
-      pdf: "application/pdf",
-      mp3: "audio/mpeg",
-      wav: "audio/wav",
-    };
-    const mime = MIME_MAP[ext] || contentType || "application/octet-stream";
-
-    // AWS SDK v3 returns a Node.js stream for Body. Next.js Response requires Web stream or Buffer.
-    const webStream = body.transformToWebStream();
-
-    const headers = {
-      "Content-Type": mime,
-      "Cache-Control": "private, max-age=86400, stale-while-revalidate=86400",
-    };
-    if (contentLength) {
-      headers["Content-Length"] = contentLength.toString();
+    if (!res.ok) {
+      return new Response(res.statusText, { status: res.status });
     }
 
-    return new Response(webStream, { headers });
+    const headers = new Headers();
+    const contentType = res.headers.get("content-type");
+    const contentLength = res.headers.get("content-length");
+    const cacheControl = res.headers.get("cache-control");
+
+    if (contentType) headers.set("Content-Type", contentType);
+    if (contentLength) headers.set("Content-Length", contentLength);
+    headers.set(
+      "Cache-Control",
+      cacheControl || "private, max-age=86400, stale-while-revalidate=86400",
+    );
+
+    return new Response(res.body, {
+      status: 200,
+      headers,
+    });
   } catch (error) {
-    if (error.name === "NoSuchKey") {
-      return new Response("Not found", { status: 404 });
-    }
-    console.error("FILE_SERVE_ERROR", error);
+    console.error("FILE_PROXY_ERROR", error);
     return new Response("Internal server error", { status: 500 });
   }
 }
+

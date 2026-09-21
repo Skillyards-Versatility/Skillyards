@@ -27,6 +27,8 @@ export const students = pgTable("students", {
   laptopOpted: boolean("laptop_opted").default(false).notNull(),
   laptopOptedAt: timestamp("laptop_opted_at"),
 
+  photoKey: text("photo_key"),
+
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

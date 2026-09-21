@@ -12,6 +12,7 @@ import {
 } from "@/actions/student";
 import { formatDate } from "@/lib/format";
 import { EditStudentModal } from "@/components/students/EditStudentModal";
+import { StudentPhotoUpload } from "@/components/students/StudentPhotoUpload";
 
 import { PlanSection } from "@/components/students/PlanSection";
 import { InstallmentsTable } from "@/components/students/InstallmentsTable";
@@ -34,6 +35,13 @@ export function StudentDetailClient({
   const [editDetailsOpen, setEditDetailsOpen] = useState(false);
   const [installments, setInstallments] = useState(initialInstallments ?? []);
   const [transactions, setTransactions] = useState(initialTransactions);
+  const [currentPhotoKey, setCurrentPhotoKey] = useState(
+    student?.photoKey || null,
+  );
+
+  useEffect(() => {
+    setCurrentPhotoKey(student?.photoKey || null);
+  }, [student?.photoKey]);
 
   useEffect(() => {
     setPlan(initialPlan ?? null);
@@ -261,8 +269,8 @@ export function StudentDetailClient({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Student Details Card */}
-        <div className="card p-5 sm:p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="card p-5 sm:p-6 space-y-4">
+          <div className="flex items-center justify-between">
             <h3 className="text-sm font-semibold text-foreground">
               Student Details
             </h3>
@@ -275,6 +283,21 @@ export function StudentDetailClient({
                 <Pencil className="w-3 h-3" /> Edit
               </button>
             )}
+          </div>
+
+          <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
+            <StudentPhotoUpload
+              photoKey={currentPhotoKey}
+              name={student.name}
+              studentId={student.id}
+              autoSave={true}
+              canEdit={canEdit}
+              onSuccess={(newKey) => {
+                setCurrentPhotoKey(newKey);
+                router.refresh();
+              }}
+              size="md"
+            />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 text-sm">
@@ -509,7 +532,7 @@ export function StudentDetailClient({
         <EditStudentModal
           isOpen={editDetailsOpen}
           onClose={() => setEditDetailsOpen(false)}
-          student={student}
+          student={{ ...student, photoKey: currentPhotoKey }}
           batches={batches}
           onSuccess={() => {
             router.refresh();

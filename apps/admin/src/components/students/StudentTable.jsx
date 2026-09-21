@@ -212,14 +212,38 @@ export function StudentTable({
                 >
                   {/* Name & Contact */}
                   <td className="px-4 sm:px-6 py-4 font-semibold text-foreground">
-                    <Link
-                      href={`/students/${student.id}`}
-                      className="hover:text-primary transition-colors block"
-                    >
-                      {student.name}
-                    </Link>
-                    <div className="text-xs text-muted-foreground font-normal mt-0.5">
-                      {student.email || student.phone || "-"}
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary/20 via-primary/5 to-muted border border-border flex items-center justify-center text-primary font-bold text-xs shrink-0 shadow-sm overflow-hidden select-none">
+                        {student.photoKey ? (
+                          <img
+                            src={`/files/${student.photoKey}`}
+                            alt={student.name}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <span>
+                            {(student.name || "S")
+                              .trim()
+                              .split(/\s+/)
+                              .map((n) => n[0])
+                              .filter(Boolean)
+                              .join("")
+                              .toUpperCase()
+                              .slice(0, 2)}
+                          </span>
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <Link
+                          href={`/students/${student.id}`}
+                          className="hover:text-primary transition-colors block truncate"
+                        >
+                          {student.name}
+                        </Link>
+                        <div className="text-xs text-muted-foreground font-normal mt-0.5 truncate">
+                          {student.email || student.phone || "-"}
+                        </div>
+                      </div>
                     </div>
                   </td>
 

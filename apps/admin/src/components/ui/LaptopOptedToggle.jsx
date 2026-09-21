@@ -9,14 +9,14 @@ export function LaptopOptedToggle({ value, onChange, id }) {
         Laptop Opted
       </label>
       <div className="flex items-center gap-2">
-        <div className="inline-flex rounded-lg border border-border bg-background p-1 gap-1">
+        <div className="inline-flex w-full sm:w-auto rounded-lg border border-border bg-muted/40 p-1 gap-1">
           <button
             type="button"
             onClick={() => onChange(true)}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
               value
-                ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/60"
-                : "text-muted-foreground hover:bg-muted"
+                ? "bg-emerald-600 text-white dark:bg-emerald-500 shadow-xs"
+                : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
             }`}
           >
             <Laptop className="w-3.5 h-3.5" />
@@ -25,10 +25,10 @@ export function LaptopOptedToggle({ value, onChange, id }) {
           <button
             type="button"
             onClick={() => onChange(false)}
-            className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
+            className={`flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-md text-xs font-bold transition-all cursor-pointer ${
               !value
-                ? "bg-gray-100 text-gray-700 dark:bg-gray-850 dark:text-gray-400 border border-gray-200 dark:border-gray-800"
-                : "text-muted-foreground hover:bg-muted"
+                ? "bg-card text-foreground border border-border shadow-xs"
+                : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
             }`}
           >
             Not Opted
