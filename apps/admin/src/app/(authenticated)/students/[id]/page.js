@@ -53,7 +53,7 @@ async function StudentDetailContent({ studentId }) {
           <Link href="/students" className="p-2 -ml-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
             <ChevronLeft className="w-5 h-5" />
           </Link>
-          <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary/20 via-primary/5 to-muted border border-border flex items-center justify-center text-primary font-bold text-base shrink-0 shadow-sm overflow-hidden">
+          <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-gradient-to-br from-primary/20 via-primary/5 to-muted border border-border flex items-center justify-center text-primary font-bold text-xl sm:text-2xl shrink-0 shadow-sm overflow-hidden">
             {student.photoKey ? (
               <img
                 src={`/files/${student.photoKey}`}

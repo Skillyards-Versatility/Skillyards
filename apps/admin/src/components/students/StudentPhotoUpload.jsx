@@ -43,6 +43,8 @@ export function StudentPhotoUpload({
     md: "h-16 w-16 text-lg",
     lg: "h-24 w-24 text-2xl",
     xl: "h-28 w-28 text-3xl",
+    "2xl": "h-32 w-32 sm:h-36 sm:w-36 text-4xl",
+    "3xl": "h-36 w-36 sm:h-44 sm:w-44 text-5xl",
   }[size] || "h-24 w-24 text-2xl";
 
   const iconSizes = {
@@ -50,7 +52,27 @@ export function StudentPhotoUpload({
     md: "w-4 h-4",
     lg: "w-5 h-5",
     xl: "w-6 h-6",
+    "2xl": "w-7 h-7",
+    "3xl": "w-8 h-8",
   }[size] || "w-5 h-5";
+
+  const badgeIconSizes = {
+    sm: "w-3 h-3",
+    md: "w-3.5 h-3.5",
+    lg: "w-4 h-4",
+    xl: "w-4 h-4",
+    "2xl": "w-4.5 h-4.5",
+    "3xl": "w-5 h-5",
+  }[size] || "w-3.5 h-3.5";
+
+  const badgePadding = {
+    sm: "p-1",
+    md: "p-1.5",
+    lg: "p-2",
+    xl: "p-2",
+    "2xl": "p-2 sm:p-2.5",
+    "3xl": "p-2.5 sm:p-3",
+  }[size] || "p-1.5";
 
   const handleFileChange = async (e) => {
     const file = e.target.files?.[0];
@@ -182,10 +204,10 @@ export function StudentPhotoUpload({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={uploading || removing}
-            className="absolute -bottom-1 -right-1 p-1.5 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-md border-2 border-background transition-transform active:scale-95 disabled:opacity-50 cursor-pointer"
+            className={`absolute -bottom-1 -right-1 ${badgePadding} bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-md border-2 border-background transition-transform active:scale-95 disabled:opacity-50 cursor-pointer`}
             title="Upload new photo"
           >
-            <Camera className="w-3.5 h-3.5" />
+            <Camera className={badgeIconSizes} />
           </button>
         )}
 

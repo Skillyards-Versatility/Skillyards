@@ -285,7 +285,7 @@ export function StudentDetailClient({
             )}
           </div>
 
-          <div className="p-3 sm:p-4 rounded-xl bg-muted/30 border border-border">
+          <div className="p-4 sm:p-5 rounded-2xl bg-muted/30 border border-border">
             <StudentPhotoUpload
               photoKey={currentPhotoKey}
               name={student.name}
@@ -296,7 +296,7 @@ export function StudentDetailClient({
                 setCurrentPhotoKey(newKey);
                 router.refresh();
               }}
-              size="md"
+              size="2xl"
             />
           </div>
 
