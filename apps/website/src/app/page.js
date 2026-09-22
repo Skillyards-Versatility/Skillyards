@@ -1,6 +1,7 @@
 import HeroCarousel from "@/components/homepage/HeroCarousel";
 import AboutSection from "@/components/homepage/AboutSection";
 import BatchFeeInfo from "@/components/programspage/BatchFeeInfo";
+import GoogleReviewsSection from "@/components/homepage/GoogleReviewsSection";
 import dynamic from "next/dynamic";
 
 const ProblemSection = dynamic(
@@ -44,6 +45,7 @@ import { getPageFaqs } from "@/lib/seo/getFaqs";
 import { absoluteUrl } from "@/lib/seo/core/url";
 import { sanityClient } from "@/lib/sanity/client";
 import { BATCHES_QUERY } from "@/lib/sanity/queries";
+import { getGoogleReviews } from "@/lib/reviews/getGoogleReviews";
 
 export const revalidate = 86400;
 
@@ -73,8 +75,11 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const batches = await sanityClient.fetch(BATCHES_QUERY);
-  const homepageFaqs = await getPageFaqs("homepage", 4);
+  const [batches, homepageFaqs, reviewsData] = await Promise.all([
+    sanityClient.fetch(BATCHES_QUERY),
+    getPageFaqs("homepage", 4),
+    getGoogleReviews(),
+  ]);
 
   const faqSchema = getFAQSchema(homepageFaqs, absoluteUrl("/"));
   const webPageSchema = getWebPageSchema({
@@ -85,7 +90,26 @@ export default async function Home() {
     keywords: homeKeywords,
   });
 
-  const combinedSchema = [faqSchema, webPageSchema].filter(Boolean);
+  const reviewsSchema = reviewsData
+    ? {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "@id": "https://www.skillyards.in/#organization",
+        name: "SkillYards",
+        url: absoluteUrl("/"),
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: String(reviewsData.rating),
+          reviewCount: String(reviewsData.userRatingCount),
+          bestRating: "5",
+          worstRating: "1",
+        },
+      }
+    : null;
+
+  const combinedSchema = [faqSchema, webPageSchema, reviewsSchema].filter(
+    Boolean,
+  );
 
   return (
     <>
@@ -99,6 +123,7 @@ export default async function Home() {
         <FeaturesSection />
         <WhatStudentsBuild />
         <BatchFeeInfo batches={batches} variant="home" />
+        <GoogleReviewsSection data={reviewsData} />
         <FeaturedRoles />
         <SkillTestSection />
         <LeadersSection />
