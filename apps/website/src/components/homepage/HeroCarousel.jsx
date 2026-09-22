@@ -131,13 +131,11 @@ export default function HeroCarousel() {
                             Best IT Training Institute in Agra With Degree &amp;
                             Placement
                           </h1>
-                        ) : null}
-
-                        {index !== 0 ? (
-                          <span className="hero-slide-text block text-3xl font-extrabold tracking-tight sm:text-5xl md:text-5xl text-foreground pointer-events-auto leading-tight">
+                        ) : (
+                          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground pointer-events-auto leading-tight">
                             {slide.title}
-                          </span>
-                        ) : null}
+                          </h2>
+                        )}
 
                         <p
                           className={`mt-3 sm:mt-6 text-base md:text-lg text-muted-foreground pointer-events-auto font-medium max-w-2xl leading-relaxed px-2 sm:px-0`}

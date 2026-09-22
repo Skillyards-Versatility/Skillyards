@@ -59,17 +59,20 @@ export function buildOrganizationSchema(data) {
 
     sameAs: data.socials,
 
-    ...(data.press?.length
+    ...((data.press?.length || data.socialMentions?.length)
       ? {
-          subjectOf: data.press.map((article) => ({
-            "@type": article.type || "NewsArticle",
-            name: article.title,
-            ...(article.publishedAt && { datePublished: article.publishedAt }),
+          subjectOf: [
+            ...(data.press || []),
+            ...(data.socialMentions || []),
+          ].map((item) => ({
+            "@type": item.type || "CreativeWork",
+            name: item.title,
+            ...(item.publishedAt && { datePublished: item.publishedAt }),
             publisher: {
               "@type": "Organization",
-              name: article.publisher,
+              name: item.publisher,
             },
-            url: article.url,
+            url: item.url,
           })),
         }
       : {}),

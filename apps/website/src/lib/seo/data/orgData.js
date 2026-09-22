@@ -1,5 +1,6 @@
 import { BASE_URL } from "../constants/ids.js";
 import { PRESS_MENTIONS } from "./press.js";
+import { SOCIAL_MENTIONS } from "./socialMentions.js";
 
 export const orgData = {
   name: "SkillYards",
@@ -78,4 +79,5 @@ export const orgData = {
   ],
 
   press: PRESS_MENTIONS,
+  socialMentions: SOCIAL_MENTIONS,
 };
