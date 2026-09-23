@@ -31,7 +31,7 @@ async function StudentDetailContent({ studentId }) {
     getBatches(),
   ]);
   const session = await getSession();
-  const canEdit = session?.role === "ADMIN";
+  const canEdit = ["ADMIN", "MANAGER"].includes(session?.role);
 
   if (!data?.student) {
     return (

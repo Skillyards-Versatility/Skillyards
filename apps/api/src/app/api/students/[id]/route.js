@@ -26,9 +26,9 @@ async function getHandler(req, { context, ctx, resource: student }) {
  * Corrects mistakes in student identity/contact/course/fee details.
  */
 async function patchHandler(req, { context, ctx, resource: student }) {
-  if (ctx.session.role !== "ADMIN") {
+  if (!["ADMIN", "MANAGER"].includes(ctx.session.role)) {
     return Response.json(
-      { error: "Admin access required to edit students" },
+      { error: "Admin or Manager access required to edit students" },
       { status: 403 },
     );
   }
@@ -52,9 +52,9 @@ async function patchHandler(req, { context, ctx, resource: student }) {
     updatedAt: new Date(),
   };
 
-  if (laptopStatusChanged) {
-    setValues.laptopOptedAt = result.data.laptopOpted ? new Date() : null;
-  } else if (result.data.laptopOpted && !student.laptopOptedAt) {
+  if (!result.data.laptopOpted) {
+    setValues.laptopOptedAt = null;
+  } else if (!student.laptopOptedAt || laptopStatusChanged) {
     setValues.laptopOptedAt = new Date();
   }
 

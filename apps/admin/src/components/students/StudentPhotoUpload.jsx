@@ -5,6 +5,64 @@ import { Camera, Trash2, Loader2, User } from "lucide-react";
 import { toast } from "sonner";
 import { uploadStudentPhoto, updateStudentPhoto } from "@/actions/student";
 
+async function optimizeImage(file) {
+  if (typeof window === "undefined") return file;
+
+  const rawType = (file.type || "").toLowerCase();
+  const rawName = (file.name || "").toLowerCase();
+  if (rawType.includes("gif") || rawName.endsWith(".gif")) return file;
+  if (rawType === "image/png" && file.size <= 2 * 1024 * 1024) return file;
+
+  return new Promise((resolve) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      try {
+        const maxDim = 1200;
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return resolve(file);
+
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (blob && (blob.size < file.size || !rawType.startsWith("image/"))) {
+              const safeName = file.name.replace(/\.[^.]+$/, ".jpeg");
+              const optimized = new File([blob], safeName, { type: "image/jpeg" });
+              resolve(optimized);
+            } else {
+              resolve(file);
+            }
+          },
+          "image/jpeg",
+          0.88,
+        );
+      } catch {
+        resolve(file);
+      }
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(file);
+    };
+    img.src = url;
+  });
+}
+
 export function StudentPhotoUpload({
   photoKey = null,
   name = "",
@@ -75,32 +133,46 @@ export function StudentPhotoUpload({
   }[size] || "p-1.5";
 
   const handleFileChange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const rawFile = e.target.files?.[0];
+    if (!rawFile) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      toast.error("Photo must be under 2MB");
+    if (rawFile.size > 10 * 1024 * 1024) {
+      toast.error("Photo must be under 10MB");
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
-    if (
-      !["image/png", "image/jpeg", "image/jpg", "image/webp"].includes(
-        file.type,
-      )
-    ) {
-      toast.error("Only PNG, JPEG, and WebP images are allowed");
+    const rawType = (rawFile.type || "").split(";")[0].trim().toLowerCase();
+    const rawExt = (rawFile.name || "").split(".").pop()?.toLowerCase().trim() || "";
+
+    const validExtensions = ["png", "jpg", "jpeg", "webp", "jfif", "pjpeg", "avif", "heic", "heif"];
+    const validTypes = [
+      "image/png",
+      "image/jpeg",
+      "image/jpg",
+      "image/webp",
+      "image/jfif",
+      "image/pjpeg",
+      "image/x-png",
+      "image/avif",
+      "image/heic",
+      "image/heif",
+    ];
+
+    if (!validTypes.includes(rawType) && !validExtensions.includes(rawExt)) {
+      toast.error("Please upload a PNG, JPEG, WebP, or AVIF image");
       if (fileInputRef.current) fileInputRef.current.value = "";
       return;
     }
 
     setUploading(true);
-    const localUrl = URL.createObjectURL(file);
+    const localUrl = URL.createObjectURL(rawFile);
     setPreviewUrl(localUrl);
 
     try {
+      const fileToUpload = await optimizeImage(rawFile);
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", fileToUpload);
 
       const res = await uploadStudentPhoto(formData);
       if (!res.success) {
@@ -214,7 +286,7 @@ export function StudentPhotoUpload({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/png,image/jpeg,image/jpg,image/webp"
+          accept="image/*,.png,.jpg,.jpeg,.webp,.jfif,.pjpeg,.avif,.heic,.heif"
           className="hidden"
           onChange={handleFileChange}
         />
@@ -227,7 +299,7 @@ export function StudentPhotoUpload({
             Student Photo
           </div>
           <p className="text-xs text-muted-foreground mt-0.5">
-            PNG, JPEG or WebP up to 2MB. Square image recommended.
+            PNG, JPEG, WebP, or AVIF (auto-optimized). Square image recommended.
           </p>
 
           {canEdit && (
