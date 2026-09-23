@@ -89,7 +89,7 @@ export default async function StudentsListPage({ searchParams }) {
   const totalStudents = stats.totalStudents;
 
   const session = await getSession();
-  const canEdit = session?.role === "ADMIN";
+  const canEdit = ["ADMIN", "MANAGER"].includes(session?.role);
 
   return (
     <div className="space-y-6">

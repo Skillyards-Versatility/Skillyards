@@ -2,13 +2,30 @@ import { createProtectedRoute } from "@/lib/middleware";
 import { uploadImageToR2 } from "@/integrations/r2/r2.client";
 import crypto from "crypto";
 
-const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
-const ALLOWED_TYPES = {
+const MIME_MAP = {
   "image/png": "png",
   "image/jpeg": "jpeg",
-  "image/jpg": "jpg",
+  "image/jpg": "jpeg",
   "image/webp": "webp",
+  "image/jfif": "jpeg",
+  "image/pjpeg": "jpeg",
+  "image/x-png": "png",
+  "image/avif": "avif",
+  "image/heic": "heic",
+  "image/heif": "heif",
+};
+
+const EXT_MAP = {
+  png: { ext: "png", mime: "image/png" },
+  jpeg: { ext: "jpeg", mime: "image/jpeg" },
+  jpg: { ext: "jpeg", mime: "image/jpeg" },
+  webp: { ext: "webp", mime: "image/webp" },
+  jfif: { ext: "jpeg", mime: "image/jpeg" },
+  avif: { ext: "avif", mime: "image/avif" },
+  heic: { ext: "heic", mime: "image/heic" },
+  heif: { ext: "heif", mime: "image/heif" },
 };
 
 async function postHandler(req, { ctx }) {
@@ -25,23 +42,33 @@ async function postHandler(req, { ctx }) {
 
     if (file.size > MAX_SIZE) {
       return Response.json(
-        { success: false, message: "File size must be under 2MB" },
+        { success: false, message: "File size must be under 5MB" },
         { status: 400 },
       );
     }
 
-    const contentType = file.type;
-    if (!ALLOWED_TYPES[contentType]) {
+    const rawType = (file.type || "").split(";")[0].trim().toLowerCase();
+    const rawName = file.name || "";
+    const nameExt = rawName.split(".").pop()?.toLowerCase().trim() || "";
+
+    let ext = MIME_MAP[rawType];
+    let contentType = rawType;
+
+    if (!ext && EXT_MAP[nameExt]) {
+      ext = EXT_MAP[nameExt].ext;
+      contentType = EXT_MAP[nameExt].mime;
+    }
+
+    if (!ext) {
       return Response.json(
         {
           success: false,
-          message: "Only PNG, JPEG, and WebP images are allowed",
+          message: "Only PNG, JPEG, WebP, and AVIF images are allowed",
         },
         { status: 400 },
       );
     }
 
-    const ext = ALLOWED_TYPES[contentType];
     const randomId = crypto.randomUUID();
     const key = `student-photos/${Date.now()}-${randomId}.${ext}`;
 

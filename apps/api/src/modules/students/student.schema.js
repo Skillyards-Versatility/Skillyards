@@ -12,27 +12,77 @@ export const createStudentSchema = z
       .string()
       .trim()
       .max(10, "Phone number must be at most 10 digits")
-      .optional(),
+      .or(z.literal(""))
+      .nullable()
+      .optional()
+      .transform((v) => (v ? v : null)),
 
-    email: z.string().trim().email("Invalid email").optional(),
+    email: z
+      .string()
+      .trim()
+      .email("Invalid email")
+      .or(z.literal(""))
+      .nullable()
+      .optional()
+      .transform((v) => (v ? v : null)),
 
     courseName: z
       .string()
       .trim()
       .max(100, "Course name must be at most 100 characters")
-      .optional(),
+      .or(z.literal(""))
+      .nullable()
+      .optional()
+      .transform((v) => (v ? v : null)),
 
-    batchId: z.string().uuid("Invalid batch ID").optional().nullable(),
-    batchName: z.string().trim().optional().nullable(),
-    assignedTo: z.string().uuid("Invalid user ID").optional().nullable(),
+    batchId: z
+      .string()
+      .uuid("Invalid batch ID")
+      .or(z.literal(""))
+      .nullable()
+      .optional()
+      .transform((v) => (v ? v : null)),
 
-    totalFee: z.number().int().positive("Total fee must be a positive integer"),
+    batchName: z
+      .string()
+      .trim()
+      .or(z.literal(""))
+      .nullable()
+      .optional()
+      .transform((v) => (v ? v : null)),
 
-    finalFee: z.number().int().positive("Final fee must be a positive integer"),
+    assignedTo: z
+      .string()
+      .uuid("Invalid user ID")
+      .or(z.literal(""))
+      .nullable()
+      .optional()
+      .transform((v) => (v ? v : null)),
+
+    totalFee: z.coerce
+      .number()
+      .int()
+      .nonnegative("Total fee must be a non-negative integer"),
+
+    finalFee: z.coerce
+      .number()
+      .int()
+      .nonnegative("Final fee must be a non-negative integer"),
 
     laptopOpted: z.boolean().default(false),
-    laptopOptedAt: z.string().datetime().nullable().optional(),
-    photoKey: z.string().trim().nullable().optional(),
+    laptopOptedAt: z
+      .union([z.string().datetime(), z.date()])
+      .nullable()
+      .optional()
+      .transform((v) => (v ? (v instanceof Date ? v : new Date(v)) : null)),
+
+    photoKey: z
+      .string()
+      .trim()
+      .or(z.literal(""))
+      .nullable()
+      .optional()
+      .transform((v) => (v ? v : null)),
   })
   .refine((data) => data.finalFee <= data.totalFee, {
     message: "Final fee cannot exceed total fee",

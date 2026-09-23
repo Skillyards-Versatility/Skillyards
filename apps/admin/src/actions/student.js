@@ -7,8 +7,8 @@ import { getAuthHeaders, getSession, getRawToken } from "@/lib/auth";
 
 async function requireAdmin() {
   const session = await getSession();
-  if (session?.role !== "ADMIN") {
-    throw new Error("Unauthorized: admin access required");
+  if (!session || !["ADMIN", "MANAGER"].includes(session.role)) {
+    throw new Error("Unauthorized: admin or manager access required");
   }
   return session;
 }
@@ -239,15 +239,34 @@ export async function uploadStudentPhoto(formData) {
   const file = formData.get("file");
   if (!file) return { error: "No file provided" };
 
-  if (file.size > 2 * 1024 * 1024) {
-    return { error: "File must be under 2MB" };
+  if (file.size > 5 * 1024 * 1024) {
+    return { error: "File must be under 5MB" };
   }
 
   try {
+    const rawType = (file.type || "").split(";")[0].trim().toLowerCase();
+    const nameExt = (file.name || "").split(".").pop()?.toLowerCase().trim() || "";
+
+    let resolvedType = rawType;
+    if (!resolvedType || resolvedType === "application/octet-stream") {
+      const extMime = {
+        png: "image/png",
+        jpeg: "image/jpeg",
+        jpg: "image/jpeg",
+        webp: "image/webp",
+        jfif: "image/jpeg",
+        avif: "image/avif",
+        heic: "image/heic",
+        heif: "image/heif",
+      };
+      resolvedType = extMime[nameExt] || "image/jpeg";
+    }
+
     const buffer = Buffer.from(await file.arrayBuffer());
-    const blob = new Blob([buffer], { type: file.type });
+    const blob = new Blob([buffer], { type: resolvedType });
     const uploadFormData = new FormData();
-    uploadFormData.append("file", blob, file.name);
+    const safeExt = nameExt || (resolvedType === "image/png" ? "png" : "jpeg");
+    uploadFormData.append("file", blob, `photo_${Date.now()}.${safeExt}`);
 
     const token = await getRawToken();
     const res = await fetch(`${API}/api/students/photo`, {
