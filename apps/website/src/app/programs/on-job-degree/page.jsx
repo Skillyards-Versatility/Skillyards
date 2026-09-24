@@ -153,7 +153,9 @@ export default async function OnJobDegreePage() {
       <WhyOnJobDegree />
       <OJDEligibility />
       <PlacementOutcomes />
-      {faqs.length > 0 && <ProgramsFAQ faqs={faqs} />}
+      {faqs.length > 0 && (
+        <ProgramsFAQ faqs={faqs} highlightText="SkillYards OJD" />
+      )}
       <FinalCTA />
     </main>
   );
