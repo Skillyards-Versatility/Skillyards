@@ -35,7 +35,7 @@ export function DGMHero() {
           transition={{ delay: 0.1 }}
           className="font-serif text-3xl font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl"
         >
-          AI-Integrated Digital Marketing Course in Agra{" "}
+          Best AI-Integrated Digital Marketing Course in Agra{" "}
           <span className="italic text-primary">with Practical Training</span>
         </motion.h1>
 

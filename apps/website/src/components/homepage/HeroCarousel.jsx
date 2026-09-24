@@ -128,8 +128,8 @@ export default function HeroCarousel() {
 
                         {index === 0 ? (
                           <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground pointer-events-auto leading-tight">
-                            Best IT Training Institute in Agra With Degree &amp;
-                            Placement
+                            Best IT &amp; Digital Marketing Training Institute
+                            in Agra With Degree &amp; Placement
                           </h1>
                         ) : (
                           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground pointer-events-auto leading-tight">
