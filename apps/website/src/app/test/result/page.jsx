@@ -179,7 +179,12 @@ function ResultContent() {
                             className="text-red-500 flex-shrink-0"
                           />
                           <span className="text-sm text-red-600 dark:text-red-400">
-                            Your answer: <strong>{item.yourAnswer}</strong>
+                            Your answer:{" "}
+                            <strong>
+                              {typeof item.yourAnswer === "object" && item.yourAnswer !== null
+                                ? item.yourAnswer.text || item.yourAnswer.id || "Not answered"
+                                : item.yourAnswer || "Not answered"}
+                            </strong>
                           </span>
                         </div>
                         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-green-500/5 border border-green-500/10">
@@ -189,7 +194,11 @@ function ResultContent() {
                           />
                           <span className="text-sm text-green-600 dark:text-green-400">
                             Correct answer:{" "}
-                            <strong>{item.correctAnswer}</strong>
+                            <strong>
+                              {typeof item.correctAnswer === "object" && item.correctAnswer !== null
+                                ? item.correctAnswer.text || item.correctAnswer.id
+                                : item.correctAnswer}
+                            </strong>
                           </span>
                         </div>
                       </div>

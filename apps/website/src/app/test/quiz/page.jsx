@@ -159,10 +159,13 @@ function QuizContent() {
   };
 
   const handleOptionSelect = (qId, option) => {
-    const next = { ...answers, [qId]: option };
+    const optId =
+      typeof option === "object" && option !== null ? option.id : option;
+    const next = { ...answers, [qId]: optId };
     setAnswers(next);
     answersRef.current = next;
   };
+
 
   // Loading status
   if (loading) {
@@ -203,6 +206,20 @@ function QuizContent() {
 
   const currentQuestion = questions[currentIndex];
   const totalQuestions = questions.length;
+
+  if (!currentQuestion || totalQuestions === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/20 p-6">
+        <div className="bg-destructive/10 text-destructive px-6 py-5 rounded-xl border border-destructive/20 max-w-md text-center">
+          <p className="font-semibold mb-1">No questions available</p>
+          <p className="text-sm opacity-80">
+            Please return to topic selection and choose your topics again.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   const answeredCount = Object.keys(answers).length;
   const progress = ((currentIndex + 1) / totalQuestions) * 100;
   const isLast = currentIndex === totalQuestions - 1;
@@ -281,12 +298,16 @@ function QuizContent() {
           </h2>
 
           <div className="flex flex-col gap-3.5 mb-10">
-            {currentQuestion.options.map((opt, idx) => {
-              const selected = answers[currentQuestion.id] === opt;
+            {currentQuestion.options?.map((opt, idx) => {
+              const optId =
+                typeof opt === "object" && opt !== null ? opt.id : opt;
+              const optText =
+                typeof opt === "object" && opt !== null ? opt.text : opt;
+              const selected = answers[currentQuestion.id] === optId;
               return (
                 <button
                   key={idx}
-                  onClick={() => handleOptionSelect(currentQuestion.id, opt)}
+                  onClick={() => handleOptionSelect(currentQuestion.id, optId)}
                   className={`group flex items-start gap-4 w-full px-5 py-4 rounded-2xl border text-left text-sm sm:text-base font-medium transition-all duration-200
                     ${
                       selected
@@ -304,7 +325,7 @@ function QuizContent() {
                   >
                     {selected ? "✓" : optionLabels[idx]}
                   </span>
-                  <span className="leading-relaxed">{opt}</span>
+                  <span className="leading-relaxed">{optText}</span>
                 </button>
               );
             })}
