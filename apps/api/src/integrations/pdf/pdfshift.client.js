@@ -1,21 +1,54 @@
 function parseApiKeys() {
-  const raw = process.env.PDFSHIFT_API_KEYS || process.env.PDFSHIFT_API_KEY;
-  if (!raw)
-    throw new Error(
-      "No PDFShift API keys configured. Set PDFSHIFT_API_KEYS (comma-separated) or PDFSHIFT_API_KEY.",
+  const keys = [];
+
+  if (process.env.PDFSHIFT_API_KEYS) {
+    keys.push(
+      ...process.env.PDFSHIFT_API_KEYS.split(",").map((s) => s.trim()),
     );
-  return raw
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+  }
+  if (process.env.PDFSHIFT_API_KEY) {
+    keys.push(process.env.PDFSHIFT_API_KEY.trim());
+  }
+  if (process.env.PDFSHIFT_API_KEY_1) {
+    keys.push(process.env.PDFSHIFT_API_KEY_1.trim());
+  }
+  if (process.env.PDFSHIFT_API_KEY_2) {
+    keys.push(process.env.PDFSHIFT_API_KEY_2.trim());
+  }
+
+  // Deduplicate and filter out empty entries
+  const uniqueKeys = [...new Set(keys.filter(Boolean))];
+
+  if (uniqueKeys.length === 0) {
+    throw new Error(
+      "No PDFShift API keys configured. Set PDFSHIFT_API_KEYS (comma-separated) or PDFSHIFT_API_KEY / PDFSHIFT_API_KEY_1 / PDFSHIFT_API_KEY_2.",
+    );
+  }
+
+  return uniqueKeys;
 }
+
+// Track key rotation across requests to evenly balance free quota
+let currentKeyIndex = 0;
 
 export async function callPdfShift(payload) {
   const keys = parseApiKeys();
   const errors = [];
+  const numKeys = keys.length;
 
-  for (const [i, apiKey] of keys.entries()) {
+  // Round-robin: rotate the starting key on every call so requests alternate evenly
+  const startIndex = currentKeyIndex % numKeys;
+  currentKeyIndex = (currentKeyIndex + 1) % numKeys;
+
+  for (let offset = 0; offset < numKeys; offset++) {
+    const keyIndex = (startIndex + offset) % numKeys;
+    const apiKey = keys[keyIndex];
+
     try {
+      console.log(
+        `[PDFSHIFT] Generating PDF using key ${keyIndex + 1} of ${numKeys}`,
+      );
+
       const response = await fetch("https://api.pdfshift.io/v3/convert/pdf", {
         method: "POST",
         headers: {
@@ -31,15 +64,19 @@ export async function callPdfShift(payload) {
       }
 
       const errText =
-        response.status === 429 ? "rate limited" : await response.text();
+        response.status === 429
+          ? "rate limited"
+          : response.status === 402
+            ? "quota/credits exhausted"
+            : await response.text();
+
       throw new Error(`HTTP ${response.status} — ${errText}`);
     } catch (err) {
-      errors.push(`Key ${i + 1}: ${err.message}`);
+      errors.push(`Key ${keyIndex + 1}: ${err.message}`);
 
-      if (i < keys.length - 1) {
+      if (offset < numKeys - 1) {
         console.warn(
-          `[PDFSHIFT] Key ${i + 1} failed, trying next key...`,
-          err.message,
+          `[PDFSHIFT] Key ${keyIndex + 1} failed (${err.message}). Shifting to next key...`,
         );
         continue;
       }

@@ -36,7 +36,7 @@ async function getHandler(req, { ctx }) {
 
   const total = session.questionsSnapshot?.length || 0;
   const percentage = total > 0 ? Math.round((session.score / total) * 100) : 0;
-  const cappedPercentage = Math.min(percentage, 60);
+  const cappedPercentage = Math.min(percentage, 78);
   const cappedScore = Math.round((cappedPercentage / 100) * total);
 
   ctx.log("RESULT_FETCHED", { sessionId, score: session.score, cappedScore });

@@ -135,14 +135,40 @@ export async function submitTest({ db, sessionId, answers }) {
     const correctAnswer = actualQ.correctAnswer;
     const givenAnswer = userAns.selectedOptionId;
 
-    if (correctAnswer === givenAnswer) {
+    const isMatch =
+      correctAnswer === givenAnswer ||
+      (Array.isArray(actualQ.options) &&
+        actualQ.options.some(
+          (o) =>
+            typeof o === "object" &&
+            o !== null &&
+            ((o.id === correctAnswer && (o.text === givenAnswer || o.id === givenAnswer)) ||
+              (o.id === givenAnswer && (o.text === correctAnswer || o.id === correctAnswer))),
+        ));
+
+    if (isMatch) {
       score++;
     } else {
+      const getLabel = (val) => {
+        if (!val) return "Not answered";
+        if (Array.isArray(actualQ.options)) {
+          const matched = actualQ.options.find(
+            (o) => (typeof o === "object" && o !== null ? o.id === val : o === val),
+          );
+          if (matched) {
+            return typeof matched === "object" && matched !== null
+              ? matched.text
+              : matched;
+          }
+        }
+        return val;
+      };
+
       evaluationSnapshot.push({
         question: actualQ.question,
         topic: actualQ.topic,
-        yourAnswer: givenAnswer || "Not answered",
-        correctAnswer,
+        yourAnswer: getLabel(givenAnswer),
+        correctAnswer: getLabel(correctAnswer),
       });
     }
   }
@@ -151,7 +177,7 @@ export async function submitTest({ db, sessionId, answers }) {
 
   const total = questions.length;
   const percentage = Math.round((score / total) * 100);
-  const cappedPercentage = Math.min(percentage, 60);
+  const cappedPercentage = Math.min(percentage, 78);
   const cappedScore = Math.round((cappedPercentage / 100) * total);
 
   await db
@@ -165,7 +191,7 @@ export async function submitTest({ db, sessionId, answers }) {
     .where(eq(testSessions.id, sessionId));
 
   const shouldSend =
-    cappedPercentage >= 70 || process.env.FORCE_SEND_EMAIL === "true";
+    cappedPercentage >= 80 || process.env.FORCE_SEND_EMAIL === "true";
 
   if (shouldSend) {
     await generateAndSendCertificateWrapper({
