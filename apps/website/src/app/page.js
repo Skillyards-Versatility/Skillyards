@@ -1,11 +1,16 @@
 import HeroCarousel from "@/components/homepage/HeroCarousel";
 import AboutSection from "@/components/homepage/AboutSection";
-import BatchFeeInfo from "@/components/programspage/BatchFeeInfo";
-import GoogleReviewsSection from "@/components/homepage/GoogleReviewsSection";
+import ProblemSection from "@/components/homepage/ProblemSection";
+import WhatStudentsBuild from "@/components/homepage/WhatStudentsBuild";
+import CTASection from "@/components/homepage/CTASection";
+import SkillTestSection from "@/components/homepage/SkillTestSection";
 import dynamic from "next/dynamic";
 
-const ProblemSection = dynamic(
-  () => import("@/components/homepage/ProblemSection"),
+const BatchFeeInfo = dynamic(
+  () => import("@/components/programspage/BatchFeeInfo"),
+);
+const GoogleReviewsSection = dynamic(
+  () => import("@/components/homepage/GoogleReviewsSection"),
 );
 const FeaturesSection = dynamic(
   () => import("@/components/homepage/FeaturesSection"),
@@ -13,7 +18,6 @@ const FeaturesSection = dynamic(
 const LeadersSection = dynamic(
   () => import("@/components/common/LeadersSection"),
 );
-const CTASection = dynamic(() => import("@/components/homepage/CTASection"));
 const FAQSection = dynamic(() => import("@/components/common/FAQSection"));
 const BlogSection = dynamic(() =>
   import("@/components/homepage/BlogSection").then((mod) => mod.BlogSection),
@@ -24,14 +28,8 @@ const PartnersSlider = dynamic(
 const ProgramsShowcase = dynamic(
   () => import("@/components/homepage/ProgrammeShowcase"),
 );
-const WhatStudentsBuild = dynamic(
-  () => import("@/components/homepage/WhatStudentsBuild"),
-);
 const FeaturedRoles = dynamic(
   () => import("@/components/homepage/FeaturedRoles"),
-);
-const SkillTestSection = dynamic(
-  () => import("@/components/homepage/SkillTestSection"),
 );
 
 import { buildSEO } from "@/lib/seo/buildSEO";

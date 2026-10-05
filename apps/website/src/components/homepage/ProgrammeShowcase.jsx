@@ -12,20 +12,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 const ProgramsShowcase = () => {
-  const [isMobile, setIsMobile] = useState(false);
   const [hovered, setHovered] = useState(-1);
-
-  // Detect mobile
-  useEffect(() => {
-    const checkIsMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
-    };
-
-    checkIsMobile();
-    window.addEventListener("resize", checkIsMobile);
-
-    return () => window.removeEventListener("resize", checkIsMobile);
-  }, []);
 
   const trainingPrograms = [
     {
@@ -84,22 +71,14 @@ const ProgramsShowcase = () => {
 
           {/* Programs */}
           <div className="w-full md:overflow-x-auto">
-            <div
-              className={`
-                flex 
-                ${isMobile ? "flex-col" : "flex-row"} 
-                gap-4 
-                w-full 
-                p-4
-              `}
-            >
+            <div className="flex flex-col md:flex-row gap-4 w-full p-4">
               {trainingPrograms.map((program, index) => (
                 <div
                   key={program.title}
-                  onMouseEnter={() => !isMobile && setHovered(index)}
-                  onMouseLeave={() => !isMobile && setHovered(-1)}
+                  onMouseEnter={() => setHovered(index)}
+                  onMouseLeave={() => setHovered(-1)}
                   onClick={() =>
-                    isMobile && setHovered(hovered === index ? -1 : index)
+                    setHovered(hovered === index ? -1 : index)
                   }
                   className={`
                     rounded-3xl
@@ -109,12 +88,12 @@ const ProgramsShowcase = () => {
                     cursor-pointer
                     relative
                     overflow-hidden
+                    w-full h-[220px] md:h-[350px]
                     ${
-                      isMobile
-                        ? "w-full h-[220px] md:h-[350px]"
-                        : `h-[350px] ${hovered === index ? "w-[400px]" : "w-[250px]"}`
+                      hovered === index
+                        ? "scale-[1.02] md:scale-100 md:w-[400px]"
+                        : "scale-100 md:w-[250px]"
                     }
-                    ${isMobile && hovered === index ? "scale-105" : "scale-100"}
                   `}
                 >
                   {/* Optimized Background Image */}
@@ -139,12 +118,7 @@ const ProgramsShowcase = () => {
                       }
                     `}
                   >
-                    <span
-                      className={`
-                        text-gray-400 font-semibold text-lg whitespace-nowrap
-                        ${!isMobile && "-rotate-90"}
-                      `}
-                    >
+                    <span className="text-gray-400 font-semibold text-lg whitespace-nowrap md:-rotate-90">
                       {program.title}
                     </span>
                   </div>

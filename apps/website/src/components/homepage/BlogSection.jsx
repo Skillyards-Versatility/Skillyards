@@ -2,7 +2,6 @@ import Link from "next/link";
 import { sanityClient } from "@/lib/sanity/client";
 import { HOMEPAGE_POSTS_QUERY } from "@/lib/sanity/queries";
 import BlogCard from "@/components/blog/BlogCard";
-import { HoverBorderGradient } from "../ui/hover-border-gradient";
 
 export async function BlogSection() {
   const posts = await sanityClient.fetch(
@@ -38,15 +37,15 @@ export async function BlogSection() {
         </div>
 
         <div className="flex justify-center pt-4">
-          <Link href="/blog">
-            <HoverBorderGradient
-              as="div"
-              containerClassName="rounded-full"
-              className="bg-primary text-primary-foreground px-8 py-2.5 text-sm font-semibold tracking-wide flex items-center gap-2"
-            >
+          <Link
+            href="/blog"
+            className="group relative inline-flex items-center gap-2 rounded-full p-[1.5px] transition-transform duration-300 hover:scale-105"
+          >
+            <span className="absolute inset-0 rounded-full bg-linear-to-r from-violet-500 via-primary to-blue-500 opacity-80 group-hover:opacity-100 transition-opacity" />
+            <span className="relative flex items-center gap-2 rounded-full bg-primary px-8 py-2.5 text-sm font-semibold tracking-wide text-primary-foreground">
               View All Blogs
-              <span aria-hidden="true">→</span>
-            </HoverBorderGradient>
+              <span aria-hidden="true" className="transition-transform duration-200 group-hover:translate-x-1">→</span>
+            </span>
           </Link>
         </div>
       </div>

@@ -19,7 +19,6 @@ const Particles = dynamic(() => import("@/components/Particles"), {
 
 import slides from "@/data/home-slides.json";
 import { useTheme } from "@/app/context/ThemeContext";
-import { LazyMotion, domAnimation, m } from "framer-motion";
 
 const AUTOPLAY_DELAY = 6000;
 
@@ -63,15 +62,14 @@ export default function HeroCarousel() {
   }, [api]);
 
   return (
-    <LazyMotion features={domAnimation}>
-      <section
-        className={`relative w-full h-[80vh] md:h-[65vh] lg:h-[80vh] overflow-hidden ${bgColor} transition-colors duration-500`}
-      >
-        {/* Mobile mesh background - pure CSS, no JS, no images */}
-        <div className="absolute inset-0 z-0 md:hidden overflow-hidden pointer-events-none">
-          <div className="absolute -top-24 -left-20 w-[70vw] h-[70vw] rounded-full bg-violet-500/30 dark:bg-violet-500/40 blur-3xl" />
-          <div className="absolute -bottom-32 -right-16 w-[65vw] h-[65vw] rounded-full bg-blue-500/25 dark:bg-blue-500/35 blur-3xl" />
-          <div className="absolute top-1/3 -right-32 w-[55vw] h-[55vw] rounded-full bg-pink-500/15 dark:bg-fuchsia-500/25 blur-3xl" />
+    <section
+      className={`relative w-full min-h-[100dvh] sm:min-h-[100dvh] md:min-h-0 md:h-[65vh] lg:h-[80vh] overflow-hidden ${bgColor} transition-colors duration-500 flex flex-col justify-center`}
+    >
+      {/* Mobile mesh background - pure CSS, no JS, no images */}
+      <div className="absolute inset-0 z-0 md:hidden overflow-hidden pointer-events-none">
+        <div className="absolute -top-24 -left-20 w-[70vw] h-[70vw] rounded-full bg-violet-500/30 dark:bg-violet-500/40 blur-3xl transform-gpu will-change-transform" />
+        <div className="absolute -bottom-32 -right-16 w-[65vw] h-[65vw] rounded-full bg-blue-500/25 dark:bg-blue-500/35 blur-3xl transform-gpu will-change-transform" />
+        <div className="absolute top-1/3 -right-32 w-[55vw] h-[55vw] rounded-full bg-pink-500/15 dark:bg-fuchsia-500/25 blur-3xl transform-gpu will-change-transform" />
           <div
             className="absolute inset-0 text-foreground opacity-[0.06] dark:opacity-[0.1]"
             style={{
@@ -109,11 +107,11 @@ export default function HeroCarousel() {
           opts={{ loop: true }}
           className="relative z-10 h-full w-full pointer-events-none"
         >
-          <CarouselContent className="h-full ml-0 pt-4 md:pt-8">
+          <CarouselContent className="h-full ml-0 pt-12 sm:pt-4 md:pt-8">
             {slides.map((slide, index) => (
               <CarouselItem
                 key={index}
-                className="pl-0 h-[70vh] md:h-[65vh] lg:h-[70vh] min-h-[440px] md:min-h-[460px] lg:min-h-[520px]"
+                className="pl-0 min-h-[100dvh] sm:min-h-[100dvh] md:min-h-0 md:h-[65vh] lg:h-[70vh] flex flex-col justify-center"
               >
                 <div className="relative h-full w-full">
                   {/* Content */}
@@ -179,12 +177,9 @@ export default function HeroCarousel() {
         <div
           className={`absolute bottom-0 left-0 z-30 h-[3px] w-full bg-muted overflow-hidden`}
         >
-          <m.div
+          <div
             key={progressKey}
-            initial={{ x: "-100%" }}
-            animate={{ x: "0%" }}
-            transition={{ duration: AUTOPLAY_DELAY / 1000, ease: "linear" }}
-            className="h-full bg-primary"
+            className="h-full w-full origin-left bg-primary animate-carousel-progress"
           />
         </div>
 
@@ -209,6 +204,5 @@ export default function HeroCarousel() {
           ))}
         </div>
       </section>
-    </LazyMotion>
   );
 }

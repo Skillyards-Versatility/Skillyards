@@ -21,9 +21,18 @@ export default function Header() {
     pathname === "/branch/agra" || pathname?.startsWith("/branch/agra/");
 
   useEffect(() => {
-    const onScroll = () => setIsSticky(window.scrollY > 20);
+    let ticking = false;
+    const onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setIsSticky(window.scrollY > 20);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
     onScroll();
-    window.addEventListener("scroll", onScroll);
+    window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 

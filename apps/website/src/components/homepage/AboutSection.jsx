@@ -1,6 +1,3 @@
-"use client";
-
-import { LazyMotion, domAnimation, m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,7 +12,7 @@ export default function AboutSection() {
       <div className="max-w-7xl mx-auto px-6 md:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           {/* Left Column: Image */}
-          <div className="relative w-full aspect-square max-h-[420px] max-w-[420px] md:max-h-560px md:max-w-none mx-auto md:ml-0 rounded-[2rem] overflow-hidden group shadow-2xl">
+          <div className="relative w-full aspect-square max-h-[420px] max-w-[420px] md:max-h-[560px] md:max-w-none mx-auto md:ml-0 rounded-[2rem] overflow-hidden group shadow-2xl">
             <Image
               src="/images/Home-about.webp"
               alt="SkillYards Training Environment"
@@ -28,22 +25,15 @@ export default function AboutSection() {
 
           {/* Right Column: Text Content */}
           <div className="flex flex-col justify-center space-y-6">
-            <LazyMotion features={domAnimation}>
-              <m.div
-                initial={false}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 w-fit"
-              >
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                </span>
-                <span className="text-xs font-bold text-primary tracking-wider uppercase">
-                  About SkillYards
-                </span>
-              </m.div>
-            </LazyMotion>
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 w-fit">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+              </span>
+              <span className="text-xs font-bold text-primary tracking-wider uppercase">
+                About SkillYards
+              </span>
+            </div>
 
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-foreground tracking-tight leading-tight">
               Why Students Choose{" "}
