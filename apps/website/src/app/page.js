@@ -4,9 +4,11 @@ import ProblemSection from "@/components/homepage/ProblemSection";
 import WhatStudentsBuild from "@/components/homepage/WhatStudentsBuild";
 import CTASection from "@/components/homepage/CTASection";
 import SkillTestSection from "@/components/homepage/SkillTestSection";
-import BatchFeeInfo from "@/components/programspage/BatchFeeInfo";
 import dynamic from "next/dynamic";
 
+const BatchFeeInfo = dynamic(
+  () => import("@/components/programspage/BatchFeeInfo"),
+);
 const GoogleReviewsSection = dynamic(
   () => import("@/components/homepage/GoogleReviewsSection"),
 );

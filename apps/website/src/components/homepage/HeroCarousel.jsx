@@ -63,7 +63,7 @@ export default function HeroCarousel() {
 
   return (
     <section
-      className={`relative w-full h-[85dvh] sm:h-[80vh] md:h-[65vh] lg:h-[80vh] overflow-hidden ${bgColor} transition-colors duration-500`}
+      className={`relative w-full min-h-[100dvh] sm:min-h-[100dvh] md:min-h-0 md:h-[65vh] lg:h-[80vh] overflow-hidden ${bgColor} transition-colors duration-500 flex flex-col justify-center`}
     >
       {/* Mobile mesh background - pure CSS, no JS, no images */}
       <div className="absolute inset-0 z-0 md:hidden overflow-hidden pointer-events-none">
@@ -107,11 +107,11 @@ export default function HeroCarousel() {
           opts={{ loop: true }}
           className="relative z-10 h-full w-full pointer-events-none"
         >
-          <CarouselContent className="h-full ml-0 pt-4 md:pt-8">
+          <CarouselContent className="h-full ml-0 pt-12 sm:pt-4 md:pt-8">
             {slides.map((slide, index) => (
               <CarouselItem
                 key={index}
-                className="pl-0 h-[75dvh] sm:h-[70vh] md:h-[65vh] lg:h-[70vh] min-h-[440px] md:min-h-[460px] lg:min-h-[520px]"
+                className="pl-0 min-h-[100dvh] sm:min-h-[100dvh] md:min-h-0 md:h-[65vh] lg:h-[70vh] flex flex-col justify-center"
               >
                 <div className="relative h-full w-full">
                   {/* Content */}
