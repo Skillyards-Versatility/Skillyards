@@ -48,16 +48,48 @@ async function postHandler(req, { ctx }) {
     return Response.json({ error: result.error.flatten() }, { status: 400 });
   }
 
-  const created = await db
-    .insert(students)
-    .values({
-      ...result.data,
-      laptopOptedAt: result.data.laptopOpted ? new Date() : null,
-    })
-    .returning();
+  try {
+    const created = await db
+      .insert(students)
+      .values({
+        ...result.data,
+        laptopOptedAt: result.data.laptopOpted ? new Date() : null,
+      })
+      .returning();
 
-  ctx.log("STUDENT_CREATED", { studentId: created[0].id });
-  return Response.json(created[0], { status: 201 });
+    ctx.log("STUDENT_CREATED", { studentId: created[0].id });
+    return Response.json(created[0], { status: 201 });
+  } catch (dbErr) {
+    if (
+      dbErr.code === "23505" ||
+      dbErr.message?.includes("unique constraint") ||
+      dbErr.message?.includes("students_email_unique")
+    ) {
+      ctx.warn("STUDENT_CREATE_DUPLICATE_EMAIL", { email: result.data.email });
+      return Response.json(
+        {
+          error: result.data.email
+            ? `A student with email "${result.data.email}" is already enrolled.`
+            : "A student with this information already exists.",
+        },
+        { status: 409 },
+      );
+    }
+
+    if (dbErr.code === "23503") {
+      ctx.warn("STUDENT_CREATE_FK_VIOLATION", { error: dbErr.message });
+      return Response.json(
+        { error: "The selected batch or assigned staff member does not exist." },
+        { status: 400 },
+      );
+    }
+
+    ctx.error("STUDENT_CREATE_ERROR", { error: dbErr.message });
+    return Response.json(
+      { error: dbErr.message || "Failed to create student in database." },
+      { status: 500 },
+    );
+  }
 }
 
 // ── STRUCTURAL ENFORCEMENT ──

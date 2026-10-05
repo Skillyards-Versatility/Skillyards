@@ -11,11 +11,22 @@ export const createStudentSchema = z
     phone: z
       .string()
       .trim()
-      .max(10, "Phone number must be at most 10 digits")
       .or(z.literal(""))
       .nullable()
       .optional()
-      .transform((v) => (v ? v : null)),
+      .transform((v) => {
+        if (!v) return null;
+        let cleaned = v.replace(/[\s\-\(\)]/g, "");
+        if (cleaned.startsWith("+91")) cleaned = cleaned.slice(3);
+        else if (cleaned.startsWith("91") && cleaned.length === 12)
+          cleaned = cleaned.slice(2);
+        else if (cleaned.startsWith("0") && cleaned.length === 11)
+          cleaned = cleaned.slice(1);
+        return cleaned || null;
+      })
+      .refine((v) => !v || /^[0-9]{10}$/.test(v), {
+        message: "Phone number must be a valid 10-digit mobile number",
+      }),
 
     email: z
       .string()
@@ -24,7 +35,7 @@ export const createStudentSchema = z
       .or(z.literal(""))
       .nullable()
       .optional()
-      .transform((v) => (v ? v : null)),
+      .transform((v) => (v ? v.toLowerCase() : null)),
 
     courseName: z
       .string()

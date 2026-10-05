@@ -58,15 +58,48 @@ async function patchHandler(req, { context, ctx, resource: student }) {
     setValues.laptopOptedAt = new Date();
   }
 
-  const [updated] = await db
-    .update(students)
-    .set(setValues)
-    .where(eq(students.id, studentId))
-    .returning();
+  try {
+    const [updated] = await db
+      .update(students)
+      .set(setValues)
+      .where(eq(students.id, studentId))
+      .returning();
 
-  ctx.log("STUDENT_UPDATED", { studentId });
+    ctx.log("STUDENT_UPDATED", { studentId });
 
-  return Response.json(updated);
+    return Response.json(updated);
+  } catch (dbErr) {
+    if (
+      dbErr.code === "23505" ||
+      dbErr.message?.includes("unique constraint") ||
+      dbErr.message?.includes("students_email_unique")
+    ) {
+      ctx.warn("STUDENT_UPDATE_DUPLICATE_EMAIL", {
+        email: result.data.email,
+        studentId,
+      });
+      return Response.json(
+        {
+          error: `A student with email "${result.data.email}" already exists.`,
+        },
+        { status: 409 },
+      );
+    }
+
+    if (dbErr.code === "23503") {
+      ctx.warn("STUDENT_UPDATE_FK_VIOLATION", { error: dbErr.message });
+      return Response.json(
+        { error: "The selected batch or assigned staff member does not exist." },
+        { status: 400 },
+      );
+    }
+
+    ctx.error("STUDENT_UPDATE_ERROR", { error: dbErr.message });
+    return Response.json(
+      { error: dbErr.message || "Failed to update student in database." },
+      { status: 500 },
+    );
+  }
 }
 
 /**
