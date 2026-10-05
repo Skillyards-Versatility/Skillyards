@@ -8,6 +8,7 @@ export const StickyScroll = ({ content, contentClassName }) => {
   const cardRefs = useRef([]);
 
   useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) return;
     const observers = cardRefs.current.map((el, index) => {
       if (!el) return null;
       const observer = new IntersectionObserver(

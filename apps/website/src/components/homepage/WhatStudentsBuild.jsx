@@ -1,6 +1,3 @@
-"use client";
-
-import { motion } from "framer-motion";
 import { Globe, Megaphone, UserCheck, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
@@ -36,11 +33,7 @@ export default function WhatStudentsBuild() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         <div className="text-center mb-16 space-y-4">
-          <motion.div
-            initial={false}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
+          <div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-foreground tracking-tight">
               Real Projects Built by Our{" "}
               <span className="text-primary italic">Students</span>
@@ -51,17 +44,13 @@ export default function WhatStudentsBuild() {
               campaigns, and prepare job-ready portfolios that recruiters
               actually want to see.
             </p>
-          </motion.div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {projectCategories.map((category, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={false}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.1 }}
               className="group p-8 rounded-[2rem] border border-border/50 bg-card/50 backdrop-blur-sm hover:bg-card hover:border-primary/30 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1"
             >
               <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
@@ -83,7 +72,7 @@ export default function WhatStudentsBuild() {
                   </span>
                 ))}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 

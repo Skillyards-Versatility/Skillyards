@@ -1,5 +1,3 @@
-"use client";
-
 import { AlertTriangle, GraduationCap, Briefcase, Zap } from "lucide-react";
 
 export default function ProblemSection() {
