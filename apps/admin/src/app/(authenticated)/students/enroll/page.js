@@ -42,10 +42,15 @@ export default function EnrollStudentPage() {
     setIsSubmitting(true);
 
     try {
-      const student = await createStudent({
+      const cleanPhone = formData.phone
+        .trim()
+        .replace(/[\s\-\(\)]/g, "")
+        .replace(/^(\+91|91(?=\d{10}$)|0(?=\d{10}$))/, "");
+
+      const result = await createStudent({
         name: formData.fullName.trim(),
-        phone: formData.phone.trim() || undefined,
-        email: formData.email.trim() || undefined,
+        phone: cleanPhone || undefined,
+        email: formData.email.trim().toLowerCase() || undefined,
         courseName: formData.course.trim() || undefined,
         batchId: formData.batchId || undefined,
         batchName: formData.batchName || undefined,
@@ -55,8 +60,13 @@ export default function EnrollStudentPage() {
         photoKey: formData.photoKey || undefined,
       });
 
+      if (!result.success) {
+        toast.error(result.error || "Failed to enroll student.");
+        return;
+      }
+
       toast.success("Student enrolled successfully.");
-      router.push(`/students/${student.id}`);
+      router.push(`/students/${result.data.id}`);
     } catch (error) {
       toast.error(error.message || "Failed to enroll student.");
     } finally {

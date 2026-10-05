@@ -133,21 +133,34 @@ export async function createStudent(studentData) {
       body: JSON.stringify(studentData),
     });
 
-    const data = await res.json();
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      data = null;
+    }
 
     if (!res.ok) {
-      throw new Error(
-        data?.error?.fieldErrors
-          ? Object.values(data.error.fieldErrors).flat().join(", ")
-          : data?.error || "Something went wrong",
-      );
+      let errMsg = "Failed to enroll student";
+      if (typeof data?.error === "string") {
+        errMsg = data.error;
+      } else if (data?.error?.fieldErrors) {
+        errMsg = Object.entries(data.error.fieldErrors)
+          .map(([field, errs]) => `${field}: ${Array.isArray(errs) ? errs.join(", ") : errs}`)
+          .join("; ");
+      } else if (data?.error?.formErrors?.length) {
+        errMsg = data.error.formErrors.join(", ");
+      } else if (data?.message) {
+        errMsg = data.message;
+      }
+      return { success: false, error: errMsg };
     }
 
     revalidateTag("students");
-    return data;
+    return { success: true, data };
   } catch (err) {
     console.error("[ADMIN][ERROR] createStudent:", err.message);
-    throw err;
+    return { success: false, error: err.message || "Failed to enroll student" };
   }
 }
 
