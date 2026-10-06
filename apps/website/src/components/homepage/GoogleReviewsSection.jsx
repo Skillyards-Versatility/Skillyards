@@ -404,6 +404,7 @@ export default function GoogleReviewsSection({ data }) {
                               target="_blank"
                               rel="noopener noreferrer"
                               className="hover:text-primary transition-colors flex items-center gap-1 font-medium"
+                              aria-label={`View ${author.name || "reviewer"}'s Google profile`}
                             >
                               Profile
                               <ExternalLink className="w-3 h-3" />
@@ -420,7 +421,7 @@ export default function GoogleReviewsSection({ data }) {
 
               {/* Bottom Pagination Dots */}
               <div
-                className="flex justify-center items-center gap-1.5 mt-6"
+                className="flex justify-center items-center mt-6"
                 aria-label="Carousel pagination"
               >
                 {Array.from({ length: count || reviews.length }).map((_, i) => (
@@ -428,13 +429,17 @@ export default function GoogleReviewsSection({ data }) {
                     key={i}
                     type="button"
                     onClick={() => api?.scrollTo(i)}
-                    className={`h-2 rounded-full transition-all duration-300 ${
-                      current === i
-                        ? "w-6 bg-primary"
-                        : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
-                    }`}
+                    className="flex h-11 min-w-11 items-center justify-center p-2 focus:outline-none"
                     aria-label={`Go to slide ${i + 1}`}
-                  />
+                  >
+                    <span
+                      className={`h-2 rounded-full transition-all duration-300 ${
+                        current === i
+                          ? "w-6 bg-primary"
+                          : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/50"
+                      }`}
+                    />
+                  </button>
                 ))}
               </div>
             </Carousel>

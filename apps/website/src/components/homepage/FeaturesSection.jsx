@@ -101,7 +101,7 @@ export default function FeaturesSection() {
               ))}
             </CarouselContent>
           </Carousel>
-          <div className="mt-5 flex justify-center gap-2">
+          <div className="mt-5 flex justify-center items-center">
             {features.map((feature, index) => (
               <button
                 key={feature.title}
@@ -109,12 +109,16 @@ export default function FeaturesSection() {
                 onClick={() => api?.scrollTo(index)}
                 aria-label={`Go to feature slide ${index + 1}`}
                 aria-current={current === index ? "true" : undefined}
-                className={`h-2.5 rounded-full transition-all duration-300 ${
-                  current === index
-                    ? "w-8 bg-primary"
-                    : "w-2.5 bg-muted hover:bg-muted-foreground/50"
-                }`}
-              />
+                className="flex h-11 min-w-11 items-center justify-center p-2 focus:outline-none"
+              >
+                <span
+                  className={`h-2.5 rounded-full transition-all duration-300 ${
+                    current === index
+                      ? "w-8 bg-primary"
+                      : "w-2.5 bg-muted hover:bg-muted-foreground/50"
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>

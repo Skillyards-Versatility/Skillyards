@@ -40,17 +40,17 @@ const nextConfig = {
           value:
             "default-src 'self'; " +
             // Scripts
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://utteranc.es https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.disqus.com https://*.disquscdn.com; " +
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://utteranc.es https://www.google.com https://www.gstatic.com https://www.googletagmanager.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.disqus.com https://*.disquscdn.com https://www.clarity.ms https://*.clarity.ms https://sc-static.net; " +
             // Frames
             "frame-src https://utteranc.es https://www.google.com https://www.gstatic.com https://www.youtube.com https://www.googletagmanager.com https://disqus.com https://*.disqus.com; " +
             // API calls
-            "connect-src 'self' https://api.github.com https://www.google.com https://www.gstatic.com https://skillyards-backend.vercel.app https://api.skillyards.in https://www.googletagmanager.com https://www.google-analytics.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://*.disqus.com https://*.disquscdn.com; " +
+            "connect-src 'self' https://api.github.com https://www.google.com https://www.gstatic.com https://skillyards-backend.vercel.app https://api.skillyards.in https://www.googletagmanager.com https://www.google-analytics.com https://analytics.google.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://ad.doubleclick.net https://stats.g.doubleclick.net https://*.clarity.ms https://*.disqus.com https://*.disquscdn.com; " +
             // Images
-            "img-src 'self' data: blob: https://images.unsplash.com https://cdn.sanity.io https://cdn.simpleicons.org https://admin.skillyards.in https://img.youtube.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://www.google.com https://www.google.co.in https://*.disquscdn.com https://referrer.disqus.com; " +
+            "img-src 'self' data: blob: https://images.unsplash.com https://cdn.sanity.io https://cdn.simpleicons.org https://admin.skillyards.in https://img.youtube.com https://googleads.g.doubleclick.net https://www.googleadservices.com https://ad.doubleclick.net https://www.google.com https://www.google.co.in https://lh3.googleusercontent.com https://*.disquscdn.com https://referrer.disqus.com; " +
             // Styles
-            "style-src 'self' 'unsafe-inline'; " +
+            "style-src 'self' 'unsafe-inline' https://www.gstatic.com; " +
             // Fonts
-            "font-src 'self' data:; " +
+            "font-src 'self' data: https://fonts.gstatic.com; " +
             // Workers
             "worker-src 'self' blob:;",
         },
@@ -65,6 +65,7 @@ const nextConfig = {
       { protocol: "https", hostname: "randomuser.me" },
       { protocol: "https", hostname: "img.youtube.com" },
       { protocol: "https", hostname: "i.ytimg.com" },
+      { protocol: "https", hostname: "lh3.googleusercontent.com" },
       {
         protocol: "https",
         hostname: "images.unsplash.com",

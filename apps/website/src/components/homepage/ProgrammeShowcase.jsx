@@ -101,7 +101,8 @@ const ProgramsShowcase = () => {
                     src={program.bg}
                     alt={program.title}
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 25vw"
+                    sizes="(max-width: 640px) 92vw, (max-width: 1024px) 350px, 400px"
+                    quality={75}
                     className="object-cover transition-transform duration-500"
                   />
                   {/* Overlay */}
