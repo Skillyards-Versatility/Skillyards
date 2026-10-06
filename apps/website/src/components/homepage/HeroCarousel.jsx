@@ -13,9 +13,10 @@ import {
 } from "@/components/ui/carousel";
 import dynamic from "next/dynamic";
 
-const Particles = dynamic(() => import("@/components/Particles"), {
-  ssr: false,
-});
+const HeroParticlesWrapper = dynamic(
+  () => import("@/components/homepage/HeroParticlesWrapper"),
+  { ssr: false }
+);
 
 import slides from "@/data/home-slides.json";
 import { useTheme } from "@/app/context/ThemeContext";
@@ -23,11 +24,34 @@ import { useTheme } from "@/app/context/ThemeContext";
 const AUTOPLAY_DELAY = 6000;
 
 export default function HeroCarousel() {
+  const [activeSlides, setActiveSlides] = React.useState(() => [slides[0]]);
   const [api, setApi] = React.useState(null);
   const [current, setCurrent] = React.useState(0);
   const [progressKey, setProgressKey] = React.useState(0);
   const [isDesktop, setIsDesktop] = React.useState(false);
   const { theme } = useTheme();
+
+  // Lazy load slides 2-3 after initial paint to maximize mobile LCP
+  React.useEffect(() => {
+    const loadRemaining = () => {
+      setActiveSlides(slides);
+    };
+
+    if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+      const id = window.requestIdleCallback(loadRemaining, { timeout: 2000 });
+      return () => window.cancelIdleCallback(id);
+    } else {
+      const id = setTimeout(loadRemaining, 1000);
+      return () => clearTimeout(id);
+    }
+  }, []);
+
+  // Re-init Embla when lazy slides mount
+  React.useEffect(() => {
+    if (api && activeSlides.length > 1) {
+      api.reInit();
+    }
+  }, [api, activeSlides]);
 
   React.useEffect(() => {
     const mq = window.matchMedia("(min-width: 768px)");
@@ -81,21 +105,7 @@ export default function HeroCarousel() {
         </div>
 
         {/* Background Particles layer - desktop only */}
-        {isDesktop && (
-          <div className="absolute inset-0 z-2">
-            <Particles
-              particleColors={[particleColor]}
-              particleCount={80}
-              particleSpread={10}
-              speed={0.1}
-              particleBaseSize={100}
-              moveParticlesOnHover
-              alphaParticles={false}
-              disableRotation={false}
-              pixelRatio={1}
-            />
-          </div>
-        )}
+        {isDesktop && <HeroParticlesWrapper particleColor={particleColor} />}
 
         <div
           className={`absolute inset-0 z-0 hidden md:block bg-linear-to-r from-background/50 to-transparent pointer-events-none`}
@@ -108,7 +118,7 @@ export default function HeroCarousel() {
           className="relative z-10 h-full w-full pointer-events-none"
         >
           <CarouselContent className="h-full ml-0 pt-12 sm:pt-4 md:pt-8">
-            {slides.map((slide, index) => (
+            {activeSlides.map((slide, index) => (
               <CarouselItem
                 key={index}
                 className="pl-0 min-h-[100dvh] sm:min-h-[100dvh] md:min-h-0 md:h-[65vh] lg:h-[70vh] flex flex-col justify-center"
@@ -177,10 +187,12 @@ export default function HeroCarousel() {
         <div
           className={`absolute bottom-0 left-0 z-30 h-[3px] w-full bg-muted overflow-hidden`}
         >
-          <div
-            key={progressKey}
-            className="h-full w-full origin-left bg-primary animate-carousel-progress"
-          />
+          {activeSlides.length > 1 && (
+            <div
+              key={progressKey}
+              className="h-full w-full origin-left bg-primary animate-carousel-progress"
+            />
+          )}
         </div>
 
         {/* Bullets */}
