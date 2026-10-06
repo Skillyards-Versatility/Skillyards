@@ -1,9 +1,4 @@
-import {
-  Inter,
-  Playfair_Display,
-  Poppins,
-  Source_Sans_3,
-} from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -21,31 +16,18 @@ import {
   primaryLocationSchema,
   websiteSchema,
 } from "@/lib/seo/schema/global";
+
 const playfair = Playfair_Display({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["600", "700"],
   variable: "--font-playfair",
   display: "swap",
 });
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: ["400", "500", "600"],
   variable: "--font-inter",
-  display: "swap",
-});
-
-const sourceSans = Source_Sans_3({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-source-sans",
-  display: "swap",
-});
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  variable: "--font-poppins",
   display: "swap",
 });
 
@@ -56,7 +38,7 @@ export default function RootLayout({ children }) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${sourceSans.variable} ${playfair.variable} ${poppins.variable}`}
+      className={`${inter.variable} ${playfair.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
