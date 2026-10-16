@@ -9,6 +9,7 @@
     "dev": "concurrently \"npm run dev -w apps/api\" \"npm run dev -w apps/erp\" \"npm run dev -w apps/website\" \"npm run dev -w apps/ai-service\"",
     "dev:api": "npm run dev -w apps/api",
     "dev:admin": "npm run dev -w apps/admin",
+    "dev:crm": "npm run dev -w apps/crm",
     "dev:web": "npm run dev -w apps/website",
     "dev:pdf": "npm run dev -w apps/pdf-service",
     "dev:ai": "npm run dev -w apps/ai-service",

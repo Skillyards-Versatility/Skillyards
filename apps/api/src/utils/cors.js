@@ -5,8 +5,10 @@ export function corsHeaders(request) {
     "https://skillyards.in",
     "https://www.skillyards.in",
     "https://admin.skillyards.in",
+    "https://crm.skillyards.in",
     "https://skillyards-admin.vercel.app",
     "https://skillyards-website.vercel.app",
+    "http://localhost:3003",
     "http://localhost:3002",
     "http://localhost:3001",
     "http://localhost:3000",
@@ -16,9 +18,9 @@ export function corsHeaders(request) {
 
   return {
     "Access-Control-Allow-Origin": isAllowed ? origin : "https://skillyards.in",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
     "Access-Control-Allow-Headers":
-      "Content-Type, Authorization, x-internal-key",
+      "Content-Type, Authorization, x-internal-key, Idempotency-Key, x-request-id",
     "Access-Control-Allow-Credentials": "true",
     "Access-Control-Expose-Headers": "Content-Disposition",
     Vary: "Origin",
