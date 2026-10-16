@@ -1,5 +1,12 @@
 import { db } from "@repo/db";
-import { leads, users, salesTeams, crmAuditEvents } from "@repo/db/schema";
+import {
+  leads,
+  users,
+  salesTeams,
+  crmAuditEvents,
+  enquiries,
+  followUps,
+} from "@repo/db/schema";
 import { eq, desc, and, or, ilike, sql } from "drizzle-orm";
 
 export async function findLeads({
@@ -148,4 +155,120 @@ export async function recordAuditEvent({
   } catch (err) {
     console.error("Failed to insert CRM audit event:", err);
   }
+}
+
+export async function findEnquiriesForLead({ leadId, normalizedPhone, normalizedEmail }) {
+  const conditions = [];
+  if (leadId) {
+    conditions.push(eq(enquiries.leadId, leadId));
+  }
+  if (normalizedPhone) {
+    conditions.push(eq(enquiries.normalizedPhone, normalizedPhone));
+  }
+  if (normalizedEmail) {
+    conditions.push(eq(enquiries.normalizedEmail, normalizedEmail));
+  }
+  if (conditions.length === 0) return [];
+
+  return await db
+    .select({
+      id: enquiries.id,
+      firstName: enquiries.firstName,
+      lastName: enquiries.lastName,
+      email: enquiries.email,
+      phone: enquiries.phone,
+      message: enquiries.message,
+      status: enquiries.status,
+      processingStatus: enquiries.processingStatus,
+      createdAt: enquiries.createdAt,
+    })
+    .from(enquiries)
+    .where(or(...conditions))
+    .orderBy(desc(enquiries.createdAt));
+}
+
+export async function findAuditEventsForLead(leadId) {
+  return await db
+    .select({
+      id: crmAuditEvents.id,
+      action: crmAuditEvents.action,
+      entityType: crmAuditEvents.entityType,
+      entityId: crmAuditEvents.entityId,
+      actorUserId: crmAuditEvents.actorUserId,
+      actorName: users.name,
+      reason: crmAuditEvents.reason,
+      beforeSnapshot: crmAuditEvents.beforeSnapshot,
+      afterSnapshot: crmAuditEvents.afterSnapshot,
+      createdAt: crmAuditEvents.createdAt,
+    })
+    .from(crmAuditEvents)
+    .leftJoin(users, eq(crmAuditEvents.actorUserId, users.id))
+    .where(
+      and(
+        eq(crmAuditEvents.entityType, "lead"),
+        eq(crmAuditEvents.entityId, leadId)
+      )
+    )
+    .orderBy(desc(crmAuditEvents.createdAt));
+}
+
+export async function findCallLogsForPhone(phone) {
+  if (!phone) return [];
+  return await db
+    .select({
+      id: followUps.id,
+      leadPhone: followUps.leadPhone,
+      telecallerId: followUps.telecallerId,
+      telecallerName: users.name,
+      duration: followUps.duration,
+      outcome: followUps.outcome,
+      type: followUps.type,
+      notes: followUps.analysis,
+      contactedAt: followUps.contactedAt,
+      createdAt: followUps.createdAt,
+    })
+    .from(followUps)
+    .leftJoin(users, eq(followUps.telecallerId, users.id))
+    .where(eq(followUps.leadPhone, phone))
+    .orderBy(desc(followUps.contactedAt));
+}
+
+export async function insertCallLogRecord({
+  leadPhone,
+  telecallerId,
+  duration = 60,
+  outcome = "reached",
+  notes = "",
+  callbackAt = null,
+}) {
+  const [created] = await db
+    .insert(followUps)
+    .values({
+      leadPhone,
+      telecallerId,
+      duration: parseInt(duration, 10) || 60,
+      outcome,
+      type: "call",
+      contactedAt: new Date(),
+      analysis: {
+        notes,
+        callbackAt: callbackAt ? new Date(callbackAt).toISOString() : null,
+      },
+    })
+    .returning();
+
+  return created;
+}
+
+export async function findAssignableStaff() {
+  return await db
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      team: users.team,
+    })
+    .from(users)
+    .orderBy(users.name);
 }

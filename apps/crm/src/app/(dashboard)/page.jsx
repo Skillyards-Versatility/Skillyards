@@ -153,13 +153,19 @@ export default function DashboardPage() {
                   <th className="px-6 py-3">Status</th>
                   <th className="px-6 py-3">Assigned To</th>
                   <th className="px-6 py-3">Created</th>
+                  <th className="px-6 py-3 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-slate-300">
                 {leads.map((lead) => (
-                  <tr key={lead.id} className="hover:bg-slate-800/30 transition-colors">
+                  <tr key={lead.id} className="hover:bg-slate-800/40 transition-colors group">
                     <td className="px-6 py-3.5 font-medium text-white">
-                      {lead.fullName || lead.name || "Unnamed"}
+                      <Link
+                        href={`/leads/${lead.id}`}
+                        className="hover:text-indigo-400 transition-colors font-semibold"
+                      >
+                        {lead.fullName || lead.name || "Unnamed"}
+                      </Link>
                     </td>
                     <td className="px-6 py-3.5 text-slate-400">
                       <div>{lead.normalizedPhone || lead.phone || "-"}</div>
@@ -179,6 +185,14 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-6 py-3.5 text-slate-500">
                       {new Date(lead.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-3.5 text-right">
+                      <Link
+                        href={`/leads/${lead.id}`}
+                        className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white font-medium text-[11px] transition-colors"
+                      >
+                        <span>Open</span>
+                      </Link>
                     </td>
                   </tr>
                 ))}

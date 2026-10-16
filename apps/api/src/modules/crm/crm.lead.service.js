@@ -4,6 +4,11 @@ import {
   insertLead,
   updateLead,
   recordAuditEvent,
+  findEnquiriesForLead,
+  findAuditEventsForLead,
+  findCallLogsForPhone,
+  insertCallLogRecord,
+  findAssignableStaff,
 } from "./crm.lead.repository";
 import { normalizePhone, normalizeEmail } from "@/utils/normalization";
 
@@ -52,7 +57,141 @@ export async function getLeadByIdService(id) {
   if (!lead) {
     throw new Error("Lead not found");
   }
-  return lead;
+
+  // Fetch linked enquiries
+  const linkedEnquiries = await findEnquiriesForLead({
+    leadId: lead.id,
+    normalizedPhone: lead.normalizedPhone,
+    normalizedEmail: lead.normalizedEmail,
+  });
+
+  // Fetch audit history
+  const auditEvents = await findAuditEventsForLead(lead.id);
+
+  // Fetch call logs
+  const callLogs = lead.normalizedPhone
+    ? await findCallLogsForPhone(lead.normalizedPhone)
+    : [];
+
+  // Build unified chronological timeline
+  const timeline = [];
+
+  // 1. Audit events
+  for (const ev of auditEvents) {
+    if (ev.action === "CALL_LOGGED") continue; // will be shown via callLogs to avoid duplication
+    timeline.push({
+      id: `audit-${ev.id}`,
+      type: ev.action === "LEAD_STATUS_CHANGED" ? "status_change" : "audit",
+      action: ev.action,
+      title:
+        ev.action === "LEAD_STATUS_CHANGED"
+          ? `Status changed to ${ev.afterSnapshot?.status || "updated"}`
+          : ev.action === "LEAD_CREATED"
+          ? "Lead created"
+          : ev.action.replace(/_/g, " "),
+      actorName: ev.actorName || "System",
+      reason: ev.reason,
+      beforeSnapshot: ev.beforeSnapshot,
+      afterSnapshot: ev.afterSnapshot,
+      timestamp: ev.createdAt,
+    });
+  }
+
+  // 2. Call logs
+  for (const call of callLogs) {
+    timeline.push({
+      id: `call-${call.id}`,
+      type: "call",
+      title: `Call logged: ${call.outcome.replace(/_/g, " ")}`,
+      actorName: call.telecallerName || "Sales Rep",
+      outcome: call.outcome,
+      duration: call.duration,
+      notes: typeof call.notes === "object" ? call.notes?.notes || "" : call.notes || "",
+      callbackAt: typeof call.notes === "object" ? call.notes?.callbackAt : null,
+      timestamp: call.contactedAt || call.createdAt,
+    });
+  }
+
+  // 3. Enquiry submissions
+  for (const enq of linkedEnquiries) {
+    timeline.push({
+      id: `enquiry-${enq.id}`,
+      type: "enquiry",
+      title: "Website Enquiry Submitted",
+      actorName: `${enq.firstName} ${enq.lastName || ""}`.trim(),
+      message: enq.message,
+      submittedEmail: enq.email,
+      submittedPhone: enq.phone,
+      timestamp: enq.createdAt,
+    });
+  }
+
+  // Sort descending by timestamp
+  timeline.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+  return {
+    ...lead,
+    enquiries: linkedEnquiries,
+    timeline,
+  };
+}
+
+export async function logLeadCallService(leadId, callData, telecallerId, requestId) {
+  const lead = await findLeadById(leadId);
+  if (!lead) {
+    throw new Error("Lead not found");
+  }
+
+  const { outcome = "reached", duration = 60, notes = "", callbackAt } = callData;
+
+  const phone = lead.normalizedPhone || "UNKNOWN";
+
+  const callRecord = await insertCallLogRecord({
+    leadPhone: phone,
+    telecallerId,
+    duration,
+    outcome,
+    notes,
+    callbackAt,
+  });
+
+  // Optionally advance status if lead was new
+  let newStatus = undefined;
+  if (outcome === "callback_requested") {
+    newStatus = "follow_up";
+  } else if (lead.status === "new") {
+    newStatus = "contacted";
+  }
+
+  if (newStatus && newStatus !== lead.status) {
+    await updateLead(leadId, { status: newStatus });
+  }
+
+  await recordAuditEvent({
+    actorUserId: telecallerId,
+    action: "CALL_LOGGED",
+    entityType: "lead",
+    entityId: leadId,
+    reason: notes || `Call outcome: ${outcome}`,
+    afterSnapshot: {
+      callId: callRecord.id,
+      outcome,
+      duration,
+      notes,
+      callbackAt,
+      newStatus,
+    },
+    requestId,
+  });
+
+  return {
+    call: callRecord,
+    updatedStatus: newStatus || lead.status,
+  };
+}
+
+export async function getAssignableStaffService() {
+  return await findAssignableStaff();
 }
 
 export async function createLeadService(payload, actorUserId, requestId) {

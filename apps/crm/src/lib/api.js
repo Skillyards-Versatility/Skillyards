@@ -45,4 +45,31 @@ export const crmApi = {
   getLead: (id) => apiRequest(`/api/crm/leads/${id}`),
   createLead: (payload) => apiRequest("/api/crm/leads", { method: "POST", body: payload }),
   updateLead: (id, payload) => apiRequest(`/api/crm/leads/${id}`, { method: "PATCH", body: payload }),
+  logCall: (id, payload) => apiRequest(`/api/crm/leads/${id}/calls`, { method: "POST", body: payload }),
+  getStaff: () => apiRequest("/api/crm/staff"),
+  getDuplicates: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/duplicates${query ? `?${query}` : ""}`);
+  },
+  resolveDuplicate: (id, payload) =>
+    apiRequest(`/api/crm/duplicates/${id}/resolve`, { method: "POST", body: payload }),
+  getQueue: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/queue${query ? `?${query}` : ""}`);
+  },
+  claimLead: (id) => apiRequest(`/api/crm/leads/${id}/claim`, { method: "POST" }),
+  autoAssignLead: (id) => apiRequest(`/api/crm/leads/${id}/auto-assign`, { method: "POST" }),
+  getTeams: () => apiRequest("/api/crm/teams"),
 };

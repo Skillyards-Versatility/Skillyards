@@ -12,12 +12,14 @@ import {
   FileSpreadsheet,
   Settings,
   Sparkles,
+  CopyCheck,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
   { label: "Leads", href: "/leads", icon: Users },
+  { label: "Duplicate Reviews", href: "/duplicates", icon: CopyCheck },
   { label: "Call Queue", href: "/queue", icon: PhoneCall },
   { label: "Follow-ups", href: "/follow-ups", icon: CalendarClock },
   { label: "Counselling", href: "/counselling", icon: GraduationCap },

@@ -6,6 +6,7 @@ import {
   sendAdminEnquiryNotification,
   sendUserConfirmation,
 } from "@/modules/notifications/email.service";
+import { ingestEnquiryService } from "@/modules/crm/crm.intake.service";
 
 export async function createEnquiryService(enquiryData) {
   try {
@@ -19,7 +20,9 @@ export async function createEnquiryService(enquiryData) {
       throw new Error("Captcha verification failed");
     }
 
-    const newEnquiry = await createEnquiry(dbData);
+    // Ingest through CRM engine (normalizes phone/email, deduplicates, associates or creates canonical lead)
+    const intakeResult = await ingestEnquiryService(dbData, { channel: "website" });
+    const newEnquiry = intakeResult.enquiry;
 
     // Send emails (non-blocking failure)
     try {

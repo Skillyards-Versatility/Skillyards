@@ -22,7 +22,7 @@
 - **`crm_audit_events`:** Append-only change history logging actor, action, snapshots, and request ID.
 - **`crm_idempotency_keys`:** Replay cache for intake requests.
 - **`lead_duplicate_reviews` & `lead_merge_history`:** Tables for duplicate candidate reviews and auditable non-destructive merges.
-- **`enquiries` Migration:** Backward-compatible columns added: `lead_id` FK, `normalized_phone`, `normalized_email`, `processing_status`, `processed_at`.
+- **`enquiries` Migration:** Backward-compatible columns added: `lead_id` FK, `normalized_phone`, `normalized_email`, `processingStatus`, `processed_at`.
 
 #### 2. Backend Architecture (`apps/api`)
 - **CORS Configuration (`utils/cors.js`):** Added `https://crm.skillyards.in` and `http://localhost:3003` to allowed origins; exposed `Idempotency-Key` and `x-request-id` headers.
@@ -30,7 +30,7 @@
 - **CRM Authorization & Scoping (`modules/crm/crm.permissions.js`):** Implemented `canAccessCrm` and record-level `canAccessLead` guards evaluating platform roles and active `crm_user_roles`.
 - **Domain Service & Repository (`modules/crm/`):**
   - `crm.lead.repository.js`: Scoped querying, join with assigned users/teams, insert/update operations, audit logging.
-  - `crm.lead.service.js`: Input normalization, lifecycle state validation (`new`, `contacted`, `follow_up`, `counselling_scheduled`, `counselled`, `qualified`, `converted`, `cold`, `lost`), audit trails.
+  - `crm.lead.service.js`: Input normalization, lifecycle state validation, audit trails.
 - **REST Route Handlers (`app/api/crm/`):**
   - `GET /api/crm/me`: Session identity, active CRM roles, permissions.
   - `GET /api/crm/leads`: Paginated, filtered (`status`, `search`) lead list.
@@ -42,15 +42,36 @@
 - **Monorepo Next.js App (`apps/crm`):** Configured with Next.js 16, Tailwind CSS v4, and API proxy rewrites (`/api/*` → API server).
 - **Design System (`globals.css`):** Sleek dark CRM palette, glass panels, customized scrollbars, interactive status badges.
 - **Auth Provider (`context/AuthContext.jsx`):** Seamless cookie-based session hydration and CRM role state.
-- **Client API (`lib/api.js`):** Typed fetcher wrapping `/api/crm/*` with `credentials: 'include'`.
-- **Navigation Shell:**
-  - `CrmSidebar`: Role-aware navigation across Dashboard, Leads, Queue, Follow-ups, Counselling, EOD.
-  - `CrmHeader`: Global lead search, current user role badge, fast action button.
 - **Views Implemented:**
-  - `Dashboard (/)`: Real-time KPI summary cards (Total Leads, Active Queue, Follow-ups Due, Counselling Booked) and Recent Prospects table.
+  - `Dashboard (/)`: Real-time KPI summary cards and Recent Prospects table.
   - `Leads Directory (/leads)`: Pipeline view with status filter tabs, search bar, and responsive table.
   - `NewLeadModal`: Modal form for staff lead creation.
-- **Workspace Script:** Added `"dev:crm": "npm run dev -w apps/crm"` to root `package.json`.
+
+---
+
+### Phase 2 Intake, Deduplication, Rep Workspace & Assignment: Completed (Updated 2026-10-16)
+
+#### 1. Lead Workspace & Timeline (`apps/crm/src/app/(dashboard)/leads/[id]`):
+- **Full Lead Profile:** Normalized phone & email with click-to-call (`tel:`) and click-to-email (`mailto:`), copy details action.
+- **Fast Call Logger:** In-page form for BDAs with outcome presets (`reached`, `callback_requested`, `not_reached`, `busy`, etc.), duration presets, notes, and callback schedule.
+- **Unified Activity Timeline:** Chronological feed merging call logs, status changes, assignments, and website form submissions.
+- **Lifecycle & Ownership Management:** Interactive stage selector and sales rep transfer dropdown.
+- **Linked Enquiries:** Tab displaying all historical website form submissions.
+
+#### 2. Intake & Deduplication Engine (`apps/api/src/modules/crm/`):
+- **Deterministic 4-Scenario Matching (`crm.intake.service.js`):**
+  - Exact match (Phone + Email): Auto-associates to existing canonical lead and touches timestamps.
+  - Zero match: Automatically creates a canonical lead (`status: 'new'`) and routes via round-robin.
+  - High-risk split collision: Flags `lead_duplicate_reviews` with `high` risk and leaves enquiry for review.
+  - Single-field match: Flags `lead_duplicate_reviews` with `medium` risk and links with `processingStatus: 'needs_review'`.
+- **Live Website Integration:** Bridged `/api/enquiries` into `ingestEnquiryService` while preserving CAPTCHA and emails.
+- **Manager Duplicate Reviews (`/duplicates`):** Screen comparing candidate lead vs incoming submission side-by-side with one-click resolution.
+
+#### 3. Capacity-Aware Round-Robin Assignment Engine (`crm.assignment.service.js`):
+- **Workload & Capacity Limits:** Enforces active lead cap (`DEFAULT_REP_CAPACITY = 50`) excluding converted/lost/cold leads.
+- **Deterministic Routing:** Workload-aware sorting with least-recently-assigned tie-breaking.
+- **Unassigned Fallback Queue:** Safely routes leads to `unassigned` pool if reps are at full capacity without losing leads.
+- **Queue Screen (`/queue`):** Reps can inspect unassigned pool, claim leads with a single click, or view their personal active call queue.
 
 ---
 

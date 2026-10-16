@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Search, Filter, Loader2, Phone, Mail, CheckCircle, RefreshCw } from "lucide-react";
+import Link from "next/link";
+import { Search, Filter, Loader2, Phone, Mail, CheckCircle, RefreshCw, ArrowUpRight } from "lucide-react";
 import { crmApi } from "@/lib/api";
 
 const STATUS_TABS = [
@@ -138,13 +139,20 @@ export default function LeadsDirectoryPage() {
                   <th className="px-6 py-3">Lifecycle Status</th>
                   <th className="px-6 py-3">Assigned Rep</th>
                   <th className="px-6 py-3">Registered At</th>
+                  <th className="px-6 py-3 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60 text-slate-300">
                 {leads.map((lead) => (
-                  <tr key={lead.id} className="hover:bg-slate-800/30 transition-colors">
+                  <tr key={lead.id} className="hover:bg-slate-800/40 transition-colors group">
                     <td className="px-6 py-3.5 font-semibold text-white">
-                      {lead.fullName || lead.name || "Unnamed"}
+                      <Link
+                        href={`/leads/${lead.id}`}
+                        className="hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+                      >
+                        <span>{lead.fullName || lead.name || "Unnamed"}</span>
+                        <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-400" />
+                      </Link>
                     </td>
                     <td className="px-6 py-3.5 text-slate-300">
                       <div className="flex items-center gap-1.5">
@@ -174,6 +182,15 @@ export default function LeadsDirectoryPage() {
                     </td>
                     <td className="px-6 py-3.5 text-slate-500">
                       {new Date(lead.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-3.5 text-right">
+                      <Link
+                        href={`/leads/${lead.id}`}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white font-medium text-[11px] transition-colors"
+                      >
+                        <span>View</span>
+                        <ArrowUpRight className="w-3 h-3" />
+                      </Link>
                     </td>
                   </tr>
                 ))}
