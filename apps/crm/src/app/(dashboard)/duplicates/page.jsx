@@ -4,23 +4,18 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   CopyCheck,
-  AlertTriangle,
   CheckCircle2,
-  Users,
-  ArrowRight,
   Loader2,
   RefreshCw,
   GitMerge,
   ExternalLink,
-  ShieldAlert,
-  HelpCircle,
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 
-const CONFIDENCE_COLORS = {
-  high: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-  medium: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  low: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+const CONFIDENCE_BADGES = {
+  high: "crm-badge crm-badge-danger",
+  medium: "crm-badge crm-badge-warning",
+  low: "crm-badge crm-badge-info",
 };
 
 export default function DuplicateReviewsPage() {
@@ -69,19 +64,19 @@ export default function DuplicateReviewsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-dark-teal-900/60 border border-dark-teal-700/50 text-dark-teal-300 flex items-center justify-center">
               <CopyCheck className="w-4 h-4" />
             </div>
-            <h1 className="text-xl font-bold text-white">Duplicate Candidate Reviews</h1>
+            <h1 className="crm-page-title">Duplicate Candidate Reviews</h1>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="crm-page-subtitle">
             Human-in-the-loop review queue preventing accidental merges and identity collisions.
           </p>
         </div>
 
         <button
           onClick={fetchReviews}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white text-xs font-medium self-start transition-colors"
+          className="crm-btn-secondary self-start"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
           <span>Refresh</span>
@@ -89,7 +84,7 @@ export default function DuplicateReviewsPage() {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+      <div className="crm-tab-bar">
         {[
           { label: "Pending Review", value: "pending" },
           { label: "Resolved", value: "resolved_existing_lead" },
@@ -98,11 +93,7 @@ export default function DuplicateReviewsPage() {
           <button
             key={tab.value}
             onClick={() => setStatusFilter(tab.value)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
-              statusFilter === tab.value
-                ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/30"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
-            }`}
+            className={statusFilter === tab.value ? "crm-tab-active" : "crm-tab-inactive"}
           >
             {tab.label}
           </button>
@@ -111,15 +102,15 @@ export default function DuplicateReviewsPage() {
 
       {/* Review List */}
       {loading ? (
-        <div className="py-24 flex flex-col items-center justify-center text-slate-500 gap-2">
-          <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />
+        <div className="py-24 flex flex-col items-center justify-center text-platinum-400 gap-2">
+          <Loader2 className="w-6 h-6 animate-spin text-dark-teal-400" />
           <span className="text-xs">Checking duplicate candidates...</span>
         </div>
       ) : reviews.length === 0 ? (
-        <div className="glass-panel p-12 rounded-xl text-center space-y-3 max-w-lg mx-auto">
-          <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
-          <h3 className="text-sm font-bold text-white">No Duplicate Conflicts Pending</h3>
-          <p className="text-xs text-slate-400">
+        <div className="crm-panel p-12 text-center space-y-3 max-w-lg mx-auto">
+          <CheckCircle2 className="w-10 h-10 text-deep-ocean-400 mx-auto" />
+          <h3 className="text-sm font-bold text-platinum-50">No Duplicate Conflicts Pending</h3>
+          <p className="text-xs text-platinum-400 leading-relaxed">
             Incoming website enquiries are cleanly mapped to canonical leads. Any identity collisions will appear here for manager review.
           </p>
         </div>
@@ -133,25 +124,21 @@ export default function DuplicateReviewsPage() {
             return (
               <div
                 key={rev.id}
-                className="glass-panel rounded-xl border border-slate-800 p-5 space-y-4 hover:border-slate-700 transition-colors"
+                className="crm-panel p-5 space-y-4"
               >
                 {/* Evidence Banner */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-800">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-platinum-800">
                   <div className="flex items-center gap-2">
-                    <span
-                      className={`px-2.5 py-0.5 rounded-full text-[11px] font-semibold border capitalize ${
-                        CONFIDENCE_COLORS[rev.confidenceCategory] || "bg-slate-800 text-slate-400"
-                      }`}
-                    >
+                    <span className={CONFIDENCE_BADGES[rev.confidenceCategory] || "crm-badge crm-badge-info"}>
                       {rev.confidenceCategory} Risk Collision
                     </span>
-                    <span className="text-xs text-slate-300 font-medium">
+                    <span className="text-xs text-platinum-200 font-medium">
                       {isCollision
                         ? "Phone and email point to different leads in database"
                         : `Single contact field (${evidence.matchedField || "contact"}) matched existing lead`}
                     </span>
                   </div>
-                  <span className="text-[10px] text-slate-500">
+                  <span className="text-[10px] text-platinum-500">
                     Flagged {new Date(rev.createdAt).toLocaleString()}
                   </span>
                 </div>
@@ -159,15 +146,15 @@ export default function DuplicateReviewsPage() {
                 {/* Side-by-side comparison */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                   {/* Left: Existing Lead Candidate */}
-                  <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800/80 space-y-2.5">
+                  <div className="p-4 rounded-xl bg-platinum-900 border border-platinum-800 space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-indigo-400 text-[11px] uppercase tracking-wider">
+                      <span className="font-semibold text-dark-teal-300 text-[11px] uppercase tracking-wider">
                         Existing Registered Lead
                       </span>
                       {rev.candidateLeadId && (
                         <Link
                           href={`/leads/${rev.candidateLeadId}`}
-                          className="flex items-center gap-1 text-[11px] text-indigo-400 hover:text-indigo-300 font-medium"
+                          className="flex items-center gap-1 text-[11px] text-dark-teal-400 hover:text-dark-teal-300 font-medium"
                           target="_blank"
                         >
                           <span>Inspect Profile</span>
@@ -176,32 +163,32 @@ export default function DuplicateReviewsPage() {
                       )}
                     </div>
                     <div>
-                      <p className="text-white font-bold text-sm">{rev.candidateLeadName || "Unnamed"}</p>
-                      <p className="text-slate-400 text-[11px]">Status: {rev.candidateLeadStatus || "new"}</p>
+                      <p className="text-platinum-50 font-bold text-sm">{rev.candidateLeadName || "Unnamed"}</p>
+                      <p className="text-platinum-400 text-[11px]">Status: {rev.candidateLeadStatus || "new"}</p>
                     </div>
-                    <div className="space-y-1 font-mono text-[11px] text-slate-300 bg-slate-950/60 p-2 rounded-lg border border-slate-800/60">
+                    <div className="space-y-1 font-mono text-[11px] text-platinum-200 bg-platinum-950/80 p-2 rounded-lg border border-platinum-800/80">
                       <div>Phone: {rev.candidateLeadPhone || "N/A"}</div>
                       <div>Email: {rev.candidateLeadEmail || "N/A"}</div>
                     </div>
                   </div>
 
                   {/* Right: Incoming Web Submission */}
-                  <div className="p-4 rounded-xl bg-slate-900/80 border border-slate-800/80 space-y-2.5">
-                    <span className="font-semibold text-emerald-400 text-[11px] uppercase tracking-wider block">
+                  <div className="p-4 rounded-xl bg-platinum-900 border border-platinum-800 space-y-2.5">
+                    <span className="font-semibold text-deep-ocean-400 text-[11px] uppercase tracking-wider block">
                       Incoming Web Submission
                     </span>
                     <div>
-                      <p className="text-white font-bold text-sm">
+                      <p className="text-platinum-50 font-bold text-sm">
                         {rev.enquiryFirstName} {rev.enquiryLastName || ""}
                       </p>
-                      <p className="text-slate-400 text-[11px]">Source: Website Contact Form</p>
+                      <p className="text-platinum-400 text-[11px]">Source: Website Contact Form</p>
                     </div>
-                    <div className="space-y-1 font-mono text-[11px] text-slate-300 bg-slate-950/60 p-2 rounded-lg border border-slate-800/60">
+                    <div className="space-y-1 font-mono text-[11px] text-platinum-200 bg-platinum-950/80 p-2 rounded-lg border border-platinum-800/80">
                       <div>Phone: {rev.enquiryPhone || "N/A"}</div>
                       <div>Email: {rev.enquiryEmail || "N/A"}</div>
                     </div>
                     {rev.enquiryMessage && (
-                      <p className="text-slate-400 italic text-[11px] line-clamp-2">
+                      <p className="text-platinum-400 italic text-[11px] line-clamp-2">
                         "{rev.enquiryMessage}"
                       </p>
                     )}
@@ -214,7 +201,7 @@ export default function DuplicateReviewsPage() {
                     <button
                       onClick={() => handleResolve(rev.id, "confirm_separate")}
                       disabled={isProcessing}
-                      className="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-semibold disabled:opacity-50 transition-colors"
+                      className="crm-btn-secondary"
                     >
                       {isProcessing ? "Processing..." : "Confirm Separate People"}
                     </button>
@@ -222,14 +209,14 @@ export default function DuplicateReviewsPage() {
                     <button
                       onClick={() => handleResolve(rev.id, "confirm_same")}
                       disabled={isProcessing}
-                      className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-md shadow-indigo-600/20 disabled:opacity-50 transition-colors"
+                      className="crm-btn-primary"
                     >
                       <GitMerge className="w-3.5 h-3.5" />
                       <span>{isProcessing ? "Resolving..." : "Confirm Same Person (Associate)"}</span>
                     </button>
                   </div>
                 ) : (
-                  <div className="text-right text-[11px] text-emerald-400 font-semibold pt-1">
+                  <div className="text-right text-[11px] text-deep-ocean-400 font-semibold pt-1">
                     ✓ Resolved: {rev.status.replace(/_/g, " ")}
                   </div>
                 )}

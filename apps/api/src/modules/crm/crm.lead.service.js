@@ -73,6 +73,17 @@ export async function getLeadByIdService(id) {
     ? await findCallLogsForPhone(lead.normalizedPhone)
     : [];
 
+  // Fetch counselling sessions
+  let counsellingSessions = [];
+  try {
+    const { findCounsellingSessionsForPhone } = await import("./crm.counselling.repository");
+    if (lead.normalizedPhone) {
+      counsellingSessions = await findCounsellingSessionsForPhone(lead.normalizedPhone);
+    }
+  } catch (err) {
+    console.error("Failed to load counselling sessions for lead:", err);
+  }
+
   // Build unified chronological timeline
   const timeline = [];
 
@@ -126,12 +137,29 @@ export async function getLeadByIdService(id) {
     });
   }
 
+  // 4. Counselling sessions
+  for (const cs of counsellingSessions) {
+    timeline.push({
+      id: `counselling-${cs.id}`,
+      type: "counselling",
+      title: `Counselling Session: ${cs.outcome.replace(/_/g, " ")}`,
+      actorName: cs.counselorName || "Counsellor",
+      outcome: cs.outcome,
+      source: cs.source,
+      notes: cs.notes || "",
+      courseInterest: cs.courseInterest,
+      sessionDate: cs.sessionDate,
+      timestamp: cs.sessionDate ? new Date(cs.sessionDate).toISOString() : cs.createdAt,
+    });
+  }
+
   // Sort descending by timestamp
   timeline.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
   return {
     ...lead,
     enquiries: linkedEnquiries,
+    counsellingSessions,
     timeline,
   };
 }

@@ -9,21 +9,21 @@ export function CrmHeader({ onNewLeadClick }) {
   const primaryRole = crmRoles?.[0] || user?.role || "Staff";
 
   return (
-    <header className="h-16 px-8 bg-[#090d16]/80 backdrop-blur-md border-b border-slate-800 flex items-center justify-between sticky top-0 z-30">
+    <header className="h-16 px-8 bg-platinum-950/80 backdrop-blur-md border-b border-platinum-800 flex items-center justify-between sticky top-0 z-30">
       {/* Search Bar */}
       <div className="relative w-80">
-        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+        <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-platinum-500" />
         <input
           type="text"
           placeholder="Search leads by name, phone, email..."
-          className="w-full bg-slate-900 border border-slate-800 rounded-lg pl-9 pr-4 py-1.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+          className="crm-input pl-9"
         />
       </div>
 
       {/* Right Controls */}
       <div className="flex items-center gap-3">
         {/* Role Badge */}
-        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-medium">
+        <div className="crm-badge crm-badge-info">
           <ShieldCheck className="w-3.5 h-3.5" />
           <span className="capitalize">{primaryRole.replace("_", " ")}</span>
         </div>
@@ -32,16 +32,16 @@ export function CrmHeader({ onNewLeadClick }) {
         <button
           type="button"
           aria-label="View notifications"
-          className="p-2 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/80 transition-colors relative"
+          className="crm-btn-ghost !p-2 relative"
         >
           <Bell className="w-4 h-4" />
-          <span className="w-2 h-2 rounded-full bg-indigo-500 absolute top-2 right-2 ring-2 ring-[#090d16]" />
+          <span className="w-2 h-2 rounded-full bg-deep-ocean-400 absolute top-2 right-2 ring-2 ring-platinum-950" />
         </button>
 
         {/* Fast Action */}
         <button
           onClick={onNewLeadClick}
-          className="flex items-center gap-1.5 px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold shadow-sm transition-colors cursor-pointer"
+          className="crm-btn-primary"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>New Lead</span>

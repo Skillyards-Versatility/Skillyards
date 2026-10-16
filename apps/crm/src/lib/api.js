@@ -72,4 +72,68 @@ export const crmApi = {
   claimLead: (id) => apiRequest(`/api/crm/leads/${id}/claim`, { method: "POST" }),
   autoAssignLead: (id) => apiRequest(`/api/crm/leads/${id}/auto-assign`, { method: "POST" }),
   getTeams: () => apiRequest("/api/crm/teams"),
+  getFollowUps: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/follow-ups${query ? `?${query}` : ""}`);
+  },
+  completeFollowUp: (id, payload) =>
+    apiRequest(`/api/crm/follow-ups/${id}`, {
+      method: "PATCH",
+      body: { action: "complete", ...payload },
+    }),
+  rescheduleFollowUp: (id, payload) =>
+    apiRequest(`/api/crm/follow-ups/${id}`, {
+      method: "PATCH",
+      body: { action: "reschedule", ...payload },
+    }),
+  getCounselling: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/counselling${query ? `?${query}` : ""}`);
+  },
+  getCounsellingSession: (id) => apiRequest(`/api/crm/counselling/${id}`),
+  createCounselling: (payload) =>
+    apiRequest("/api/crm/counselling", { method: "POST", body: payload }),
+  rescheduleCounselling: (id, payload) =>
+    apiRequest(`/api/crm/counselling/${id}/reschedule`, { method: "POST", body: payload }),
+  updateCounsellingStatus: (id, payload) =>
+    apiRequest(`/api/crm/counselling/${id}/status`, { method: "POST", body: payload }),
+  scheduleLeadCounselling: (leadId, payload) =>
+    apiRequest(`/api/crm/leads/${leadId}/counselling`, { method: "POST", body: payload }),
+  getEodPreview: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/eod/preview${query ? `?${query}` : ""}`);
+  },
+  submitEodReport: (payload) =>
+    apiRequest("/api/crm/eod-reports", { method: "POST", body: payload }),
+  getEodReports: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/eod-reports${query ? `?${query}` : ""}`);
+  },
+  getEodReport: (id) => apiRequest(`/api/crm/eod-reports/${id}`),
+  amendEodReport: (id, payload) =>
+    apiRequest(`/api/crm/eod-reports/${id}/amend`, { method: "POST", body: payload }),
 };

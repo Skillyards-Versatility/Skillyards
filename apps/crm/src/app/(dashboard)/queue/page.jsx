@@ -5,28 +5,18 @@ import Link from "next/link";
 import {
   PhoneCall,
   Users,
-  UserCheck,
   Zap,
-  ArrowRight,
   Loader2,
   RefreshCw,
   Phone,
   Mail,
   ShieldCheck,
-  AlertCircle,
-  ExternalLink,
   ChevronRight,
-  Sparkles,
+  ExternalLink,
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
-
-const STATUS_COLORS = {
-  new: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  contacted: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  follow_up: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  counselling_scheduled: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
-};
+import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
 
 export default function CallQueuePage() {
   const { user } = useAuth();
@@ -101,19 +91,19 @@ export default function CallQueuePage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-indigo-600/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-dark-teal-900/60 border border-dark-teal-700/50 text-dark-teal-300 flex items-center justify-center">
               <PhoneCall className="w-4 h-4" />
             </div>
-            <h1 className="text-xl font-bold text-white">Sales Call & Assignment Queue</h1>
+            <h1 className="crm-page-title">Sales Call & Assignment Queue</h1>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="crm-page-subtitle">
             Fair round-robin routing engine protecting team capacity and accelerating lead response time.
           </p>
         </div>
 
         <button
           onClick={fetchQueue}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white text-xs font-medium self-start transition-colors"
+          className="crm-btn-secondary self-start"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
           <span>Refresh Queue</span>
@@ -121,18 +111,14 @@ export default function CallQueuePage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-2">
+      <div className="crm-tab-bar">
         <button
           onClick={() => setActiveTab("unassigned")}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-            activeTab === "unassigned"
-              ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/30"
-              : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
-          }`}
+          className={activeTab === "unassigned" ? "crm-tab-active" : "crm-tab-inactive"}
         >
           <span>Unassigned Pool</span>
           {activeTab === "unassigned" && total > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-indigo-900 text-indigo-200 text-[10px]">
+            <span className="crm-tab-badge-active">
               {total}
             </span>
           )}
@@ -140,15 +126,11 @@ export default function CallQueuePage() {
 
         <button
           onClick={() => setActiveTab("my_queue")}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-            activeTab === "my_queue"
-              ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/30"
-              : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
-          }`}
+          className={activeTab === "my_queue" ? "crm-tab-active" : "crm-tab-inactive"}
         >
           <span>My Call Queue</span>
           {activeTab === "my_queue" && total > 0 && (
-            <span className="px-1.5 py-0.2 rounded-full bg-indigo-900 text-indigo-200 text-[10px]">
+            <span className="crm-tab-badge-active">
               {total}
             </span>
           )}
@@ -156,11 +138,7 @@ export default function CallQueuePage() {
 
         <button
           onClick={() => setActiveTab("teams")}
-          className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-            activeTab === "teams"
-              ? "bg-indigo-600 text-white shadow-sm shadow-indigo-600/30"
-              : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
-          }`}
+          className={activeTab === "teams" ? "crm-tab-active" : "crm-tab-inactive"}
         >
           <Users className="w-3.5 h-3.5" />
           <span>Team Capacity & Roster</span>
@@ -169,31 +147,31 @@ export default function CallQueuePage() {
 
       {/* Queue Body */}
       {loading ? (
-        <div className="py-24 flex flex-col items-center justify-center text-slate-500 gap-2">
-          <Loader2 className="w-6 h-6 animate-spin text-indigo-500" />
+        <div className="py-24 flex flex-col items-center justify-center text-platinum-400 gap-2">
+          <Loader2 className="w-6 h-6 animate-spin text-dark-teal-400" />
           <span className="text-xs">Fetching queue items...</span>
         </div>
       ) : activeTab === "teams" ? (
         /* Team Capacity Tab */
         <div className="space-y-6">
           {teams.length === 0 ? (
-            <div className="glass-panel p-12 text-center text-slate-500 text-xs rounded-xl">
+            <div className="crm-panel p-12 text-center text-platinum-500 text-xs">
               No active sales teams configured yet.
             </div>
           ) : (
             teams.map((team) => (
               <div
                 key={team.id}
-                className="glass-panel p-5 rounded-xl border border-slate-800 space-y-4"
+                className="crm-panel p-5 space-y-4"
               >
-                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div className="flex items-center justify-between border-b border-platinum-800 pb-3">
                   <div>
-                    <h3 className="text-sm font-bold text-white">{team.name}</h3>
-                    <p className="text-[11px] text-slate-400">
+                    <h3 className="text-sm font-bold text-platinum-50">{team.name}</h3>
+                    <p className="text-[11px] text-platinum-400">
                       {team.memberCount} active sales representatives assigned
                     </p>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <span className="crm-badge crm-badge-success">
                     Active Routing
                   </span>
                 </div>
@@ -209,37 +187,33 @@ export default function CallQueuePage() {
                     return (
                       <div
                         key={member.userId}
-                        className="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2.5"
+                        className="p-4 rounded-xl bg-platinum-900 border border-platinum-800 space-y-2.5"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold text-white text-xs">{member.name}</span>
+                          <span className="font-semibold text-platinum-50 text-xs">{member.name}</span>
                           <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-semibold border capitalize ${
-                              isFull
-                                ? "bg-rose-500/10 text-rose-400 border-rose-500/20"
-                                : "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                            }`}
+                            className={isFull ? "crm-badge crm-badge-danger" : "crm-badge crm-badge-success"}
                           >
                             {isFull ? "At Capacity" : "Available"}
                           </span>
                         </div>
 
-                        <div className="text-[11px] text-slate-400">
-                          Role: <span className="text-slate-200 capitalize">{member.role}</span>
+                        <div className="text-[11px] text-platinum-400">
+                          Role: <span className="text-platinum-200 capitalize">{member.role}</span>
                         </div>
 
                         {/* Workload Progress Bar */}
                         <div className="space-y-1">
-                          <div className="flex justify-between text-[10px] text-slate-400">
+                          <div className="flex justify-between text-[10px] text-platinum-400">
                             <span>Active Leads</span>
-                            <span className="font-mono text-slate-200 font-semibold">
+                            <span className="font-mono text-platinum-200 font-semibold">
                               {member.activeLeads} / {member.capacityLimit || 50}
                             </span>
                           </div>
-                          <div className="w-full h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                          <div className="w-full h-1.5 rounded-full bg-platinum-800 overflow-hidden">
                             <div
                               className={`h-full rounded-full transition-all duration-300 ${
-                                isFull ? "bg-rose-500" : ratio > 75 ? "bg-amber-500" : "bg-indigo-500"
+                                isFull ? "bg-dark-wine-500" : ratio > 75 ? "bg-pale-oak-400" : "bg-dark-teal-500"
                               }`}
                               style={{ width: `${ratio}%` }}
                             />
@@ -255,14 +229,14 @@ export default function CallQueuePage() {
         </div>
       ) : queueItems.length === 0 ? (
         /* Empty State */
-        <div className="glass-panel p-16 rounded-xl text-center space-y-3 max-w-lg mx-auto">
-          <ShieldCheck className="w-10 h-10 text-emerald-400 mx-auto" />
-          <h3 className="text-sm font-bold text-white">
+        <div className="crm-panel p-16 text-center space-y-3 max-w-lg mx-auto">
+          <ShieldCheck className="w-10 h-10 text-deep-ocean-400 mx-auto" />
+          <h3 className="text-sm font-bold text-platinum-50">
             {activeTab === "unassigned"
               ? "All Prospects Are Assigned"
               : "Your Call Queue is Clear"}
           </h3>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-platinum-400 leading-relaxed">
             {activeTab === "unassigned"
               ? "Every prospect has been routed to an active representative. New submissions will appear here if capacity limits are reached."
               : "You have contacted all assigned active leads. Check back when new prospects are routed to your pipeline."}
@@ -270,82 +244,78 @@ export default function CallQueuePage() {
         </div>
       ) : (
         /* Queue Table / List */
-        <div className="glass-panel rounded-xl overflow-hidden border border-slate-800">
+        <div className="crm-panel overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-900/60 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+            <table className="crm-table">
+              <thead className="crm-thead">
                 <tr>
-                  <th className="px-6 py-3">Prospect Name</th>
-                  <th className="px-6 py-3">Phone</th>
-                  <th className="px-6 py-3">Email</th>
-                  <th className="px-6 py-3">Status</th>
-                  <th className="px-6 py-3">Created</th>
-                  <th className="px-6 py-3 text-right">Queue Action</th>
+                  <th className="crm-th">Prospect Name</th>
+                  <th className="crm-th">Phone</th>
+                  <th className="crm-th">Email</th>
+                  <th className="crm-th">Status</th>
+                  <th className="crm-th">Created</th>
+                  <th className="crm-th text-right">Queue Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-slate-300">
+              <tbody className="crm-tbody">
                 {queueItems.map((item) => {
                   const isProcessing = actionLoadingId === item.id;
 
                   return (
-                    <tr key={item.id} className="hover:bg-slate-800/40 transition-colors group">
-                      <td className="px-6 py-3.5 font-semibold text-white">
+                    <tr key={item.id} className="crm-tr group">
+                      <td className="crm-td">
                         <Link
                           href={`/leads/${item.id}`}
-                          className="hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+                          className="crm-lead-link flex items-center gap-1.5"
                         >
                           <span>{item.fullName || "Unnamed"}</span>
-                          <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-400" />
+                          <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-deep-ocean-400" />
                         </Link>
                       </td>
-                      <td className="px-6 py-3.5 text-slate-300">
+                      <td className="crm-td text-platinum-200">
                         <div className="flex items-center gap-1.5">
-                          <Phone className="w-3.5 h-3.5 text-slate-500" />
+                          <Phone className="w-3.5 h-3.5 text-platinum-500" />
                           <span>{item.normalizedPhone || "-"}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-3.5 text-slate-400">
+                      <td className="crm-td text-platinum-300">
                         <div className="flex items-center gap-1.5">
-                          <Mail className="w-3.5 h-3.5 text-slate-500" />
+                          <Mail className="w-3.5 h-3.5 text-platinum-500" />
                           <span>{item.normalizedEmail || "-"}</span>
                         </div>
                       </td>
-                      <td className="px-6 py-3.5">
-                        <span
-                          className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium border capitalize ${
-                            STATUS_COLORS[item.status] || "bg-slate-800 text-slate-400 border-slate-700"
-                          }`}
-                        >
-                          {item.status.replace("_", " ")}
+                      <td className="crm-td">
+                        <span className={getStatusBadgeClass(item.status)}>
+                          {formatStatusLabel(item.status)}
                         </span>
                       </td>
-                      <td className="px-6 py-3.5 text-slate-500">
+                      <td className="crm-td text-platinum-400">
                         {new Date(item.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="px-6 py-3.5 text-right">
+                      <td className="crm-td text-right">
                         {activeTab === "unassigned" ? (
                           <div className="flex items-center justify-end gap-2">
                             <button
                               onClick={() => handleClaimLead(item.id)}
                               disabled={isProcessing}
-                              className="px-2.5 py-1 rounded bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-[11px] shadow-sm shadow-indigo-600/20 disabled:opacity-50 transition-colors"
+                              className="crm-btn-primary !py-1 !px-2.5 text-[11px]"
                             >
                               {isProcessing ? "Claiming..." : "Claim"}
                             </button>
                             <button
                               onClick={() => handleAutoAssign(item.id)}
                               disabled={isProcessing}
-                              className="flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-medium text-[11px] disabled:opacity-50 transition-colors"
+                              className="crm-btn-secondary !py-1 !px-2 text-[11px]"
                               title="Assign via round-robin"
                             >
-                              <Zap className="w-3 h-3 text-amber-400" />
+                              <Zap className="w-3 h-3 text-pale-oak-400" />
                               <span>Auto</span>
                             </button>
                           </div>
                         ) : (
                           <Link
                             href={`/leads/${item.id}`}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white font-medium text-[11px] transition-colors"
+                            className="crm-btn-secondary !py-1 !px-2.5 text-[11px]"
                           >
                             <span>Open</span>
                             <ChevronRight className="w-3 h-3" />
