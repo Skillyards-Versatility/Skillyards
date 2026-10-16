@@ -46,7 +46,7 @@ export default function CallQueuePage() {
         setTotal(res.pagination?.total || 0);
       }
     } catch (err) {
-      console.error("Failed to fetch queue:", err);
+      console.warn("Could not load queue from backend:", err.message);
     } finally {
       setLoading(false);
     }

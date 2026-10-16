@@ -134,7 +134,7 @@ export default function LeadDetailPage() {
       const data = await crmApi.getLead(id);
       setLead(data);
     } catch (err) {
-      console.error("Failed to load lead:", err);
+      console.warn("Could not load lead from backend:", err.message);
       setError(err.message || "Failed to load lead details");
     } finally {
       setLoading(false);
@@ -146,7 +146,7 @@ export default function LeadDetailPage() {
       const data = await crmApi.getStaff();
       setStaff(data || []);
     } catch (err) {
-      console.error("Failed to load staff list:", err);
+      console.warn("Could not load staff list from backend:", err.message);
     }
   };
 

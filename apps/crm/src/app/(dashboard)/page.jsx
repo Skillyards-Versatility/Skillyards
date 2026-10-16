@@ -28,7 +28,7 @@ export default function DashboardPage() {
         setLeads(res.items || []);
         setTotalLeads(res.pagination?.total || 0);
       } catch (err) {
-        console.error("Failed to load dashboard data:", err);
+        console.warn("Could not load dashboard data from backend:", err.message);
       } finally {
         setLoading(false);
       }

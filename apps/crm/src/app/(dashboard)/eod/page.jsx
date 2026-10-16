@@ -96,8 +96,44 @@ export default function EodPage() {
         });
       }
     } catch (err) {
-      console.error("Failed to load EOD preview:", err);
+      console.warn("Could not reach backend API server:", err.message);
       setPreviewError(err.message || "Failed to load EOD preview");
+      // Resilient fallback baseline preview so that the UI, formula breakdown, and gauges work smoothly in offline dev
+      const curDate = date || selectedDate || new Date().toISOString().split("T")[0];
+      setPreview((prev) => prev || {
+        isOffline: true,
+        user: { name: user?.name || "Representative", team: "sales" },
+        date: curDate,
+        isSunday: new Date(curDate).getDay() === 0,
+        isCutoffPassed: false,
+        isSubmitted: false,
+        isLocked: false,
+        targets: {
+          configVersion: "v1.0",
+          baselineDials: 120,
+          baselineConnects: 50,
+          talkTimeTargetMinutes: 90,
+          completedCounselling: 0,
+          counsellingReliefDials: 0,
+          counsellingReliefConnects: 0,
+          dialTarget: 120,
+          connectTarget: 50,
+        },
+        autoActuals: {
+          dials: 0,
+          connects: 0,
+          talkTimeMinutes: 0,
+          counsellingCompleted: 0,
+          notes: "",
+        },
+        currentActuals: {
+          dials: 0,
+          connects: 0,
+          talkTimeMinutes: 0,
+          counsellingCompleted: 0,
+          notes: "",
+        },
+      });
     } finally {
       setLoadingPreview(false);
     }
@@ -116,7 +152,7 @@ export default function EodPage() {
       const res = await crmApi.getEodReports(params);
       setReportsList(res.reports || []);
     } catch (err) {
-      console.error("Failed to load EOD reports history:", err);
+      console.warn("Could not load EOD reports history from backend:", err.message);
     } finally {
       setLoadingHistory(false);
     }
@@ -189,7 +225,7 @@ export default function EodPage() {
       const detailed = await crmApi.getEodReport(report.id);
       setDetailedHistory(detailed);
     } catch (err) {
-      console.error("Failed to load report detail:", err);
+      console.warn("Could not load report detail from backend:", err.message);
       setDetailedHistory(null);
     } finally {
       setLoadingDetailedHistory(false);
@@ -260,6 +296,32 @@ export default function EodPage() {
           </button>
         </div>
       </div>
+
+      {/* Offline Mode Banner */}
+      {preview?.isOffline && (
+        <div className="p-4 rounded-xl bg-pale-oak-950/60 border border-pale-oak-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-pale-oak-900/80 border border-pale-oak-700/70 flex items-center justify-center shrink-0 text-pale-oak-400">
+              <AlertCircle className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="font-semibold text-platinum-100">
+                Offline Development Mode (Local Fallback Preview)
+              </p>
+              <p className="text-platinum-400 mt-0.5">
+                Backend server on port 3000 is not reachable. Showing standard baseline targets (120 Dials, 50 Connects, 90m Talk Time). Run <span className="font-mono text-deep-ocean-300">cd apps/api && npm run dev</span> to connect to live database.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => fetchPreview(selectedDate)}
+            className="crm-btn-secondary shrink-0 text-xs"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            Retry Connection
+          </button>
+        </div>
+      )}
 
       {/* Policy & Formula Banner */}
       <div className="crm-panel p-4 bg-gradient-to-r from-dark-teal-950/80 via-platinum-950 to-deep-ocean-950/40 border border-dark-teal-800/40">
@@ -549,13 +611,35 @@ export default function EodPage() {
               <div className="w-8 h-8 border-2 border-dark-teal-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
               <p className="text-xs">Calculating authoritative targets and extracting live CRM actuals...</p>
             </div>
-          ) : previewError ? (
-            <div className="p-8 text-center text-dark-wine-400">
-              <AlertCircle className="w-6 h-6 mx-auto mb-2 text-dark-wine-500" />
-              <p className="text-xs">{previewError}</p>
-              <button onClick={() => fetchPreview(selectedDate)} className="crm-btn-secondary mt-3">
-                Try Again
-              </button>
+          ) : (previewError && !preview) ? (
+            <div className="p-8 text-center max-w-lg mx-auto space-y-4">
+              <div className="w-12 h-12 rounded-2xl bg-dark-wine-950/80 border border-dark-wine-800/60 flex items-center justify-center mx-auto text-dark-wine-400">
+                <AlertCircle className="w-6 h-6" />
+              </div>
+              <div className="space-y-1.5">
+                <h3 className="font-semibold text-sm text-platinum-100">
+                  Unable to Load Server EOD Preview
+                </h3>
+                <p className="text-xs text-platinum-400">
+                  {previewError}
+                </p>
+              </div>
+              <div className="p-3 rounded-lg bg-platinum-950 border border-platinum-800 text-left font-mono text-[11px] text-platinum-300 space-y-1">
+                <div className="text-platinum-500 font-sans text-[10px] uppercase font-bold tracking-wider">
+                  Check Service Health:
+                </div>
+                <div>1. Ensure API backend is running: <span className="text-deep-ocean-400">cd apps/api && npm run dev</span></div>
+                <div>2. Verify backend endpoint at: <span className="text-deep-ocean-400">http://localhost:3000/api/crm/me</span></div>
+              </div>
+              <div className="flex items-center justify-center gap-2 pt-2">
+                <button
+                  onClick={() => fetchPreview(selectedDate)}
+                  className="crm-btn-primary"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  Try Again
+                </button>
+              </div>
             </div>
           ) : preview?.isLocked ? (
             /* --- LOCKED SUBMITTED REPORT VIEW --- */
