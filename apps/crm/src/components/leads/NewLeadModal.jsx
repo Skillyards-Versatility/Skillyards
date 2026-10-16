@@ -35,27 +35,27 @@ export function NewLeadModal({ isOpen, onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-      <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-xl shadow-2xl p-6">
-        <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-          <h2 className="text-base font-bold text-white">Create New Lead</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+      <div className="crm-panel w-full max-w-md p-6 shadow-2xl">
+        <div className="flex items-center justify-between pb-4 border-b border-platinum-800">
+          <h2 className="text-base font-bold text-platinum-50">Create New Lead</h2>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-200 transition-colors"
+            className="crm-btn-ghost !p-1 text-platinum-400 hover:text-platinum-100"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {error && (
-          <div className="mt-4 p-3 bg-rose-500/10 border border-rose-500/20 rounded-lg text-rose-400 text-xs">
+          <div className="mt-4 p-3 rounded-lg text-xs bg-dark-wine-950/80 border border-dark-wine-700/60 text-dark-wine-300">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="mt-4 space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="crm-label">
               Full Name *
             </label>
             <input
@@ -64,12 +64,12 @@ export function NewLeadModal({ isOpen, onClose, onSuccess }) {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="e.g. Rahul Sharma"
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="crm-input"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="crm-label">
               Phone Number *
             </label>
             <input
@@ -78,12 +78,12 @@ export function NewLeadModal({ isOpen, onClose, onSuccess }) {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="e.g. 9876543210"
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="crm-input"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="crm-label">
               Email Address
             </label>
             <input
@@ -91,18 +91,18 @@ export function NewLeadModal({ isOpen, onClose, onSuccess }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="rahul@example.com"
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="crm-input"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1">
+            <label className="crm-label">
               Initial Status
             </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-indigo-500"
+              className="crm-select"
             >
               <option value="new">New</option>
               <option value="contacted">Contacted</option>
@@ -115,14 +115,14 @@ export function NewLeadModal({ isOpen, onClose, onSuccess }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+              className="crm-btn-ghost"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-colors disabled:opacity-50"
+              className="crm-btn-primary"
             >
               {loading && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
               <span>Save Lead</span>

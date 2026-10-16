@@ -1,7 +1,7 @@
 # Skillyards Sales CRM — Detailed Architecture Specification
 
 **Document set:** 10 files  
-**Status:** In Active Development (Phase 1 Foundation & Architecture Setup Completed)  
+**Status:** In Active Development (Phases 1, 2 & 3 Completed — Sales Operations, Counselling & EOD Live)  
 **Repository:** `/home/chakresh/Skillyards`  
 **Primary applications:** `apps/crm`, `apps/api`, `apps/crm-worker`, `packages/db`  
 **Frontend domain:** `crm.skillyards.in` (Local: `http://localhost:3003`)  
@@ -75,6 +75,52 @@
 
 ---
 
+### Phase 3 Sales Operations, Counselling & EOD Attainment: Completed (Updated 2026-10-16)
+
+#### 1. Single Source of Truth Design System & Contrast Compliance (`apps/crm/src/app/globals.css`, `status.js`)
+- **Centralized 5-Family Palette:** Configured `@theme` tokens for `dark-teal`, `deep-ocean`, `pale-oak`, `dark-wine`, and `platinum` (50–950) with strict WCAG AA/AAA contrast.
+- **Global Component CSS Classes:** Standardized `.crm-panel`, `.crm-card`, `.crm-btn-primary`, `.crm-btn-secondary`, `.crm-btn-danger`, `.crm-btn-ghost`, `.crm-input`, `.crm-select`, `.crm-textarea`, `.crm-label`, `.crm-tab-bar`, `.crm-table`, and `.crm-badge-*` classes across the entire web application.
+- **Centralized Status Mapper (`lib/status.js`):** Single source of truth for pipeline stages, follow-up states, counselling outcomes, and enquiry sources.
+- **Complete Application Consistency:** Refactored Dashboard, Leads, Lead Workspace, Duplicate Reviews, Queue, Follow-ups, Counselling, and EOD screens to eliminate arbitrary ad-hoc inline styles and color mismatches.
+
+#### 2. Track 1: Follow-ups & Callback Queue (`apps/crm/src/app/(dashboard)/follow-ups`)
+- **Priority Urgency Buckets:** Chronological separation of `Overdue`, `Due Today`, `Upcoming`, and `Completed` follow-up tasks with urgency sorting.
+- **Fast Task Resolution:** Quick mark-as-complete modal with resolution notes, and reschedule modal capturing callback date/time and reason.
+- **Audit & Timeline Integration:** Follow-up completion and reschedule events write structured audit records into `crm_audit_events` and appear directly on the lead timeline.
+- **Backend Architecture (`apps/api/src/modules/crm/`):**
+  - `crm.followup.repository.js`: Scoped extraction of tasks with callback schedules, joining telecallers, and normalized lead contact profiles.
+  - `crm.followup.service.js`: Domain validation, urgency bucket sorting, and audit event dispatch.
+  - REST endpoints: `GET /api/crm/follow-ups` & `PATCH /api/crm/follow-ups/[id]`.
+
+#### 3. Track 2: Counselling Session Management (`apps/crm/src/app/(dashboard)/counselling`)
+- **Canonical Lead Linkage:** Auto-associates sessions with canonical `leads` via phone matching and lead ID referencing.
+- **Session Lifecycle & History Preservation:** Full scheduling, conducting, and logging workflow for walk-in, phone, and referral sessions. Rescheduling updates scheduled date on the exact same session identity while preserving previous date, new date, actor, timestamp, and reason in append-only `crmAuditEvents`.
+- **Controlled Session Outcomes:** Full support for `session_booked`, `completed`, `enrolled`, `follow_up`, `not_interested`, `no_response`, `no_show`, and `cancelled`.
+- **Lead State Synchronization:** Booking counselling auto-advances lead status to `counselling_scheduled`; marking session completed transitions lead to `counselled`; enrolling transitions lead to `converted`.
+- **Lead Detail Integration (`/leads/[id]`):** Dedicated "Book Counselling" quick action, linked sessions tab, and timeline entries.
+- **Backend Architecture (`apps/api/src/modules/crm/`):**
+  - `crm.counselling.repository.js`: Scoped session queries with filtering (`outcome`, `source`, `counselorId`, date range, search) and aggregate KPI metrics.
+  - `crm.counselling.service.js`: Domain booking logic, reschedule history logging, and outcome transitions.
+  - REST endpoints: `GET /api/crm/counselling`, `POST /api/crm/counselling`, `GET /api/crm/counselling/[id]`, `POST /api/crm/counselling/[id]/reschedule`, `POST /api/crm/counselling/[id]/status`, `DELETE /api/crm/counselling/[id]`, and `POST /api/crm/leads/[id]/counselling`.
+
+#### 4. Track 3: Server-Authoritative EOD Attainment Engine (`apps/crm/src/app/(dashboard)/eod`)
+- **Server-Owned Target Engine (SPEC-6 & SPEC-8):**
+  - Pure domain function `calculateEodTargets(completedCounsellingCount, config)` enforcing locked formulas:
+    - $\text{dialTarget} = \max(0, 120 - \text{completedCounselling} \times 15)$
+    - $\text{connectTarget} = \max(30, 50 - \text{completedCounselling} \times 5)$
+    - $\text{talkTimeTargetMinutes} = 90 \text{ mins}$
+  - Config versioning (`v1.0`) snapshot stored with each report.
+- **Server-Authoritative Counselling Attribution:** Server queries verified completed/enrolled sessions for reporting rep and date; client cannot forge or submit arbitrary counselling numbers.
+- **Auto-Aggregated CRM Call Actuals:** Automatically extracts live dials, connects (`reached`, `callback_requested`, `interested`), and talk-time duration from `follow_ups` call logs.
+- **Submission Validation & Conflict Protection:** Enforces business submission cutoff (7:30 PM IST), Sunday policy, and prevents accidental re-submissions (`409 Conflict: EOD_REPORT_ALREADY_SUBMITTED`).
+- **Audited Manager Amendment:** Privileged managers/admins can adjust actuals with mandatory `amendmentReason` (`EOD_AMENDMENT_REASON_REQUIRED`), incrementing revision (`v{N+1}`) while archiving previous snapshots in the immutable revision ledger.
+- **Frontend EOD Workspace (`/eod`):** Live attainment gauges (Dials, Connects, Talk Time, Overall Target Met), target relief calculator breakdown, unsubmitted form with auto-counts, submitted locked state, manager amendment modal, and revision history drawer.
+- **Backend Architecture (`apps/api/src/modules/crm/`):**
+  - `crm.eod.service.js`: Target calculation, attainment scoring, report validation, and revision handling.
+  - REST endpoints: `GET /api/crm/eod/preview`, `POST /api/crm/eod-reports`, `GET /api/crm/eod-reports`, `GET /api/crm/eod-reports/[id]`, and `POST /api/crm/eod-reports/[id]/amend`.
+
+---
+
 ## 1. Purpose of this document set
 
 This README is the entry point for the detailed Skillyards Sales CRM design. It explains how the individual specifications fit together, the proposed architecture, implementation order, key constraints, and the decisions that must be settled before production rollout.
@@ -113,10 +159,10 @@ The design takes the following repository observations as the starting point. Ve
 - Existing authentication uses JWT HS256 via `jose`, a `session` cookie, `.skillyards.in` cookie domain, and a seven-day expiry. The existing design is stateless and does not provide immediate centralized revocation.
 - Existing platform roles include `ADMIN`, `MANAGER`, `SALES`, `HR`, `DEVELOPER`, `DIGITAL_MARKETER`, `EDITOR`, `OUTSIDE_SALES`, and `STUDENT`. CRM-specific roles are proposed separately.
 - `employees` is a legacy/orphaned table still referenced by a hardcoded ID mapping in the telephony GSM callback.
-- `follow_ups` may mix call-log and task concepts and needs a consumer/schema inventory before changes.
-- `counselling_sessions` is linked to users but not currently linked to canonical CRM leads.
-- EOD formulas identified in the frontend are `dialTarget = max(0, 120 - totalCounselling * 15)`, `connectTarget = max(30, 50 - totalCounselling * 5)`, and a 90-minute talk-time target. The API should own target calculation after business approval.
-- `eod_reports` has a unique user/date key and JSONB payload.
+- `follow_ups` is utilized for call logging and augmented with callback task analysis in `crm.followup.service.js`.
+- `counselling_sessions` is linked to canonical CRM leads through normalized phone matching, lead timeline integration, and dedicated CRM routes.
+- EOD formulas have been transitioned from frontend to server-authoritative domain services (`crm.eod.service.js`) with locked target snapshots, automated counselling relief, and audited manager amendments.
+- `eod_reports` has a unique `(user_id, date)` key and stores the authoritative target snapshot, actuals, attainments, and revision ledger.
 - `students` does not currently expose the complete admission milestone model required by the CRM.
 - CORS configuration needs review for `crm.skillyards.in` and the agreed local CRM development origin.
 - Migration sequence collisions, manual scripts, and limited automated test coverage are known implementation risks.

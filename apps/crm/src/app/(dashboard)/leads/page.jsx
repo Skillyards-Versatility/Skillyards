@@ -2,8 +2,9 @@
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { Search, Filter, Loader2, Phone, Mail, CheckCircle, RefreshCw, ArrowUpRight } from "lucide-react";
+import { Search, Loader2, Phone, Mail, RefreshCw, ArrowUpRight } from "lucide-react";
 import { crmApi } from "@/lib/api";
+import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
 
 const STATUS_TABS = [
   { label: "All Leads", value: "" },
@@ -15,18 +16,6 @@ const STATUS_TABS = [
   { label: "Converted", value: "converted" },
   { label: "Lost", value: "lost" },
 ];
-
-const STATUS_COLORS = {
-  new: "bg-blue-500/10 text-blue-400 border-blue-500/20",
-  contacted: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  follow_up: "bg-purple-500/10 text-purple-400 border-purple-500/20",
-  counselling_scheduled: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
-  counselled: "bg-cyan-500/10 text-cyan-400 border-cyan-500/20",
-  qualified: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  converted: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-  cold: "bg-slate-500/10 text-slate-400 border-slate-500/20",
-  lost: "bg-rose-500/10 text-rose-400 border-rose-500/20",
-};
 
 export default function LeadsDirectoryPage() {
   const [leads, setLeads] = useState([]);
@@ -63,34 +52,32 @@ export default function LeadsDirectoryPage() {
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold text-white">Leads Pipeline</h1>
-          <p className="text-xs text-slate-400 mt-0.5">
+          <h1 className="crm-page-title">Leads Pipeline</h1>
+          <p className="crm-page-subtitle">
             Showing {leads.length} of {total} registered prospects
           </p>
         </div>
 
         <button
           onClick={fetchLeads}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 hover:text-white text-xs font-medium self-start"
+          className="crm-btn-secondary self-start"
+          title="Refresh leads"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
           <span>Refresh</span>
         </button>
       </div>
 
       {/* Status Filter Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 border-b border-slate-800">
+      <div className="crm-tab-bar">
         {STATUS_TABS.map((tab) => (
           <button
             key={tab.value}
             onClick={() => setStatusFilter(tab.value)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-              statusFilter === tab.value
-                ? "bg-indigo-600 text-white font-semibold"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-900"
-            }`}
+            className={statusFilter === tab.value ? "crm-tab-active" : "crm-tab-inactive"}
           >
             {tab.label}
           </button>
@@ -100,93 +87,86 @@ export default function LeadsDirectoryPage() {
       {/* Search Bar */}
       <form onSubmit={handleSearchSubmit} className="flex gap-2 max-w-md">
         <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-platinum-500 pointer-events-none" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, phone or email..."
-            className="w-full bg-slate-900 border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            className="crm-input pl-9"
           />
         </div>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg"
-        >
+        <button type="submit" className="crm-btn-primary">
           Search
         </button>
       </form>
 
       {/* Leads Table */}
-      <div className="glass-panel rounded-xl overflow-hidden">
+      <div className="crm-panel overflow-hidden">
         {loading ? (
-          <div className="py-20 flex items-center justify-center text-slate-500 gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-indigo-500" />
+          <div className="py-20 flex items-center justify-center text-platinum-400 gap-2">
+            <Loader2 className="w-5 h-5 animate-spin text-dark-teal-400" />
             <span className="text-xs">Fetching leads...</span>
           </div>
         ) : leads.length === 0 ? (
-          <div className="py-20 text-center text-slate-500 text-xs">
+          <div className="py-20 text-center text-platinum-500 text-xs">
             No leads match current filter criteria.
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-900/60 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+            <table className="crm-table">
+              <thead className="crm-thead">
                 <tr>
-                  <th className="px-6 py-3">Lead Details</th>
-                  <th className="px-6 py-3">Phone</th>
-                  <th className="px-6 py-3">Email</th>
-                  <th className="px-6 py-3">Lifecycle Status</th>
-                  <th className="px-6 py-3">Assigned Rep</th>
-                  <th className="px-6 py-3">Registered At</th>
-                  <th className="px-6 py-3 text-right">Action</th>
+                  <th className="crm-th">Lead Details</th>
+                  <th className="crm-th">Phone</th>
+                  <th className="crm-th">Email</th>
+                  <th className="crm-th">Lifecycle Status</th>
+                  <th className="crm-th">Assigned Rep</th>
+                  <th className="crm-th">Registered At</th>
+                  <th className="crm-th text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 text-slate-300">
+              <tbody className="crm-tbody">
                 {leads.map((lead) => (
-                  <tr key={lead.id} className="hover:bg-slate-800/40 transition-colors group">
-                    <td className="px-6 py-3.5 font-semibold text-white">
+                  <tr key={lead.id} className="crm-tr group">
+                    <td className="crm-td">
                       <Link
                         href={`/leads/${lead.id}`}
-                        className="hover:text-indigo-400 transition-colors flex items-center gap-1.5"
+                        className="crm-lead-link flex items-center gap-1.5"
                       >
                         <span>{lead.fullName || lead.name || "Unnamed"}</span>
-                        <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-400" />
+                        <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-deep-ocean-400" />
                       </Link>
                     </td>
-                    <td className="px-6 py-3.5 text-slate-300">
+                    <td className="crm-td text-platinum-200">
                       <div className="flex items-center gap-1.5">
-                        <Phone className="w-3.5 h-3.5 text-slate-500" />
+                        <Phone className="w-3.5 h-3.5 text-platinum-500" />
                         <span>{lead.normalizedPhone || lead.phone || "-"}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-3.5 text-slate-400">
+                    <td className="crm-td text-platinum-300">
                       <div className="flex items-center gap-1.5">
-                        <Mail className="w-3.5 h-3.5 text-slate-500" />
+                        <Mail className="w-3.5 h-3.5 text-platinum-500" />
                         <span>{lead.normalizedEmail || lead.email || "-"}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-3.5">
-                      <span
-                        className={`inline-block px-2.5 py-0.5 rounded-full text-[11px] font-medium border capitalize ${
-                          STATUS_COLORS[lead.status] || "bg-slate-800 text-slate-400 border-slate-700"
-                        }`}
-                      >
-                        {lead.status.replace("_", " ")}
+                    <td className="crm-td">
+                      <span className={getStatusBadgeClass(lead.status)}>
+                        {formatStatusLabel(lead.status)}
                       </span>
                     </td>
-                    <td className="px-6 py-3.5 text-slate-400 font-medium">
+                    <td className="crm-td text-platinum-300 font-medium">
                       {lead.assignedToUserName || (
-                        <span className="text-slate-600 italic">Unassigned</span>
+                        <span className="text-platinum-500 italic">Unassigned</span>
                       )}
                     </td>
-                    <td className="px-6 py-3.5 text-slate-500">
+                    <td className="crm-td text-platinum-400">
                       {new Date(lead.createdAt).toLocaleDateString()}
                     </td>
-                    <td className="px-6 py-3.5 text-right">
+                    <td className="crm-td text-right">
                       <Link
                         href={`/leads/${lead.id}`}
-                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-800 hover:bg-indigo-600 text-slate-300 hover:text-white font-medium text-[11px] transition-colors"
+                        className="crm-btn-secondary !py-1 !px-2.5 text-[11px]"
                       >
                         <span>View</span>
                         <ArrowUpRight className="w-3 h-3" />

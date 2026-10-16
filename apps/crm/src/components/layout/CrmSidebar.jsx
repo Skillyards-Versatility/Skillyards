@@ -31,21 +31,23 @@ export function CrmSidebar() {
   const { user, crmRoles } = useAuth();
 
   return (
-    <aside className="w-64 bg-[#090d16] border-r border-slate-800 flex flex-col shrink-0 h-screen sticky top-0">
+    <aside className="w-64 bg-platinum-950 border-r border-platinum-800/80 flex flex-col shrink-0 h-screen sticky top-0">
       {/* Brand */}
-      <div className="h-16 px-6 flex items-center gap-3 border-b border-slate-800/80">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-          <Sparkles className="w-5 h-5 text-white" />
+      <div className="h-16 px-6 flex items-center gap-3 border-b border-platinum-800/80">
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-dark-teal-700 to-deep-ocean-500 flex items-center justify-center shadow-lg shadow-deep-ocean-500/20">
+          <Sparkles className="w-5 h-5 text-platinum-50" />
         </div>
         <div>
-          <span className="font-bold text-base tracking-tight text-white block">Skillyards</span>
-          <span className="text-[10px] uppercase tracking-wider font-semibold text-indigo-400 block -mt-1">Sales CRM</span>
+          <span className="font-bold text-base tracking-tight text-platinum-50 block">Skillyards</span>
+          <span className="text-[10px] uppercase tracking-wider font-bold text-deep-ocean-400 block -mt-1">
+            Sales CRM
+          </span>
         </div>
       </div>
 
       {/* Nav List */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-        <div className="px-3 pb-2 text-[11px] font-semibold tracking-wider text-slate-500 uppercase">
+        <div className="px-3 pb-2 text-[11px] font-semibold tracking-wider text-platinum-500 uppercase">
           Sales Operations
         </div>
         {NAV_ITEMS.map((item) => {
@@ -57,11 +59,11 @@ export function CrmSidebar() {
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
                 isActive
-                  ? "bg-indigo-600/15 text-indigo-400 border border-indigo-500/30 font-semibold"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+                  ? "bg-dark-teal-900/50 text-deep-ocean-300 border border-dark-teal-700/60 font-semibold shadow-sm shadow-dark-teal-950"
+                  : "text-platinum-400 hover:text-platinum-100 hover:bg-platinum-900/60"
               }`}
             >
-              <Icon className={`w-4 h-4 ${isActive ? "text-indigo-400" : "text-slate-400"}`} />
+              <Icon className={`w-4 h-4 ${isActive ? "text-deep-ocean-400" : "text-platinum-400"}`} />
               <span>{item.label}</span>
             </Link>
           );
@@ -69,14 +71,14 @@ export function CrmSidebar() {
       </nav>
 
       {/* User profile footer */}
-      <div className="p-3 border-t border-slate-800/80 bg-slate-900/40">
-        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-900 border border-slate-800">
-          <div className="w-8 h-8 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold text-xs uppercase border border-indigo-500/30">
+      <div className="p-3 border-t border-platinum-800/80 bg-platinum-900/40">
+        <div className="flex items-center gap-3 px-3 py-2 rounded-lg bg-platinum-900 border border-platinum-800">
+          <div className="w-8 h-8 rounded-full bg-dark-teal-900/60 text-deep-ocean-300 flex items-center justify-center font-bold text-xs uppercase border border-dark-teal-700/50">
             {user?.name ? user.name[0] : "U"}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-xs font-semibold text-white truncate">{user?.name || "Loading..."}</p>
-            <p className="text-[10px] text-slate-400 truncate">
+            <p className="text-xs font-semibold text-platinum-100 truncate">{user?.name || "Loading..."}</p>
+            <p className="text-[10px] text-platinum-400 truncate">
               {crmRoles?.[0] ? crmRoles[0].toUpperCase() : user?.role || "Staff"}
             </p>
           </div>
