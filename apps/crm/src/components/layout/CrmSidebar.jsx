@@ -33,16 +33,14 @@ export function CrmSidebar() {
   return (
     <aside className="w-64 bg-platinum-950 border-r border-platinum-800/80 flex flex-col shrink-0 h-screen sticky top-0">
       {/* Brand */}
-      <div className="h-16 px-6 flex items-center gap-3 border-b border-platinum-800/80">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-dark-teal-700 to-deep-ocean-500 flex items-center justify-center shadow-lg shadow-deep-ocean-500/20">
-          <Sparkles className="w-5 h-5 text-platinum-50" />
-        </div>
-        <div>
-          <span className="font-bold text-base tracking-tight text-platinum-50 block">Skillyards</span>
-          <span className="text-[10px] uppercase tracking-wider font-bold text-deep-ocean-400 block -mt-1">
-            Sales CRM
-          </span>
-        </div>
+      <div className="h-16 px-6 flex items-center border-b border-platinum-800/80">
+        <Link href="/" className="flex items-center">
+          <img
+            src="/logo/logo-light.svg"
+            alt="Skillyards Logo"
+            className="h-8 w-auto object-contain"
+          />
+        </Link>
       </div>
 
       {/* Nav List */}
@@ -57,11 +55,10 @@ export function CrmSidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
-                isActive
-                  ? "bg-dark-teal-900/50 text-deep-ocean-300 border border-dark-teal-700/60 font-semibold shadow-sm shadow-dark-teal-950"
-                  : "text-platinum-400 hover:text-platinum-100 hover:bg-platinum-900/60"
-              }`}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${isActive
+                ? "bg-dark-teal-900/50 text-deep-ocean-300 border border-dark-teal-700/60 font-semibold shadow-sm shadow-dark-teal-950"
+                : "text-platinum-400 hover:text-platinum-100 hover:bg-platinum-900/60"
+                }`}
             >
               <Icon className={`w-4 h-4 ${isActive ? "text-deep-ocean-400" : "text-platinum-400"}`} />
               <span>{item.label}</span>

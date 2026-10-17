@@ -61,7 +61,7 @@ export default function FollowUpsPage() {
         }
       );
     } catch (err) {
-      console.error("Failed to load follow-up tasks:", err);
+      console.warn("Could not load follow-up tasks from backend:", err.message);
     } finally {
       setLoading(false);
     }

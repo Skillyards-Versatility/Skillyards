@@ -30,7 +30,7 @@ export default function DuplicateReviewsPage() {
       const data = await crmApi.getDuplicates({ status: statusFilter });
       setReviews(data || []);
     } catch (err) {
-      console.error("Failed to load duplicate reviews:", err);
+      console.warn("Could not load duplicate reviews from backend:", err.message);
     } finally {
       setLoading(false);
     }

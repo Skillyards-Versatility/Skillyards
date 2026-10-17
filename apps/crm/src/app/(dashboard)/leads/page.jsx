@@ -35,7 +35,7 @@ export default function LeadsDirectoryPage() {
       setLeads(res.items || []);
       setTotal(res.pagination?.total || 0);
     } catch (err) {
-      console.error("Failed to load leads:", err);
+      console.warn("Could not load leads from backend:", err.message);
     } finally {
       setLoading(false);
     }
