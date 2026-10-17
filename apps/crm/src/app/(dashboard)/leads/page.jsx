@@ -35,7 +35,7 @@ export default function LeadsDirectoryPage() {
       setLeads(res.items || []);
       setTotal(res.pagination?.total || 0);
     } catch (err) {
-      console.error("Failed to load leads:", err);
+      console.warn("Could not load leads from backend:", err.message);
     } finally {
       setLoading(false);
     }
@@ -87,14 +87,14 @@ export default function LeadsDirectoryPage() {
       {/* Search Bar */}
       <form onSubmit={handleSearchSubmit} className="flex gap-2 max-w-md">
         <div className="relative flex-1">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-platinum-500 pointer-events-none" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name, phone or email..."
-            className="crm-input pl-9"
+            className="crm-input pr-9 pl-3.5"
           />
+          <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-platinum-500 pointer-events-none" />
         </div>
         <button type="submit" className="crm-btn-primary">
           Search
@@ -127,53 +127,77 @@ export default function LeadsDirectoryPage() {
                 </tr>
               </thead>
               <tbody className="crm-tbody">
-                {leads.map((lead) => (
-                  <tr key={lead.id} className="crm-tr group">
-                    <td className="crm-td">
-                      <Link
-                        href={`/leads/${lead.id}`}
-                        className="crm-lead-link flex items-center gap-1.5"
-                      >
-                        <span>{lead.fullName || lead.name || "Unnamed"}</span>
-                        <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-deep-ocean-400" />
-                      </Link>
-                    </td>
-                    <td className="crm-td text-platinum-200">
-                      <div className="flex items-center gap-1.5">
-                        <Phone className="w-3.5 h-3.5 text-platinum-500" />
-                        <span>{lead.normalizedPhone || lead.phone || "-"}</span>
-                      </div>
-                    </td>
-                    <td className="crm-td text-platinum-300">
-                      <div className="flex items-center gap-1.5">
-                        <Mail className="w-3.5 h-3.5 text-platinum-500" />
-                        <span>{lead.normalizedEmail || lead.email || "-"}</span>
-                      </div>
-                    </td>
-                    <td className="crm-td">
-                      <span className={getStatusBadgeClass(lead.status)}>
-                        {formatStatusLabel(lead.status)}
-                      </span>
-                    </td>
-                    <td className="crm-td text-platinum-300 font-medium">
-                      {lead.assignedToUserName || (
-                        <span className="text-platinum-500 italic">Unassigned</span>
-                      )}
-                    </td>
-                    <td className="crm-td text-platinum-400">
-                      {new Date(lead.createdAt).toLocaleDateString()}
-                    </td>
-                    <td className="crm-td text-right">
-                      <Link
-                        href={`/leads/${lead.id}`}
-                        className="crm-btn-secondary !py-1 !px-2.5 text-[11px]"
-                      >
-                        <span>View</span>
-                        <ArrowUpRight className="w-3 h-3" />
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+                {leads.map((lead) => {
+                  const leadName = lead.fullName || lead.name || "Unnamed";
+                  const initial = leadName.charAt(0).toUpperCase();
+
+                  return (
+                    <tr key={lead.id} className="crm-tr group">
+                      <td className="crm-td">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-[#4A6D7C]/15 border border-[#4A6D7C]/25 text-[#194451] font-bold text-xs flex items-center justify-center shrink-0">
+                            {initial}
+                          </div>
+                          <div>
+                            <Link
+                              href={`/leads/${lead.id}`}
+                              className="crm-lead-link font-bold text-xs flex items-center gap-1.5"
+                            >
+                              <span>{leadName}</span>
+                              <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#4A6D7C]" />
+                            </Link>
+                            <div className="text-[10.5px] text-[#7E9396] font-mono mt-0.5">
+                              ID: #{lead.id?.slice(0, 8) || "N/A"}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="crm-td">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-[#1C2527]">
+                          <Phone className="w-3.5 h-3.5 text-[#5A6E71]" />
+                          <span>{lead.normalizedPhone || lead.phone || "-"}</span>
+                        </div>
+                      </td>
+                      <td className="crm-td">
+                        <div className="flex items-center gap-1.5 text-xs text-[#5A6E71]">
+                          <Mail className="w-3.5 h-3.5 text-[#7E9396]" />
+                          <span>{lead.normalizedEmail || lead.email || "-"}</span>
+                        </div>
+                      </td>
+                      <td className="crm-td">
+                        <span className={getStatusBadgeClass(lead.status)}>
+                          {formatStatusLabel(lead.status)}
+                        </span>
+                      </td>
+                      <td className="crm-td">
+                        {lead.assignedToUserName ? (
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] text-xs text-[#2E3E41] font-medium">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#4A6D7C]" />
+                            <span>{lead.assignedToUserName}</span>
+                          </div>
+                        ) : (
+                          <span className="text-[#889C9E] italic text-xs">Unassigned</span>
+                        )}
+                      </td>
+                      <td className="crm-td text-xs text-[#5A6E71]">
+                        {new Date(lead.createdAt).toLocaleDateString(undefined, {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </td>
+                      <td className="crm-td text-right">
+                        <Link
+                          href={`/leads/${lead.id}`}
+                          className="crm-btn-secondary !py-1 !px-2.5 text-[11px]"
+                        >
+                          <span>View</span>
+                          <ArrowUpRight className="w-3 h-3" />
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

@@ -27,6 +27,64 @@ import { crmApi } from "@/lib/api";
 import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
 import { useAuth } from "@/context/AuthContext";
 
+const FALLBACK_COUNSELLING_SESSIONS = [
+  {
+    id: "mock-counselling-1",
+    studentName: "Aarav Sharma",
+    phone: "+91 98765 43210",
+    courseInterest: "Full Stack Web Development",
+    ageOrClass: "Final Year B.Tech",
+    counselorName: "Priya Sharma",
+    counselorId: "user-1",
+    bookedByName: "Self / Walk-in",
+    source: "walk_in",
+    outcome: "completed",
+    sessionDate: new Date().toISOString().split("T")[0],
+    notes: "Deeply interested in MERN stack. Offered early bird scholarship.",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "mock-counselling-2",
+    studentName: "Ananya Verma",
+    phone: "+91 98111 22334",
+    courseInterest: "Data Science & AI",
+    ageOrClass: "Working Professional",
+    counselorName: "Rahul Mehta",
+    counselorId: "user-2",
+    bookedByName: "Vikram Telecaller",
+    source: "phone",
+    outcome: "session_booked",
+    sessionDate: new Date().toISOString().split("T")[0],
+    notes: "Follow up call booked for demo lecture review.",
+    createdAt: new Date().toISOString(),
+  },
+  {
+    id: "mock-counselling-3",
+    studentName: "Rohan Kulkarni",
+    phone: "+91 99223 34455",
+    courseInterest: "Cloud Computing & DevOps",
+    ageOrClass: "3rd Year BCA",
+    counselorName: "Priya Sharma",
+    counselorId: "user-1",
+    bookedByName: "Referral Portal",
+    source: "referral",
+    outcome: "enrolled",
+    sessionDate: new Date().toISOString().split("T")[0],
+    notes: "Enrolled in Batch 2026-A. Initial installment confirmed.",
+    createdAt: new Date().toISOString(),
+  },
+];
+
+const FALLBACK_COUNSELLING_SUMMARY = {
+  total: 3,
+  today: 3,
+  upcoming: 1,
+  completed: 1,
+  enrolled: 1,
+  bySource: { walk_in: 1, phone: 1, referral: 1 },
+  byOutcome: { session_booked: 1, completed: 1, enrolled: 1 },
+};
+
 export default function CounsellingPage() {
   const { user, crmRoles } = useAuth();
 
@@ -51,6 +109,7 @@ export default function CounsellingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [staff, setStaff] = useState([]);
+  const [isOffline, setIsOffline] = useState(false);
 
   // Filters
   const [activeTab, setActiveTab] = useState("all"); // 'all' | 'scheduled' | 'completed' | 'enrolled' | 'follow_up' | 'cancelled_noshow'
@@ -100,7 +159,7 @@ export default function CounsellingPage() {
         const staffList = await crmApi.getStaff();
         setStaff(staffList || []);
       } catch (err) {
-        console.error("Failed to load staff list:", err);
+        console.warn("Could not load staff list from backend:", err.message);
       }
     }
     fetchStaff();
@@ -159,9 +218,13 @@ export default function CounsellingPage() {
       if (res.summary) {
         setSummary(res.summary);
       }
+      setIsOffline(false);
     } catch (err) {
-      console.error("Failed to fetch counselling sessions:", err);
-      setError(err.message || "Failed to load counselling sessions");
+      console.warn("Could not reach backend API for counselling sessions:", err.message);
+      setIsOffline(true);
+      setError(null);
+      setSessions(FALLBACK_COUNSELLING_SESSIONS);
+      setSummary(FALLBACK_COUNSELLING_SUMMARY);
     } finally {
       setLoading(false);
     }
@@ -261,7 +324,7 @@ export default function CounsellingPage() {
       const detailed = await crmApi.getCounsellingSession(session.id);
       setSessionHistory(detailed.history || []);
     } catch (err) {
-      console.error("Failed to load session history:", err);
+      console.warn("Could not load session history from backend:", err.message);
       setSessionHistory([]);
     } finally {
       setLoadingHistory(false);
@@ -329,6 +392,32 @@ export default function CounsellingPage() {
           </button>
         </div>
       </div>
+
+      {/* Offline Mode Banner */}
+      {isOffline && (
+        <div className="p-4 rounded-xl bg-pale-oak-950/60 border border-pale-oak-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-pale-oak-900/80 border border-pale-oak-700/70 flex items-center justify-center shrink-0 text-pale-oak-400">
+              <AlertCircle className="w-4 h-4" />
+            </div>
+            <div>
+              <p className="font-semibold text-platinum-100">
+                Offline Development Mode (Local Fallback Demo Sessions)
+              </p>
+              <p className="text-platinum-400 mt-0.5">
+                Backend server on port 3000 is not reachable. Showing interactive demo counselling sessions. Run <span className="font-mono text-deep-ocean-300">cd apps/api && npm run dev</span> to connect to live database.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={fetchSessions}
+            className="crm-btn-secondary shrink-0 text-xs"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            Retry Connection
+          </button>
+        </div>
+      )}
 
       {/* EOD Attribution Banner */}
       <div className="crm-panel p-4 bg-gradient-to-r from-dark-teal-950/70 via-platinum-950 to-deep-ocean-950/40 border border-dark-teal-800/40 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -510,14 +599,14 @@ export default function CounsellingPage() {
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           {/* Search bar */}
           <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md relative">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-platinum-500" />
             <input
               type="text"
               placeholder="Search student, phone, or course..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="crm-input pl-9"
+              className="crm-input pr-9 pl-3.5"
             />
+            <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-platinum-500 pointer-events-none" />
           </form>
 
           {/* Dropdown Filters */}
