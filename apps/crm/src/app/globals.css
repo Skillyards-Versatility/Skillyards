@@ -1,145 +1,183 @@
 @import "tailwindcss";
 
 @theme {
-  --color-dark-teal-50: #ebf7fa;
-  --color-dark-teal-100: #d7eff4;
-  --color-dark-teal-200: #aee0ea;
-  --color-dark-teal-300: #86d0df;
-  --color-dark-teal-400: #5ec0d4;
-  --color-dark-teal-500: #36b1c9;
-  --color-dark-teal-600: #2b8da1;
-  --color-dark-teal-700: #206a79;
-  --color-dark-teal-800: #154751;
-  --color-dark-teal-900: #0b2328;
-  --color-dark-teal-950: #07191c;
+  /* =========================================================================
+     CRM DESIGN SYSTEM - WARM LINEN (#F0E6D6) + 5-COLOR PALETTE
+     Canvas Base: #F0E6D6 (Warm Linen Parchment)
+     Palette:
+     1. #C6C5B9 (Stone Neutral)
+     2. #62929E (Slate Cyan)
+     3. #4A6D7C (Deep Steel Teal)
+     4. #393A10 (Dark Olive Moss)
+     5. #475657 (Charcoal Slate)
+     ========================================================================= */
 
-  --color-deep-ocean-50: #e8fdfc;
-  --color-deep-ocean-100: #d0fbf9;
-  --color-deep-ocean-200: #a2f6f2;
-  --color-deep-ocean-300: #73f2ec;
-  --color-deep-ocean-400: #44eee5;
-  --color-deep-ocean-500: #16e9df;
-  --color-deep-ocean-600: #11bbb2;
-  --color-deep-ocean-700: #0d8c86;
-  --color-deep-ocean-800: #095d59;
-  --color-deep-ocean-900: #042f2d;
-  --color-deep-ocean-950: #03211f;
+  /* Direct Palette Named Tokens */
+  --color-crm-stone: #c6c5b9;
+  --color-crm-cyan: #62929e;
+  --color-crm-teal: #4a6d7c;
+  --color-crm-olive: #393a10;
+  --color-crm-slate: #475657;
 
-  --color-pale-oak-50: #f7f4ee;
-  --color-pale-oak-100: #efe9dc;
-  --color-pale-oak-200: #ded3ba;
-  --color-pale-oak-300: #cebd97;
-  --color-pale-oak-400: #bea674;
-  --color-pale-oak-500: #ad9052;
-  --color-pale-oak-600: #8b7341;
-  --color-pale-oak-700: #685731;
-  --color-pale-oak-800: #453a21;
-  --color-pale-oak-900: #231d10;
-  --color-pale-oak-950: #18140b;
+  /* Compatibility scale for #F0E6D6 Warm Luxury Layout
+     - text-platinum-50 -> #1C2527 (Strongest Dark Slate Heading)
+     - text-platinum-100 -> #222E30 (Primary High-Contrast Title)
+     - text-platinum-200 -> #2E3E41 (Primary Body Content)
+     - text-platinum-300 -> #425559 (Secondary Body)
+     - text-platinum-400 -> #5A6E71 (Muted/Subtitle Slate)
+     - text-platinum-500 -> #7E9396 (Subtle Detail/Placeholder)
+     - border-platinum-800 -> rgba(71, 86, 87, 0.16) (Refined warm border)
+     - bg-platinum-900 -> #FFFFFF (Crisp White Card / Inner Box)
+     - bg-platinum-950 -> #F4ECDF (Warm Parchment Inset)
+  */
+  --color-platinum-50: #1C2527;
+  --color-platinum-100: #222E30;
+  --color-platinum-200: #2E3E41;
+  --color-platinum-300: #425559;
+  --color-platinum-400: #5A6E71;
+  --color-platinum-500: #7E9396;
+  --color-platinum-600: #A2B3B6;
+  --color-platinum-700: #C8BDB0;
+  --color-platinum-800: rgba(71, 86, 87, 0.16);
+  --color-platinum-900: #FFFFFF;
+  --color-platinum-950: #F4ECDF;
 
-  --color-dark-wine-50: #f9edeb;
-  --color-dark-wine-100: #f3dad8;
-  --color-dark-wine-200: #e7b5b1;
-  --color-dark-wine-300: #db918a;
-  --color-dark-wine-400: #cf6c63;
-  --color-dark-wine-500: #c3473c;
-  --color-dark-wine-600: #9c3930;
-  --color-dark-wine-700: #752b24;
-  --color-dark-wine-800: #4e1c18;
-  --color-dark-wine-900: #270e0c;
-  --color-dark-wine-950: #1b0a08;
+  /* Dark Teal scale adapted to Warm Canvas:
+     - Text / Accent: Deep Teal (#194451 / #275767 / #4A6D7C)
+     - Backgrounds: Soft Tinted Teal (#E8F1F4 / #D3E4EA)
+  */
+  --color-dark-teal-50: #FAFDFE;
+  --color-dark-teal-100: #F0F6F8;
+  --color-dark-teal-200: #DCECF0;
+  --color-dark-teal-300: #194451;
+  --color-dark-teal-400: #275767;
+  --color-dark-teal-500: #4A6D7C;
+  --color-dark-teal-600: #3C5B68;
+  --color-dark-teal-700: rgba(74, 109, 124, 0.28);
+  --color-dark-teal-800: rgba(74, 109, 124, 0.18);
+  --color-dark-teal-900: rgba(74, 109, 124, 0.10);
+  --color-dark-teal-950: #FAF6EE;
 
-  --color-platinum-50: #f0f3f5;
-  --color-platinum-100: #e0e7eb;
-  --color-platinum-200: #c2ced6;
-  --color-platinum-300: #a3b6c2;
-  --color-platinum-400: #859dad;
-  --color-platinum-500: #668599;
-  --color-platinum-600: #526a7a;
-  --color-platinum-700: #3d505c;
-  --color-platinum-800: #29353d;
-  --color-platinum-900: #141b1f;
-  --color-platinum-950: #0e1315;
+  /* Deep Ocean scale adapted for Slate Cyan accents */
+  --color-deep-ocean-50: #F9FCFD;
+  --color-deep-ocean-100: #EEF7F9;
+  --color-deep-ocean-200: #D8EDF2;
+  --color-deep-ocean-300: #164955;
+  --color-deep-ocean-400: #216372;
+  --color-deep-ocean-500: #62929E;
+  --color-deep-ocean-600: #4E7C88;
+  --color-deep-ocean-700: rgba(98, 146, 158, 0.30);
+  --color-deep-ocean-800: rgba(98, 146, 158, 0.20);
+  --color-deep-ocean-900: rgba(98, 146, 158, 0.12);
+  --color-deep-ocean-950: #FAF6EE;
+
+  /* Pale Oak scale adapted for Dark Olive Moss accents */
+  --color-pale-oak-50: #FAFBF3;
+  --color-pale-oak-100: #F4F6E4;
+  --color-pale-oak-200: #E6EAC5;
+  --color-pale-oak-300: #252608;
+  --color-pale-oak-400: #393A10;
+  --color-pale-oak-500: #535518;
+  --color-pale-oak-600: #393A10;
+  --color-pale-oak-700: rgba(57, 58, 16, 0.30);
+  --color-pale-oak-800: rgba(57, 58, 16, 0.20);
+  --color-pale-oak-900: rgba(57, 58, 16, 0.10);
+  --color-pale-oak-950: #FAF6EE;
+
+  /* Dark Wine scale for alerts/lost leads */
+  --color-dark-wine-300: #8E2B23;
+  --color-dark-wine-400: #C3473C;
+  --color-dark-wine-700: rgba(195, 71, 60, 0.30);
+  --color-dark-wine-800: rgba(195, 71, 60, 0.20);
+  --color-dark-wine-900: rgba(195, 71, 60, 0.10);
+  --color-dark-wine-950: #FFF5F4;
 }
 
 @layer base {
   :root {
-    --crm-canvas: #0e1315;
-    --crm-surface: #141b1f;
-    --crm-surface-elevated: #1a2328;
-    --crm-surface-hover: #29353d;
-    --crm-border: #29353d;
-    --crm-border-strong: #3d505c;
-    --crm-text-primary: #f0f3f5;
-    --crm-text-secondary: #c2ced6;
-    --crm-text-muted: #859dad;
-    --crm-text-dim: #668599;
-    --crm-accent: #206a79;
-    --crm-accent-hover: #2b8da1;
-    --crm-accent-bright: #36b1c9;
-    --crm-cyan-bright: #16e9df;
-    --crm-danger: #cf6c63;
-    --crm-danger-bg: #270e0c;
-    --crm-warning: #bea674;
-    --crm-warning-bg: #231d10;
-    --crm-success: #11bbb2;
-    --crm-success-bg: #042f2d;
+    --crm-canvas: #F0E6D6;
+    --crm-surface: #FAF6EE;
+    --crm-surface-elevated: #FFFFFF;
+    --crm-surface-hover: #EBE1D0;
+    --crm-border: rgba(71, 86, 87, 0.16);
+    --crm-border-strong: rgba(74, 109, 124, 0.28);
+    --crm-text-primary: #1C2527;
+    --crm-text-secondary: #475657;
+    --crm-text-muted: #6B7D80;
+    --crm-accent: #4A6D7C;
+    --crm-accent-hover: #3D5A66;
+    --crm-cyan: #62929E;
+    --crm-olive: #393A10;
+    --crm-slate: #475657;
+    --crm-stone: #C6C5B9;
+    --crm-danger: #c3473c;
+    --crm-warning: #747625;
+    --crm-success: #35626d;
   }
 
   body {
-    background-color: var(--crm-canvas);
-    color: var(--crm-text-primary);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #F0E6D6 !important;
+    color: #1C2527 !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
   }
 }
 
-/* Custom Scrollbar - Consistent across all browsers */
+/* Custom Scrollbar for Warm Linen background */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #07191c;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #29353d;
+  background: rgba(71, 86, 87, 0.25);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3d505c;
+  background: rgba(71, 86, 87, 0.45);
 }
 
 /* =========================================================================
-   SINGLE SOURCE OF TRUTH: REUSABLE CRM DESIGN SYSTEM UTILITIES
-   All custom classes ensure WCAG high-contrast readability and consistency.
+   CRM DESIGN SYSTEM UTILITY CLASSES (WARM #F0E6D6 THEME)
    ========================================================================= */
 
 /* --- PANELS & CARDS --- */
 .crm-panel,
 .glass-panel {
-  background: rgba(20, 27, 31, 0.92);
-  backdrop-filter: blur(14px);
-  border: 1px solid #29353d;
-  border-radius: 0.75rem;
+  background: #FAF6EE;
+  border: 1px solid rgba(71, 86, 87, 0.16);
+  border-radius: 1rem;
+  box-shadow: 
+    0 1px 3px rgba(71, 86, 87, 0.05),
+    0 8px 24px -4px rgba(71, 86, 87, 0.07);
 }
 
 .crm-card,
 .glass-card {
-  background: #141b1f;
-  border: 1px solid #29353d;
-  border-radius: 0.75rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #FAF6EE;
+  border: 1px solid rgba(71, 86, 87, 0.15);
+  border-radius: 1rem;
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 
+    0 1px 2px rgba(71, 86, 87, 0.04),
+    0 4px 14px -2px rgba(71, 86, 87, 0.06);
 }
 
 .crm-card:hover,
 .glass-card:hover {
-  border-color: #3d505c;
-  transform: translateY(-1px);
+  border-color: #62929E;
+  transform: translateY(-2px);
+  background: #FFFFFF;
+  box-shadow: 
+    0 14px 30px -6px rgba(71, 86, 87, 0.13),
+    0 0 0 1px rgba(98, 146, 158, 0.25);
 }
 
 /* --- BUTTONS --- */
@@ -147,26 +185,32 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
-  background-color: #206a79;
-  color: #f0f3f5;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, #4A6D7C 0%, #62929E 100%);
+  color: #ffffff;
   font-weight: 600;
   font-size: 0.75rem;
-  padding: 0.45rem 0.9rem;
+  letter-spacing: 0.01em;
+  padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-  border: 1px solid #2b8da1;
-  box-shadow: 0 1px 3px rgba(7, 25, 28, 0.4);
+  border: 1px solid #4A6D7C;
+  box-shadow: 0 2px 6px rgba(74, 109, 124, 0.25);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .crm-btn-primary:hover:not(:disabled) {
-  background-color: #2b8da1;
-  color: #ffffff;
+  background: linear-gradient(135deg, #3D5A66 0%, #527C87 100%);
+  box-shadow: 0 4px 14px rgba(74, 109, 124, 0.35);
+  transform: translateY(-1px);
+}
+
+.crm-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .crm-btn-primary:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -174,26 +218,27 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
-  background-color: #141b1f;
-  color: #c2ced6;
-  border: 1px solid #29353d;
+  gap: 0.4rem;
+  background: #FAF6EE;
+  color: #2E3A3C;
+  border: 1px solid rgba(71, 86, 87, 0.22);
   font-weight: 500;
   font-size: 0.75rem;
-  padding: 0.45rem 0.85rem;
+  padding: 0.5rem 0.95rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .crm-btn-secondary:hover:not(:disabled) {
-  background-color: #29353d;
-  color: #f0f3f5;
-  border-color: #3d505c;
+  background: #FFFFFF;
+  border-color: #4A6D7C;
+  color: #1C2527;
+  transform: translateY(-1px);
 }
 
 .crm-btn-secondary:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -202,20 +247,20 @@
   align-items: center;
   justify-content: center;
   gap: 0.375rem;
-  background-color: #752b24;
-  color: #f9edeb;
+  background: #c3473c;
+  color: #ffffff;
   border: 1px solid #9c3930;
   font-weight: 600;
   font-size: 0.75rem;
-  padding: 0.45rem 0.85rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .crm-btn-danger:hover:not(:disabled) {
-  background-color: #9c3930;
-  color: #ffffff;
+  background: #a9372d;
+  box-shadow: 0 4px 12px rgba(195, 71, 60, 0.3);
 }
 
 .crm-btn-ghost {
@@ -224,126 +269,128 @@
   justify-content: center;
   gap: 0.375rem;
   background: transparent;
-  color: #859dad;
+  color: #475657;
   font-weight: 500;
   font-size: 0.75rem;
   padding: 0.45rem 0.75rem;
   border-radius: 0.5rem;
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .crm-btn-ghost:hover {
-  color: #f0f3f5;
-  background-color: #141b1f;
+  color: #1C2527;
+  background: rgba(71, 86, 87, 0.08);
 }
 
 .crm-btn-call {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  background-color: rgba(17, 187, 178, 0.15);
-  border: 1px solid rgba(22, 233, 223, 0.35);
-  color: #73f2ec;
+  background-color: rgba(98, 146, 158, 0.14);
+  border: 1px solid rgba(98, 146, 158, 0.4);
+  color: #1F4F5B;
   font-weight: 600;
   font-size: 0.75rem;
-  padding: 0.375rem 0.75rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 0.5rem;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .crm-btn-call:hover {
-  background-color: rgba(17, 187, 178, 0.25);
-  color: #ffffff;
+  background-color: rgba(98, 146, 158, 0.25);
+  color: #13343C;
 }
 
 .crm-btn-email {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  background-color: rgba(43, 141, 161, 0.15);
-  border: 1px solid rgba(54, 177, 201, 0.35);
-  color: #86d0df;
+  background-color: rgba(74, 109, 124, 0.14);
+  border: 1px solid rgba(74, 109, 124, 0.35);
+  color: #24414B;
   font-weight: 600;
   font-size: 0.75rem;
-  padding: 0.375rem 0.75rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 0.5rem;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .crm-btn-email:hover {
-  background-color: rgba(43, 141, 161, 0.25);
-  color: #ffffff;
+  background-color: rgba(74, 109, 124, 0.25);
+  color: #14282F;
 }
 
 /* --- FORM CONTROLS --- */
 .crm-input {
   width: 100%;
-  background-color: #141b1f;
-  border: 1px solid #29353d;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(71, 86, 87, 0.2);
   border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.55rem 0.85rem;
   font-size: 0.75rem;
-  color: #f0f3f5;
+  color: #1C2527;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 }
 
 .crm-input::placeholder {
-  color: #668599;
+  color: #8C9CA0;
 }
 
 .crm-input:focus {
-  border-color: #36b1c9;
-  box-shadow: 0 0 0 1px rgba(54, 177, 201, 0.25);
+  border-color: #4A6D7C;
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(74, 109, 124, 0.15);
 }
 
 .crm-select {
   width: 100%;
-  background-color: #141b1f;
-  border: 1px solid #29353d;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(71, 86, 87, 0.2);
   border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.55rem 0.85rem;
   font-size: 0.75rem;
-  color: #f0f3f5;
+  color: #1C2527;
   outline: none;
   cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .crm-select:focus {
-  border-color: #36b1c9;
-  box-shadow: 0 0 0 1px rgba(54, 177, 201, 0.25);
+  border-color: #4A6D7C;
+  box-shadow: 0 0 0 3px rgba(74, 109, 124, 0.15);
 }
 
 .crm-textarea {
   width: 100%;
-  background-color: #141b1f;
-  border: 1px solid #29353d;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(71, 86, 87, 0.2);
   border-radius: 0.5rem;
-  padding: 0.625rem;
+  padding: 0.65rem;
   font-size: 0.75rem;
-  color: #f0f3f5;
+  color: #1C2527;
   outline: none;
   resize: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.2s ease;
 }
 
 .crm-textarea::placeholder {
-  color: #668599;
+  color: #8C9CA0;
 }
 
 .crm-textarea:focus {
-  border-color: #36b1c9;
-  box-shadow: 0 0 0 1px rgba(54, 177, 201, 0.25);
+  border-color: #4A6D7C;
+  box-shadow: 0 0 0 3px rgba(74, 109, 124, 0.15);
 }
 
 .crm-label {
   display: block;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #c2ced6;
-  margin-bottom: 0.375rem;
+  color: #2E3A3C;
+  margin-bottom: 0.4rem;
 }
 
 /* --- TABS & NAVIGATION --- */
@@ -351,58 +398,62 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  border-bottom: 1px solid #29353d;
-  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(71, 86, 87, 0.16);
+  padding-bottom: 0.55rem;
   overflow-x: auto;
 }
 
 .crm-tab-active {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
   border-radius: 0.5rem;
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
-  background-color: #206a79;
-  color: #f0f3f5;
-  box-shadow: 0 1px 2px rgba(7, 25, 28, 0.5);
-  transition: all 0.15s ease;
+  background: #4A6D7C;
+  color: #ffffff;
+  border: 1px solid #3D5A66;
+  box-shadow: 0 2px 6px rgba(74, 109, 124, 0.25);
+  transition: all 0.2s ease;
 }
 
 .crm-tab-inactive {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.375rem 0.75rem;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
   border-radius: 0.5rem;
   font-size: 0.75rem;
   font-weight: 500;
   white-space: nowrap;
-  color: #859dad;
-  transition: all 0.15s ease;
+  color: #475657;
+  background: #FAF6EE;
+  border: 1px solid rgba(71, 86, 87, 0.12);
+  transition: all 0.2s ease;
 }
 
 .crm-tab-inactive:hover {
-  color: #e0e7eb;
-  background-color: #141b1f;
+  color: #1C2527;
+  background: #FFFFFF;
+  border-color: rgba(71, 86, 87, 0.25);
 }
 
 .crm-tab-badge-active {
-  padding: 0.1rem 0.375rem;
+  padding: 0.12rem 0.4rem;
   border-radius: 9999px;
-  background-color: #0b2328;
-  color: #86d0df;
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
   font-size: 10px;
   font-family: ui-monospace, monospace;
 }
 
 .crm-tab-badge-inactive {
-  padding: 0.1rem 0.375rem;
+  padding: 0.12rem 0.4rem;
   border-radius: 9999px;
-  background-color: #29353d;
-  color: #859dad;
+  background-color: rgba(71, 86, 87, 0.14);
+  color: #475657;
   font-size: 10px;
   font-family: ui-monospace, monospace;
 }
@@ -412,151 +463,154 @@
   width: 100%;
   text-align: left;
   font-size: 0.75rem;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
 .crm-thead {
-  background-color: rgba(20, 27, 31, 0.95);
-  color: #859dad;
+  background-color: #E6DBCA;
+  color: #2E3A3C;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   font-size: 11px;
   font-weight: 600;
-  border-bottom: 1px solid #29353d;
+  border-bottom: 1px solid rgba(71, 86, 87, 0.18);
 }
 
 .crm-th {
-  padding: 0.75rem 1.5rem;
+  padding: 0.85rem 1.5rem;
 }
 
 .crm-tbody {
-  color: #c2ced6;
+  color: #1C2527;
 }
 
 .crm-tr {
-  border-bottom: 1px solid rgba(41, 53, 61, 0.6);
+  border-bottom: 1px solid rgba(71, 86, 87, 0.1);
   transition: background-color 0.15s ease;
 }
 
 .crm-tr:hover {
-  background-color: rgba(20, 27, 31, 0.6);
+  background-color: rgba(98, 146, 158, 0.07);
 }
 
 .crm-td {
-  padding: 0.875rem 1.5rem;
+  padding: 0.95rem 1.5rem;
+  border-bottom: 1px solid rgba(71, 86, 87, 0.1);
 }
 
 /* --- TYPOGRAPHY --- */
 .crm-page-title {
-  font-size: 1.25rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  color: #f0f3f5;
-  letter-spacing: -0.02em;
+  color: #1C2527;
+  letter-spacing: -0.025em;
 }
 
 .crm-page-subtitle {
   font-size: 0.75rem;
-  color: #859dad;
-  margin-top: 0.125rem;
+  color: #475657;
+  margin-top: 0.2rem;
 }
 
 .crm-lead-link {
-  color: #f0f3f5;
+  color: #1C2527;
   font-weight: 600;
   transition: color 0.15s ease;
 }
 
 .crm-lead-link:hover {
-  color: #44eee5;
+  color: #4A6D7C;
 }
 
 /* --- STATUS BADGES --- */
 .crm-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  padding: 0.125rem 0.625rem;
+  gap: 0.3rem;
+  padding: 0.18rem 0.65rem;
   border-radius: 9999px;
   font-size: 11px;
   font-weight: 600;
+  letter-spacing: 0.01em;
   border-width: 1px;
   text-transform: capitalize;
   white-space: nowrap;
 }
 
 .crm-badge-new {
-  background-color: rgba(11, 35, 40, 0.7);
-  color: #86d0df;
-  border-color: rgba(32, 106, 121, 0.6);
+  background-color: rgba(98, 146, 158, 0.15);
+  color: #1F4F5B;
+  border-color: rgba(98, 146, 158, 0.4);
 }
 
 .crm-badge-contacted {
-  background-color: rgba(35, 29, 16, 0.7);
-  color: #ded3ba;
-  border-color: rgba(104, 87, 49, 0.6);
+  background-color: rgba(71, 86, 87, 0.14);
+  color: #2E3738;
+  border-color: rgba(71, 86, 87, 0.3);
 }
 
 .crm-badge-follow_up {
-  background-color: rgba(4, 47, 45, 0.7);
-  color: #73f2ec;
-  border-color: rgba(13, 140, 134, 0.6);
+  background-color: rgba(74, 109, 124, 0.15);
+  color: #284752;
+  border-color: rgba(74, 109, 124, 0.38);
 }
 
 .crm-badge-counselling_scheduled {
-  background-color: rgba(21, 71, 81, 0.7);
-  color: #aee0ea;
-  border-color: rgba(43, 141, 161, 0.6);
+  background-color: rgba(57, 58, 16, 0.14);
+  color: #393A10;
+  border-color: rgba(57, 58, 16, 0.35);
 }
 
 .crm-badge-counselled {
-  background-color: rgba(9, 93, 89, 0.7);
-  color: #a2f6f2;
-  border-color: rgba(17, 187, 178, 0.6);
+  background-color: rgba(98, 146, 158, 0.2);
+  color: #17424C;
+  border-color: rgba(98, 146, 158, 0.45);
 }
 
 .crm-badge-qualified {
-  background-color: rgba(17, 187, 178, 0.15);
-  color: #44eee5;
-  border-color: rgba(22, 233, 223, 0.4);
+  background-color: #393A10;
+  color: #F8F9EB;
+  border-color: #393A10;
 }
 
 .crm-badge-converted {
-  background-color: rgba(22, 233, 223, 0.2);
-  color: #d0fbf9;
-  border-color: rgba(68, 238, 229, 0.5);
+  background: linear-gradient(135deg, #4A6D7C 0%, #62929E 100%);
+  color: #FFFFFF;
+  border-color: #4A6D7C;
 }
 
 .crm-badge-cold {
-  background-color: rgba(41, 53, 61, 0.6);
-  color: #c2ced6;
-  border-color: rgba(61, 80, 92, 0.6);
+  background-color: rgba(71, 86, 87, 0.12);
+  color: #475657;
+  border-color: rgba(71, 86, 87, 0.22);
 }
 
 .crm-badge-lost,
 .crm-badge-danger,
 .crm-badge-high {
-  background-color: rgba(39, 14, 12, 0.7);
-  color: #db918a;
-  border-color: rgba(117, 43, 36, 0.6);
+  background-color: rgba(195, 71, 60, 0.15);
+  color: #9c3930;
+  border-color: rgba(195, 71, 60, 0.35);
 }
 
 .crm-badge-warning,
 .crm-badge-medium {
-  background-color: rgba(35, 29, 16, 0.7);
-  color: #bea674;
-  border-color: rgba(104, 87, 49, 0.6);
+  background-color: rgba(116, 118, 37, 0.15);
+  color: #575919;
+  border-color: rgba(116, 118, 37, 0.35);
 }
 
 .crm-badge-info,
 .crm-badge-low {
-  background-color: rgba(11, 35, 40, 0.7);
-  color: #5ec0d4;
-  border-color: rgba(32, 106, 121, 0.6);
+  background-color: rgba(74, 109, 124, 0.15);
+  color: #24414B;
+  border-color: rgba(74, 109, 124, 0.35);
 }
 
 .crm-badge-success,
 .crm-badge-completed {
-  background-color: rgba(4, 47, 45, 0.7);
-  color: #44eee5;
-  border-color: rgba(13, 140, 134, 0.6);
+  background-color: rgba(53, 98, 109, 0.15);
+  color: #20454D;
+  border-color: rgba(53, 98, 109, 0.35);
 }

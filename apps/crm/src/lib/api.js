@@ -20,7 +20,14 @@ export async function apiRequest(endpoint, { method = "GET", body, headers = {} 
   const data = await res.json().catch(() => null);
 
   if (!res.ok) {
-    const errorMsg = data?.message || data?.error?.message || `Request failed with status ${res.status}`;
+    let errorMsg = data?.message || data?.error?.message;
+    if (!errorMsg) {
+      if (res.status === 500) {
+        errorMsg = "Backend API server error (HTTP 500). Please ensure apps/api is running on http://localhost:3000.";
+      } else {
+        errorMsg = `Request failed with status ${res.status}`;
+      }
+    }
     const err = new Error(errorMsg);
     err.status = res.status;
     err.data = data;
