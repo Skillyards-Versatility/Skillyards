@@ -17,18 +17,96 @@ import { crmApi } from "@/lib/api";
 import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
 
 export default function DashboardPage() {
+  const DEMO_LEADS = [
+    {
+      id: "lead-101",
+      fullName: "Aarav Sharma",
+      normalizedPhone: "+91 98765 43210",
+      normalizedEmail: "aarav.sharma@example.com",
+      status: "counselling_scheduled",
+      assignedToUserName: "Priya Patel",
+      createdAt: new Date(Date.now() - 3600000 * 2).toISOString(),
+    },
+    {
+      id: "lead-102",
+      fullName: "Ananya Iyer",
+      normalizedPhone: "+91 98123 45678",
+      normalizedEmail: "ananya.iyer@example.com",
+      status: "new",
+      assignedToUserName: "Vikram Malhotra",
+      createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
+    },
+    {
+      id: "lead-103",
+      fullName: "Rohan Verma",
+      normalizedPhone: "+91 97234 56789",
+      normalizedEmail: "rohan.v@example.com",
+      status: "contacted",
+      assignedToUserName: "Priya Patel",
+      createdAt: new Date(Date.now() - 3600000 * 8).toISOString(),
+    },
+    {
+      id: "lead-104",
+      fullName: "Sneha Mukherjee",
+      normalizedPhone: "+91 99345 67890",
+      normalizedEmail: "sneha.m@example.com",
+      status: "qualified",
+      assignedToUserName: "Amit Kumar",
+      createdAt: new Date(Date.now() - 3600000 * 16).toISOString(),
+    },
+    {
+      id: "lead-105",
+      fullName: "Kabir Mehta",
+      normalizedPhone: "+91 98456 78901",
+      normalizedEmail: "kabir.m@example.com",
+      status: "converted",
+      assignedToUserName: "Priya Patel",
+      createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
+    },
+    {
+      id: "lead-106",
+      fullName: "Divya Nair",
+      normalizedPhone: "+91 97567 89012",
+      normalizedEmail: "divya.nair@example.com",
+      status: "follow_up",
+      assignedToUserName: "Vikram Malhotra",
+      createdAt: new Date(Date.now() - 3600000 * 36).toISOString(),
+    },
+  ];
+
   const [leads, setLeads] = useState([]);
   const [totalLeads, setTotalLeads] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
+      const getDemoDataset = () => {
+        if (typeof window !== "undefined") {
+          try {
+            const stored = JSON.parse(localStorage.getItem("skillyards_custom_leads") || "[]");
+            if (Array.isArray(stored) && stored.length > 0) {
+              return [...stored, ...DEMO_LEADS];
+            }
+          } catch (_) {}
+        }
+        return DEMO_LEADS;
+      };
+
       try {
         const res = await crmApi.getLeads({ limit: 8 });
-        setLeads(res.items || []);
-        setTotalLeads(res.pagination?.total || 0);
+        if (res?.items && res.items.length > 0) {
+          setLeads(res.items);
+          setTotalLeads(res.pagination?.total || res.items.length);
+        } else {
+          const ds = getDemoDataset();
+          setLeads(ds.slice(0, 8));
+          setTotalLeads(ds.length);
+        }
       } catch (err) {
-        console.warn("Could not load dashboard data from backend:", err.message);
+        console.warn("Could not load dashboard data from backend, activating demo pipeline:", err.message);
+        const ds = getDemoDataset();
+        setLeads(ds.slice(0, 8));
+        setTotalLeads(ds.length);
       } finally {
         setLoading(false);
       }
