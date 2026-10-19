@@ -13,16 +13,13 @@ import {
   CopyCheck,
   ChevronRight,
   ChevronDown,
-  Folder,
-  FolderOpen,
-  PanelLeftClose,
-  MoreHorizontal,
+  ChevronLeft,
+  X,
   Settings,
   Plus,
-  RefreshCw,
-  SlidersHorizontal,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useTelephony } from "@/context/TelephonyContext";
 
 // Primary Navigation Activity Bar Items
 const NAV_ITEMS = [
@@ -35,7 +32,7 @@ const NAV_ITEMS = [
   { label: "EOD Reports", href: "/eod", icon: FileSpreadsheet },
 ];
 
-// VS-Code / Linear style Sub-Panel Operations Tree for each section
+// Sub-Panel Operations Tree for each section
 const SECTION_DETAILS = {
   "/": {
     title: "Command Center",
@@ -98,12 +95,13 @@ const SECTION_DETAILS = {
     ],
   },
   "/eod": {
-    title: "EOD Reports",
-    category: "Performance Attainment",
+    title: "EOD Attainment",
+    category: "Reporting & Audits",
     items: [
-      { label: "Today's Attainment", href: "/eod" },
-      { label: "Historical Records", href: "/eod" },
-      { label: "Rep Activity Breakdown", href: "/eod" },
+      { label: "Daily Submission", href: "/eod" },
+      { label: "Target Calculator", href: "/eod" },
+      { label: "Manager Amendments", href: "/eod" },
+      { label: "Attainment Ledger", href: "/eod" },
     ],
   },
 };
@@ -112,55 +110,48 @@ export function CrmSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { user, crmRoles } = useAuth();
-  const audioRef = useRef(null);
-  const lastPlayTimeRef = useRef(0);
+  const { openSoftphone } = useTelephony();
 
-  // VS-Code style activity drawer: collapsed by default ("pahle se icon dikhega")
-  const [isOpen, setIsOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState(pathname || "/");
+  const [activeSection, setActiveSection] = useState("/");
   const [folderOpen, setFolderOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(true);
 
-  // Sync active section when path changes
+  const audioRef = useRef(null);
+  const lastSoundPlayedRef = useRef(0);
+
+  // Sync active section with current URL
   useEffect(() => {
-    setActiveSection(pathname);
+    const matching = NAV_ITEMS.find((item) =>
+      item.href === "/" ? pathname === "/" : pathname.startsWith(item.href)
+    );
+    if (matching) {
+      setActiveSection(matching.href);
+    }
   }, [pathname]);
 
-  // Preload click sound
-  useEffect(() => {
-    audioRef.current = new Audio("/audio/button-click-sound.mp3");
-    audioRef.current.preload = "auto";
-  }, []);
-
   const playClickSound = () => {
-    const now = Date.now();
-    if (now - lastPlayTimeRef.current < 150) return; // Prevent double trigger
-    lastPlayTimeRef.current = now;
-
     try {
+      const now = Date.now();
+      if (now - lastSoundPlayedRef.current < 200) return;
+      lastSoundPlayedRef.current = now;
+
+      if (!audioRef.current && typeof Audio !== "undefined") {
+        audioRef.current = new Audio("/audio/button-click-sound.mp3");
+        audioRef.current.volume = 0.35;
+      }
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
         audioRef.current.play().catch(() => {});
-      } else {
-        const audio = new Audio("/audio/button-click-sound.mp3");
-        audio.play().catch(() => {});
       }
     } catch {}
   };
 
-  /**
-   * Handle Activity Bar Icon Click:
-   * 1. If drawer is closed: open it and navigate to route.
-   * 2. If drawer is already open and clicked icon is CURRENT: toggle/close drawer (width ghatega).
-   * 3. If drawer is open and clicked icon is DIFFERENT: switch section and navigate.
-   */
   const handleActivityClick = (item) => {
     playClickSound();
-
-    if (isOpen && activeSection === item.href) {
-      // Toggle off / collapse
-      setIsOpen(false);
+    if (activeSection === item.href) {
+      // Toggle drawer if active icon clicked
+      setIsOpen((prev) => !prev);
     } else {
-      // Open / switch
       setActiveSection(item.href);
       setIsOpen(true);
       router.push(item.href);
@@ -178,79 +169,57 @@ export function CrmSidebar() {
   return (
     <aside className="flex shrink-0 h-[calc(100vh-64px)] sticky top-16 z-30 select-none">
       {/* =========================================================================
-          TIER 1: PRIMARY ACTIVITY BAR (Narrow Vertical Icon Strip ~54px)
-          Always visible, clean, high-precision dark aesthetic (VS Code / Cursor style)
+          TIER 1: PRIMARY ACTIVITY BAR (Narrow Vertical Icon Strip ~56px)
+          Always visible, clean, high-precision dark aesthetic matching top navbar
           ========================================================================= */}
       <div className="w-14 bg-[#0c1316] border-r border-[rgba(98,146,158,0.15)] flex flex-col items-center justify-between py-3 h-full z-20 shadow-xl">
-        {/* Top: Section Toggle & Navigation Icons */}
-        <div className="flex flex-col items-center gap-2 w-full">
-          {/* Quick Toggle Button */}
-          <button
-            type="button"
-            onClick={() => {
-              playClickSound();
-              setIsOpen((prev) => !prev);
-            }}
-            title={isOpen ? "Collapse Menu Drawer" : "Expand Menu Drawer"}
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-[#7e939a] hover:text-white hover:bg-[rgba(98,146,158,0.12)] transition-colors mb-1 active:scale-95"
-          >
-            {isOpen ? (
-              <PanelLeftClose className="w-4 h-4 text-[#a2c4cc]" />
-            ) : (
-              <SlidersHorizontal className="w-4 h-4 text-[#62929e]" />
-            )}
-          </button>
+        {/* Navigation Icons (No collapse button at top) */}
+        <div className="flex flex-col items-center gap-1.5 w-full pt-1">
+          {NAV_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const isSelected = activeSection === item.href;
 
-          {/* Activity Bar Icons */}
-          <div className="flex flex-col items-center gap-1.5 w-full">
-            {NAV_ITEMS.map((item) => {
-              const Icon = item.icon;
-              const isSelected = activeSection === item.href;
+            return (
+              <div key={item.href} className="relative group w-full flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => handleActivityClick(item)}
+                  title={item.label}
+                  className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150 ${
+                    isSelected
+                      ? "text-white bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.4)] shadow-sm shadow-[#62929e]/10"
+                      : "text-[#7e939a] hover:text-white hover:bg-[rgba(98,146,158,0.08)]"
+                  }`}
+                >
+                  {/* Active vertical left bar indicator */}
+                  {isSelected && (
+                    <span className="absolute left-0 top-1.5 bottom-1.5 w-[2.5px] bg-[#62929e] rounded-r shadow-[0_0_6px_#62929e]" />
+                  )}
 
-              return (
-                <div key={item.href} className="relative group w-full flex justify-center">
-                  <button
-                    type="button"
-                    onClick={() => handleActivityClick(item)}
-                    title={item.label}
-                    className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150 ${
-                      isSelected && isOpen
-                        ? "text-white bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.4)] shadow-sm shadow-[#62929e]/10"
-                        : isSelected
-                        ? "text-white bg-[rgba(98,146,158,0.1)]"
-                        : "text-[#7e939a] hover:text-white hover:bg-[rgba(98,146,158,0.08)]"
+                  <Icon
+                    className={`w-5 h-5 transition-colors ${
+                      isSelected
+                        ? "text-[#62929e] drop-shadow-[0_0_8px_rgba(98,146,158,0.5)]"
+                        : "text-[#7e939a] group-hover:text-white"
                     }`}
-                  >
-                    {/* Active vertical left bar indicator (VS Code style) */}
-                    {isSelected && (
-                      <span className="absolute left-0 top-1.5 bottom-1.5 w-[2.5px] bg-[#62929e] rounded-r shadow-[0_0_6px_#62929e]" />
-                    )}
+                  />
 
-                    <Icon
-                      className={`w-5 h-5 transition-colors ${
-                        isSelected
-                          ? "text-[#62929e] drop-shadow-[0_0_8px_rgba(98,146,158,0.5)]"
-                          : "text-[#7e939a] group-hover:text-white"
-                      }`}
-                    />
+                  {/* Badge Pill */}
+                  {item.badge && (
+                    <span className="absolute -bottom-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#007acc] text-white text-[9.5px] font-bold flex items-center justify-center shadow-md border border-[#0c1316]">
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
 
-                    {/* Blue Notification Badge Pill (e.g. '9', '1') */}
-                    {item.badge && (
-                      <span className="absolute -bottom-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#007acc] text-white text-[9.5px] font-bold flex items-center justify-center shadow-md border border-[#0c1316]">
-                        {item.badge}
-                      </span>
-                    )}
-                  </button>
-
-                  {/* Floating tooltip */}
-                  <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1 rounded-md bg-[#121c1f] border border-[rgba(98,146,158,0.25)] text-white text-xs font-medium whitespace-nowrap shadow-xl z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 backdrop-blur-md">
-                    {item.label}
-                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#121c1f]" />
-                  </div>
+                {/* Floating tooltip */}
+                <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1 rounded-md bg-[#121c1f] border border-[rgba(98,146,158,0.25)] text-white text-xs font-medium whitespace-nowrap shadow-xl z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 backdrop-blur-md">
+                  {item.label}
+                  <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#121c1f]" />
                 </div>
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
 
         {/* Bottom: Settings & User Avatar */}
@@ -268,24 +237,25 @@ export function CrmSidebar() {
             title={`${user?.name || "User"} (${crmRoles?.[0] || "Staff"})`}
             className="w-8 h-8 rounded-full bg-gradient-to-br from-[#4A6D7C] to-[#62929E] text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm border border-[rgba(162,196,204,0.3)] cursor-pointer hover:scale-105 active:scale-95 transition-transform"
           >
-            {user?.name ? user.name[0] : "U"}
+            {user?.name ? user.name[0] : "P"}
           </div>
         </div>
       </div>
 
       {/* =========================================================================
-          TIER 2: EXPANDABLE EXPLORER / OPERATIONS PANEL (~230px)
-          Slides open/close when activity icons are clicked ("width badhega or ghatega")
+          TIER 2: OPERATIONS DRAWER / EXPLORER PANEL (~240px)
+          Can be collapsed via the close button inside the drawer header
           ========================================================================= */}
       <div
-        className={`bg-[#FAF6EE] border-r border-[rgba(71,86,87,0.14)] flex flex-col h-full overflow-hidden transition-[width,opacity] duration-250 ease-out z-10 shadow-xl ${
+        className={`bg-[#0f171a] border-r border-[rgba(98,146,158,0.15)] flex flex-col h-full overflow-hidden transition-[width,opacity] duration-200 ease-in-out z-10 shadow-2xl ${
           isOpen ? "w-60 opacity-100" : "w-0 opacity-0 pointer-events-none border-r-0"
         }`}
       >
-        {/* Panel Header */}
-        <div className="h-14 px-4 flex items-center justify-between border-b border-[rgba(71,86,87,0.12)] shrink-0">
+        {/* Panel Header with professional in-drawer Close Button */}
+        <div className="h-14 px-3.5 flex items-center justify-between border-b border-[rgba(98,146,158,0.15)] bg-[#0c1316] shrink-0 min-w-[240px]">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="text-[11px] font-bold tracking-wider text-[#1C2527] uppercase truncate">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#62929e] shadow-[0_0_6px_#62929e]" />
+            <span className="text-[11.5px] font-bold tracking-wider text-white uppercase truncate">
               {currentSectionData.title}
             </span>
           </div>
@@ -293,39 +263,32 @@ export function CrmSidebar() {
           <div className="flex items-center gap-1 shrink-0">
             <button
               type="button"
-              onClick={playClickSound}
-              title="More actions"
-              className="p-1 rounded text-[#57686A] hover:text-[#1C2527] hover:bg-[rgba(71,86,87,0.08)] transition-colors"
-            >
-              <MoreHorizontal className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
               onClick={() => {
                 playClickSound();
                 setIsOpen(false);
               }}
-              title="Collapse Panel"
-              className="p-1 rounded text-[#57686A] hover:text-[#1C2527] hover:bg-[rgba(71,86,87,0.08)] transition-colors"
+              title="Close Drawer"
+              aria-label="Close drawer"
+              className="group/close w-7 h-7 rounded-lg flex items-center justify-center text-[#8ba3aa] hover:text-white bg-[rgba(98,146,158,0.1)] hover:bg-[rgba(98,146,158,0.25)] border border-[rgba(98,146,158,0.2)] hover:border-[rgba(98,146,158,0.45)] transition-all duration-150 active:scale-90 cursor-pointer shadow-sm"
             >
-              <PanelLeftClose className="w-4 h-4 text-[#4A6D7C]" />
+              <X className="w-3.5 h-3.5 text-[#8ba3aa] group-hover/close:text-white group-hover/close:rotate-90 transition-transform duration-200" />
             </button>
           </div>
         </div>
 
-        {/* Panel Content Tree (VS Code Explorer style) */}
-        <div className="flex-1 py-3 overflow-y-auto overflow-x-hidden text-xs">
-          {/* Collapsible Section Category Tree */}
+        {/* Panel Content Tree (Explorer Style) */}
+        <div className="flex-1 py-3 overflow-y-auto overflow-x-hidden text-xs min-w-[240px]">
+          {/* Section Category Dropdown Tree */}
           <div className="mb-2">
             <button
               type="button"
               onClick={() => setFolderOpen((prev) => !prev)}
-              className="w-full px-3 py-1.5 flex items-center gap-1.5 text-[11px] font-bold text-[#2E3A3C] hover:text-[#1C2527] tracking-wide uppercase transition-colors"
+              className="w-full px-3 py-1.5 flex items-center gap-1.5 text-[10.5px] font-bold text-[#7e939a] hover:text-white tracking-wider uppercase transition-colors"
             >
               {folderOpen ? (
-                <ChevronDown className="w-3.5 h-3.5 text-[#57686A]" />
+                <ChevronDown className="w-3.5 h-3.5 text-[#62929e]" />
               ) : (
-                <ChevronRight className="w-3.5 h-3.5 text-[#57686A]" />
+                <ChevronRight className="w-3.5 h-3.5 text-[#62929e]" />
               )}
               <span className="truncate">{currentSectionData.category}</span>
             </button>
@@ -343,14 +306,16 @@ export function CrmSidebar() {
                       onClick={playClickSound}
                       className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs transition-colors group ${
                         isCurrent
-                          ? "bg-[#4A6D7C] text-white font-semibold shadow-sm"
-                          : "text-[#2E3A3C] hover:text-[#1C2527] hover:bg-[rgba(71,86,87,0.08)]"
+                          ? "bg-[rgba(98,146,158,0.22)] text-white font-semibold border border-[rgba(98,146,158,0.4)] shadow-sm"
+                          : "text-[#95abb2] hover:text-white hover:bg-[rgba(98,146,158,0.08)]"
                       }`}
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         <span
                           className={`w-1.5 h-1.5 rounded-full ${
-                            isCurrent ? "bg-[#ffffff]" : "bg-[#4A6D7C]/60 group-hover:bg-[#4A6D7C]"
+                            isCurrent
+                              ? "bg-[#62929e] shadow-[0_0_6px_#62929e]"
+                              : "bg-[#4A6D7C]/60 group-hover:bg-[#62929e]"
                           }`}
                         />
                         <span className="truncate">{sub.label}</span>
@@ -361,7 +326,7 @@ export function CrmSidebar() {
                           className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full border ${
                             isCurrent
                               ? "bg-white/20 text-white border-white/30"
-                              : "bg-[rgba(74,109,124,0.12)] text-[#284752] border-[rgba(74,109,124,0.25)]"
+                              : "bg-[rgba(98,146,158,0.18)] text-[#a3cdd8] border border-[rgba(98,146,158,0.25)]"
                           }`}
                         >
                           {sub.count}
@@ -375,35 +340,41 @@ export function CrmSidebar() {
           </div>
 
           {/* Quick Shortcuts Box */}
-          <div className="mt-4 px-3 pt-3 border-t border-[rgba(71,86,87,0.1)]">
-            <div className="text-[10px] font-semibold tracking-wider text-[#57686A] uppercase mb-2">
+          <div className="mt-4 px-3 pt-3 border-t border-[rgba(98,146,158,0.14)]">
+            <div className="text-[10px] font-semibold tracking-wider text-[#62929e] uppercase mb-2">
               Quick Shortcuts
             </div>
             <div className="space-y-1">
               <Link
                 href="/leads"
                 onClick={playClickSound}
-                className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] text-[#2E3A3C] hover:text-[#1C2527] hover:bg-[rgba(71,86,87,0.08)] transition-colors"
+                className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] text-[#95abb2] hover:text-white hover:bg-[rgba(98,146,158,0.08)] transition-colors"
               >
-                <Plus className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                <Plus className="w-3.5 h-3.5 text-[#62929e]" />
                 <span>Register New Lead</span>
               </Link>
-              <Link
-                href="/queue"
-                onClick={playClickSound}
-                className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] text-[#2E3A3C] hover:text-[#1C2527] hover:bg-[rgba(71,86,87,0.08)] transition-colors"
+              <button
+                type="button"
+                onClick={() => {
+                  playClickSound();
+                  openSoftphone();
+                }}
+                className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] text-[#95abb2] hover:text-white hover:bg-[rgba(98,146,158,0.08)] transition-colors text-left cursor-pointer"
               >
-                <PhoneCall className="w-3.5 h-3.5 text-[#4A6D7C]" />
-                <span>Start Tele-calling</span>
-              </Link>
+                <PhoneCall className="w-3.5 h-3.5 text-[#62929e]" />
+                <span>Open Softphone Dialer</span>
+              </button>
             </div>
           </div>
         </div>
 
         {/* Panel Footer */}
-        <div className="p-3 border-t border-[rgba(71,86,87,0.12)] bg-[#F5EDE1] flex items-center justify-between text-[11px] text-[#57686A]">
+        <div className="p-3 border-t border-[rgba(98,146,158,0.15)] bg-[#090f11] flex items-center justify-between text-[11px] text-[#7e939a] min-w-[240px]">
           <span className="truncate">Skillyards CRM v2.0</span>
-          <span className="text-[#35626D] font-semibold">Ready</span>
+          <span className="flex items-center gap-1.5 text-[#62929e] font-semibold">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#10b981] animate-pulse" />
+            Ready
+          </span>
         </div>
       </div>
     </aside>

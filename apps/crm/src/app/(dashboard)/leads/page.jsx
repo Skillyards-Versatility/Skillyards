@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Search, Loader2, Phone, Mail, RefreshCw, ArrowUpRight, Download } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
+import { useTelephony } from "@/context/TelephonyContext";
 
 const STATUS_TABS = [
   { label: "All Leads", value: "" },
@@ -84,6 +85,7 @@ const DEMO_LEADS = [
 ];
 
 export default function LeadsDirectoryPage() {
+  const { startCall } = useTelephony();
   const [leads, setLeads] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
@@ -339,13 +341,33 @@ export default function LeadsDirectoryPage() {
                         })}
                       </td>
                       <td className="crm-td text-right">
-                        <Link
-                          href={`/leads/${lead.id}`}
-                          className="crm-btn-secondary !py-1 !px-2.5 text-[11px]"
-                        >
-                          <span>View</span>
-                          <ArrowUpRight className="w-3 h-3" />
-                        </Link>
+                        <div className="flex items-center justify-end gap-1.5">
+                          {(lead.normalizedPhone || lead.phone) && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startCall({
+                                  leadId: lead.id,
+                                  name: leadName,
+                                  phone: lead.normalizedPhone || lead.phone,
+                                  courseInterest: "Admissions Consultation",
+                                });
+                              }}
+                              title={`Call ${leadName} with Softphone`}
+                              className="p-1.5 rounded-lg bg-[#2E7559]/15 hover:bg-[#2E7559] text-[#1e5842] hover:text-white border border-[#2E7559]/30 transition-all active:scale-90 cursor-pointer shadow-xs inline-flex items-center justify-center"
+                            >
+                              <Phone className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                          <Link
+                            href={`/leads/${lead.id}`}
+                            className="crm-btn-secondary !py-1 !px-2.5 text-[11px]"
+                          >
+                            <span>View</span>
+                            <ArrowUpRight className="w-3 h-3" />
+                          </Link>
+                        </div>
                       </td>
                     </tr>
                   );

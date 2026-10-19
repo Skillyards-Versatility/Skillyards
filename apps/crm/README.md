@@ -36,9 +36,12 @@ The CRM features a **Warm Luxury Parchment & Dark Cockpit** aesthetic engineered
     - `--color-platinum-950`: `#F4ECDF` (warm linen insets)
   - Refined status badges, tab bars, buttons, and form inputs for high contrast.
 
-### 2. Sidebar Navigation & Micro-Interactions
-- **2-Tier Collapsible Drawer:** Integrated a compact 54px permanent activity bar with an expandable flyout menu.
-- **Audio Feedback:** Integrated debounced tactile click sound (`pop.mp3`) that plays exactly once per link click.
+### 2. Dual-Tier Navigation Sidebar (Obsidian Cockpit Drawer with In-Drawer Close)
+- **Activity Bar & Dedicated Operations Drawer:** Left vertical activity bar (~56px) paired with an Operations Drawer (~240px) matching the dark obsidian cockpit theme (`#0c1316` / `#0f171a`) for a unified, executive aesthetic.
+- **Professional In-Drawer Close Button:** Sleek dark-glass icon button (`w-7 h-7 rounded-lg`) featuring a smooth 90° rotation micro-animation on hover, translucent cyan-teal border glow, and tactile press scaling.
+- **Re-Open & Toggle Interaction:** Clicking any activity bar navigation icon instantly expands the operations drawer. Clicking the already-active section icon toggles the drawer open/closed.
+- **Smooth Animation:** Smooth CSS width and opacity transitions ensure a silky-smooth experience without text jumping or layout breaks.
+- **Audio Feedback:** Integrated debounced tactile click sound (`button-click-sound.mp3`) on link interaction.
 
 ### 3. Executive Dashboard (`/`)
 - **4 Key Performance Indicator (KPI) Cards:** Styled with `#FAF6EE` surfaces, distinctive palette icon badges, and bold `#1C2527` metric counts.
@@ -125,6 +128,35 @@ All modal dialogs and slide-over drawers now feature the unified `#0c1316` cockp
   - Main workspace layout padding adapted to `p-4 sm:p-6 md:p-8`.
   - Polished touch targets and horizontal table scroll containers across mobile viewports.
 
+### 9. In-App Telecalling Softphone & Audio Cockpit (Phase 1)
+- **Zero-Cost Web Audio Synthesizer (`lib/telephonyAudio.js`):**
+  - Pure in-browser oscillator audio synthesis without external files or audio latency.
+  - Standard ITU-T dual-frequency DTMF dial tones (697Hz–1477Hz) on numeric key touches.
+  - Authentic telecom ringback cadence (440Hz + 480Hz burst loop).
+  - Ascending harmonic chime on call connection (C5-E5-G5 triad) and descending hangup tone.
+- **Docked Floating Softphone (`components/telephony/SoftphoneDrawer.jsx`):**
+  - Always-accessible floating widget in the bottom-right corner.
+  - Shows real-time connection status (Live WebRTC Ready), rep availability, and live duration timer.
+  - Interactive touch dialpad with instant prospect name & course auto-lookup matching typed digits.
+  - Recent calls history log with 1-click redial.
+- **Live Active Call Cockpit (`components/telephony/ActiveCallCockpit.jsx`):**
+  - Full candidate hero card with monogram avatar, normalized phone, and course interest tag.
+  - Dynamic status indicator (`DIALING` -> `RINGING` -> `CONNECTED` -> `ENDED`).
+  - High-contrast emerald live timer (`00:00`) with animated soundwave voice activity visualizer.
+  - In-call controls: Mute Microphone (`MicOff`), Hold Call (`Pause`), In-call DTMF Keypad, and prominent Hang Up (`PhoneOff`).
+- **Mandatory Call Disposition Modal (`components/telephony/CallDispositionModal.jsx`):**
+  - Automatically surfaces upon call completion to enforce SPEC-6 audit compliance.
+  - Standardized outcomes: *Connected*, *Counselling Scheduled*, *Callback Requested*, *Ringing/No Answer*, *Busy*, *Invalid Number*, *Not Interested*.
+  - Callback scheduler: If *Callback Requested* is selected, prompts date & time and auto-creates a task in `/follow-ups`.
+  - Discussion notes with one-click quick suggestion chips.
+  - Direct EOD target auto-attribution (+1 Dial, +1 Connect if >15s, +Talk-Time seconds).
+- **1-Click Call Triggers Across CRM Workspaces:**
+  - Lead Workspace Profile (`/leads/[id]`): Hero "Call" button directly initiates the softphone.
+  - Leads Pipeline (`/leads`): Table row quick phone action button.
+  - Call Queue (`/queue`): 1-click dial from assigned queue list.
+  - Follow-up Agenda (`/follow-ups`): 1-click dial scheduled callback tasks.
+  - Global Hotkey `D`: Press `D` anywhere to toggle the softphone dialer window.
+
 ---
 
 ## 🛠️ Tech Stack & Architecture
@@ -156,3 +188,10 @@ npm run dev
 ```
 
 Visit [http://localhost:3003](http://localhost:3003) in your browser.
+
+---
+
+## 📞 Telecalling Dialer & Softphone Documentation
+
+For the complete technical blueprint, state machine, telecom options (WebRTC vs Cloud PBX vs Android GSM), and EOD target integration specs, see:
+- [docs/CRM/TELECALLING_DIALER_ARCHITECTURE_GUIDE.md](file:///d:/CRM-SKILLYARDS/Skillyards/docs/CRM/TELECALLING_DIALER_ARCHITECTURE_GUIDE.md)

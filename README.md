@@ -39,9 +39,12 @@ For full application instructions, visit [apps/crm/README.md](file:///d:/CRM-SKI
   - Elevated inner boxes & form inputs: Crisp `#FFFFFF`
   - High-contrast typography: `#1C2527` (slate black) for primary headings and `#5A6E71` / `#7E939A` for secondary labels.
 
-### 2. Audio-Enhanced Collapsible Navigation
-- Compact 54px permanent activity bar with collapsible flyout drawer.
-- Tactile, single-trigger audio feedback (`pop.mp3`) on link interaction.
+### 2. Dual-Tier Navigation Sidebar (Obsidian Cockpit Drawer with In-Drawer Close)
+- Dedicated vertical activity bar paired with an Operations Drawer (~240px) matching the dark obsidian cockpit theme (`#0c1316` / `#0f171a`).
+- Cohesive color palette matching top navbar with slate-teal borders (`[rgba(98,146,158,0.15)]`) and high-contrast typography.
+- Professional in-drawer close button (`w-7 h-7 rounded-lg`) with dark-glass styling, 90° rotation micro-animation, and tactile press feedback.
+- Clicking any activity bar navigation icon instantly expands the operations drawer; clicking the active icon toggles the drawer.
+- Tactile, single-trigger audio feedback (`button-click-sound.mp3`) on link interaction.
 
 ### 3. Modals, Drawers & Sub-Pages Polish (Option 1)
 All interactive surfaces follow the unified dark cockpit header (`#0c1316`) + warm ivory body (`#FAF6EE`):
@@ -72,8 +75,15 @@ All interactive surfaces follow the unified dark cockpit header (`#0c1316`) + wa
 - **Dynamic Persona Switcher:** Interactive navbar dropdown for testing **Sales Manager**, **Senior Counsellor**, and **Telecaller** role permissions on the fly.
 - **Actionable Notifications Center:** Navbar bell trigger with live activity indicators for overdue callbacks, counselling due today, and queue intake.
 - **One-Click CSV Data Export:** Dedicated CSV export functionality in Leads Directory (`/leads`), Counselling Management (`/counselling`), and EOD Ledger (`/eod`).
-- **Global Keyboard Shortcuts & Cheatsheet:** Hotkeys for New Lead (`N`), Search (`/`), Help (`?`), and Dismiss (`Esc`) with a modal guide.
+- **Global Keyboard Shortcuts & Cheatsheet:** Hotkeys for New Lead (`N`), Dialer (`D`), Search (`/`), Help (`?`), and Dismiss (`Esc`) with a modal guide.
 - **Responsive Layout:** Optimized mobile and tablet padding (`p-4 sm:p-6 md:p-8`) and horizontal table scrolling across all viewports.
+
+### 7. In-App Telecalling Softphone & Audio Cockpit (Phase 1)
+- **Zero-Cost Web Audio Synthesizer:** Pure browser dual-frequency DTMF dial tones, authentic telecom ringback cadence, and call connection/hangup audio chimes.
+- **Docked Floating Softphone Widget:** Persistent bottom-right floating trigger with live status indicators, interactive touch dialpad, live lead auto-lookup, and recent calls log.
+- **Active Call Cockpit:** Live student hero card, real-time talk timer (`MM:SS`), soundwave voice visualizer, mute, hold, in-call DTMF keypad, and hangup.
+- **Mandatory Call Disposition Modal:** Audit-compliant post-call outcome tagging (*Connected*, *Counselling Scheduled*, *Callback Requested*, etc.), callback scheduler, discussion notes, and direct EOD target auto-attribution (+1 Dial, +1 Connect, +Talk-Time seconds).
+- **1-Click Call Triggers:** Seamless telecalling integration across Lead Profile, Leads Directory, Call Queue, and Follow-up Agenda.
 
 ---
 

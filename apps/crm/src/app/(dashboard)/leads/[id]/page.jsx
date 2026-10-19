@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
+import { useTelephony } from "@/context/TelephonyContext";
 
 const STATUSES = [
   { value: "new", label: "New" },
@@ -58,6 +59,7 @@ export default function LeadDetailPage() {
   const params = useParams();
   const id = params?.id;
   const router = useRouter();
+  const { startCall } = useTelephony();
 
   const [lead, setLead] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -430,13 +432,22 @@ export default function LeadDetailPage() {
           </button>
 
           {lead.normalizedPhone && (
-            <a
-              href={`tel:${lead.normalizedPhone}`}
-              className="crm-btn-call shadow-xs"
+            <button
+              type="button"
+              onClick={() =>
+                startCall({
+                  leadId: lead.id,
+                  name: lead.fullName,
+                  phone: lead.normalizedPhone,
+                  courseInterest: lead.enquiryCourse || "Course Consultation",
+                })
+              }
+              className="crm-btn-call shadow-xs cursor-pointer"
+              title="Launch In-App Telecalling Softphone"
             >
               <Phone className="w-3.5 h-3.5" />
               <span>Call ({lead.normalizedPhone})</span>
-            </a>
+            </button>
           )}
 
           {lead.normalizedEmail && (
