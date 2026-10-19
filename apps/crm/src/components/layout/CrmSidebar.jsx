@@ -17,6 +17,7 @@ import {
   X,
   Settings,
   Plus,
+  Award,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useTelephony } from "@/context/TelephonyContext";
@@ -29,6 +30,7 @@ const NAV_ITEMS = [
   { label: "Call Queue", href: "/queue", icon: PhoneCall },
   { label: "Follow-ups", href: "/follow-ups", icon: CalendarClock },
   { label: "Counselling", href: "/counselling", icon: GraduationCap },
+  { label: "Admissions & Fees", href: "/admissions", icon: Award, badge: "New" },
   { label: "EOD Reports", href: "/eod", icon: FileSpreadsheet },
 ];
 
@@ -92,6 +94,16 @@ const SECTION_DETAILS = {
       { label: "Scheduled Today", href: "/counselling" },
       { label: "Session Outcomes", href: "/counselling" },
       { label: "Enrolled Students", href: "/counselling" },
+    ],
+  },
+  "/admissions": {
+    title: "Admissions & Fees",
+    category: "Financials & Cohorts",
+    items: [
+      { label: "Enrolled Students", href: "/admissions" },
+      { label: "Tuition Collections", href: "/admissions" },
+      { label: "0% EMI Loan Approvals", href: "/admissions" },
+      { label: "Pending Receivables", href: "/admissions" },
     ],
   },
   "/eod": {

@@ -76,14 +76,38 @@ All interactive surfaces follow the unified dark cockpit header (`#0c1316`) + wa
 - **Actionable Notifications Center:** Navbar bell trigger with live activity indicators for overdue callbacks, counselling due today, and queue intake.
 - **One-Click CSV Data Export:** Dedicated CSV export functionality in Leads Directory (`/leads`), Counselling Management (`/counselling`), and EOD Ledger (`/eod`).
 - **Global Keyboard Shortcuts & Cheatsheet:** Hotkeys for New Lead (`N`), Dialer (`D`), Search (`/`), Help (`?`), and Dismiss (`Esc`) with a modal guide.
-- **Responsive Layout:** Optimized mobile and tablet padding (`p-4 sm:p-6 md:p-8`) and horizontal table scrolling across all viewports.
-
 ### 7. In-App Telecalling Softphone & Audio Cockpit (Phase 1)
 - **Zero-Cost Web Audio Synthesizer:** Pure browser dual-frequency DTMF dial tones, authentic telecom ringback cadence, and call connection/hangup audio chimes.
 - **Docked Floating Softphone Widget:** Persistent bottom-right floating trigger with live status indicators, interactive touch dialpad, live lead auto-lookup, and recent calls log.
 - **Active Call Cockpit:** Live student hero card, real-time talk timer (`MM:SS`), soundwave voice visualizer, mute, hold, in-call DTMF keypad, and hangup.
 - **Mandatory Call Disposition Modal:** Audit-compliant post-call outcome tagging (*Connected*, *Counselling Scheduled*, *Callback Requested*, etc.), callback scheduler, discussion notes, and direct EOD target auto-attribution (+1 Dial, +1 Connect, +Talk-Time seconds).
 - **1-Click Call Triggers:** Seamless telecalling integration across Lead Profile, Leads Directory, Call Queue, and Follow-up Agenda.
+
+### 8. Executive Visual Analytics & Conversion Funnel Cockpit
+- **Interactive Multi-Stage Waterfall Funnel:** Real-time visualization of candidate conversion from *New Inquiries* (100%) through *Contacted*, *Qualified*, and *Counselling* down to confirmed *Admissions Enrolled* (15%) with stage drop-off calculations.
+- **Sales Team Performance Leaderboard:** Ranked staff performance (🥇 Gold, 🥈 Silver, 🥉 Bronze) with admissions enrolled, sessions conducted, total calls, and target % attainment.
+- **Velocity & Revenue Gauges:** Pacing progress bar, average lead turnaround time (days), and live telephony dials counter linked with the softphone.
+- **Time Range Filtering:** Dynamic recalculations across *Today*, *This Week*, *This Month*, and *Quarterly*.
+
+### 9. Multi-Channel WhatsApp, SMS & Direct Email Outreach Engine
+- **Zero-Cost Native Multi-Channel Dispatch:** Direct browser protocol links (`https://wa.me/...`, `mailto:...`, `sms:...`) and 1-click clipboard copy without expensive external vendor API contracts.
+- **Pre-Approved EdTech Sales Templates:** Ready-to-send templates for Course Curriculum/Brochure, 1-on-1 Counselling Invites, 15% Merit Scholarship Waivers, Call Follow-ups, and Fee Structure / EMI Schedules.
+- **Dynamic Token Interpolation:** Live candidate and course personalization (`{{candidate_name}}`, `{{course_name}}`, `{{counsellor_name}}`, `{{meet_link}}`, `{{brochure_link}}`) with token insertion pills.
+- **Audit-Compliant Activity Feed:** Sent outreach is automatically logged into the lead's chronological timeline (`/leads/[id]`) with color-coded channel badges and persisted to browser storage.
+
+### 10. Lead Bulk Actions & Batch Operations Hub (`/leads`)
+- **Multi-Select Table Management:** Tri-state master checkbox with active row highlights (`!bg-[#4A6D7C]/12 border-l-4`), selection counter, and instant deselect.
+- **Docked Obsidian Cockpit Action Toolbar:** Floating control dock (`#0c1316`) surfacing on lead selection for 1-click batch actions.
+- **Batch Lifecycle Status Transition:** Bulk status migration with audit logging.
+- **Batch Staff Reassignment & Round-Robin Balancing:** Reassign to specific reps or auto-balance workloads evenly across the sales team.
+- **Batch Outreach Broadcast:** Multi-lead WhatsApp, Email BCC, and SMS broadcasting with dynamic candidate token replacement and timeline logging.
+- **Filtered Selected-Only CSV Export:** Download custom CSV containing only the chosen leads.
+
+### 11. Student Admissions & Fee Collection Hub (`/admissions`)
+- **Complete Admissions Funnel Conversion:** Transform qualified leads into enrolled students with auto-generated Student IDs (`SKY-2026-XXXX`).
+- **Dynamic Fee Calculator & Scholarship Grants:** Program selection, merit waivers (`SKY-MERIT-15`), 18% GST toggle, and flexible payment plan calculation (Full, 2-Part Installment, or 0% EMI).
+- **Official Digital Fee Receipt Letterhead:** Branded official receipt with itemized fee breakdown, transaction UTR, and 1-click **Print / Save as PDF** support.
+- **Financial Admissions Ledger Console:** Real-time KPI summary (Enrolled Students, Tuition Collected, Receivables, 0% EMI Loans), cohort filters, and CSV data export.
 
 ---
 

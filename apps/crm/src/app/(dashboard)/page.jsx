@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
+import { ExecutiveAnalyticsCockpit } from "@/components/analytics/ExecutiveAnalyticsCockpit";
 
 export default function DashboardPage() {
   const DEMO_LEADS = [
@@ -87,7 +88,7 @@ export default function DashboardPage() {
             if (Array.isArray(stored) && stored.length > 0) {
               return [...stored, ...DEMO_LEADS];
             }
-          } catch (_) {}
+          } catch (_) { }
         }
         return DEMO_LEADS;
       };
@@ -248,6 +249,9 @@ export default function DashboardPage() {
           </div>
         </Link>
       </div>
+
+      {/* Executive Visual Analytics & Conversion Funnel Cockpit */}
+      <ExecutiveAnalyticsCockpit />
 
       {/* EOD Attainment Action Box */}
       <div className="bg-gradient-to-r from-[#FAF6EE] via-[#F6EDE0] to-[#ECE1CF] border border-[rgba(74,109,124,0.22)] rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

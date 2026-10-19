@@ -43,8 +43,18 @@ The CRM features a **Warm Luxury Parchment & Dark Cockpit** aesthetic engineered
 - **Smooth Animation:** Smooth CSS width and opacity transitions ensure a silky-smooth experience without text jumping or layout breaks.
 - **Audio Feedback:** Integrated debounced tactile click sound (`button-click-sound.mp3`) on link interaction.
 
-### 3. Executive Dashboard (`/`)
+### 3. Executive Dashboard & Visual Analytics Cockpit (`/`)
 - **4 Key Performance Indicator (KPI) Cards:** Styled with `#FAF6EE` surfaces, distinctive palette icon badges, and bold `#1C2527` metric counts.
+- **Multi-Stage Pipeline Conversion Funnel (`ExecutiveAnalyticsCockpit.jsx`):**
+  - Interactive waterfall funnel tracking: *New Inquiries* (100%) ➔ *Contacted* (78%) ➔ *Qualified* (52%) ➔ *Counselling Conducted* (29%) ➔ *Admissions Enrolled* (15%).
+  - Real-time drop-off calculations and proportional progress bars with luxury color accents.
+  - Interactive time range selector (*Today*, *This Week*, *This Month*, *Quarterly*).
+- **Sales Team Performance Leaderboard:**
+  - Dynamic rankings (🥇 Gold, 🥈 Silver, 🥉 Bronze) showcasing admissions enrolled, sessions conducted, total dials, and target attainment percentages.
+- **Revenue Pacing & Operational Velocity Gauges:**
+  - Revenue Attainment progress bar with pacing benchmark status.
+  - Average Lead-to-Session turnaround time velocity tracker.
+  - Live Tele-calling Attainment gauge dynamically integrated with the in-app softphone.
 - **Daily EOD Action Banner:** Dynamic gradient card (`from-[#FAF6EE] via-[#F6EDE0] to-[#ECE1CF]`) displaying submission status and quick entry CTAs.
 - **Recent Prospects Table:** Monogram avatar circles, direct call/email links, and assigned representative chips.
 
@@ -156,6 +166,72 @@ All modal dialogs and slide-over drawers now feature the unified `#0c1316` cockp
   - Call Queue (`/queue`): 1-click dial from assigned queue list.
   - Follow-up Agenda (`/follow-ups`): 1-click dial scheduled callback tasks.
   - Global Hotkey `D`: Press `D` anywhere to toggle the softphone dialer window.
+
+### 10. Multi-Channel WhatsApp, SMS & Direct Email Outreach Engine
+- **Zero-Cost Native Multi-Channel Dispatch:**
+  - Direct integration via browser protocol deep links (`https://wa.me/...`, `mailto:...`, `sms:...`) and 1-click clipboard copying.
+  - Zero paid external API subscriptions required (bypasses costly Gupshup/Twilio per-message fees while remaining enterprise-ready).
+- **Interactive Multi-Channel Modal (`components/leads/MultiChannelOutreachModal.jsx`):**
+  - **3 Communication Channels:** WhatsApp Web / Desktop App, Native Email Client, and Mobile SMS.
+  - **5 Pre-Approved EdTech Sales Templates:**
+    1. *Course Curriculum & Syllabus Brochure:* Official syllabus link, live project details, mentor intro, and curriculum overview.
+    2. *Admissions 1-on-1 Counselling Invite:* Direct Google Meet / Zoom admissions room link and career path consultation invite.
+    3. *Merit Scholarship & Tuition Waiver:* 15% academic waiver code with 48-hour expiration trigger for urgent conversions.
+    4. *Post-Call Summary & Immediate Follow-up:* Key phone takeaways recap, program highlights, and next steps confirmation.
+    5. *Course Fee Structure & Flexible 0% EMI Schedule:* Complete installment and digital EMI approval link.
+  - **Dynamic Token Interpolation Engine:**
+    - Live substitution of `{{candidate_name}}`, `{{course_name}}`, `{{counsellor_name}}`, `{{crm_phone}}`, `{{meet_link}}`, `{{brochure_link}}`, and `{{candidate_code}}`.
+    - Token quick-insert pills allow representatives to insert dynamic tags directly into the message text area on the fly.
+    - Live character counter and WhatsApp Web / Email dispatch buttons with tactile feedback.
+- **Audit-Compliant Activity Feed Integration:**
+  - Dispatched communications automatically log to the candidate's activity timeline (`/leads/[id]`) with timestamps, actor metadata, and message preview snippets.
+  - Distinct channel badges: WhatsApp (`#25D366`), Email (`#4A6D7C`), and SMS (`#B07238`).
+  - Persistent browser storage (`skillyards_lead_call_history_${id}`) ensures outreach history survives refreshes and offline reloads.
+
+### 11. Lead Bulk Actions & Batch Operations Hub (`/leads`)
+- **Multi-Select Table Selection:**
+  - Tri-state master checkbox (Select All, Indeterminate, Deselect All).
+  - Row-level interactive checkboxes with active row highlighting (`!bg-[#4A6D7C]/12 border-l-4 !border-l-[#4A6D7C]`).
+  - Real-time selection count tracking and quick "Clear Selection" trigger.
+- **Docked Obsidian Cockpit Action Toolbar:**
+  - Floating bottom-docked control deck (`#0c1316`) that smoothly slides up when 1 or more leads are selected.
+  - One-click trigger buttons for Bulk Status, Bulk Reassignment, Batch Outreach, and Filtered CSV Export.
+- **Batch Status Migration Modal:**
+  - Update all selected prospects across lifecycle stages (*New*, *Contacted*, *Follow-up*, *Counselling Scheduled*, *Qualified*, *Converted*, *Cold*, *Lost*).
+  - Optional batch reason / audit log note recorded into candidate history.
+- **Batch Staff Reassignment Modal:**
+  - Reassign selected leads to a specific sales representative (*Priya Patel*, *Vikram Malhotra*, *Amit Kumar*).
+  - **⚡ Auto Round-Robin Balanced Distribution:** Alternates assignment across all active counsellors to equalize team lead loads automatically.
+- **Batch Outreach Broadcast Modal (`components/leads/BulkOutreachModal.jsx`):**
+  - Broadcasts WhatsApp, Email, or SMS to all selected candidates with automated dynamic name/course token replacement.
+  - Multi-candidate recipient roster with quick 1-click individual WhatsApp chat launchers and BCC email client merge.
+  - Auto-logs outreach history to all selected candidates' chronological timelines in `localStorage`.
+- **Selected-Only CSV Export:**
+  - Generates custom-filtered CSV (`skillyards-selected-X-leads-YYYY-MM-DD.csv`) containing only the checked leads.
+- **Optimistic State & Local Storage Persistence:**
+  - Immediate state reflection with animated toast notification banner.
+
+### 12. Student Admissions & Fee Collection Hub (`/admissions`)
+- **End-to-End Admissions Conversion:**
+  - Converts qualified/counselled prospects into officially enrolled students with unique Student IDs (`SKY-2026-XXXX`).
+  - Available via the Admissions Console (`/admissions`) and directly within any candidate profile (`/leads/[id]`) via the emerald "Enroll Student" action button.
+- **Tuition Fee Calculator & Scholarship Deduction Engine (`components/admissions/EnrollStudentModal.jsx`):**
+  - Course selection with real-time base tuition fees.
+  - Scholarship & fee waiver codes: 15% Academic Merit (`SKY-MERIT-15`), 10% Early Bird (`EARLY-10`), 20% Women in Tech Leadership Grant.
+  - Government GST (18%) automatic calculation toggle with full tax transparency.
+  - Payment schedule configuration: 100% Upfront, 2-Part Installment, or 0% Interest 10-Month EMI Loan.
+  - Down payment collection, balance due computation, and installment due date scheduling.
+- **Official Digital Fee Receipt & Letterhead (`components/admissions/StudentFeeReceiptModal.jsx`):**
+  - Instant institutional letterhead fee receipt with unique Receipt No (`REC-2026-XXXXX`), student details, program cohort, transaction UTR, and itemized tuition & GST tax breakdown.
+  - One-click **Print / Save as PDF** support (`window.print()`).
+- **Admissions Management Console (`/admissions`):**
+  - 4 Real-time Financial & Enrollment KPI cards: Total Enrolled Students, Gross Tuition Revenue Collected, Pending Receivables (<30 days), and 0% EMI Loan Disbursals.
+  - Interactive Filter Tabs (*All Enrollments*, *Fully Paid*, *0% EMI Active*, *Balance Pending*).
+  - Search by Student Name, ID, Phone, Email, or Receipt number.
+  - Direct softphone call triggers and receipt inspection.
+  - One-click Admissions Ledger CSV Export.
+- **Audit Compliance & Candidate Timeline Integration:**
+  - Enrolling a student automatically marks candidate as `converted`, logs an official `student_enrolled` audit event in their timeline, and persists to browser storage.
 
 ---
 
