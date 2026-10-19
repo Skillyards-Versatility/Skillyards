@@ -155,19 +155,23 @@ export default function FollowUpsPage() {
 
         <div className="flex items-center gap-2 self-start">
           {/* Scope Toggle */}
-          <div className="flex items-center rounded-lg bg-platinum-900 border border-platinum-800 p-0.5 text-xs font-semibold">
+          <div className="flex items-center rounded-xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] p-1 text-xs font-semibold shadow-xs">
             <button
               onClick={() => setScope("my")}
-              className={`px-3 py-1 rounded-md transition-colors ${
-                scope === "my" ? "bg-dark-teal-600 text-platinum-50" : "text-platinum-400 hover:text-platinum-50"
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                scope === "my"
+                  ? "bg-[#4A6D7C] text-white shadow-xs font-bold"
+                  : "text-[#5A6E71] hover:text-[#1C2527]"
               }`}
             >
               My Tasks
             </button>
             <button
               onClick={() => setScope("all")}
-              className={`px-3 py-1 rounded-md transition-colors ${
-                scope === "all" ? "bg-dark-teal-600 text-platinum-50" : "text-platinum-400 hover:text-platinum-50"
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                scope === "all"
+                  ? "bg-[#4A6D7C] text-white shadow-xs font-bold"
+                  : "text-[#5A6E71] hover:text-[#1C2527]"
               }`}
             >
               All Team Tasks
@@ -176,7 +180,7 @@ export default function FollowUpsPage() {
 
           <button
             onClick={fetchFollowUps}
-            className="crm-btn-secondary"
+            className="crm-btn-secondary !p-2"
             title="Refresh tasks"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
@@ -190,64 +194,64 @@ export default function FollowUpsPage() {
           onClick={() => setActiveTab("overdue")}
           className={`crm-card p-4 cursor-pointer transition-all ${
             activeTab === "overdue"
-              ? "!border-dark-wine-500/80 bg-dark-wine-950/40"
-              : "hover:border-platinum-700"
+              ? "!border-[#C3473C] bg-white ring-2 ring-[#C3473C]/20 shadow-md"
+              : "hover:border-[rgba(71,86,87,0.3)]"
           }`}
         >
-          <div className="flex items-center justify-between text-platinum-400 text-xs font-medium">
+          <div className="flex items-center justify-between text-[#5A6E71] text-xs font-semibold uppercase tracking-wider">
             <span>Overdue Callbacks</span>
-            <AlertTriangle className="w-3.5 h-3.5 text-dark-wine-400" />
+            <AlertTriangle className="w-3.5 h-3.5 text-[#C3473C]" />
           </div>
-          <p className="text-2xl font-bold text-dark-wine-400 mt-1">{data.counts.overdue}</p>
-          <span className="text-[10px] text-platinum-500">Requires urgent outreach</span>
+          <p className="text-3xl font-black text-[#C3473C] mt-1.5 tracking-tight">{data.counts.overdue}</p>
+          <span className="text-[11px] text-[#8E2B23] font-medium">Requires urgent outreach</span>
         </div>
 
         <div
           onClick={() => setActiveTab("dueToday")}
           className={`crm-card p-4 cursor-pointer transition-all ${
             activeTab === "dueToday"
-              ? "!border-dark-teal-500/80 bg-dark-teal-950/40"
-              : "hover:border-platinum-700"
+              ? "!border-[#4A6D7C] bg-white ring-2 ring-[#4A6D7C]/20 shadow-md"
+              : "hover:border-[rgba(71,86,87,0.3)]"
           }`}
         >
-          <div className="flex items-center justify-between text-platinum-400 text-xs font-medium">
+          <div className="flex items-center justify-between text-[#5A6E71] text-xs font-semibold uppercase tracking-wider">
             <span>Due Today</span>
-            <Clock className="w-3.5 h-3.5 text-dark-teal-300" />
+            <Clock className="w-3.5 h-3.5 text-[#4A6D7C]" />
           </div>
-          <p className="text-2xl font-bold text-dark-teal-300 mt-1">{data.counts.dueToday}</p>
-          <span className="text-[10px] text-platinum-500">Scheduled for today</span>
+          <p className="text-3xl font-black text-[#1C2527] mt-1.5 tracking-tight">{data.counts.dueToday}</p>
+          <span className="text-[11px] text-[#4A6D7C] font-semibold">Scheduled for today</span>
         </div>
 
         <div
           onClick={() => setActiveTab("upcoming")}
           className={`crm-card p-4 cursor-pointer transition-all ${
             activeTab === "upcoming"
-              ? "!border-deep-ocean-500/80 bg-deep-ocean-950/40"
-              : "hover:border-platinum-700"
+              ? "!border-[#62929E] bg-white ring-2 ring-[#62929E]/20 shadow-md"
+              : "hover:border-[rgba(71,86,87,0.3)]"
           }`}
         >
-          <div className="flex items-center justify-between text-platinum-400 text-xs font-medium">
-            <span>Upcoming</span>
-            <Calendar className="w-3.5 h-3.5 text-deep-ocean-300" />
+          <div className="flex items-center justify-between text-[#5A6E71] text-xs font-semibold uppercase tracking-wider">
+            <span>Upcoming Agenda</span>
+            <Calendar className="w-3.5 h-3.5 text-[#216372]" />
           </div>
-          <p className="text-2xl font-bold text-deep-ocean-300 mt-1">{data.counts.upcoming}</p>
-          <span className="text-[10px] text-platinum-500">Tomorrow & onwards</span>
+          <p className="text-3xl font-black text-[#1C2527] mt-1.5 tracking-tight">{data.counts.upcoming}</p>
+          <span className="text-[11px] text-[#5A6E71]">Tomorrow & onwards</span>
         </div>
 
         <div
           onClick={() => setActiveTab("completed")}
           className={`crm-card p-4 cursor-pointer transition-all ${
             activeTab === "completed"
-              ? "!border-deep-ocean-500/80 bg-deep-ocean-950/40"
-              : "hover:border-platinum-700"
+              ? "!border-[#393A10] bg-white ring-2 ring-[#393A10]/20 shadow-md"
+              : "hover:border-[rgba(71,86,87,0.3)]"
           }`}
         >
-          <div className="flex items-center justify-between text-platinum-400 text-xs font-medium">
+          <div className="flex items-center justify-between text-[#5A6E71] text-xs font-semibold uppercase tracking-wider">
             <span>Completed</span>
-            <CheckCircle2 className="w-3.5 h-3.5 text-deep-ocean-400" />
+            <CheckCircle2 className="w-3.5 h-3.5 text-[#393A10]" />
           </div>
-          <p className="text-2xl font-bold text-deep-ocean-400 mt-1">{data.counts.completed}</p>
-          <span className="text-[10px] text-platinum-500">Resolved tasks</span>
+          <p className="text-3xl font-black text-[#1C2527] mt-1.5 tracking-tight">{data.counts.completed}</p>
+          <span className="text-[11px] text-[#393A10] font-semibold">Resolved callback tasks</span>
         </div>
       </div>
 

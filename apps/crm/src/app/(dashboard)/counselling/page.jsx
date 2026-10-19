@@ -599,14 +599,14 @@ export default function CounsellingPage() {
         <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between">
           {/* Search bar */}
           <form onSubmit={handleSearchSubmit} className="flex-1 max-w-md relative">
-            <Search className="w-4 h-4 absolute left-3 top-2.5 text-platinum-500" />
             <input
               type="text"
               placeholder="Search student, phone, or course..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="crm-input pl-9"
+              className="crm-input pr-9 pl-3.5"
             />
+            <Search className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-platinum-500 pointer-events-none" />
           </form>
 
           {/* Dropdown Filters */}
