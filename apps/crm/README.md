@@ -230,8 +230,20 @@ All modal dialogs and slide-over drawers now feature the unified `#0c1316` cockp
   - Search by Student Name, ID, Phone, Email, or Receipt number.
   - Direct softphone call triggers and receipt inspection.
   - One-click Admissions Ledger CSV Export.
-- **Audit Compliance & Candidate Timeline Integration:**
-  - Enrolling a student automatically marks candidate as `converted`, logs an official `student_enrolled` audit event in their timeline, and persists to browser storage.
+### 13. Complete Full-Stack Integration (Backend API + Database + UI)
+- **Unified Admissions & Payment Hub:**
+  - `GET /api/crm/admissions`: Fetches live enrolled students joined with payment records from `students` and `payments` tables via Drizzle ORM.
+  - `POST /api/crm/admissions`: Inserts student into `students`, logs down payment into `payments`, sets lead status to `converted`, and writes an immutable audit record in `crmAuditEvents`.
+  - Frontend client `crmApi.getAdmissions()` and `crmApi.enrollStudent()` with dual-layer fallback to local storage.
+- **Batch Operations & Reassignment:**
+  - `POST /api/crm/leads/bulk`: Handles `status`, `assign` (direct or round-robin), and `outreach` actions with database updates and batch `crmAuditEvents` entries.
+  - Frontend multi-selection bar in `/leads` executes live batch API updates with optimistic state and timeline history logging.
+- **Multi-Channel Candidate Outreach Logging:**
+  - `POST /api/crm/leads/[id]/outreach`: Logs candidate WhatsApp, Email, or SMS message events to `crmAuditEvents`.
+  - Unified timeline builder in `crm.lead.service.js` automatically renders outreach entries (`OUTREACH_SENT`) with channel badges, templates, and timestamps.
+- **In-App Softphone Call Logging:**
+  - `POST /api/crm/leads/[id]/calls`: Records call duration, disposition outcome, and callback timestamps directly into call logs and lead timeline.
+  - Telephony context automatically syncs softphone call dispositions to backend and updates EOD attributable counters.
 
 ---
 

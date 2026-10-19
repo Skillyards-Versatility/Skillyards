@@ -56,7 +56,7 @@ export function SoftphoneDrawer() {
           1. FLOATING DOCKED TRIGGER PILL (Bottom-Right, Always Visible)
           ========================================================================= */}
       {!isSoftphoneOpen && (
-        <div className="fixed bottom-4 right-20 sm:right-24 z-30 animate-fadeIn">
+        <div className="fixed bottom-4 right-4 sm:right-6 z-30 animate-fadeIn">
           <button
             type="button"
             onClick={openSoftphone}

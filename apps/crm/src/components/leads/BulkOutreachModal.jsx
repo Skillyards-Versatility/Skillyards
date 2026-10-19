@@ -18,6 +18,7 @@ import {
   CreditCard,
   CheckCircle2,
 } from "lucide-react";
+import { crmApi } from "@/lib/api";
 
 const TEMPLATES = [
   {
@@ -187,11 +188,24 @@ export function BulkOutreachModal({ isOpen, onClose, selectedLeads = [], onBatch
   };
 
   // Log batch outreach to all selected leads' timeline and persistence
-  const handleBatchLogToTimelines = () => {
+  const handleBatchLogToTimelines = async () => {
     setIsLogging(true);
     try {
       const channelLabel = activeChannel === "whatsapp" ? "WhatsApp" : activeChannel === "email" ? "Email" : "SMS";
       const timestamp = new Date().toISOString();
+
+      // Dispatch to Backend API
+      try {
+        await crmApi.bulkUpdateLeads({
+          action: "outreach",
+          leadIds: selectedLeads.map((l) => l.id),
+          channel: activeChannel,
+          templateTitle: currentTemplate.title,
+          messageSnippet: currentTemplate.body.slice(0, 150),
+        });
+      } catch (apiErr) {
+        console.warn("Backend bulk outreach API offline, logged locally:", apiErr.message);
+      }
 
       selectedLeads.forEach((lead) => {
         const leadKey = `skillyards_lead_call_history_${lead.id}`;

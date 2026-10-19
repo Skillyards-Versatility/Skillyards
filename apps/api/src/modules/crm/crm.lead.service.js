@@ -90,18 +90,38 @@ export async function getLeadByIdService(id) {
   // 1. Audit events
   for (const ev of auditEvents) {
     if (ev.action === "CALL_LOGGED") continue; // will be shown via callLogs to avoid duplication
+    
+    let type = "audit";
+    let title = ev.action.replace(/_/g, " ");
+    let notes = ev.reason || "";
+
+    if (ev.action === "LEAD_STATUS_CHANGED") {
+      type = "status_change";
+      title = `Status changed to ${ev.afterSnapshot?.status || "updated"}`;
+    } else if (ev.action === "LEAD_CREATED") {
+      title = "Lead created";
+    } else if (ev.action === "OUTREACH_SENT") {
+      const channel = ev.afterSnapshot?.channel || "whatsapp";
+      type = `outreach_${channel}`;
+      title = `${channel.toUpperCase()} Outreach: ${ev.afterSnapshot?.templateTitle || "Direct Message"}`;
+      notes = ev.afterSnapshot?.messageSnippet || ev.reason || "";
+    } else if (ev.action === "STUDENT_ENROLLED") {
+      type = "student_enrolled";
+      title = `Student Enrolled: ${ev.afterSnapshot?.courseName || "Program"}`;
+      notes = ev.reason || "";
+    } else if (ev.action === "LEAD_REASSIGNED") {
+      type = "status_change";
+      title = "Lead Reassigned";
+    }
+
     timeline.push({
       id: `audit-${ev.id}`,
-      type: ev.action === "LEAD_STATUS_CHANGED" ? "status_change" : "audit",
+      type,
       action: ev.action,
-      title:
-        ev.action === "LEAD_STATUS_CHANGED"
-          ? `Status changed to ${ev.afterSnapshot?.status || "updated"}`
-          : ev.action === "LEAD_CREATED"
-          ? "Lead created"
-          : ev.action.replace(/_/g, " "),
+      title,
       actorName: ev.actorName || "System",
       reason: ev.reason,
+      notes,
       beforeSnapshot: ev.beforeSnapshot,
       afterSnapshot: ev.afterSnapshot,
       timestamp: ev.createdAt,

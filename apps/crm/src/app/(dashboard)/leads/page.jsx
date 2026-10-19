@@ -275,6 +275,18 @@ export default function LeadsDirectoryPage() {
       const statusObj = ALL_STATUSES.find((s) => s.value === targetStatus);
       const statusLabel = statusObj?.label || targetStatus;
 
+      // Send to Backend API
+      try {
+        await crmApi.bulkUpdateLeads({
+          action: "status",
+          leadIds: selectedIds,
+          status: targetStatus,
+          reason: statusNote || "Updated via Leads Pipeline Batch Actions",
+        });
+      } catch (apiErr) {
+        console.warn("Backend bulk API offline, applied locally:", apiErr.message);
+      }
+
       // Optimistically update local leads state
       setLeads((prev) =>
         prev.map((lead) => {
@@ -337,6 +349,17 @@ export default function LeadsDirectoryPage() {
     setIsUpdatingAssign(true);
     try {
       const isRoundRobin = targetAssigneeId === "round_robin";
+
+      // Send to Backend API
+      try {
+        await crmApi.bulkUpdateLeads({
+          action: "assign",
+          leadIds: selectedIds,
+          assignedToUserId: targetAssigneeId,
+        });
+      } catch (apiErr) {
+        console.warn("Backend bulk assign API offline, applied locally:", apiErr.message);
+      }
 
       setLeads((prev) =>
         prev.map((lead, idx) => {
@@ -435,7 +458,17 @@ export default function LeadsDirectoryPage() {
     showToast(`Exported ${exportData.length} prospects to CSV`);
   };
 
-  const handleBulkOutreachComplete = ({ count, channel, template }) => {
+  const handleBulkOutreachComplete = async ({ count, channel, template }) => {
+    try {
+      await crmApi.bulkUpdateLeads({
+        action: "outreach",
+        leadIds: selectedIds,
+        channel,
+        templateTitle: template,
+      });
+    } catch (apiErr) {
+      console.warn("Backend bulk outreach API offline:", apiErr.message);
+    }
     showToast(`Logged ${template} to ${count} candidate timelines via ${channel.toUpperCase()}`);
     setSelectedIds([]);
   };

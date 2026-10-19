@@ -25,6 +25,7 @@ import { useTelephony } from "@/context/TelephonyContext";
 import { useAuth } from "@/context/AuthContext";
 import { EnrollStudentModal } from "@/components/admissions/EnrollStudentModal";
 import { StudentFeeReceiptModal } from "@/components/admissions/StudentFeeReceiptModal";
+import { crmApi } from "@/lib/api";
 
 const DEMO_ENROLLMENTS = [
   {
@@ -174,12 +175,26 @@ export default function AdmissionsPage() {
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
 
-  // Load enrollments from localStorage or demo
-  const fetchEnrollments = () => {
+  // Load enrollments from backend API with localStorage & demo fallbacks
+  const fetchEnrollments = async () => {
     setLoading(true);
     try {
+      let apiItems = [];
+      try {
+        const res = await crmApi.getAdmissions();
+        if (Array.isArray(res) && res.length > 0) {
+          apiItems = res;
+        }
+      } catch (e) {
+        console.warn("Backend admissions API unavailable, using offline persistence:", e.message);
+      }
+
       const stored = JSON.parse(localStorage.getItem("skillyards_enrolled_students") || "[]");
-      const combined = Array.isArray(stored) && stored.length > 0 ? [...stored, ...DEMO_ENROLLMENTS] : DEMO_ENROLLMENTS;
+      const baseDemo = apiItems.length > 0 ? apiItems : DEMO_ENROLLMENTS;
+      
+      // Combine without duplicating IDs
+      const existingIds = new Set(stored.map((s) => s.id));
+      const combined = [...stored, ...baseDemo.filter((d) => !existingIds.has(d.id))];
 
       // Filter
       let filtered = combined;

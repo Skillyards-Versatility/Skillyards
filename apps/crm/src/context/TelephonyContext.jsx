@@ -7,6 +7,7 @@ import {
   playCallConnectedChime,
   playCallEndedTone,
 } from "@/lib/telephonyAudio";
+import { crmApi } from "@/lib/api";
 
 const TelephonyContext = createContext(null);
 
@@ -188,6 +189,22 @@ export function TelephonyProvider({ children }) {
     try {
       localStorage.setItem("skillyards_telephony_recent_calls", JSON.stringify(updatedCalls));
     } catch {}
+
+    // Dispatch to Backend API
+    if (activeCall.leadId) {
+      try {
+        crmApi.logCall(activeCall.leadId, {
+          outcome: outcome || "connected",
+          duration: callDuration,
+          notes: notes || "No additional notes recorded.",
+          callbackAt: callbackAt || undefined,
+        }).catch((err) => {
+          console.warn("Backend call log sync offline, logged to local context:", err.message);
+        });
+      } catch (err) {
+        console.warn("Could not dispatch call log to backend:", err);
+      }
+    }
 
     // Auto-attribute to Daily EOD actuals
     try {
