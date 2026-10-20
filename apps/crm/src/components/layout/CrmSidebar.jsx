@@ -261,20 +261,20 @@ export function CrmSidebar() {
     };
 
   return (
-    <aside className="flex shrink-0 h-[calc(100vh-64px)] sticky top-16 z-30 select-none">
+    <aside className="flex shrink-0 h-full select-none">
       {/* =========================================================================
           TIER 1: PRIMARY ACTIVITY BAR (Narrow Vertical Icon Strip ~56px)
           Always visible, clean, high-precision dark aesthetic matching top navbar
           ========================================================================= */}
-      <div className="w-14 bg-[#0c1316] border-r border-[rgba(98,146,158,0.15)] flex flex-col items-center justify-between py-3 h-full z-20 shadow-xl">
-        {/* Navigation Icons (No collapse button at top) */}
-        <div className="flex flex-col items-center gap-1.5 w-full pt-1">
+      <div className="w-14 bg-[#0c1316] border-r border-[rgba(98,146,158,0.15)] flex flex-col items-center justify-between py-2 h-full z-20 shadow-xl overflow-hidden">
+        {/* Navigation Icons (Scrollable without scrollbar if viewport is short) */}
+        <div className="flex-1 flex flex-col items-center gap-1 w-full pt-0.5 overflow-y-auto overflow-x-hidden no-scrollbar">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isSelected = activeSection === item.href;
 
             return (
-              <div key={item.href} className="relative group w-full flex justify-center">
+              <div key={item.href} className="relative group w-full flex justify-center shrink-0">
                 <button
                   type="button"
                   onClick={() => handleActivityClick(item)}
@@ -317,12 +317,12 @@ export function CrmSidebar() {
         </div>
 
         {/* Bottom: Settings & User Avatar */}
-        <div className="flex flex-col items-center gap-3 w-full">
+        <div className="flex flex-col items-center gap-2.5 w-full pt-2 border-t border-[rgba(98,146,158,0.12)] shrink-0 bg-[#0c1316]">
           <button
             type="button"
             onClick={playClickSound}
             title="Settings"
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-[#7e939a] hover:text-white hover:bg-[rgba(98,146,158,0.08)] transition-all"
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-[#7e939a] hover:text-white hover:bg-[rgba(98,146,158,0.08)] transition-all cursor-pointer"
           >
             <Settings className="w-5 h-5" />
           </button>

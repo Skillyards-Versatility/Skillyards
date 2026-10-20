@@ -144,6 +144,15 @@
   background: rgba(71, 86, 87, 0.45);
 }
 
+/* Hide scrollbar for clean UI overflow */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* =========================================================================
    CRM DESIGN SYSTEM UTILITY CLASSES (WARM #F0E6D6 THEME)
    ========================================================================= */

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { CrmSidebar } from "@/components/layout/CrmSidebar";
 import { CrmHeader } from "@/components/layout/CrmHeader";
 import { NewLeadModal } from "@/components/leads/NewLeadModal";
@@ -10,6 +11,9 @@ import { TelephonyProvider, useTelephony } from "@/context/TelephonyContext";
 import { SoftphoneDrawer } from "@/components/telephony/SoftphoneDrawer";
 
 function DashboardLayoutContent({ children }) {
+  const pathname = usePathname();
+  const isFullBleedPage = pathname === "/inbox";
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
   const { setIsSoftphoneOpen, isSoftphoneOpen, callState } = useTelephony();
@@ -42,14 +46,18 @@ function DashboardLayoutContent({ children }) {
   }, [callState, setIsSoftphoneOpen]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F0E6D6] text-[#1C2527] selection:bg-[#4A6D7C]/30 selection:text-[#1C2527]">
+    <div className="flex flex-col h-screen overflow-hidden bg-[#F0E6D6] text-[#1C2527] selection:bg-[#4A6D7C]/30 selection:text-[#1C2527]">
       {/* Full-Width Top Header containing permanent Skillyards Logo, Search, Persona Switcher & Notifications */}
       <CrmHeader onNewLeadClick={() => setIsModalOpen(true)} />
 
       {/* Workspace Area: Collapsible Sidebar on Left + Content View on Right */}
-      <div className="flex-1 flex min-w-0">
+      <div className="flex-1 flex min-w-0 overflow-hidden">
         <CrmSidebar />
-        <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto">{children}</main>
+        {isFullBleedPage ? (
+          <main className="flex-1 h-full overflow-hidden flex flex-col min-h-0 min-w-0">{children}</main>
+        ) : (
+          <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto">{children}</main>
+        )}
       </div>
 
       {/* Persistent Floating Softphone Widget & Disposition Runner */}
