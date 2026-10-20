@@ -16,6 +16,7 @@ import {
   Receipt,
   FileText,
 } from "lucide-react";
+import { crmApi } from "@/lib/api";
 
 const COURSES = [
   { id: "fsd", name: "Full Stack Web Development (MERN)", fee: 45000 },
@@ -155,6 +156,31 @@ export function EnrollStudentModal({ isOpen, onClose, lead, onEnrollmentComplete
     };
 
     try {
+      // 1. Submit to Backend API
+      try {
+        const apiRes = await crmApi.enrollStudent({
+          leadId: lead?.id || null,
+          studentName,
+          studentPhone,
+          studentEmail,
+          courseName: selectedCourseName,
+          cohortName: selectedBatch,
+          baseFee,
+          totalAmount: finalTotalAmount,
+          amountPaid: Number(amountPaidToday),
+          paymentMode,
+          transactionRef: transactionRef || `UTR-${Date.now().toString().slice(-8)}`,
+          scholarshipCode: scholarship.code,
+          scholarshipAmount: discountAmount,
+        });
+        if (apiRes?.studentId) {
+          newEnrollment.studentId = apiRes.studentId;
+          newEnrollment.receiptNo = apiRes.receiptNo;
+        }
+      } catch (apiErr) {
+        console.warn("Backend API offline, persisting enrollment locally:", apiErr.message);
+      }
+
       // Save to localStorage enrolled students roster
       const existing = JSON.parse(localStorage.getItem("skillyards_enrolled_students") || "[]");
       existing.unshift(newEnrollment);

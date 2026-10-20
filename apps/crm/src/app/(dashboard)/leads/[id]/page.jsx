@@ -239,7 +239,7 @@ export default function LeadDetailPage() {
     }
   };
 
-  const handleOutreachSent = ({ channel, templateTitle, messageSnippet }) => {
+  const handleOutreachSent = async ({ channel, templateTitle, messageSnippet }) => {
     const channelLabel =
       channel === "whatsapp" ? "WhatsApp" : channel === "email" ? "Email" : "SMS";
     const newEvent = {
@@ -254,6 +254,18 @@ export default function LeadDetailPage() {
       ...prev,
       timeline: [newEvent, ...(prev?.timeline || [])],
     }));
+
+    // Send to Backend API
+    try {
+      await crmApi.logOutreach(id, {
+        channel,
+        templateTitle,
+        messageSnippet,
+      });
+    } catch (apiErr) {
+      console.warn("Backend log outreach API offline, kept in local timeline:", apiErr.message);
+    }
+
     try {
       const leadKey = `skillyards_lead_call_history_${id}`;
       const existing = JSON.parse(localStorage.getItem(leadKey) || "[]");

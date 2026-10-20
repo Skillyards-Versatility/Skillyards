@@ -143,4 +143,14 @@ export const crmApi = {
   getEodReport: (id) => apiRequest(`/api/crm/eod-reports/${id}`),
   amendEodReport: (id, payload) =>
     apiRequest(`/api/crm/eod-reports/${id}/amend`, { method: "POST", body: payload }),
+  // Admissions & Student Enrollment
+  getAdmissions: () => apiRequest("/api/crm/admissions"),
+  enrollStudent: (payload) =>
+    apiRequest("/api/crm/admissions", { method: "POST", body: payload }),
+  // Bulk Lead Actions
+  bulkUpdateLeads: (payload) =>
+    apiRequest("/api/crm/leads/bulk", { method: "POST", body: payload }),
+  // Single Lead Outreach Logging
+  logOutreach: (leadId, payload) =>
+    apiRequest(`/api/crm/leads/${leadId}/outreach`, { method: "POST", body: payload }),
 };

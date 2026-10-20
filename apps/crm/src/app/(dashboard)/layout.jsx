@@ -55,19 +55,6 @@ function DashboardLayoutContent({ children }) {
       {/* Persistent Floating Softphone Widget & Disposition Runner */}
       <SoftphoneDrawer />
 
-      {/* Keyboard Shortcuts Floating Trigger */}
-      <div className="fixed bottom-4 right-4 z-30 hidden sm:block">
-        <button
-          onClick={() => setShowShortcutsModal(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0c1316]/90 hover:bg-[#0c1316] text-[#FAF6EE] text-[11px] font-medium shadow-lg border border-[rgba(98,146,158,0.25)] backdrop-blur-md transition-all active:scale-95 cursor-pointer"
-          title="Press '?' for keyboard shortcuts"
-        >
-          <Keyboard className="w-3.5 h-3.5 text-[#62929e]" />
-          <span>Hotkeys</span>
-          <kbd className="px-1 py-0.2 rounded bg-white/15 text-[9px] font-mono">?</kbd>
-        </button>
-      </div>
-
       {/* Keyboard Shortcuts Cheatsheet Modal */}
       {showShortcutsModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/65 backdrop-blur-md transition-all">
