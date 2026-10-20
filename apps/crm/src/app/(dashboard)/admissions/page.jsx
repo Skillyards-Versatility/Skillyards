@@ -21,6 +21,8 @@ import {
   Award,
   Users,
   Banknote,
+  Trophy,
+  Layers,
 } from "lucide-react";
 import { useTelephony } from "@/context/TelephonyContext";
 import { useAuth } from "@/context/AuthContext";
@@ -334,6 +336,24 @@ export default function AdmissionsPage() {
           >
             <Banknote className="w-3.5 h-3.5 text-[#B07238]" />
             <span>Installments Desk</span>
+          </Link>
+
+          <Link
+            href="/incentives"
+            className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5 font-bold !text-[#2E7559] border-[rgba(46,117,89,0.3)] bg-white hover:bg-[#FAF6EE]"
+            title="Open Sales Team Incentives & Commission Desk"
+          >
+            <Trophy className="w-3.5 h-3.5 text-[#2E7559]" />
+            <span>Sales Incentives</span>
+          </Link>
+
+          <Link
+            href="/cohorts"
+            className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5 font-bold !text-[#194451] border-[rgba(25,68,81,0.3)] bg-white hover:bg-[#FAF6EE]"
+            title="Open Academic Batches & Seat Inventory Hub"
+          >
+            <Layers className="w-3.5 h-3.5 text-[#194451]" />
+            <span>Academic Batches</span>
           </Link>
 
           <button

@@ -360,6 +360,53 @@ All modal dialogs and slide-over drawers now feature the unified `#0c1316` cockp
   - Connected to `GET /api/crm/campaigns`, `POST /api/crm/campaigns`, and `PATCH /api/crm/campaigns/[id]`.
   - Writes `CAMPAIGN_CREATED` and `CAMPAIGN_UPDATED` immutable audit records to `crmAuditEvents`.
 
+### 19. Sales Team Gamification & Incentive Commission Desk (`/incentives`)
+- **Rep Motivation, Leaderboard & Slabs Engine:**
+  - Enterprise sales incentive and monthly commission calculation system designed to motivate admission counsellors, eliminate spreadsheet payout errors, and provide leadership with real-time sales attainment analytics.
+- **4 Real-Time Revenue & Incentive KPIs:**
+  - **Commission Pool Earned:** Total commission earned across the sales floor for the active billing cycle.
+  - **Avg Target Attainment %:** Team quota pacing benchmark with visual progress indicator.
+  - **Tuition Revenue Closed:** Total gross course fees brought into the institution by the sales team.
+  - **Floor Champion Podium Card:** Highlights the #1 top-performing counsellor with their current payout and admission count.
+- **Interactive Rep Podium Stage (🥇 Gold, 🥈 Silver, 🥉 Bronze):**
+  - Modern gamified top 3 podium visualization displaying avatar badges, milestone win streaks, admissions closed, and live payout amounts.
+- **Tiered Milestone Commission Slabs Strip & Interactive "What-If" Calculator:**
+  - Visual policy tier strip detailing:
+    - *Tier 1 (Admissions 1–5):* ₹1,500 / seat
+    - *Tier 2 (Admissions 6–10):* ₹2,500 / seat
+    - *Tier 3 (Admissions 11–15):* ₹3,500 / seat
+    - *Tier 4 (Admissions >15):* ₹5,000 / seat + **₹10,000 Mega Milestone Bonus**
+  - **Interactive Commission Simulator (`CommissionCalculatorModal.jsx`):** Allows reps and sales managers to slide target admissions (0 to 30) and instantly project tiered commission payouts, institution tuition revenue generated, and bonus triggers in real-time.
+- **Manager Payroll Signoff & Approval Ledger (`ApprovePayoutModal.jsx`):**
+  - Detailed table with rep search, status filters (*Pending*, *Approved*, *Paid*), rank badges, quotas, tuition generated, and total earned commissions.
+  - Manager approval flow with audit compliance checklist (*Tuition collection verified*, *Zero disputed refunds*, *EOD compliance satisfied*) and manager verification remarks.
+  - 1-Click Payroll CSV Export (`skillyards-rep-incentives-YYYY-MM-DD.csv`).
+- **Full Backend API & Dual-Tier Offline Resilience:**
+  - Connected to `GET /api/crm/incentives`, `POST /api/crm/incentives` (manager signoff), and `GET /api/crm/incentives/slabs`.
+  - Synchronized calculation algorithms across backend and frontend with offline `localStorage` fallback and immutable audit logging (`INCENTIVE_LOCKED`).
+
+### 20. Academic Batches & Live Seat Inventory Desk (`/cohorts` & `/batches`)
+- **Real-Time Cohort Capacity & Fill Rate Engine:**
+  - Dedicated operational cockpit empowering admission counsellors and academic directors to track seat availability across all active, upcoming, and full batches in real-time.
+- **4 Operational Cohort & Capacity KPIs:**
+  - **Total Cohorts:** Comprehensive count of all academic batches with status breakdown (*Launching Soon* vs *Live Running*).
+  - **Average Occupancy Rate:** Floor-wide seat utilization percentage with animated progress meter.
+  - **Seats Open:** Real-time tally of remaining seats available for enrolment across all programs.
+  - **Enrolled Students:** Confirmed learners allocated to specific cohort batches.
+- **Dual Display Modes (Grid Cards vs Table Ledger):**
+  - **Visual Cohort Cards View:** 3-column interactive cards featuring urgency badges (*Admissions Open*, *Filling Fast 🔥*, *Batch Full*), seat occupancy progress bars, launch countdown dates, schedule timing badges, and lead mentor profiles.
+  - **High-Density Table Ledger View:** Executive roster listing batch codes, program names, schedules, occupancy meters, trainers, status tags, and 1-click action triggers.
+- **Priority Seat Reservation & 48h Token Hold (`ReserveSeatModal.jsx`):**
+  - Allows counsellors to lock a prospective student's seat with an advance token fee (e.g. ₹5,000) with a 24h, 48h, or 72h countdown.
+  - Automatic WhatsApp booking confirmation generator with copyable template and direct WhatsApp Web link.
+- **Student Cohort Transfer Desk (`TransferStudentModal.jsx`):**
+  - 1-Click transfer workflow enabling counsellors to move students between cohorts (e.g. Weekday Evening ➔ Weekend Live) with transfer reason selection, seat occupancy auto-recalculation, and governance audit records.
+- **Learner Roster Drawer (`CohortDetailsDrawer.jsx`):**
+  - Slide-over inspection drawer featuring live student roster, fee payment statuses (*Fully Paid*, *0% EMI Active*, *Partial Paid*), manual student allocation, active token holds breakdown, and 1-Click Roster CSV Export.
+- **Full Backend API & Dual-Tier Offline Safety:**
+  - Connected to `GET /api/crm/cohorts`, `POST /api/crm/cohorts`, `GET /api/crm/cohorts/[id]`, `POST /api/crm/cohorts/reserve`, `POST /api/crm/cohorts/transfer`, and `/api/crm/batches` aliases.
+  - Logs `COHORT_CREATED`, `SEAT_RESERVED_TOKEN_HOLD`, and `STUDENT_COHORT_TRANSFERRED` audit events to `crmAuditEvents`.
+
 ---
 
 ## 🛠️ Tech Stack & Architecture

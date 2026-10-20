@@ -23,6 +23,7 @@ import {
   Banknote,
   MessageSquare,
   Target,
+  Trophy,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useTelephony } from "@/context/TelephonyContext";
@@ -39,7 +40,8 @@ const NAV_ITEMS = [
   { label: "Counselling", href: "/counselling", icon: GraduationCap },
   { label: "Admissions & Fees", href: "/admissions", icon: Award, badge: "New" },
   { label: "Fee Installments", href: "/installments", icon: Banknote, badge: "Dues" },
-  { label: "Course Cohorts", href: "/cohorts", icon: Layers, badge: "Live" },
+  { label: "Sales Incentives", href: "/incentives", icon: Trophy, badge: "Bonus" },
+  { label: "Academic Batches", href: "/cohorts", icon: Layers, badge: "Live" },
   { label: "Drip Cadences", href: "/cadences", icon: Workflow, badge: "Drip" },
   { label: "EOD Reports", href: "/eod", icon: FileSpreadsheet },
 ];
@@ -146,13 +148,33 @@ const SECTION_DETAILS = {
       { label: "Admissions Hub", href: "/admissions" },
     ],
   },
-  "/cohorts": {
-    title: "Course Cohorts",
-    category: "Batch Allocation",
+  "/incentives": {
+    title: "Incentives & Payouts",
+    category: "Gamification & Payroll",
     items: [
-      { label: "Active Cohorts", href: "/cohorts" },
-      { label: "Seat Occupancy", href: "/cohorts" },
-      { label: "Batch Allocation Roster", href: "/cohorts" },
+      { label: "Sales Leaderboard", href: "/incentives" },
+      { label: "Commission Calculator", href: "/incentives" },
+      { label: "Manager Approval Ledger", href: "/incentives" },
+      { label: "Admissions Hub", href: "/admissions" },
+    ],
+  },
+  "/cohorts": {
+    title: "Academic Batches",
+    category: "Seat Inventory & Allocations",
+    items: [
+      { label: "Active Cohorts & Batches", href: "/cohorts" },
+      { label: "Seat Occupancy Ledger", href: "/cohorts" },
+      { label: "Reserve Seat (Token Hold)", href: "/cohorts" },
+      { label: "Enrolled Admissions", href: "/admissions" },
+    ],
+  },
+  "/batches": {
+    title: "Academic Batches",
+    category: "Seat Inventory & Allocations",
+    items: [
+      { label: "Active Cohorts & Batches", href: "/cohorts" },
+      { label: "Seat Occupancy Ledger", href: "/cohorts" },
+      { label: "Reserve Seat (Token Hold)", href: "/cohorts" },
       { label: "Enrolled Admissions", href: "/admissions" },
     ],
   },
