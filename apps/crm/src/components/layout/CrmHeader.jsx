@@ -221,16 +221,24 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
             </div>
             <button
               type="submit"
-              className="crm-btn-primary !py-2 !px-3 text-xs"
+              className="crm-btn-primary !py-2 !px-3 text-xs shrink-0"
             >
               Search
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowMobileSearch(false)}
+              className="p-2 text-[#7e939a] hover:text-white rounded-lg transition-colors shrink-0"
+              title="Close search"
+            >
+              <X className="w-4 h-4" />
             </button>
           </form>
         </div>
       )}
 
       {/* Right Controls */}
-      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+      <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
         {/* Mobile Search Toggle */}
         <button
           type="button"
@@ -247,12 +255,12 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
           <button
             type="button"
             onClick={() => setShowRoleSwitcher((prev) => !prev)}
-            className="px-2 sm:px-2.5 py-1 rounded-full bg-[rgba(98,146,158,0.15)] hover:bg-[rgba(98,146,158,0.22)] border border-[rgba(98,146,158,0.3)] text-[11px] font-semibold text-[#a2c4cc] flex items-center gap-1 shadow-xs transition-colors"
-            title="Click to switch persona role"
+            className="p-1.5 sm:px-2.5 sm:py-1 rounded-full bg-[rgba(98,146,158,0.15)] hover:bg-[rgba(98,146,158,0.22)] border border-[rgba(98,146,158,0.3)] text-[11px] font-semibold text-[#a2c4cc] flex items-center gap-1 shadow-xs transition-colors"
+            title={`Persona: ${primaryRole.replace(/_/g, " ")} (Click to switch)`}
           >
             <ShieldCheck className="w-3.5 h-3.5 text-[#62929e] shrink-0" />
-            <span className="capitalize max-w-[65px] sm:max-w-none truncate">{primaryRole.replace(/_/g, " ")}</span>
-            <ChevronDown className="w-3 h-3 text-[#7e939a] shrink-0" />
+            <span className="hidden sm:inline capitalize truncate">{primaryRole.replace(/_/g, " ")}</span>
+            <ChevronDown className="w-3 h-3 text-[#7e939a] shrink-0 hidden sm:inline" />
           </button>
 
           {showRoleSwitcher && (
