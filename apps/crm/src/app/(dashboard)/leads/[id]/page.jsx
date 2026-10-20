@@ -28,10 +28,17 @@ import {
   GraduationCap,
   X,
   CalendarClock,
+  Smartphone,
+  Award,
+  Receipt,
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
 import { useTelephony } from "@/context/TelephonyContext";
+import { useAuth } from "@/context/AuthContext";
+import { MultiChannelOutreachModal } from "@/components/leads/MultiChannelOutreachModal";
+import { EnrollStudentModal } from "@/components/admissions/EnrollStudentModal";
+import { StudentFeeReceiptModal } from "@/components/admissions/StudentFeeReceiptModal";
 
 const STATUSES = [
   { value: "new", label: "New" },
@@ -60,8 +67,13 @@ export default function LeadDetailPage() {
   const id = params?.id;
   const router = useRouter();
   const { startCall } = useTelephony();
+  const { user } = useAuth();
 
   const [lead, setLead] = useState(null);
+  const [isOutreachModalOpen, setIsOutreachModalOpen] = useState(false);
+  const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
+  const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const [activeEnrollment, setActiveEnrollment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -227,16 +239,74 @@ export default function LeadDetailPage() {
     }
   };
 
+  const handleOutreachSent = ({ channel, templateTitle, messageSnippet }) => {
+    const channelLabel =
+      channel === "whatsapp" ? "WhatsApp" : channel === "email" ? "Email" : "SMS";
+    const newEvent = {
+      id: `tl-outreach-${Date.now()}`,
+      type: `outreach_${channel}`,
+      title: `${channelLabel} Outreach: ${templateTitle}`,
+      actorName: user?.name || "You",
+      timestamp: new Date().toISOString(),
+      notes: messageSnippet,
+    };
+    setLead((prev) => ({
+      ...prev,
+      timeline: [newEvent, ...(prev?.timeline || [])],
+    }));
+    try {
+      const leadKey = `skillyards_lead_call_history_${id}`;
+      const existing = JSON.parse(localStorage.getItem(leadKey) || "[]");
+      existing.unshift(newEvent);
+      localStorage.setItem(leadKey, JSON.stringify(existing));
+    } catch (e) {
+      console.warn("Failed to persist outreach to localStorage:", e);
+    }
+  };
+
   const fetchLeadDetails = async () => {
     if (!id) return;
     try {
       setLoading(true);
       setError(null);
-      const data = await crmApi.getLead(id);
+      let data;
+      try {
+        data = await crmApi.getLead(id);
+      } catch (err) {
+        console.warn("Could not load lead from backend, activating demo lead:", err.message);
+        data = getFallbackLead(id);
+      }
+
+      // Merge locally persisted calls and outreach activities
+      try {
+        const leadKey = `skillyards_lead_call_history_${id}`;
+        const localHistory = JSON.parse(localStorage.getItem(leadKey) || "[]");
+        if (localHistory.length > 0) {
+          const existingIds = new Set((data.timeline || []).map((t) => t.id));
+          const mappedLocal = localHistory
+            .filter((h) => !existingIds.has(h.id))
+            .map((h) => ({
+              id: h.id || `tl-${Date.now()}-${Math.random()}`,
+              type: h.type || (h.channel ? `outreach_${h.channel}` : "call"),
+              title: h.title || (h.outcome ? `Phone Call (${h.outcome})` : "Outreach Sent"),
+              actorName: h.actorName || user?.name || "You",
+              timestamp: h.timestamp || h.startTime || new Date().toISOString(),
+              duration: h.duration,
+              notes: h.notes || h.note,
+              callbackAt: h.callbackAt,
+            }));
+          data = {
+            ...data,
+            timeline: [...mappedLocal, ...(data.timeline || [])],
+          };
+        }
+      } catch (e) {
+        console.warn("Could not parse local history:", e);
+      }
+
       setLead(data);
     } catch (err) {
-      console.warn("Could not load lead from backend, activating demo lead:", err.message);
-      setLead(getFallbackLead(id));
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -414,12 +484,33 @@ export default function LeadDetailPage() {
 
         {/* Header Quick Actions */}
         <div className="flex items-center gap-2 flex-wrap">
+          {/* Enroll Student Action */}
+          <button
+            type="button"
+            onClick={() => setIsEnrollModalOpen(true)}
+            className="crm-btn-primary !bg-[#2E7559] hover:!bg-[#235d46] shadow-xs cursor-pointer flex items-center gap-1.5"
+            title="Enroll candidate into an academic cohort and generate fee receipt"
+          >
+            <Award className="w-3.5 h-3.5 text-white" />
+            <span>Enroll Student</span>
+          </button>
+
           <button
             onClick={() => setIsCounsellingModalOpen(true)}
             className="crm-btn-primary shadow-xs"
           >
             <GraduationCap className="w-3.5 h-3.5" />
             <span>Book Counselling</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setIsOutreachModalOpen(true)}
+            className="crm-btn-secondary !bg-[#25D366]/10 !text-[#128C7E] !border-[#25D366]/30 hover:!bg-[#25D366]/20 shadow-xs cursor-pointer flex items-center gap-1.5"
+            title="Send WhatsApp, Email, or SMS outreach"
+          >
+            <MessageSquare className="w-3.5 h-3.5 text-[#25D366]" />
+            <span>Outreach</span>
           </button>
 
           <button
@@ -644,13 +735,26 @@ export default function LeadDetailPage() {
                       const isStatus = item.type === "status_change";
                       const isEnquiry = item.type === "enquiry";
                       const isCounselling = item.type === "counselling";
+                      const isEnrolled = item.type === "student_enrolled";
+                      const isOutreachWhatsapp = item.type === "outreach_whatsapp";
+                      const isOutreachEmail = item.type === "outreach_email";
+                      const isOutreachSms = item.type === "outreach_sms";
+                      const isOutreach = isOutreachWhatsapp || isOutreachEmail || isOutreachSms;
 
                       return (
                         <div key={item.id} className="relative group">
                           {/* Dot / Icon */}
                           <div
                             className={`absolute -left-[30px] top-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border shadow-xs ${
-                              isCall
+                              isEnrolled
+                                ? "bg-[#25D366]/20 border-[#25D366]/50 text-[#128C7E]"
+                                : isOutreachWhatsapp
+                                ? "bg-[#25D366]/15 border-[#25D366]/40 text-[#128C7E]"
+                                : isOutreachEmail
+                                ? "bg-[rgba(74,109,124,0.15)] border-[rgba(74,109,124,0.4)] text-[#4A6D7C]"
+                                : isOutreachSms
+                                ? "bg-[rgba(176,114,56,0.15)] border-[rgba(176,114,56,0.4)] text-[#B07238]"
+                                : isCall
                                 ? "bg-[rgba(98,146,158,0.15)] border-[rgba(98,146,158,0.4)] text-[#4A6D7C]"
                                 : isStatus
                                 ? "bg-[rgba(176,114,56,0.15)] border-[rgba(176,114,56,0.4)] text-[#B07238]"
@@ -661,7 +765,15 @@ export default function LeadDetailPage() {
                                 : "bg-white border-[rgba(71,86,87,0.3)] text-[#5A6E71]"
                             }`}
                           >
-                            {isCall ? (
+                            {isEnrolled ? (
+                              <Award className="w-3.5 h-3.5 text-[#128C7E]" />
+                            ) : isOutreachWhatsapp ? (
+                              <MessageSquare className="w-3 h-3 text-[#25D366]" />
+                            ) : isOutreachEmail ? (
+                              <Mail className="w-3 h-3 text-[#4A6D7C]" />
+                            ) : isOutreachSms ? (
+                              <Smartphone className="w-3 h-3 text-[#B07238]" />
+                            ) : isCall ? (
                               <Phone className="w-3 h-3" />
                             ) : isStatus ? (
                               <RefreshCw className="w-3 h-3" />
@@ -727,8 +839,49 @@ export default function LeadDetailPage() {
                             )}
 
                             {/* Reason for status or general audit */}
-                            {!isCall && !isCounselling && item.reason && (
+                            {!isCall && !isCounselling && !isOutreach && item.reason && (
                               <p className="text-[#5A6E71] italic text-[11px]">"{item.reason}"</p>
+                            )}
+
+                            {/* Enrolled Details */}
+                            {isEnrolled && item.notes && (
+                              <div className="bg-[#FAF6EE] p-3 rounded-lg border border-[rgba(37,211,102,0.35)] space-y-2 mt-1 text-[#1C2527] text-[11px]">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#25D366]/15 border border-[#25D366]/40 text-[#128C7E]">
+                                    Official Enrollment Confirmed
+                                  </span>
+                                  <Link
+                                    href="/admissions"
+                                    className="text-[10.5px] font-bold text-[#4A6D7C] hover:underline flex items-center gap-1"
+                                  >
+                                    <span>Admissions Ledger</span>
+                                    <ArrowUpRight className="w-3 h-3" />
+                                  </Link>
+                                </div>
+                                <p className="text-[#334648] whitespace-pre-line text-[11px] bg-white/80 p-2.5 rounded border border-[rgba(71,86,87,0.1)] font-mono">
+                                  {item.notes}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Outreach Dispatch Preview */}
+                            {isOutreach && item.notes && (
+                              <div className="bg-[#FAF6EE] p-3 rounded-lg border border-[rgba(71,86,87,0.12)] space-y-1.5 mt-1 text-[#1C2527] text-[11px]">
+                                <div className="flex items-center gap-2">
+                                  <span className={`text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                                    isOutreachWhatsapp
+                                      ? "bg-[#25D366]/10 border-[#25D366]/30 text-[#128C7E]"
+                                      : isOutreachEmail
+                                      ? "bg-[#4A6D7C]/10 border-[#4A6D7C]/30 text-[#4A6D7C]"
+                                      : "bg-[#B07238]/10 border-[#B07238]/30 text-[#B07238]"
+                                  }`}>
+                                    {isOutreachWhatsapp ? "WhatsApp Dispatch" : isOutreachEmail ? "Direct Email" : "SMS Dispatch"}
+                                  </span>
+                                </div>
+                                <p className="text-[#334648] whitespace-pre-line line-clamp-3 font-mono text-[10.5px] bg-white/70 p-2 rounded border border-[rgba(71,86,87,0.08)]">
+                                  {item.notes}
+                                </p>
+                              </div>
                             )}
 
                             {/* Enquiry message */}
@@ -1130,6 +1283,34 @@ export default function LeadDetailPage() {
           </div>
         </div>
       )}
+      {/* Multi-Channel Outreach Engine Modal */}
+      <MultiChannelOutreachModal
+        isOpen={isOutreachModalOpen}
+        onClose={() => setIsOutreachModalOpen(false)}
+        lead={lead}
+        onOutreachSent={handleOutreachSent}
+        currentUser={user}
+      />
+
+      {/* Student Enrollment Modal */}
+      <EnrollStudentModal
+        isOpen={isEnrollModalOpen}
+        onClose={() => setIsEnrollModalOpen(false)}
+        lead={lead}
+        currentUser={user}
+        onEnrollmentComplete={(newEnrollment) => {
+          setActiveEnrollment(newEnrollment);
+          setIsReceiptModalOpen(true);
+          fetchLeadDetails();
+        }}
+      />
+
+      {/* Official Fee Receipt Modal */}
+      <StudentFeeReceiptModal
+        isOpen={isReceiptModalOpen}
+        onClose={() => setIsReceiptModalOpen(false)}
+        enrollment={activeEnrollment}
+      />
     </div>
   );
 }
