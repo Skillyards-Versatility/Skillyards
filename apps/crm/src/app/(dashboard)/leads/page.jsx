@@ -18,12 +18,14 @@ import {
   Sparkles,
   CheckCircle2,
   Filter,
+  Workflow,
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
 import { useTelephony } from "@/context/TelephonyContext";
 import { useAuth } from "@/context/AuthContext";
 import { BulkOutreachModal } from "@/components/leads/BulkOutreachModal";
+import { EnrollInCadenceModal } from "@/components/cadences/EnrollInCadenceModal";
 
 const STATUS_TABS = [
   { label: "All Leads", value: "" },
@@ -157,6 +159,8 @@ export default function LeadsDirectoryPage() {
   const [isUpdatingAssign, setIsUpdatingAssign] = useState(false);
 
   const [isBulkOutreachModalOpen, setIsBulkOutreachModalOpen] = useState(false);
+  const [isBulkCadenceModalOpen, setIsBulkCadenceModalOpen] = useState(false);
+  const [cadencesList, setCadencesList] = useState([]);
 
   // Toast feedback state
   const [toast, setToast] = useState(null);
@@ -232,6 +236,17 @@ export default function LeadsDirectoryPage() {
     fetchLeads();
     // Clear selection on filter tab change
     setSelectedIds([]);
+
+    // Preload available cadences
+    const loadCadences = async () => {
+      try {
+        const res = await crmApi.getCadences();
+        if (Array.isArray(res) && res.length > 0) {
+          setCadencesList(res);
+        }
+      } catch (_) {}
+    };
+    loadCadences();
   }, [statusFilter]);
 
   const handleSearchSubmit = (e) => {
@@ -800,6 +815,17 @@ export default function LeadsDirectoryPage() {
               <span>Batch Outreach ({selectedIds.length})</span>
             </button>
 
+            {/* Bulk Cadence Button */}
+            <button
+              type="button"
+              onClick={() => setIsBulkCadenceModalOpen(true)}
+              className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-white flex items-center gap-1.5 transition-all cursor-pointer border border-white/10"
+              title="Enroll selected leads into automated drip cadence"
+            >
+              <Workflow className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Drip Cadence</span>
+            </button>
+
             {/* Export Selected Button */}
             <button
               type="button"
@@ -995,6 +1021,18 @@ export default function LeadsDirectoryPage() {
         selectedLeads={selectedLeads}
         onBatchComplete={handleBulkOutreachComplete}
         currentUser={user}
+      />
+
+      {/* Bulk Cadence Enrollment Modal */}
+      <EnrollInCadenceModal
+        isOpen={isBulkCadenceModalOpen}
+        onClose={() => setIsBulkCadenceModalOpen(false)}
+        selectedLeads={selectedLeads}
+        availableCadences={cadencesList}
+        onEnrollComplete={({ count, cadenceName }) => {
+          showToast(`Enrolled ${count} prospects into "${cadenceName}"!`);
+          setSelectedIds([]);
+        }}
       />
     </div>
   );

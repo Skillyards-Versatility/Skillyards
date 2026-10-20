@@ -20,6 +20,7 @@ import {
   ShieldCheck,
   Award,
   Users,
+  Banknote,
 } from "lucide-react";
 import { useTelephony } from "@/context/TelephonyContext";
 import { useAuth } from "@/context/AuthContext";
@@ -325,6 +326,15 @@ export default function AdmissionsPage() {
             <Plus className="w-4 h-4 text-white" />
             <span>+ Enroll Student</span>
           </button>
+
+          <Link
+            href="/installments"
+            className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5 font-bold !text-[#B07238] border-[rgba(176,114,56,0.3)] bg-white hover:bg-[#FAF6EE]"
+            title="Open Fee Installments & Dues Desk"
+          >
+            <Banknote className="w-3.5 h-3.5 text-[#B07238]" />
+            <span>Installments Desk</span>
+          </Link>
 
           <button
             onClick={handleExportCSV}

@@ -18,6 +18,9 @@ import {
   Settings,
   Plus,
   Award,
+  Layers,
+  Workflow,
+  Banknote,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useTelephony } from "@/context/TelephonyContext";
@@ -31,6 +34,9 @@ const NAV_ITEMS = [
   { label: "Follow-ups", href: "/follow-ups", icon: CalendarClock },
   { label: "Counselling", href: "/counselling", icon: GraduationCap },
   { label: "Admissions & Fees", href: "/admissions", icon: Award, badge: "New" },
+  { label: "Fee Installments", href: "/installments", icon: Banknote, badge: "Dues" },
+  { label: "Course Cohorts", href: "/cohorts", icon: Layers, badge: "Live" },
+  { label: "Drip Cadences", href: "/cadences", icon: Workflow, badge: "Drip" },
   { label: "EOD Reports", href: "/eod", icon: FileSpreadsheet },
 ];
 
@@ -103,7 +109,37 @@ const SECTION_DETAILS = {
       { label: "Enrolled Students", href: "/admissions" },
       { label: "Tuition Collections", href: "/admissions" },
       { label: "0% EMI Loan Approvals", href: "/admissions" },
-      { label: "Pending Receivables", href: "/admissions" },
+      { label: "Pending Receivables", href: "/installments" },
+    ],
+  },
+  "/installments": {
+    title: "Fee Installments Desk",
+    category: "Financials & Receivables",
+    items: [
+      { label: "Receivables Ledger", href: "/installments" },
+      { label: "Overdue Alerts", href: "/installments" },
+      { label: "Upcoming 30 Days", href: "/installments" },
+      { label: "Admissions Hub", href: "/admissions" },
+    ],
+  },
+  "/cohorts": {
+    title: "Course Cohorts",
+    category: "Batch Allocation",
+    items: [
+      { label: "Active Cohorts", href: "/cohorts" },
+      { label: "Seat Occupancy", href: "/cohorts" },
+      { label: "Batch Allocation Roster", href: "/cohorts" },
+      { label: "Enrolled Admissions", href: "/admissions" },
+    ],
+  },
+  "/cadences": {
+    title: "Drip Cadences",
+    category: "Sales Automation",
+    items: [
+      { label: "Active Sequences", href: "/cadences" },
+      { label: "Enrolled Prospects", href: "/cadences" },
+      { label: "Engagement Analytics", href: "/cadences" },
+      { label: "Lead Pipeline", href: "/leads" },
     ],
   },
   "/eod": {

@@ -112,6 +112,22 @@ export async function getLeadByIdService(id) {
     } else if (ev.action === "LEAD_REASSIGNED") {
       type = "status_change";
       title = "Lead Reassigned";
+    } else if (ev.action === "CADENCE_ENROLLED") {
+      type = "cadence";
+      title = `Enrolled in Nurturing Cadence: ${ev.afterSnapshot?.cadenceName || "Sequence"}`;
+      notes = ev.reason || "";
+    } else if (ev.action === "CADENCE_STEP_DISPATCHED") {
+      type = "cadence_step";
+      title = `Cadence Step Dispatched: ${ev.afterSnapshot?.stepTitle || "Automated Action"}`;
+      notes = ev.reason || "";
+    } else if (ev.action === "INSTALLMENT_COLLECTED") {
+      type = "payment";
+      title = `Installment Fee Collected: ₹${Number(ev.afterSnapshot?.amountCollected || 0).toLocaleString("en-IN")}`;
+      notes = `Receipt: ${ev.afterSnapshot?.receiptNo || "N/A"} • Mode: ${(ev.afterSnapshot?.paymentMode || "direct").toUpperCase()} • Ref: ${ev.afterSnapshot?.transactionRef || "N/A"}`;
+    } else if (ev.action === "INSTALLMENT_REMINDER_SENT") {
+      type = "reminder";
+      title = `Payment Reminder Dispatched (${(ev.afterSnapshot?.channel || "WhatsApp").toUpperCase()})`;
+      notes = `Due: ₹${Number(ev.afterSnapshot?.amountDue || 0).toLocaleString("en-IN")} • Due Date: ${ev.afterSnapshot?.dueDate || "Soon"}`;
     }
 
     timeline.push({

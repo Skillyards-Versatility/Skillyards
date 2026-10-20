@@ -204,7 +204,7 @@ All modal dialogs and slide-over drawers now feature the unified `#0c1316` cockp
   - **⚡ Auto Round-Robin Balanced Distribution:** Alternates assignment across all active counsellors to equalize team lead loads automatically.
 - **Batch Outreach Broadcast Modal (`components/leads/BulkOutreachModal.jsx`):**
   - Broadcasts WhatsApp, Email, or SMS to all selected candidates with automated dynamic name/course token replacement.
-  - Multi-candidate recipient roster with quick 1-click individual WhatsApp chat launchers and BCC email client merge.
+  - Multi-candidate recipient roster with quick 1-click individual WhatsApp chat launchers and BCC email client merge.+
   - Auto-logs outreach history to all selected candidates' chronological timelines in `localStorage`.
 - **Selected-Only CSV Export:**
   - Generates custom-filtered CSV (`skillyards-selected-X-leads-YYYY-MM-DD.csv`) containing only the checked leads.
@@ -244,6 +244,74 @@ All modal dialogs and slide-over drawers now feature the unified `#0c1316` cockp
 - **In-App Softphone Call Logging:**
   - `POST /api/crm/leads/[id]/calls`: Records call duration, disposition outcome, and callback timestamps directly into call logs and lead timeline.
   - Telephony context automatically syncs softphone call dispositions to backend and updates EOD attributable counters.
+
+### 14. Course Cohorts & Batch Seat Allocation Hub (`/cohorts`)
+- **Real-Time Seat Occupancy Monitoring:**
+  - Track total seats, filled seats, and remaining seats with dynamic occupancy meters across all cohorts.
+  - Urgency indicators: `Batch Full` (100%), `Filling Fast 🔥` (>80% or ≤5 seats open), and `Admissions Open`.
+- **4 Operational Cohort KPIs:**
+  - Total Cohorts, Average Seat Occupancy Rate (%), Total Open Seats Remaining, and Enrolled Learners Allocated.
+- **Interactive Multi-Course & Status Filters:**
+  - Course-specific views: *Full Stack Web (MERN)*, *Data Science & AI*, *Product Design (UX)*, *Cloud & DevOps*.
+  - Status filters: *All Batches*, *Launching Soon*, *In Progress (Live)*, and *Batch Full*.
+- **Cohort Creation & Admissions Integration (`CreateCohortModal.jsx`):**
+  - Configure cohort edition, target program, launch date, schedule timings, maximum capacity, and faculty mentor.
+  - Connects to backend `POST /api/crm/cohorts` and persists locally.
+  - Automatically enriches the Admissions Enrollment Modal (`EnrollStudentModal.jsx`) so newly created cohorts are selectable when enrolling students.
+- **Cohort Roster & Student Allocation Drawer (`CohortDetailsDrawer.jsx`):**
+  - Slide-over inspection drawer with live occupancy meter, faculty mentor bio, and enrolled students table.
+  - Direct student allocation form to add/transfer learners into the batch.
+  - 1-Click Roster CSV export (`skillyards-roster-[code]-YYYY-MM-DD.csv`).
+- **1-Click WhatsApp Cohort Update Broadcast:**
+  - Pre-formatted cohort launch and seat availability update messages for rapid prospect outreach.
+
+### 15. Automated Lead Nurturing & Drip Cadence Engine (`/cadences`)
+- **Multi-Touch Automated Sales Cadences:**
+  - Standardized multi-channel sequences across WhatsApp, Phone calls, Emails, and SMS to nurture unresponsive and fresh prospects automatically over 5 to 14 days.
+  - Step touchpoints: *Day 0 WhatsApp Brochure* ➔ *Day 1 Discovery Phone Call* ➔ *Day 3 1-on-1 Counselling Video Link* ➔ *Day 5 15% Merit Scholarship Grant* ➔ *Day 7 Final Decision Call*.
+- **4 Operational Cadence KPIs:**
+  - Active Sequences Running, Prospects Currently in Drip, Average Reply/Engagement Rate (%), and Direct Admissions Conversions Generated.
+- **Cadence Sequence Builder Modal (`CreateCadenceModal.jsx`):**
+  - Custom sequence title, target course program, strategic objective, and dynamic multi-step editor with day delays and channel selectors.
+  - Connects to backend `POST /api/crm/cadences` and logs audit events.
+- **Candidate Journey & Enrolled Leads Drawer (`CadenceDetailsDrawer.jsx`):**
+  - Slide-over inspection drawer with visual step roadmap, channel badges, and live candidate roster.
+  - Track candidate progression (e.g. `Step 2 of 5`), next scheduled action due, and status (`Active`, `Replied`, `Converted`, `Paused`).
+  - 1-Click manual step dispatch button to advance a candidate immediately.
+  - 1-Click Enrolled Roster CSV download.
+- **Bulk Leads Pipeline Integration (`/leads`):**
+  - Multi-select candidates on `/leads` and click **"Drip Cadence"** to enroll all selected prospects into a sequence in one click (`EnrollInCadenceModal.jsx`).
+- **Unified Activity Timeline Integration:**
+  - Automatically records `CADENCE_ENROLLED` and `CADENCE_STEP_DISPATCHED` audit events into the candidate's chronological timeline feed (`/leads/[id]`).
+
+### 16. Fee Installment & EMI Collection Desk (`/installments`)
+- **End-to-End Receivables & Dues Lifecycle:**
+  - Dedicated financial command desk to track pending tuition milestone payments (2-part installments) and 10-month NBFC/direct 0% EMI collections across enrolled students.
+  - Automatically calculates real-time aging: *Overdue Alerts* (past due date with day counter, e.g. `4 Days Overdue ⚠️`), *Due This Week* (due in ≤7 days), *Upcoming (Next 30 Days)*, and *Settled / Paid*.
+- **4 Operational Financial KPIs:**
+  - Total Receivables Outstanding (₹), Overdue Dues At Risk (₹) with pulsing alert badge, Tuition Collected This Month (₹), and On-Time Settlement Rate (%).
+- **Urgent Accounts Overdue Banner:**
+  - Proactive notification strip highlighting overdue tuition amounts at risk with 1-click filter activation to triage collections quickly.
+- **1-Click WhatsApp Payment Reminders (`SendInstallmentReminderModal.jsx`):**
+  - **4 Pre-Approved EdTech Payment Templates:**
+    1. *Upcoming Dues Reminder (3 Days Prior):* Friendly date heads-up with instant UPI pay link.
+    2. *Due Today Clearance Alert:* High-priority payment notification.
+    3. *Overdue Notice & LMS Access Hold Warning:* Audit notice warning against automated classroom & repo access freeze.
+    4. *Monthly 0% EMI Debit Reminder:* Monthly installment confirmation for NBFC loans.
+  - **Dynamic UPI Payment Links:** Generates deep-link `upi://pay?pa=fees@skillyards&pn=Skillyards%20Versatility&am=...&tn=Fee%20...` and direct web payment links.
+  - Direct dispatch to WhatsApp Web, Email client, or SMS. Logs `INSTALLMENT_REMINDER_SENT` into candidate audit timeline.
+- **Record Installment Fee Collection Modal (`CollectInstallmentModal.jsx`):**
+  - Collect full milestone or partial installment with real-time balance calculation.
+  - Multi-mode support: UPI, Net Banking (NEFT/RTGS), Debit/Credit Card, Cash Voucher, Cheque/DD, and NBFC Direct Debit.
+  - Bank UTR / Transaction Reference verification and accounts comments.
+  - Dual-tier offline synchronization: updates `localStorage` (`skillyards_custom_installments` and `skillyards_custom_admissions`), syncs with backend database, and writes `INSTALLMENT_COLLECTED` audit record.
+- **Institutional Fee Receipt Modal (`InstallmentReceiptModal.jsx`):**
+  - High-fidelity official payment voucher featuring Skillyards institutional header, GSTIN, receipt number (`REC-INST-2026-XXXXX`), student particulars, ledger table, and amount in Indian Rupees words (e.g. *"Twenty Thousand One Hundred Thirty-Five Rupees Only"*).
+  - 1-Click **Print / Save as PDF** (`window.print()`).
+  - 1-Click **WhatsApp Receipt to Student**.
+- **Cross-Module Financial Integration:**
+  - Direct link in Admissions & Fees header (`/admissions` ➔ `Installments Desk`).
+  - Candidate profile (`/leads/[id]`) renders verified green tuition payment badges and links directly to fee vouchers.
 
 ---
 
