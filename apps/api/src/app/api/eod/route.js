@@ -37,7 +37,7 @@ async function postHandler(req, { ctx }) {
       return Response.json(
         {
           success: false,
-          message: "Submission cutoff (7:30 PM IST) has passed",
+          message: "Submission cutoff (11:59 PM IST) has passed",
         },
         { status: 400 },
       );
@@ -177,7 +177,7 @@ async function putHandler(req, { ctx }) {
     // Check cutoff
     if (!isIstBeforeCutoff()) {
       return Response.json(
-        { success: false, message: "Cannot edit after 7:30 PM IST cutoff" },
+        { success: false, message: "Cannot edit after 11:59 PM IST cutoff" },
         { status: 400 },
       );
     }
