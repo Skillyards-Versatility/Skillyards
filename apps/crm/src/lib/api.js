@@ -234,5 +234,47 @@ export const crmApi = {
     apiRequest("/api/crm/campaigns", { method: "POST", body: payload }),
   updateCampaign: (id, payload) =>
     apiRequest(`/api/crm/campaigns/${id}`, { method: "PATCH", body: payload }),
+  // Sales Team Gamification & Incentive Commission Desk
+  getIncentives: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/incentives${query ? `?${query}` : ""}`);
+  },
+  approveIncentivePayout: (payload) =>
+    apiRequest("/api/crm/incentives", { method: "POST", body: payload }),
+  getIncentiveSlabs: () => apiRequest("/api/crm/incentives/slabs"),
+  updateIncentiveSlabs: (payload) =>
+    apiRequest("/api/crm/incentives/slabs", { method: "PUT", body: payload }),
+  // Academic Batches & Course Cohorts Desk
+  getCohorts: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/cohorts${query ? `?${query}` : ""}`);
+  },
+  getCohort: (id) => apiRequest(`/api/crm/cohorts/${id}`),
+  createCohort: (payload) =>
+    apiRequest("/api/crm/cohorts", { method: "POST", body: payload }),
+  updateCohort: (id, payload) =>
+    apiRequest(`/api/crm/cohorts/${id}`, { method: "PATCH", body: payload }),
+  assignStudentToCohort: (id, payload) =>
+    apiRequest(`/api/crm/cohorts/${id}`, { method: "POST", body: payload }),
+  reserveBatchSeat: (payload) =>
+    apiRequest("/api/crm/cohorts/reserve", { method: "POST", body: payload }),
+  transferCohortStudent: (payload) =>
+    apiRequest("/api/crm/cohorts/transfer", { method: "POST", body: payload }),
+  // Batch aliases
+  getBatches: (params) => crmApi.getCohorts(params),
+  getBatch: (id) => crmApi.getCohort(id),
+  createBatch: (payload) => crmApi.createCohort(payload),
 };
 

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
+import Link from "next/link";
 import {
   Layers,
   Search,
@@ -20,11 +21,17 @@ import {
   ShieldCheck,
   ChevronRight,
   Filter,
+  LayoutGrid,
+  List,
+  BookmarkCheck,
+  Banknote,
+  Award,
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { CreateCohortModal } from "@/components/cohorts/CreateCohortModal";
 import { CohortDetailsDrawer } from "@/components/cohorts/CohortDetailsDrawer";
+import { ReserveSeatModal } from "@/components/cohorts/ReserveSeatModal";
 
 const COURSE_FILTERS = [
   { label: "All Courses", value: "" },
@@ -147,10 +154,13 @@ export default function CohortsPage() {
   const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
 
-  // Modals & Drawers state
+  // View mode & Modals state
+  const [viewMode, setViewMode] = useState("grid"); // "grid" | "table"
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedCohort, setSelectedCohort] = useState(null);
   const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
+  const [isReserveModalOpen, setIsReserveModalOpen] = useState(false);
+  const [reserveCohortTarget, setReserveCohortTarget] = useState(null);
 
   // Toast feedback state
   const [toast, setToast] = useState(null);
@@ -329,6 +339,24 @@ export default function CohortsPage() {
         </div>
 
         <div className="flex items-center gap-2 self-start flex-wrap">
+          <Link
+            href="/admissions"
+            className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5 font-bold !text-[#2E7559] border-[rgba(46,117,89,0.3)] bg-white hover:bg-[#FAF6EE]"
+            title="Open Admissions Hub"
+          >
+            <Award className="w-3.5 h-3.5 text-[#2E7559]" />
+            <span>Admissions Hub</span>
+          </Link>
+
+          <Link
+            href="/installments"
+            className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5 font-bold !text-[#B07238] border-[rgba(176,114,56,0.3)] bg-white hover:bg-[#FAF6EE]"
+            title="Open Fee Installments Desk"
+          >
+            <Banknote className="w-3.5 h-3.5 text-[#B07238]" />
+            <span>Installments Desk</span>
+          </Link>
+
           <button
             type="button"
             onClick={handleExportCSV}
@@ -468,21 +496,51 @@ export default function CohortsPage() {
             />
           </form>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto overflow-x-auto w-full sm:w-auto">
-            {STATUS_FILTERS.map((s) => (
+          <div className="flex items-center gap-3 self-start sm:self-auto overflow-x-auto w-full sm:w-auto">
+            <div className="flex items-center gap-1.5 overflow-x-auto">
+              {STATUS_FILTERS.map((s) => (
+                <button
+                  key={s.value}
+                  type="button"
+                  onClick={() => setStatusFilter(s.value)}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                    statusFilter === s.value
+                      ? "bg-[#0c1316] text-white shadow-xs"
+                      : "bg-white text-[#5A6E71] hover:text-[#1C2527] border border-[rgba(71,86,87,0.15)]"
+                  }`}
+                >
+                  {s.label}
+                </button>
+              ))}
+            </div>
+
+            {/* View Mode Toggle */}
+            <div className="flex items-center bg-white border border-[rgba(71,86,87,0.2)] rounded-lg p-0.5 shrink-0 shadow-2xs">
               <button
-                key={s.value}
                 type="button"
-                onClick={() => setStatusFilter(s.value)}
-                className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
-                  statusFilter === s.value
+                onClick={() => setViewMode("grid")}
+                className={`p-1.5 rounded-md transition-all cursor-pointer ${
+                  viewMode === "grid"
                     ? "bg-[#0c1316] text-white shadow-xs"
-                    : "bg-white text-[#5A6E71] hover:text-[#1C2527] border border-[rgba(71,86,87,0.15)]"
+                    : "text-[#5A6E71] hover:text-[#1C2527]"
                 }`}
+                title="Grid Card View"
               >
-                {s.label}
+                <LayoutGrid className="w-3.5 h-3.5" />
               </button>
-            ))}
+              <button
+                type="button"
+                onClick={() => setViewMode("table")}
+                className={`p-1.5 rounded-md transition-all cursor-pointer ${
+                  viewMode === "table"
+                    ? "bg-[#0c1316] text-white shadow-xs"
+                    : "text-[#5A6E71] hover:text-[#1C2527]"
+                }`}
+                title="Table Ledger View"
+              >
+                <List className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -507,7 +565,7 @@ export default function CohortsPage() {
             + Create New Cohort
           </button>
         </div>
-      ) : (
+      ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {cohorts.map((cohort) => {
             const occupancy =
@@ -648,6 +706,19 @@ export default function CohortsPage() {
                   <button
                     type="button"
                     onClick={() => {
+                      setReserveCohortTarget(cohort);
+                      setIsReserveModalOpen(true);
+                    }}
+                    className="px-2.5 py-1.5 rounded-xl border border-[rgba(217,119,6,0.3)] bg-white hover:bg-[#FAF6EE] text-[#D97706] text-xs font-bold transition-all shadow-2xs flex items-center gap-1 shrink-0"
+                    title="Hold a seat with advance token deposit"
+                  >
+                    <BookmarkCheck className="w-3.5 h-3.5 text-[#D97706]" />
+                    <span>Hold Seat</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
                       const msg = encodeURIComponent(
                         `Hi Candidate, admissions for Skillyards ${cohort.name} (${cohort.courseName}) are currently ${
                           isFull ? "closed as batch is 100% full" : `closing with only ${cohort.seatsRemaining} seats left`
@@ -665,6 +736,170 @@ export default function CohortsPage() {
             );
           })}
         </div>
+      ) : (
+        /* Table Ledger View */
+        <div className="bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] rounded-2xl shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr className="bg-white border-b border-[rgba(71,86,87,0.14)] text-[11px] font-bold text-[#5A6E71] uppercase tracking-wider">
+                  <th className="py-3 px-4">Cohort Code & Title</th>
+                  <th className="py-3 px-4">Course Program</th>
+                  <th className="py-3 px-4">Schedule & Launch</th>
+                  <th className="py-3 px-4">Seat Occupancy</th>
+                  <th className="py-3 px-4">Mentor / Faculty</th>
+                  <th className="py-3 px-4 text-center">Status</th>
+                  <th className="py-3 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[rgba(71,86,87,0.1)]">
+                {cohorts.map((cohort) => {
+                  const occupancy =
+                    cohort.occupancyRate !== undefined
+                      ? cohort.occupancyRate
+                      : Math.round(((cohort.filledSeats || 0) / (cohort.maxCapacity || 30)) * 100);
+                  const isFull = cohort.seatsRemaining === 0 || occupancy >= 100;
+                  const isFillingFast = !isFull && (occupancy >= 80 || cohort.seatsRemaining <= 5);
+
+                  return (
+                    <tr
+                      key={cohort.id}
+                      className="hover:bg-white/80 transition-colors cursor-pointer group"
+                      onClick={() => {
+                        setSelectedCohort(cohort);
+                        setIsDetailsDrawerOpen(true);
+                      }}
+                    >
+                      {/* Code & Title */}
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-[#4A6D7C]/15 border border-[#4A6D7C]/30 text-[#194451]">
+                            {cohort.code || "SKY-COHORT"}
+                          </span>
+                          <span className="font-bold text-[#1C2527] group-hover:text-[#194451]">
+                            {cohort.name}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Course */}
+                      <td className="py-3 px-4 font-medium text-[#5A6E71]">
+                        {cohort.courseName}
+                      </td>
+
+                      {/* Schedule & Launch */}
+                      <td className="py-3 px-4">
+                        <div className="space-y-0.5">
+                          <div className="flex items-center gap-1.5 text-[#1C2527] font-medium">
+                            <Clock className="w-3 h-3 text-[#4A6D7C]" />
+                            <span>{cohort.schedule || "Weekend Live"}</span>
+                          </div>
+                          <div className="text-[10px] text-[#7E939A]">
+                            Launch: {new Date(cohort.startDate || Date.now()).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Seat Occupancy Meter */}
+                      <td className="py-3 px-4">
+                        <div className="w-36 space-y-1">
+                          <div className="flex items-center justify-between text-[11px]">
+                            <span className="font-bold text-[#1C2527]">
+                              {cohort.filledSeats || 0} / {cohort.maxCapacity || 30}
+                            </span>
+                            <span className="font-semibold text-[#5A6E71]">{occupancy}%</span>
+                          </div>
+                          <div className="w-full h-1.5 rounded-full bg-[rgba(71,86,87,0.12)] overflow-hidden">
+                            <div
+                              className={`h-full rounded-full ${
+                                isFull ? "bg-[#DC2626]" : isFillingFast ? "bg-[#D97706]" : "bg-[#128C7E]"
+                              }`}
+                              style={{ width: `${Math.min(100, occupancy)}%` }}
+                            />
+                          </div>
+                          <span className="text-[10px] text-[#7E939A] block">
+                            {cohort.seatsRemaining !== undefined ? cohort.seatsRemaining : Math.max(0, 30 - (cohort.filledSeats || 0))} open
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Mentor */}
+                      <td className="py-3 px-4">
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-[#194451] text-white flex items-center justify-center font-bold text-[9px]">
+                            {cohort.mentorAvatar || "VM"}
+                          </div>
+                          <span className="font-bold text-xs text-[#1C2527]">
+                            {cohort.mentorName || "Faculty Lead"}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Status */}
+                      <td className="py-3 px-4 text-center">
+                        <span
+                          className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border inline-block ${
+                            isFull
+                              ? "bg-[#DC2626]/10 text-[#DC2626] border-[#DC2626]/30"
+                              : isFillingFast
+                              ? "bg-[#D97706]/15 text-[#D97706] border-[#D97706]/35"
+                              : "bg-[#25D366]/15 text-[#128C7E] border-[#25D366]/35"
+                          }`}
+                        >
+                          {isFull ? "Full" : isFillingFast ? "Filling Fast" : "Open"}
+                        </span>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="py-3 px-4 text-right" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedCohort(cohort);
+                              setIsDetailsDrawerOpen(true);
+                            }}
+                            className="px-2 py-1 rounded-lg bg-white border border-[rgba(71,86,87,0.18)] hover:bg-[#FAF6EE] text-[#1C2527] text-xs font-bold transition-all shadow-2xs"
+                            title="View cohort roster"
+                          >
+                            Roster
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setReserveCohortTarget(cohort);
+                              setIsReserveModalOpen(true);
+                            }}
+                            className="px-2 py-1 rounded-lg bg-white border border-[rgba(217,119,6,0.3)] hover:bg-[#FAF6EE] text-[#D97706] text-xs font-bold transition-all shadow-2xs flex items-center gap-1"
+                            title="Hold a seat with advance token"
+                          >
+                            <BookmarkCheck className="w-3 h-3 text-[#D97706]" />
+                            <span>Hold</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const msg = encodeURIComponent(
+                                `Hi Candidate, admissions for Skillyards ${cohort.name} (${cohort.courseName}) are closing with only ${cohort.seatsRemaining} seats left. Reply to reserve your seat!`
+                              );
+                              window.open(`https://wa.me/?text=${msg}`, "_blank");
+                            }}
+                            className="p-1.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366]/25 border border-[#25D366]/35 text-[#128C7E] transition-all cursor-pointer"
+                            title="WhatsApp update"
+                          >
+                            <MessageSquare className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
       )}
 
       {/* Create Cohort Modal */}
@@ -675,6 +910,20 @@ export default function CohortsPage() {
         currentUser={user}
       />
 
+      {/* Seat Reservation Modal */}
+      <ReserveSeatModal
+        isOpen={isReserveModalOpen}
+        onClose={() => {
+          setIsReserveModalOpen(false);
+          setReserveCohortTarget(null);
+        }}
+        cohort={reserveCohortTarget}
+        onSeatReserved={(newRes) => {
+          showToast(`Seat reserved for ${newRes.studentName} with ₹${newRes.tokenAmount.toLocaleString("en-IN")} token hold!`);
+          fetchCohorts();
+        }}
+      />
+
       {/* Cohort Details & Enrolled Learners Drawer */}
       <CohortDetailsDrawer
         isOpen={isDetailsDrawerOpen}
@@ -683,6 +932,7 @@ export default function CohortsPage() {
           setSelectedCohort(null);
         }}
         cohort={selectedCohort}
+        allCohorts={cohorts}
         onUpdateCohort={handleUpdateCohort}
       />
     </div>
