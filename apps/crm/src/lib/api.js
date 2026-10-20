@@ -153,4 +153,56 @@ export const crmApi = {
   // Single Lead Outreach Logging
   logOutreach: (leadId, payload) =>
     apiRequest(`/api/crm/leads/${leadId}/outreach`, { method: "POST", body: payload }),
+  // Course Cohorts & Batch Seat Allocation
+  getCohorts: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/cohorts${query ? `?${query}` : ""}`);
+  },
+  getCohort: (id) => apiRequest(`/api/crm/cohorts/${id}`),
+  createCohort: (payload) =>
+    apiRequest("/api/crm/cohorts", { method: "POST", body: payload }),
+  assignStudentToCohort: (cohortId, payload) =>
+    apiRequest(`/api/crm/cohorts/${cohortId}`, { method: "POST", body: payload }),
+  // Lead Nurturing & Drip Cadences
+  getCadences: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/cadences${query ? `?${query}` : ""}`);
+  },
+  getCadence: (id) => apiRequest(`/api/crm/cadences/${id}`),
+  createCadence: (payload) =>
+    apiRequest("/api/crm/cadences", { method: "POST", body: payload }),
+  updateCadence: (id, payload) =>
+    apiRequest(`/api/crm/cadences/${id}`, { method: "PATCH", body: payload }),
+  enrollLeadInCadence: (cadenceId, payload) =>
+    apiRequest(`/api/crm/cadences/${cadenceId}/enroll`, { method: "POST", body: payload }),
+  // Fee Installments & EMI Collections Desk
+  getInstallments: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/installments${query ? `?${query}` : ""}`);
+  },
+  createInstallment: (payload) =>
+    apiRequest("/api/crm/installments", { method: "POST", body: payload }),
+  collectInstallment: (payload) =>
+    apiRequest("/api/crm/installments/collect", { method: "POST", body: payload }),
+  sendInstallmentReminder: (payload) =>
+    apiRequest("/api/crm/installments/remind", { method: "POST", body: payload }),
 };
+

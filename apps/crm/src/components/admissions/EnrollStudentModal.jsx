@@ -113,9 +113,19 @@ export function EnrollStudentModal({ isOpen, onClose, lead, onEnrollmentComplete
 
   const balancePending = Math.max(0, finalTotalAmount - amountPaidToday);
 
-  if (!isOpen) return null;
+  // Available batches including custom cohorts
+  const availableBatches = useMemo(() => {
+    let customNames = [];
+    if (typeof window !== "undefined") {
+      try {
+        const stored = JSON.parse(localStorage.getItem("skillyards_custom_cohorts") || "[]");
+        customNames = stored.map((c) => `${c.name} (${c.schedule || "Weekend Live"})`);
+      } catch (_) {}
+    }
+    return [...customNames, ...BATCHES];
+  }, [isOpen]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!studentName || !studentPhone) {
       alert("Please provide the candidate's name and phone number");
@@ -323,7 +333,7 @@ export function EnrollStudentModal({ isOpen, onClose, lead, onEnrollmentComplete
                   onChange={(e) => setSelectedBatch(e.target.value)}
                   className="crm-select bg-white"
                 >
-                  {BATCHES.map((b) => (
+                  {availableBatches.map((b) => (
                     <option key={b} value={b}>
                       {b}
                     </option>

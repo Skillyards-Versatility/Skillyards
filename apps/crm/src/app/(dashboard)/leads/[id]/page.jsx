@@ -31,6 +31,8 @@ import {
   Smartphone,
   Award,
   Receipt,
+  Banknote,
+  ArrowUpRight,
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
@@ -748,6 +750,8 @@ export default function LeadDetailPage() {
                       const isEnquiry = item.type === "enquiry";
                       const isCounselling = item.type === "counselling";
                       const isEnrolled = item.type === "student_enrolled";
+                      const isPayment = item.type === "payment";
+                      const isReminder = item.type === "reminder";
                       const isOutreachWhatsapp = item.type === "outreach_whatsapp";
                       const isOutreachEmail = item.type === "outreach_email";
                       const isOutreachSms = item.type === "outreach_sms";
@@ -760,6 +764,10 @@ export default function LeadDetailPage() {
                             className={`absolute -left-[30px] top-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold border shadow-xs ${
                               isEnrolled
                                 ? "bg-[#25D366]/20 border-[#25D366]/50 text-[#128C7E]"
+                                : isPayment
+                                ? "bg-[#2E7559]/20 border-[#2E7559]/50 text-[#2E7559]"
+                                : isReminder
+                                ? "bg-[#B07238]/20 border-[#B07238]/50 text-[#B07238]"
                                 : isOutreachWhatsapp
                                 ? "bg-[#25D366]/15 border-[#25D366]/40 text-[#128C7E]"
                                 : isOutreachEmail
@@ -779,6 +787,10 @@ export default function LeadDetailPage() {
                           >
                             {isEnrolled ? (
                               <Award className="w-3.5 h-3.5 text-[#128C7E]" />
+                            ) : isPayment ? (
+                              <Banknote className="w-3.5 h-3.5 text-[#2E7559]" />
+                            ) : isReminder ? (
+                              <CalendarClock className="w-3.5 h-3.5 text-[#B07238]" />
                             ) : isOutreachWhatsapp ? (
                               <MessageSquare className="w-3 h-3 text-[#25D366]" />
                             ) : isOutreachEmail ? (
@@ -871,6 +883,48 @@ export default function LeadDetailPage() {
                                   </Link>
                                 </div>
                                 <p className="text-[#334648] whitespace-pre-line text-[11px] bg-white/80 p-2.5 rounded border border-[rgba(71,86,87,0.1)] font-mono">
+                                  {item.notes}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Payment / Installment Collection Details */}
+                            {isPayment && item.notes && (
+                              <div className="bg-[#FAF6EE] p-3 rounded-lg border border-[rgba(46,117,89,0.35)] space-y-2 mt-1 text-[#1C2527] text-[11px]">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#2E7559]/15 border border-[#2E7559]/40 text-[#2E7559]">
+                                    Tuition Fee Collected
+                                  </span>
+                                  <Link
+                                    href="/installments"
+                                    className="text-[10.5px] font-bold text-[#4A6D7C] hover:underline flex items-center gap-1"
+                                  >
+                                    <span>Installments Desk</span>
+                                    <ArrowUpRight className="w-3 h-3" />
+                                  </Link>
+                                </div>
+                                <p className="text-[#334648] whitespace-pre-line text-[11px] bg-white/80 p-2.5 rounded border border-[rgba(71,86,87,0.1)] font-mono">
+                                  {item.notes}
+                                </p>
+                              </div>
+                            )}
+
+                            {/* Reminder Dispatched Details */}
+                            {isReminder && item.notes && (
+                              <div className="bg-[#FAF6EE] p-3 rounded-lg border border-[rgba(176,114,56,0.3)] space-y-1.5 mt-1 text-[#1C2527] text-[11px]">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-[#B07238]/15 border border-[#B07238]/40 text-[#B07238]">
+                                    Payment Reminder Dispatched
+                                  </span>
+                                  <Link
+                                    href="/installments"
+                                    className="text-[10.5px] font-bold text-[#4A6D7C] hover:underline flex items-center gap-1"
+                                  >
+                                    <span>Review Dues</span>
+                                    <ArrowUpRight className="w-3 h-3" />
+                                  </Link>
+                                </div>
+                                <p className="text-[#334648] whitespace-pre-line text-[11px] bg-white/80 p-2 rounded border border-[rgba(71,86,87,0.1)] font-mono">
                                   {item.notes}
                                 </p>
                               </div>
