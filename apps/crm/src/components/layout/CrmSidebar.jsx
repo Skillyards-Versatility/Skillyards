@@ -21,6 +21,8 @@ import {
   Layers,
   Workflow,
   Banknote,
+  MessageSquare,
+  Target,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useTelephony } from "@/context/TelephonyContext";
@@ -29,9 +31,11 @@ import { useTelephony } from "@/context/TelephonyContext";
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
   { label: "Leads", href: "/leads", icon: Users, badge: "9" },
+  { label: "Marketing Campaigns", href: "/campaigns", icon: Target, badge: "ROI" },
   { label: "Duplicate Reviews", href: "/duplicates", icon: CopyCheck, badge: "1" },
   { label: "Call Queue", href: "/queue", icon: PhoneCall },
   { label: "Follow-ups", href: "/follow-ups", icon: CalendarClock },
+  { label: "Omnichannel Inbox", href: "/inbox", icon: MessageSquare, badge: "3" },
   { label: "Counselling", href: "/counselling", icon: GraduationCap },
   { label: "Admissions & Fees", href: "/admissions", icon: Award, badge: "New" },
   { label: "Fee Installments", href: "/installments", icon: Banknote, badge: "Dues" },
@@ -66,6 +70,16 @@ const SECTION_DETAILS = {
       { label: "Cold / Lost", href: "/leads" },
     ],
   },
+  "/campaigns": {
+    title: "Campaign Attribution",
+    category: "Marketing & Growth",
+    items: [
+      { label: "Active Campaigns", href: "/campaigns" },
+      { label: "Channel Performance", href: "/campaigns" },
+      { label: "Launch Campaign & UTM", href: "/campaigns" },
+      { label: "Leads Pipeline", href: "/leads" },
+    ],
+  },
   "/duplicates": {
     title: "Duplicate Reviews",
     category: "Data Hygiene",
@@ -91,6 +105,16 @@ const SECTION_DETAILS = {
       { label: "Today's Agenda", href: "/follow-ups" },
       { label: "Overdue Reminders", href: "/follow-ups" },
       { label: "Next 7 Days", href: "/follow-ups" },
+    ],
+  },
+  "/inbox": {
+    title: "Omnichannel Communications",
+    category: "Conversational Sales",
+    items: [
+      { label: "All Active Chats", href: "/inbox" },
+      { label: "WhatsApp Direct", href: "/inbox" },
+      { label: "Unread Messages", href: "/inbox", count: 3 },
+      { label: "Cadence Drip Replies", href: "/inbox" },
     ],
   },
   "/counselling": {

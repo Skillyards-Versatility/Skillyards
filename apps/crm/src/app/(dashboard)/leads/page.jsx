@@ -19,6 +19,7 @@ import {
   CheckCircle2,
   Filter,
   Workflow,
+  Target,
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
@@ -523,6 +524,15 @@ export default function LeadsDirectoryPage() {
               <span>Export Selected ({selectedIds.length})</span>
             </button>
           )}
+
+          <Link
+            href="/campaigns"
+            className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5 font-bold !text-[#4A6D7C] border-[rgba(74,109,124,0.3)] bg-white hover:bg-[#FAF6EE]"
+            title="Open Marketing Campaigns & Lead Attribution"
+          >
+            <Target className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <span>Campaigns</span>
+          </Link>
 
           <button
             onClick={() => handleExportCSV(false)}

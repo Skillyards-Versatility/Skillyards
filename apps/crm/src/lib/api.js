@@ -204,5 +204,35 @@ export const crmApi = {
     apiRequest("/api/crm/installments/collect", { method: "POST", body: payload }),
   sendInstallmentReminder: (payload) =>
     apiRequest("/api/crm/installments/remind", { method: "POST", body: payload }),
+  // Omnichannel Communications & WhatsApp Inbox
+  getInboxThreads: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/inbox${query ? `?${query}` : ""}`);
+  },
+  getInboxThread: (id) => apiRequest(`/api/crm/inbox/${id}`),
+  sendInboxMessage: (id, payload) =>
+    apiRequest(`/api/crm/inbox/${id}`, { method: "POST", body: payload }),
+  // Marketing Campaign ROI & Lead Attribution Desk
+  getCampaigns: (params = {}) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== "") {
+        searchParams.set(key, val);
+      }
+    });
+    const query = searchParams.toString();
+    return apiRequest(`/api/crm/campaigns${query ? `?${query}` : ""}`);
+  },
+  getCampaign: (id) => apiRequest(`/api/crm/campaigns/${id}`),
+  createCampaign: (payload) =>
+    apiRequest("/api/crm/campaigns", { method: "POST", body: payload }),
+  updateCampaign: (id, payload) =>
+    apiRequest(`/api/crm/campaigns/${id}`, { method: "PATCH", body: payload }),
 };
 
