@@ -472,7 +472,7 @@ export function eodWarningTemplate({ userName, date, adminUrl }) {
         </h1>
         <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 24px;">
           Hi <b>${userName}</b>,<br><br>
-          We noticed that you have not submitted your End-of-Day (EOD) report for today (<b>${date}</b>) before the 7:30 PM cutoff.
+          We noticed that you have not submitted your End-of-Day (EOD) report for today (<b>${date}</b>) before the 11:59 PM cutoff.
         </p>
 
         <div style="background:#fef2f2;border-radius:12px;padding:16px;border:1px solid #fecaca;border-left:4px solid #ef4444;margin-bottom:28px;">

@@ -5,6 +5,7 @@ import {
   sendEodWarningEmail,
   isEmailEnabled,
 } from "@/modules/notifications/email.service";
+import { getIstDate, isIstBeforeCutoff } from "@/lib/ist.js";
 
 const TEAM_LEADS = {
   sales: { name: "Rahul Singh", email: "sskillyards@gmail.com" },
@@ -142,46 +143,68 @@ export async function processEodEmails(date, targetUserId = null) {
   // Build a queue of functions to run sequentially
   const emailTasks = [];
 
+  const allSubmittedUserIds = new Set(reports.map((r) => r.userId));
+  const isTodayBeforeCutoff = date === getIstDate() && isIstBeforeCutoff();
+
   for (const team of teams) {
     const teamReports = reportsByTeam[team] || [];
     const teamUsers = usersByTeam[team] || [];
 
-    const submittedUserIds = new Set(teamReports.map((r) => r.userId));
-    const missingUsers = teamUsers.filter((u) => !submittedUserIds.has(u.id));
+    // User is only missing if they haven't submitted a report for this date
+    const missingUsers = teamUsers.filter((u) => !allSubmittedUserIds.has(u.id));
 
     let addedWarningsForTeam = false;
 
-    // Warning emails for missing users
-    for (const missingUser of missingUsers) {
-      if (warningsSentUserIds.has(missingUser.id)) {
-        warningsSkipped++;
-        continue;
-      }
+    // Warning emails for missing users:
+    // Only send if cutoff has passed (do not mail users while still in given submission time)
+    if (!isTodayBeforeCutoff) {
+      for (const missingUser of missingUsers) {
+        if (warningsSentUserIds.has(missingUser.id)) {
+          warningsSkipped++;
+          continue;
+        }
 
-      addedWarningsForTeam = true;
-      emailTasks.push(async () => {
-        try {
-          await sendEodWarningEmail({
-            to: missingUser.email,
-            userName: missingUser.name,
-            date: date,
-            adminUrl: ADMIN_URL,
-          });
-          // Track it in DB immediately to prevent future runs from picking it up
-          await db
-            .insert(eodWarnings)
-            .values({
-              userId: missingUser.id,
+        addedWarningsForTeam = true;
+        emailTasks.push(async () => {
+          try {
+            // Verify user hasn't submitted in the meantime before sending warning
+            const [hasSubmitted] = await db
+              .select({ id: eodReports.id })
+              .from(eodReports)
+              .where(
+                and(
+                  eq(eodReports.userId, missingUser.id),
+                  eq(eodReports.date, date),
+                ),
+              )
+              .limit(1);
+
+            if (hasSubmitted) {
+              warningsSkipped++;
+              return;
+            }
+
+            await sendEodWarningEmail({
+              to: missingUser.email,
+              userName: missingUser.name,
               date: date,
-            })
-            .onConflictDoNothing();
+              adminUrl: ADMIN_URL,
+            });
+            // Track it in DB immediately to prevent future runs from picking it up
+            await db
+              .insert(eodWarnings)
+              .values({
+                userId: missingUser.id,
+                date: date,
+              })
+              .onConflictDoNothing();
 
-          warningsSent++;
-          results.push({
-            type: "warning",
-            recipient: missingUser.email,
-            status: "sent",
-          });
+            warningsSent++;
+            results.push({
+              type: "warning",
+              recipient: missingUser.email,
+              status: "sent",
+            });
         } catch (err) {
           console.error(
             `Failed to send warning email to ${missingUser.email}`,
@@ -201,6 +224,7 @@ export async function processEodEmails(date, targetUserId = null) {
         }
       });
     }
+  }
 
     // Team summary email logic
     // If targeting a specific user who is MISSING, skip team report (just send warning).

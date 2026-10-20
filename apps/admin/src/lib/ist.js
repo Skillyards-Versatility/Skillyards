@@ -36,12 +36,12 @@ export function getIstTime(now = new Date()) {
 }
 
 /**
- * Check if current IST time is before the 7:30 PM cutoff.
- * Cutoff = 19:30 IST = 1170 minutes from midnight.
+ * Check if current IST time is before the 11:59 PM cutoff.
+ * Cutoff = 23:59 IST = 1439 minutes from midnight.
  */
 export function isIstBeforeCutoff(now = new Date()) {
   const { totalMinutes } = getIstTime(now);
-  return totalMinutes < 1170; // 19 * 60 + 30 = 1170
+  return totalMinutes < 1439; // 23 * 60 + 59 = 1439
 }
 
 /**

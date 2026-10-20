@@ -28,7 +28,7 @@ export async function submitEodReport({ date, data, screenshotKey }) {
     if (!isIstBeforeCutoff()) {
       return {
         success: false,
-        message: "Submission cutoff (7:30 PM IST) has passed.",
+        message: "Submission cutoff (11:59 PM IST) has passed.",
       };
     }
 
