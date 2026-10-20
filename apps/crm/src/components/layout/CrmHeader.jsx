@@ -16,6 +16,7 @@ import {
   ChevronDown,
   X,
   Keyboard,
+  Menu,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -87,12 +88,13 @@ const ROLES_LIST = [
   },
 ];
 
-export function CrmHeader({ onNewLeadClick }) {
+export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen }) {
   const router = useRouter();
   const { user, crmRoles, setUser, setCrmRoles } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
   const [notifications, setNotifications] = useState(DEMO_NOTIFICATIONS);
 
   const searchInputRef = useRef(null);
@@ -135,6 +137,7 @@ export function CrmHeader({ onNewLeadClick }) {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/leads?search=${encodeURIComponent(searchQuery.trim())}`);
+      setShowMobileSearch(false);
     }
   };
 
@@ -157,9 +160,19 @@ export function CrmHeader({ onNewLeadClick }) {
   };
 
   return (
-    <header className="h-16 px-4 sm:px-6 bg-[#0c1316] border-b border-[rgba(98,146,158,0.15)] flex items-center justify-between sticky top-0 z-40 shadow-md w-full">
-      {/* Left: Permanent Full-Size Skillyards Logo & Search */}
-      <div className="flex items-center gap-5 sm:gap-6">
+    <header className="h-16 px-3 sm:px-6 bg-[#0c1316] border-b border-[rgba(98,146,158,0.15)] flex items-center justify-between sticky top-0 z-40 shadow-md w-full">
+      {/* Left: Mobile Drawer Hamburger + Skillyards Logo + Search */}
+      <div className="flex items-center gap-2 sm:gap-6 min-w-0">
+        {/* Mobile Hamburger Drawer Button */}
+        <button
+          type="button"
+          onClick={onMenuToggle}
+          aria-label="Toggle navigation drawer"
+          className="md:hidden p-2 rounded-xl text-[#7e939a] hover:text-white hover:bg-[rgba(98,146,158,0.15)] transition-colors active:scale-95 cursor-pointer shrink-0"
+        >
+          {isMobileSidebarOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5" />}
+        </button>
+
         <Link
           href="/"
           title="Skillyards CRM"
@@ -168,12 +181,12 @@ export function CrmHeader({ onNewLeadClick }) {
           <img
             src="/logo/logo-light.svg"
             alt="Skillyards Logo"
-            className="h-8 w-auto object-contain transition-opacity group-hover:opacity-90"
+            className="h-7 sm:h-8 w-auto object-contain transition-opacity group-hover:opacity-90"
           />
         </Link>
 
-        {/* Global Search Bar */}
-        <form onSubmit={handleSearchSubmit} className="relative w-64 md:w-80 hidden sm:block">
+        {/* Global Search Bar (Desktop / Tablet) */}
+        <form onSubmit={handleSearchSubmit} className="relative w-56 md:w-80 hidden sm:block">
           <input
             ref={searchInputRef}
             type="text"
@@ -191,23 +204,59 @@ export function CrmHeader({ onNewLeadClick }) {
         </form>
       </div>
 
+      {/* Mobile Search Overlay Bar */}
+      {showMobileSearch && (
+        <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#0c1316] border-b border-[rgba(98,146,158,0.25)] p-3 z-50 shadow-2xl animate-in slide-in-from-top-2 duration-150">
+          <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                autoFocus
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search leads by name, phone or email..."
+                className="w-full bg-[#131d21] border border-[rgba(98,146,158,0.35)] rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-[#7e939a] outline-none focus:border-[#62929e]"
+              />
+              <Search className="w-4 h-4 text-[#7e939a] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+            <button
+              type="submit"
+              className="crm-btn-primary !py-2 !px-3 text-xs"
+            >
+              Search
+            </button>
+          </form>
+        </div>
+      )}
+
       {/* Right Controls */}
-      <div className="flex items-center gap-2.5 sm:gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+        {/* Mobile Search Toggle */}
+        <button
+          type="button"
+          onClick={() => setShowMobileSearch((prev) => !prev)}
+          aria-label="Toggle mobile search"
+          className="sm:hidden p-2 text-[#7e939a] hover:text-white hover:bg-[rgba(98,146,158,0.12)] rounded-lg transition-colors active:scale-95"
+          title="Search Leads"
+        >
+          <Search className="w-4 h-4" />
+        </button>
+
         {/* Role & Persona Switcher */}
         <div className="relative" ref={roleRef}>
           <button
             type="button"
             onClick={() => setShowRoleSwitcher((prev) => !prev)}
-            className="px-2.5 py-1 rounded-full bg-[rgba(98,146,158,0.15)] hover:bg-[rgba(98,146,158,0.22)] border border-[rgba(98,146,158,0.3)] text-[11px] font-semibold text-[#a2c4cc] flex items-center gap-1.5 shadow-xs transition-colors"
+            className="px-2 sm:px-2.5 py-1 rounded-full bg-[rgba(98,146,158,0.15)] hover:bg-[rgba(98,146,158,0.22)] border border-[rgba(98,146,158,0.3)] text-[11px] font-semibold text-[#a2c4cc] flex items-center gap-1 shadow-xs transition-colors"
             title="Click to switch persona role"
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-[#62929e]" />
-            <span className="capitalize">{primaryRole.replace(/_/g, " ")}</span>
-            <ChevronDown className="w-3 h-3 text-[#7e939a]" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#62929e] shrink-0" />
+            <span className="capitalize max-w-[65px] sm:max-w-none truncate">{primaryRole.replace(/_/g, " ")}</span>
+            <ChevronDown className="w-3 h-3 text-[#7e939a] shrink-0" />
           </button>
 
           {showRoleSwitcher && (
-            <div className="absolute right-0 mt-2 w-72 bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] rounded-2xl shadow-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
+            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-72 max-w-sm bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] rounded-2xl shadow-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
               <div className="px-2.5 py-1.5 border-b border-[rgba(71,86,87,0.12)] mb-1 flex items-center justify-between">
                 <div>
                   <p className="text-xs font-bold text-[#1C2527]">Switch CRM Persona</p>
@@ -274,7 +323,7 @@ export function CrmHeader({ onNewLeadClick }) {
           </button>
 
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 sm:w-88 bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] rounded-2xl shadow-2xl p-3 z-50 animate-in fade-in zoom-in-95 duration-150">
+            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-88 max-w-sm bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] rounded-2xl shadow-2xl p-3 z-50 animate-in fade-in zoom-in-95 duration-150">
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-[rgba(71,86,87,0.12)] px-1">
                 <div className="flex items-center gap-1.5">
                   <span className="text-xs font-bold text-[#1C2527]">Notifications</span>

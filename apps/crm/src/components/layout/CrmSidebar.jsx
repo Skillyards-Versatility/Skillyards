@@ -200,7 +200,7 @@ const SECTION_DETAILS = {
   },
 };
 
-export function CrmSidebar() {
+export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, crmRoles } = useAuth();
@@ -221,6 +221,10 @@ export function CrmSidebar() {
     if (matching) {
       setActiveSection(matching.href);
     }
+    // Auto-close mobile drawer on route change
+    if (isMobileOpen && onMobileClose) {
+      onMobileClose();
+    }
   }, [pathname]);
 
   const playClickSound = () => {
@@ -240,7 +244,7 @@ export function CrmSidebar() {
     } catch {}
   };
 
-  const handleActivityClick = (item) => {
+  const handleActivityClick = (item, isMobile = false) => {
     playClickSound();
     if (activeSection === item.href) {
       // Toggle drawer if active icon clicked
@@ -260,8 +264,8 @@ export function CrmSidebar() {
       items: [],
     };
 
-  return (
-    <aside className="flex shrink-0 h-full select-none">
+  const renderSidebarContent = (isMobile = false) => (
+    <div className="flex shrink-0 h-full select-none">
       {/* =========================================================================
           TIER 1: PRIMARY ACTIVITY BAR (Narrow Vertical Icon Strip ~56px)
           Always visible, clean, high-precision dark aesthetic matching top navbar
@@ -269,6 +273,18 @@ export function CrmSidebar() {
       <div className="w-14 bg-[#0c1316] border-r border-[rgba(98,146,158,0.15)] flex flex-col items-center justify-between py-2 h-full z-20 shadow-xl overflow-hidden">
         {/* Navigation Icons (Scrollable without scrollbar if viewport is short) */}
         <div className="flex-1 flex flex-col items-center gap-1 w-full pt-0.5 overflow-y-auto overflow-x-hidden no-scrollbar">
+          {/* Mobile Top Dismiss Button */}
+          {isMobile && (
+            <button
+              type="button"
+              onClick={onMobileClose}
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-[#8ba3aa] hover:text-white bg-[rgba(98,146,158,0.12)] border border-[rgba(98,146,158,0.25)] mb-1 shrink-0 cursor-pointer active:scale-95 transition-all"
+              title="Close Drawer"
+            >
+              <X className="w-4 h-4 text-white" />
+            </button>
+          )}
+
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isSelected = activeSection === item.href;
@@ -277,7 +293,7 @@ export function CrmSidebar() {
               <div key={item.href} className="relative group w-full flex justify-center shrink-0">
                 <button
                   type="button"
-                  onClick={() => handleActivityClick(item)}
+                  onClick={() => handleActivityClick(item, isMobile)}
                   title={item.label}
                   className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150 ${
                     isSelected
@@ -306,11 +322,13 @@ export function CrmSidebar() {
                   )}
                 </button>
 
-                {/* Floating tooltip */}
-                <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1 rounded-md bg-[#121c1f] border border-[rgba(98,146,158,0.25)] text-white text-xs font-medium whitespace-nowrap shadow-xl z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 backdrop-blur-md">
-                  {item.label}
-                  <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#121c1f]" />
-                </div>
+                {/* Floating tooltip (desktop only) */}
+                {!isMobile && (
+                  <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1 rounded-md bg-[#121c1f] border border-[rgba(98,146,158,0.25)] text-white text-xs font-medium whitespace-nowrap shadow-xl z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 backdrop-blur-md">
+                    {item.label}
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#121c1f]" />
+                  </div>
+                )}
               </div>
             );
           })}
@@ -397,7 +415,10 @@ export function CrmSidebar() {
                     <Link
                       key={idx}
                       href={sub.href}
-                      onClick={playClickSound}
+                      onClick={() => {
+                        playClickSound();
+                        if (isMobile && onMobileClose) onMobileClose();
+                      }}
                       className={`flex items-center justify-between px-3 py-1.5 rounded-lg text-xs transition-colors group ${
                         isCurrent
                           ? "bg-[rgba(98,146,158,0.22)] text-white font-semibold border border-[rgba(98,146,158,0.4)] shadow-sm"
@@ -441,7 +462,10 @@ export function CrmSidebar() {
             <div className="space-y-1">
               <Link
                 href="/leads"
-                onClick={playClickSound}
+                onClick={() => {
+                  playClickSound();
+                  if (isMobile && onMobileClose) onMobileClose();
+                }}
                 className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] text-[#95abb2] hover:text-white hover:bg-[rgba(98,146,158,0.08)] transition-colors"
               >
                 <Plus className="w-3.5 h-3.5 text-[#62929e]" />
@@ -452,6 +476,7 @@ export function CrmSidebar() {
                 onClick={() => {
                   playClickSound();
                   openSoftphone();
+                  if (isMobile && onMobileClose) onMobileClose();
                 }}
                 className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-[11px] text-[#95abb2] hover:text-white hover:bg-[rgba(98,146,158,0.08)] transition-colors text-left cursor-pointer"
               >
@@ -471,6 +496,31 @@ export function CrmSidebar() {
           </span>
         </div>
       </div>
-    </aside>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Persistent Docked Sidebar */}
+      <aside className="hidden md:flex shrink-0 h-full select-none">
+        {renderSidebarContent(false)}
+      </aside>
+
+      {/* Mobile & Small Tablet Drawer Overlay */}
+      {isMobileOpen && (
+        <div className="fixed inset-0 z-50 flex md:hidden animate-in fade-in duration-200">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black/65 backdrop-blur-xs transition-opacity duration-200"
+            onClick={onMobileClose}
+          />
+
+          {/* Drawer Content */}
+          <div className="relative z-10 flex h-full shadow-2xl animate-in slide-in-from-left duration-200">
+            {renderSidebarContent(true)}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

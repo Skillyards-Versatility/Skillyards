@@ -91,7 +91,7 @@ export function SoftphoneDrawer() {
           2. EXPANDED SOFTPHONE WINDOW (Docked Bottom-Right)
           ========================================================================= */}
       {isSoftphoneOpen && (
-        <div className="fixed bottom-4 right-4 sm:right-6 z-40 w-[320px] sm:w-[350px] bg-[#0c1316] border border-[rgba(98,146,158,0.25)] rounded-2xl shadow-2xl overflow-hidden flex flex-col text-white animate-fadeIn select-none backdrop-blur-xl">
+        <div className="fixed bottom-4 right-3 sm:right-6 z-40 w-[calc(100vw-1.5rem)] sm:w-[350px] max-w-[360px] bg-[#0c1316] border border-[rgba(98,146,158,0.25)] rounded-2xl shadow-2xl overflow-hidden flex flex-col text-white animate-fadeIn select-none backdrop-blur-xl">
           {/* Header Bar */}
           <div className="h-13 px-4 bg-[#080d0f] border-b border-[rgba(98,146,158,0.18)] flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5 min-w-0">
