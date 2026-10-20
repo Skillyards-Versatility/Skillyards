@@ -147,7 +147,7 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
   const tokens = useMemo(() => {
     const rawName = lead?.fullName || lead?.name || "Student";
     const cleanPhone = (lead?.normalizedPhone || lead?.phone || "").replace(/\D/g, "");
-    const course = lead?.enquiryCourse || "Full Stack & AI Accelerator";
+    const course = lead?.courseInterest || lead?.courseName || lead?.enquiryCourse || "Full Stack Web Development (MERN)";
     const rep = lead?.assignedToUserName || currentUser?.name || "Admissions Team";
     const code = cleanPhone ? cleanPhone.slice(-4) : "2026";
 
@@ -205,8 +205,9 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
       alert("No phone number found for this lead.");
       return;
     }
+    const phoneWithCountry = cleanPhone.length === 10 ? `91${cleanPhone}` : (cleanPhone.startsWith("91") && cleanPhone.length === 12 ? cleanPhone : `91${cleanPhone}`);
     const encoded = encodeURIComponent(customText);
-    const url = `https://wa.me/${cleanPhone.startsWith("91") ? cleanPhone : `91${cleanPhone}`}?text=${encoded}`;
+    const url = `https://wa.me/${phoneWithCountry}?text=${encoded}`;
     window.open(url, "_blank");
 
     if (onOutreachSent) {
@@ -244,8 +245,9 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
       alert("No phone number found for this lead.");
       return;
     }
+    const phoneForSms = cleanPhone.length === 10 ? `+91${cleanPhone}` : cleanPhone.startsWith("+") ? cleanPhone : `+${cleanPhone}`;
     const encoded = encodeURIComponent(customText);
-    const smsUrl = `sms:${cleanPhone}?body=${encoded}`;
+    const smsUrl = `sms:${phoneForSms}?body=${encoded}`;
     window.open(smsUrl, "_blank");
 
     if (onOutreachSent) {
@@ -258,8 +260,15 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
     onClose();
   };
 
+  if (!isOpen || !lead) return null;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md animate-fadeIn">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md animate-fadeIn"
+    >
       <div className="w-full max-w-4xl bg-[#FAF6EE] text-[#1C2527] rounded-2xl shadow-2xl border border-[rgba(71,86,87,0.2)] overflow-hidden flex flex-col max-h-[92vh]">
         {/* =========================================================================
             1. MODAL DARK COCKPIT HEADER
@@ -279,7 +288,7 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
                 </span>
               </div>
               <p className="text-[11px] text-[#7e939a] truncate mt-0.5">
-                Sending to: <strong className="text-white">{lead.fullName}</strong> ({rawPhone || "No Phone"} • {targetEmail || "No Email"})
+                Sending to: <strong className="text-white">{lead?.fullName || lead?.name || "Student"}</strong> ({rawPhone || "No Phone"} • {targetEmail || "No Email"})
               </p>
             </div>
           </div>

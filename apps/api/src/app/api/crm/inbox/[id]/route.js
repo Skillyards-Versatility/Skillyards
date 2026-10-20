@@ -213,6 +213,6 @@ async function sendThreadMessageHandler(req, { ctx, params }) {
   }
 }
 
-export const GET = createProtectedRoute(canAccessCrm, getThreadMessagesHandler);
-export const POST = createProtectedRoute(canAccessCrm, sendThreadMessageHandler);
+export const GET = createProtectedRoute(getThreadMessagesHandler, { policy: canAccessCrm });
+export const POST = createProtectedRoute(sendThreadMessageHandler, { policy: canAccessCrm });
 export { THREAD_MESSAGES };

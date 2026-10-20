@@ -82,7 +82,7 @@ const INITIAL_THREADS = [
     channel: "whatsapp",
     lastMessage: "Hi Priya, could you share the live project architecture for the MERN program?",
     lastMessageSender: "candidate",
-    lastMessageAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+    lastMessageAt: "2026-10-20T11:44:00.000Z",
     unreadCount: 1,
     isDripEnrolled: true,
     tag: "Active Prospect",
@@ -102,7 +102,7 @@ const INITIAL_THREADS = [
     channel: "whatsapp",
     lastMessage: "Thank you! I received the Google Meet link for today's session at 5 PM.",
     lastMessageSender: "candidate",
-    lastMessageAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+    lastMessageAt: "2026-10-20T11:11:00.000Z",
     unreadCount: 0,
     isDripEnrolled: true,
     tag: "Counselling Scheduled",
@@ -122,7 +122,7 @@ const INITIAL_THREADS = [
     channel: "whatsapp",
     lastMessage: "Can you provide more details regarding the 0% EMI financing plan?",
     lastMessageSender: "candidate",
-    lastMessageAt: new Date(Date.now() - 1000 * 60 * 110).toISOString(),
+    lastMessageAt: "2026-10-20T10:06:00.000Z",
     unreadCount: 2,
     isDripEnrolled: false,
     tag: "EMI Query",
@@ -142,7 +142,7 @@ const INITIAL_THREADS = [
     channel: "whatsapp",
     lastMessage: "Payment voucher REC-2026-90412 verified. Access credentials issued.",
     lastMessageSender: "system",
-    lastMessageAt: new Date(Date.now() - 1000 * 3600 * 24).toISOString(),
+    lastMessageAt: "2026-10-19T11:56:00.000Z",
     unreadCount: 0,
     isDripEnrolled: false,
     tag: "Enrolled Learner",
@@ -162,7 +162,7 @@ const INITIAL_THREADS = [
     channel: "email",
     lastMessage: "Syllabus brochure & scholarship code SKILL30-4912 dispatched.",
     lastMessageSender: "counsellor",
-    lastMessageAt: new Date(Date.now() - 1000 * 3600 * 36).toISOString(),
+    lastMessageAt: "2026-10-18T23:56:00.000Z",
     unreadCount: 0,
     isDripEnrolled: true,
     tag: "Cadence Drip",
@@ -180,7 +180,7 @@ const INITIAL_MESSAGES_MAP = {
       senderName: "Aarav Sharma",
       channel: "whatsapp",
       content: "Hi! I submitted an enquiry for the MERN Stack development course. Can someone help me with the syllabus?",
-      timestamp: new Date(Date.now() - 1000 * 3600 * 5).toISOString(),
+      timestamp: "2026-10-20T06:56:00.000Z",
       status: "read",
     },
     {
@@ -189,7 +189,7 @@ const INITIAL_MESSAGES_MAP = {
       senderName: "Priya Patel",
       channel: "whatsapp",
       content: "Hello Aarav! Welcome to Skillyards Versatility. Here is the official curriculum brochure: https://portal.skillyards.com/brochure/mern. It covers full-stack Node.js, React 19, Next.js, and cloud deployments.",
-      timestamp: new Date(Date.now() - 1000 * 3600 * 4).toISOString(),
+      timestamp: "2026-10-20T07:56:00.000Z",
       status: "read",
     },
     {
@@ -198,7 +198,7 @@ const INITIAL_MESSAGES_MAP = {
       senderName: "Automated Cadence",
       channel: "system",
       content: "Cadence Step 2: 1-on-1 Academic Counselling invitation link dispatched.",
-      timestamp: new Date(Date.now() - 1000 * 3600 * 2).toISOString(),
+      timestamp: "2026-10-20T09:56:00.000Z",
       status: "delivered",
     },
     {
@@ -207,7 +207,7 @@ const INITIAL_MESSAGES_MAP = {
       senderName: "Aarav Sharma",
       channel: "whatsapp",
       content: "Hi Priya, could you share the live project architecture for the MERN program?",
-      timestamp: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
+      timestamp: "2026-10-20T11:44:00.000Z",
       status: "delivered",
     },
   ],
@@ -218,7 +218,7 @@ const INITIAL_MESSAGES_MAP = {
       senderName: "Amit Kumar",
       channel: "whatsapp",
       content: "Hi Sneha, looking forward to our Data Science & AI counselling session today at 5:00 PM. Here is the meeting room: https://meet.google.com/sky-ai-counsel",
-      timestamp: new Date(Date.now() - 1000 * 3600 * 3).toISOString(),
+      timestamp: "2026-10-20T08:56:00.000Z",
       status: "read",
     },
     {
@@ -227,7 +227,7 @@ const INITIAL_MESSAGES_MAP = {
       senderName: "Sneha Mukherjee",
       channel: "whatsapp",
       content: "Thank you! I received the Google Meet link for today's session at 5 PM.",
-      timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
+      timestamp: "2026-10-20T11:11:00.000Z",
       status: "read",
     },
   ],
@@ -238,7 +238,7 @@ const INITIAL_MESSAGES_MAP = {
       senderName: "Vikram Malhotra",
       channel: "whatsapp",
       content: "Hi Rohan! We noticed you evaluated the UI/UX Mastery cohort. Would you like to review our flexible payment options?",
-      timestamp: new Date(Date.now() - 1000 * 3600 * 6).toISOString(),
+      timestamp: "2026-10-20T05:56:00.000Z",
       status: "read",
     },
     {
@@ -247,7 +247,7 @@ const INITIAL_MESSAGES_MAP = {
       senderName: "Rohan Varma",
       channel: "whatsapp",
       content: "Can you provide more details regarding the 0% EMI financing plan?",
-      timestamp: new Date(Date.now() - 1000 * 60 * 110).toISOString(),
+      timestamp: "2026-10-20T10:06:00.000Z",
       status: "delivered",
     },
   ],
@@ -258,7 +258,7 @@ const INITIAL_MESSAGES_MAP = {
       senderName: "Admissions Desk",
       channel: "system",
       content: "Official Student Enrollment Confirmed (Student ID: SKY-2026-8812). Down-payment ₹45,135 settled.",
-      timestamp: new Date(Date.now() - 1000 * 3600 * 24).toISOString(),
+      timestamp: "2026-10-19T11:56:00.000Z",
       status: "delivered",
     },
   ],
@@ -269,7 +269,7 @@ const INITIAL_MESSAGES_MAP = {
       senderName: "Amit Kumar",
       channel: "email",
       content: "Syllabus brochure & scholarship code SKILL30-4912 dispatched.",
-      timestamp: new Date(Date.now() - 1000 * 3600 * 36).toISOString(),
+      timestamp: "2026-10-18T23:56:00.000Z",
       status: "read",
     },
   ],
@@ -279,6 +279,7 @@ export default function OmnichannelInboxPage() {
   const { startCall } = useTelephony();
   const { user: currentUser } = useAuth();
 
+  const [isMounted, setIsMounted] = useState(false);
   const [threads, setThreads] = useState(INITIAL_THREADS);
   const [selectedThreadId, setSelectedThreadId] = useState("lead-101");
   const [messagesMap, setMessagesMap] = useState(INITIAL_MESSAGES_MAP);
@@ -290,6 +291,10 @@ export default function OmnichannelInboxPage() {
   const [isSending, setIsSending] = useState(false);
   const [repNotes, setRepNotes] = useState("");
   const [copiedPhone, setCopiedPhone] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const messagesEndRef = useRef(null);
 
@@ -307,8 +312,9 @@ export default function OmnichannelInboxPage() {
   const fetchThreads = async () => {
     try {
       const res = await crmApi.getInboxThreads();
-      if (res && res.data && res.data.threads) {
-        setThreads(res.data.threads);
+      const threadsList = res?.threads || res?.data?.threads;
+      if (Array.isArray(threadsList) && threadsList.length > 0) {
+        setThreads(threadsList);
       }
     } catch (_) {}
   };
@@ -429,23 +435,21 @@ export default function OmnichannelInboxPage() {
 
     setMessageInput("");
 
-    // 3. Dispatch to backend API
-    try {
-      await crmApi.sendInboxMessage(activeThread.id, {
-        content,
-        channel: selectedChannel,
-        candidatePhone: activeThread.candidatePhone,
-        candidateName: activeThread.candidateName,
-      });
-    } catch (_) {}
-
-    // 4. Open WhatsApp Web if enabled and channel is whatsapp
+    // 3. Open WhatsApp Web synchronously if enabled (prevents browser popup blocker)
     if (selectedChannel === "whatsapp" && openWhatsAppOnSend) {
       const cleanPhone = (activeThread.candidatePhone || "").replace(/[^0-9]/g, "");
-      const targetPhone = cleanPhone.startsWith("91") ? cleanPhone : `91${cleanPhone}`;
+      const targetPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : (cleanPhone.startsWith("91") && cleanPhone.length === 12 ? cleanPhone : `91${cleanPhone}`);
       const url = `https://wa.me/${targetPhone}?text=${encodeURIComponent(content)}`;
       window.open(url, "_blank");
     }
+
+    // 4. Dispatch to backend API in background
+    crmApi.sendInboxMessage(activeThread.id, {
+      content,
+      channel: selectedChannel,
+      candidatePhone: activeThread.candidatePhone,
+      candidateName: activeThread.candidateName,
+    }).catch((err) => console.warn("Backend inbox message sync warning:", err));
 
     setIsSending(false);
   };
@@ -479,10 +483,10 @@ export default function OmnichannelInboxPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6.5rem)] -mb-8 -mx-4 sm:-mx-6 md:-mx-8">
+    <div className="flex flex-col h-full w-full overflow-hidden bg-[#FAF6EE]">
       
       {/* Top Banner Cockpit */}
-      <div className="px-6 py-3 bg-[#0c1316] text-white flex items-center justify-between border-b border-[rgba(98,146,158,0.2)] shrink-0">
+      <div className="px-5 py-2.5 bg-[#0c1316] text-white flex items-center justify-between border-b border-[rgba(98,146,158,0.2)] shrink-0">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center text-[#25D366]">
             <MessageSquare className="w-4 h-4" />
@@ -519,15 +523,15 @@ export default function OmnichannelInboxPage() {
       </div>
 
       {/* Main 3-Column Split Pane */}
-      <div className="flex-1 flex overflow-hidden bg-[#F0E6D6]">
+      <div className="flex-1 flex min-h-0 overflow-hidden bg-[#FAF6EE]">
         
         {/* ======================================================== */}
-        {/* COLUMN 1: Conversation Threads Roster (~340px) */}
+        {/* COLUMN 1: Conversation Threads Roster (~320px) */}
         {/* ======================================================== */}
-        <div className="w-80 md:w-96 border-r border-[rgba(71,86,87,0.18)] bg-[#FAF6EE] flex flex-col shrink-0">
+        <div className="w-80 md:w-88 border-r border-[rgba(71,86,87,0.18)] bg-[#FAF6EE] flex flex-col h-full min-h-0 shrink-0">
           
           {/* Search & Channel Tabs */}
-          <div className="p-3 border-b border-[rgba(71,86,87,0.14)] space-y-2.5">
+          <div className="p-3 border-b border-[rgba(71,86,87,0.14)] space-y-2.5 shrink-0">
             {/* Search Input */}
             <div className="relative">
               <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#7E939A]" />
@@ -577,7 +581,7 @@ export default function OmnichannelInboxPage() {
           </div>
 
           {/* Threads Scroll List */}
-          <div className="flex-1 overflow-y-auto divide-y divide-[rgba(71,86,87,0.1)]">
+          <div className="flex-1 min-h-0 overflow-y-auto divide-y divide-[rgba(71,86,87,0.1)]">
             {filteredThreads.length === 0 ? (
               <div className="p-8 text-center text-[#5A6E71] text-xs">
                 No conversation threads match this filter.
@@ -618,8 +622,8 @@ export default function OmnichannelInboxPage() {
                         <h4 className="text-xs font-bold text-[#1C2527] truncate">
                           {thread.candidateName}
                         </h4>
-                        <span className="text-[10px] text-[#7E939A] shrink-0 font-medium">
-                          {timeAgo}
+                        <span suppressHydrationWarning className="text-[10px] text-[#7E939A] shrink-0 font-medium">
+                          {isMounted ? timeAgo : ""}
                         </span>
                       </div>
 
@@ -664,7 +668,7 @@ export default function OmnichannelInboxPage() {
         {/* ======================================================== */}
         {/* COLUMN 2: Center Chat Stream & Multi-Channel Composer */}
         {/* ======================================================== */}
-        <div className="flex-1 flex flex-col bg-[#F4ECDF] overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-0 bg-[#F4ECDF] overflow-hidden">
           
           {/* Chat Header */}
           {activeThread && (
@@ -709,7 +713,10 @@ export default function OmnichannelInboxPage() {
                 </button>
 
                 <a
-                  href={`https://wa.me/${activeThread.candidatePhone.replace(/[^0-9]/g, "")}`}
+                  href={`https://wa.me/${(() => {
+                    const c = (activeThread.candidatePhone || "").replace(/[^0-9]/g, "");
+                    return c.length === 10 ? `91${c}` : (c.startsWith("91") && c.length === 12 ? c : `91${c}`);
+                  })()}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1ebd5b] text-white text-xs font-bold transition-all shadow-xs"
@@ -732,7 +739,7 @@ export default function OmnichannelInboxPage() {
           )}
 
           {/* Chat Messages Stream */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3">
+          <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3">
             {/* Timestamp Separator */}
             <div className="flex items-center justify-center my-2">
               <span className="text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-white/80 border border-[rgba(71,86,87,0.14)] text-[#7E939A]">
@@ -779,7 +786,9 @@ export default function OmnichannelInboxPage() {
                         {isMe ? "You" : msg.senderName}
                       </span>
                       <span className="flex items-center gap-1">
-                        <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+                        <span suppressHydrationWarning>
+                          {isMounted ? formatMessageTime(msg.timestamp) : ""}
+                        </span>
                         {isMe && <CheckCheck className="w-3 h-3 text-[#25D366]" />}
                       </span>
                     </div>
@@ -796,18 +805,19 @@ export default function OmnichannelInboxPage() {
           </div>
 
           {/* Quick EdTech Macros & Token Pills Strip */}
-          <div className="px-4 py-2 bg-[#FAF6EE] border-t border-[rgba(71,86,87,0.14)] space-y-2 shrink-0">
+          <div className="px-4 py-2 bg-[#FAF6EE] border-t border-[rgba(71,86,87,0.14)] space-y-1.5 shrink-0">
             {/* Quick Macro Buttons */}
-            <div className="flex items-center gap-1.5 overflow-x-auto text-xs pb-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#7E939A] shrink-0 mr-1">
-                Quick Templates:
+            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar text-xs">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#7E939A] shrink-0 mr-1 flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-[#B07238]" />
+                <span>Templates:</span>
               </span>
               {QUICK_TEMPLATES.map((tmpl) => (
                 <button
                   key={tmpl.id}
                   type="button"
                   onClick={() => handleApplyMacro(tmpl)}
-                  className="px-2.5 py-1 rounded-lg bg-white hover:bg-[#F0E6D6] text-[#1C2527] font-semibold text-[11px] border border-[rgba(71,86,87,0.16)] shrink-0 transition-colors shadow-xs"
+                  className="px-2.5 py-1 rounded-lg bg-white hover:bg-[#F0E6D6] text-[#1C2527] font-semibold text-[11px] border border-[rgba(71,86,87,0.16)] shrink-0 transition-all hover:scale-[1.02] shadow-xs active:scale-95 cursor-pointer"
                 >
                   {tmpl.label}
                 </button>
@@ -815,8 +825,8 @@ export default function OmnichannelInboxPage() {
             </div>
 
             {/* Dynamic Token Pills */}
-            <div className="flex items-center gap-1 text-[10.5px] text-[#5A6E71]">
-              <span className="text-[10px] uppercase font-bold text-[#7E939A]">Insert:</span>
+            <div className="flex items-center gap-1 text-[10.5px] text-[#5A6E71] overflow-x-auto no-scrollbar">
+              <span className="text-[10px] uppercase font-bold text-[#7E939A] shrink-0 mr-1">Insert:</span>
               {[
                 { key: "name", label: "+ Candidate Name" },
                 { key: "course", label: "+ Target Course" },
@@ -827,7 +837,7 @@ export default function OmnichannelInboxPage() {
                   key={token.key}
                   type="button"
                   onClick={() => handleInsertToken(token.key)}
-                  className="px-2 py-0.5 rounded bg-[rgba(71,86,87,0.08)] hover:bg-[rgba(71,86,87,0.15)] text-[#4A6D7C] font-mono transition-colors"
+                  className="px-2 py-0.5 rounded-md bg-[rgba(71,86,87,0.08)] hover:bg-[rgba(71,86,87,0.15)] text-[#4A6D7C] font-mono text-[10px] shrink-0 transition-colors cursor-pointer"
                 >
                   {token.label}
                 </button>
@@ -913,7 +923,7 @@ export default function OmnichannelInboxPage() {
         {/* COLUMN 3: Candidate Intelligence Dossier (~300px) */}
         {/* ======================================================== */}
         {activeThread && (
-          <div className="hidden lg:flex w-80 border-l border-[rgba(71,86,87,0.18)] bg-[#FAF6EE] flex-col overflow-y-auto p-4 space-y-4 shrink-0">
+          <div className="hidden lg:flex w-80 border-l border-[rgba(71,86,87,0.18)] bg-[#FAF6EE] flex-col h-full min-h-0 overflow-y-auto p-4 space-y-4 shrink-0">
             
             {/* Candidate Dossier Header */}
             <div className="p-4 bg-white rounded-2xl border border-[rgba(71,86,87,0.16)] text-center space-y-2 shadow-xs">
@@ -975,15 +985,15 @@ export default function OmnichannelInboxPage() {
               <div className="space-y-1 font-mono">
                 <div className="flex justify-between text-[11px]">
                   <span className="text-[#5A6E71]">Program Fee:</span>
-                  <span className="font-bold text-[#1C2527]">₹{(activeThread.totalFee || 45135).toLocaleString("en-IN")}</span>
+                  <span suppressHydrationWarning className="font-bold text-[#1C2527]">₹{(activeThread.totalFee || 45135).toLocaleString("en-IN")}</span>
                 </div>
                 <div className="flex justify-between text-[11px]">
                   <span className="text-[#5A6E71]">Amount Paid:</span>
-                  <span className="font-bold text-[#2E7559]">₹{(activeThread.amountPaid || 0).toLocaleString("en-IN")}</span>
+                  <span suppressHydrationWarning className="font-bold text-[#2E7559]">₹{(activeThread.amountPaid || 0).toLocaleString("en-IN")}</span>
                 </div>
                 <div className="flex justify-between text-[11px] pt-1 border-t border-[rgba(71,86,87,0.1)]">
                   <span className="text-[#5A6E71]">Balance Due:</span>
-                  <span className="font-black text-[#B07238]">₹{(activeThread.balanceDue || 0).toLocaleString("en-IN")}</span>
+                  <span suppressHydrationWarning className="font-black text-[#B07238]">₹{(activeThread.balanceDue || 0).toLocaleString("en-IN")}</span>
                 </div>
               </div>
             </div>
@@ -1021,9 +1031,22 @@ export default function OmnichannelInboxPage() {
   );
 }
 
+function formatMessageTime(isoString) {
+  if (!isoString) return "";
+  const d = new Date(isoString);
+  if (isNaN(d.getTime())) return "";
+  let hours = d.getHours();
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+  const ampm = hours >= 12 ? "pm" : "am";
+  hours = hours % 12 || 12;
+  return `${hours}:${minutes} ${ampm}`;
+}
+
 function formatTimeAgo(isoString) {
   if (!isoString) return "";
-  const diffMs = Date.now() - new Date(isoString).getTime();
+  const date = new Date(isoString);
+  if (isNaN(date.getTime())) return "";
+  const diffMs = Math.max(0, Date.now() - date.getTime());
   const diffMins = Math.round(diffMs / (1000 * 60));
   if (diffMins < 1) return "Just now";
   if (diffMins < 60) return `${diffMins}m ago`;

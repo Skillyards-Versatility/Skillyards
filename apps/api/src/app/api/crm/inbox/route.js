@@ -180,5 +180,5 @@ async function getInboxThreadsHandler(req, { ctx }) {
   }
 }
 
-export const GET = createProtectedRoute(canAccessCrm, getInboxThreadsHandler);
+export const GET = createProtectedRoute(getInboxThreadsHandler, { policy: canAccessCrm });
 export { runtimeThreads };

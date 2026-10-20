@@ -116,8 +116,15 @@ export function InstallmentReceiptModal({ isOpen, onClose, data }) {
     window.open(`https://wa.me/${targetPhone}?text=${text}`, "_blank");
   };
 
+  if (!isOpen || !plan || !receipt) return null;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm overflow-y-auto print:p-0 print:bg-white">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm overflow-y-auto print:p-0 print:bg-white"
+    >
       <div className="relative w-full max-w-2xl bg-[#FAF6EE] rounded-2xl shadow-2xl border border-[rgba(71,86,87,0.22)] overflow-hidden my-8 print:shadow-none print:border-none print:my-0">
         
         {/* Cockpit Top Bar - Hidden on print */}

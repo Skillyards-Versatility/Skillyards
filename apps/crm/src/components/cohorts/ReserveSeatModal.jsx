@@ -84,10 +84,17 @@ export function ReserveSeatModal({ isOpen, onClose, cohort, onSeatReserved }) {
     }
   };
 
+  if (!isOpen || !cohort) return null;
+
   const whatsappMessage = `Hi ${studentName || "Candidate"}, your seat for ${cohort.name} (${cohort.courseName}) has been temporarily reserved with a token deposit of ₹${tokenAmount.toLocaleString("en-IN")}. Your seat reservation is locked for the next ${holdHours} hours until ${new Date(Date.now() + holdHours * 3600000).toLocaleString("en-IN")}. Please complete the balance admission procedure before expiration to guarantee your batch seat. - Skillyards Admissions Team`;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm overflow-y-auto animate-fadeIn">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm overflow-y-auto animate-fadeIn"
+    >
       <div className="relative w-full max-w-lg bg-[#FAF6EE] rounded-2xl shadow-2xl border border-[rgba(71,86,87,0.22)] overflow-hidden my-8 animate-slideDown">
         {/* Cockpit Top Bar */}
         <div className="bg-[#0c1316] text-white px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)]">

@@ -147,7 +147,7 @@ export function BulkOutreachModal({ isOpen, onClose, selectedLeads = [], onBatch
   const getPersonalizedMessage = (lead) => {
     const rawName = lead.fullName || lead.name || "Student";
     const rep = lead.assignedToUserName || currentUser?.name || "Admissions Team";
-    const course = lead.enquiryCourse || "Full Stack & AI Accelerator";
+    const course = lead.courseInterest || lead.courseName || lead.enquiryCourse || "Full Stack Web Development (MERN)";
 
     return currentTemplate.body
       .replaceAll("{{candidate_name}}", rawName)
@@ -162,8 +162,9 @@ export function BulkOutreachModal({ isOpen, onClose, selectedLeads = [], onBatch
       alert("No valid phone number for this lead");
       return;
     }
+    const targetPhone = phone.length === 10 ? `91${phone}` : (phone.startsWith("91") && phone.length === 12 ? phone : `91${phone}`);
     const message = getPersonalizedMessage(lead);
-    const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    const waUrl = `https://wa.me/${targetPhone}?text=${encodeURIComponent(message)}`;
     window.open(waUrl, "_blank", "noopener,noreferrer");
     setDispatchedLeads((prev) => ({ ...prev, [lead.id]: true }));
   };
@@ -241,8 +242,15 @@ export function BulkOutreachModal({ isOpen, onClose, selectedLeads = [], onBatch
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm animate-fadeIn">
+    <div
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm animate-fadeIn"
+    >
       <div className="bg-[#FAF6EE] border border-[rgba(71,86,87,0.25)] rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-scaleUp">
         {/* Obsidian Cockpit Header */}
         <div className="px-5 py-4 bg-[#0c1316] text-[#FAF6EE] border-b border-[rgba(98,146,158,0.2)] flex items-center justify-between shrink-0">
