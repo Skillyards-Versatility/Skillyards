@@ -524,8 +524,17 @@ export default function LeadDetailPage() {
             title="Send WhatsApp, Email, or SMS outreach"
           >
             <MessageSquare className="w-3.5 h-3.5 text-[#25D366]" />
-            <span>Outreach</span>
+            <span>Quick Outreach</span>
           </button>
+
+          <Link
+            href="/inbox"
+            className="crm-btn-secondary !bg-white hover:!bg-[#FAF6EE] text-[#1C2527] shadow-xs cursor-pointer flex items-center gap-1.5"
+            title="Open full 2-way conversation in Omnichannel Inbox"
+          >
+            <MessageSquare className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <span>Chat in Inbox</span>
+          </Link>
 
           <button
             onClick={handleCopyContact}

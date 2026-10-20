@@ -313,6 +313,53 @@ All modal dialogs and slide-over drawers now feature the unified `#0c1316` cockp
   - Direct link in Admissions & Fees header (`/admissions` ➔ `Installments Desk`).
   - Candidate profile (`/leads/[id]`) renders verified green tuition payment badges and links directly to fee vouchers.
 
+### 17. Unified Omnichannel Communications & WhatsApp Conversation Center (`/inbox`)
+- **Centralized 3-Pane Conversational Cockpit:**
+  - A modern, high-speed Slack & WhatsApp Web-style workspace designed for telecallers and counsellors to manage two-way prospect communications without context switching.
+- **Left Pane — Candidate Conversation Threads Roster:**
+  - Real-time conversation stream with search and channel filter tabs (*All*, *WhatsApp*, *Unread*, *In Cadence*).
+  - Shows candidate monogram avatar, online status badge, course interest tag, unread notification counter, and relative time elapsed (*"12m ago"*, *"1h ago"*).
+- **Center Pane — Live Chat Window & Multi-Channel Composer:**
+  - Chronological message history stream with incoming student queries, outgoing messages with delivery checkmarks (`✓✓`), and centered system events (*Counselling scheduled*, *Cadence step dispatched*, *Fee receipt issued*).
+  - **Quick EdTech Macros & Templates Strip:**
+    - Instant 1-click response chips: *Brochure Link 📄*, *1-on-1 Counselling 📅*, *30% Merit Scholarship 🏷️*, *0% EMI Schedule 💳*, and *Class Timings ⏰*.
+    - Clicking any macro pre-fills and interpolates candidate name & program into the composer automatically.
+  - **Dynamic Token Injection:** One-click insert pills for `{{candidate_name}}`, `{{course_name}}`, `{{counsellor_name}}`, and `{{crm_phone}}`.
+  - **Multi-Channel Dispatch Selector:** Seamlessly switch between **WhatsApp Web** (`#25D366`), **Direct Email** (`#4A6D7C`), and **SMS** (`#B07238`).
+  - **1-Click WhatsApp Web Trigger:** Automatically formats deep-link `https://wa.me/...` with URL-encoded message text and launches in a new tab upon sending.
+- **Right Pane — Candidate Intelligence Dossier:**
+  - Candidate identity card with contact details, assigned representative, and interactive **Lifecycle Stage Selector** (*New*, *Contacted*, *Follow-up*, *Counselling Scheduled*, *Qualified*, *Converted*).
+  - Program interest & cohort batch allocation.
+  - **Tuition & Receivables Ledger:** Live breakdown of Total Course Fee, Amount Paid, and Balance Due with direct deep link to the Installments Desk.
+  - **Internal Rep Notes Pad:** Private sales objection and callback notes persisted locally per candidate.
+  - Direct Softphone Call trigger (`Phone`) and full profile inspection link.
+- **Full Backend API & Audit Integration:**
+  - Connected to `GET /api/crm/inbox`, `GET /api/crm/inbox/[id]`, and `POST /api/crm/inbox/[id]`.
+  - Automatically writes `OUTREACH_SENT` immutable audit entries to `crmAuditEvents` and updates lead interaction timelines.
+
+### 18. Marketing Campaign ROI & Lead Source Attribution Desk (`/campaigns`)
+- **End-to-End Ad Spend & Attribution Analytics:**
+  - Full-funnel marketing intelligence dashboard designed for sales leadership and growth marketers to track multi-channel performance across Meta Ads (Instagram/Facebook), Google Search Ads (CPC), YouTube TrueView, LinkedIn Ads (B2B Career Switchers), College Offline Hackathons, and Alumni Referral ambassadors.
+- **4 Operational Marketing & Revenue KPIs:**
+  - **Total Ad Spend Budget:** Aggregated spend tracking against allocated budgets with utilization pacing.
+  - **Leads Acquired & Blended CPL:** Total inbound prospect volume and blended Cost Per Lead (₹).
+  - **Blended Customer Acquisition Cost (CAC):** True customer acquisition cost per enrolled student.
+  - **Return on Ad Spend (RoAS Multiplier):** Realized tuition revenue divided by ad spend (e.g. `17.4x 🔥`), validating marketing profitability.
+- **Interactive UTM Campaign Link Builder (`CreateCampaignModal.jsx`):**
+  - Configures campaign title, target course program, budget, and live date ranges.
+  - Dynamic UTM parameter constructor (`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`).
+  - Real-time generated tracking link preview (e.g. `https://skillyards.com/courses?utm_source=meta&utm_medium=paid_social&utm_campaign=...`) with 1-click clipboard copy.
+- **Channel Performance Comparison Strip:**
+  - Visual comparison cards tracking spend, inquiries, closed admissions, and RoAS across all 6 acquisition channels.
+- **Attribution Ledger & Conversion Waterfall Drawer (`CampaignDetailsDrawer.jsx`):**
+  - Slide-over inspection drawer with complete 5-stage conversion waterfall:
+    *Ad Impressions* ➔ *Ad Clicks (CTR %)* ➔ *Lead Inquiries (LP Conv %)* ➔ *Counselling Sessions Conducted* ➔ *Admissions Enrolled*.
+  - **Top Closing Sales Reps:** Dynamic sales leaderboard ranking counsellors who closed the most admissions from each specific campaign.
+  - 1-Click Campaign Attribution CSV export (`skillyards-campaign-attribution-YYYY-MM-DD.csv`).
+- **Full Backend API & Audit Integration:**
+  - Connected to `GET /api/crm/campaigns`, `POST /api/crm/campaigns`, and `PATCH /api/crm/campaigns/[id]`.
+  - Writes `CAMPAIGN_CREATED` and `CAMPAIGN_UPDATED` immutable audit records to `crmAuditEvents`.
+
 ---
 
 ## 🛠️ Tech Stack & Architecture
