@@ -6,11 +6,15 @@ import { CrmHeader } from "@/components/layout/CrmHeader";
 import { NewLeadModal } from "@/components/leads/NewLeadModal";
 import { Keyboard, X } from "lucide-react";
 
-export default function DashboardLayout({ children }) {
+import { TelephonyProvider, useTelephony } from "@/context/TelephonyContext";
+import { SoftphoneDrawer } from "@/components/telephony/SoftphoneDrawer";
+
+function DashboardLayoutContent({ children }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showShortcutsModal, setShowShortcutsModal] = useState(false);
+  const { setIsSoftphoneOpen, isSoftphoneOpen, callState } = useTelephony();
 
-  // Global hotkeys: 'N' for New Lead, '?' for shortcuts, 'Escape' to close
+  // Global hotkeys: 'N' for New Lead, 'D' for Dialer, '?' for shortcuts, 'Escape' to close
   useEffect(() => {
     const handleKeyDown = (e) => {
       const activeTag = document.activeElement?.tagName;
@@ -19,17 +23,23 @@ export default function DashboardLayout({ children }) {
       if (e.key === "n" || e.key === "N") {
         e.preventDefault();
         setIsModalOpen(true);
+      } else if (e.key === "d" || e.key === "D") {
+        e.preventDefault();
+        setIsSoftphoneOpen((prev) => !prev);
       } else if (e.key === "?") {
         e.preventDefault();
         setShowShortcutsModal((prev) => !prev);
       } else if (e.key === "Escape") {
         setIsModalOpen(false);
         setShowShortcutsModal(false);
+        if (callState === "IDLE") {
+          setIsSoftphoneOpen(false);
+        }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  }, [callState, setIsSoftphoneOpen]);
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F0E6D6] text-[#1C2527] selection:bg-[#4A6D7C]/30 selection:text-[#1C2527]">
@@ -42,11 +52,14 @@ export default function DashboardLayout({ children }) {
         <main className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto">{children}</main>
       </div>
 
+      {/* Persistent Floating Softphone Widget & Disposition Runner */}
+      <SoftphoneDrawer />
+
       {/* Keyboard Shortcuts Floating Trigger */}
       <div className="fixed bottom-4 right-4 z-30 hidden sm:block">
         <button
           onClick={() => setShowShortcutsModal(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0c1316]/90 hover:bg-[#0c1316] text-[#FAF6EE] text-[11px] font-medium shadow-lg border border-[rgba(98,146,158,0.25)] backdrop-blur-md transition-all active:scale-95"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#0c1316]/90 hover:bg-[#0c1316] text-[#FAF6EE] text-[11px] font-medium shadow-lg border border-[rgba(98,146,158,0.25)] backdrop-blur-md transition-all active:scale-95 cursor-pointer"
           title="Press '?' for keyboard shortcuts"
         >
           <Keyboard className="w-3.5 h-3.5 text-[#62929e]" />
@@ -75,6 +88,7 @@ export default function DashboardLayout({ children }) {
             <div className="p-5 space-y-3">
               {[
                 { key: "N", desc: "Open Register New Lead modal from anywhere" },
+                { key: "D", desc: "Toggle Telecalling Softphone Dialer" },
                 { key: "/", desc: "Focus Global Search in top navbar" },
                 { key: "?", desc: "Toggle this Keyboard Shortcuts guide" },
                 { key: "Esc", desc: "Close any open modal or dropdown" },
@@ -115,5 +129,13 @@ export default function DashboardLayout({ children }) {
         />
       )}
     </div>
+  );
+}
+
+export default function DashboardLayout({ children }) {
+  return (
+    <TelephonyProvider>
+      <DashboardLayoutContent>{children}</DashboardLayoutContent>
+    </TelephonyProvider>
   );
 }

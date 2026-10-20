@@ -140,8 +140,9 @@ Read the documents in this order:
 7. [`07-conversion-notifications-workers-detailed.md`](./07-conversion-notifications-workers-detailed.md) — Admission conversion, authoritative enrolment milestones, notifications, transactional outbox, background jobs, retries, and operations.
 8. [`08-api-contracts-detailed.md`](./08-api-contracts-detailed.md) — Proposed REST contracts, request/response envelopes, error codes, pagination, idempotency, and API tests.
 9. [`09-implementation-and-acceptance-detailed.md`](./09-implementation-and-acceptance-detailed.md) — Phased delivery, milestones, exit gates, tests, rollout, risk register, and sign-off.
+10. [`TELECALLING_DIALER_ARCHITECTURE_GUIDE.md`](./TELECALLING_DIALER_ARCHITECTURE_GUIDE.md) — Telecalling softphone dialer architecture, WebRTC vs GSM comparison, state machine, audio synthesizer, and EOD attribution integration.
 
-This README is the tenth file and serves as the navigation and governance layer for the document set.
+This README is the index and governance layer for the document set.
 
 ## 3. Current-system context
 

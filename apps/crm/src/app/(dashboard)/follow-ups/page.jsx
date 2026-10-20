@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
+import { useTelephony } from "@/context/TelephonyContext";
 
 const FALLBACK_FOLLOW_UPS_DATA = {
   counts: { overdue: 1, dueToday: 2, upcoming: 1, completed: 1, totalActive: 4 },
@@ -86,6 +87,7 @@ const FALLBACK_FOLLOW_UPS_DATA = {
 
 export default function FollowUpsPage() {
   const { user } = useAuth();
+  const { startCall } = useTelephony();
 
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
@@ -474,14 +476,22 @@ export default function FollowUpsPage() {
                   {!isCompleted && (
                     <>
                       {task.leadPhone && (
-                        <a
-                          href={`tel:${task.leadPhone}`}
-                          className="crm-btn-call shadow-xs"
-                          title="Call phone directly"
+                        <button
+                          type="button"
+                          onClick={() =>
+                            startCall({
+                              leadId: task.leadId,
+                              name: task.leadFullName,
+                              phone: task.leadPhone,
+                              courseInterest: "Scheduled Callback",
+                            })
+                          }
+                          className="crm-btn-call shadow-xs cursor-pointer"
+                          title="Call with Softphone"
                         >
                           <Phone className="w-3.5 h-3.5" />
                           <span>Call</span>
-                        </a>
+                        </button>
                       )}
 
                       <button
