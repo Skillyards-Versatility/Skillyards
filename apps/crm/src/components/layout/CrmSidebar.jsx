@@ -62,13 +62,13 @@ const SECTION_DETAILS = {
     category: "Lead Operations",
     items: [
       { label: "All Registered Leads", href: "/leads" },
-      { label: "New Prospects", href: "/leads", count: 9 },
-      { label: "Contacted Leads", href: "/leads" },
-      { label: "In Follow-up", href: "/leads" },
-      { label: "Counselling Scheduled", href: "/leads" },
-      { label: "Qualified Prospects", href: "/leads", count: 4 },
-      { label: "Converted / Closed", href: "/leads" },
-      { label: "Cold / Lost", href: "/leads" },
+      { label: "New Prospects", href: "/leads?status=new", count: 9 },
+      { label: "Contacted Leads", href: "/leads?status=contacted" },
+      { label: "In Follow-up", href: "/leads?status=follow_up" },
+      { label: "Counselling Scheduled", href: "/leads?status=counselling_scheduled" },
+      { label: "Qualified Prospects", href: "/leads?status=qualified", count: 4 },
+      { label: "Converted / Closed", href: "/leads?status=converted" },
+      { label: "Cold / Lost", href: "/leads?status=lost" },
     ],
   },
   "/campaigns": {
@@ -76,8 +76,8 @@ const SECTION_DETAILS = {
     category: "Marketing & Growth",
     items: [
       { label: "Active Campaigns", href: "/campaigns" },
-      { label: "Channel Performance", href: "/campaigns" },
-      { label: "Launch Campaign & UTM", href: "/campaigns" },
+      { label: "Channel Performance", href: "/campaigns?tab=performance" },
+      { label: "Launch Campaign & UTM", href: "/campaigns?tab=create" },
       { label: "Leads Pipeline", href: "/leads" },
     ],
   },
@@ -86,8 +86,8 @@ const SECTION_DETAILS = {
     category: "Data Hygiene",
     items: [
       { label: "Pending Resolution", href: "/duplicates", count: 1 },
-      { label: "Merge History", href: "/duplicates" },
-      { label: "Audit Logs", href: "/duplicates" },
+      { label: "Merge History", href: "/duplicates?tab=history" },
+      { label: "Audit Logs", href: "/duplicates?tab=audit" },
     ],
   },
   "/queue": {
@@ -96,7 +96,7 @@ const SECTION_DETAILS = {
     items: [
       { label: "Active Lead Queue", href: "/queue" },
       { label: "Overdue Follow-up Calls", href: "/follow-ups" },
-      { label: "High Priority Prospects", href: "/leads" },
+      { label: "High Priority Prospects", href: "/leads?status=qualified" },
     ],
   },
   "/follow-ups": {
@@ -104,8 +104,8 @@ const SECTION_DETAILS = {
     category: "Schedule & Agenda",
     items: [
       { label: "Today's Agenda", href: "/follow-ups" },
-      { label: "Overdue Reminders", href: "/follow-ups" },
-      { label: "Next 7 Days", href: "/follow-ups" },
+      { label: "Overdue Reminders", href: "/follow-ups?filter=overdue" },
+      { label: "Next 7 Days", href: "/follow-ups?filter=upcoming" },
     ],
   },
   "/inbox": {
@@ -113,9 +113,9 @@ const SECTION_DETAILS = {
     category: "Conversational Sales",
     items: [
       { label: "All Active Chats", href: "/inbox" },
-      { label: "WhatsApp Direct", href: "/inbox" },
-      { label: "Unread Messages", href: "/inbox", count: 3 },
-      { label: "Cadence Drip Replies", href: "/inbox" },
+      { label: "WhatsApp Direct", href: "/inbox?channel=whatsapp" },
+      { label: "Unread Messages", href: "/inbox?filter=unread", count: 3 },
+      { label: "Cadence Drip Replies", href: "/inbox?filter=cadence" },
     ],
   },
   "/counselling": {
@@ -123,8 +123,8 @@ const SECTION_DETAILS = {
     category: "Student Admissions",
     items: [
       { label: "Scheduled Today", href: "/counselling" },
-      { label: "Session Outcomes", href: "/counselling" },
-      { label: "Enrolled Students", href: "/counselling" },
+      { label: "Session Outcomes", href: "/counselling?tab=outcomes" },
+      { label: "Enrolled Students", href: "/counselling?tab=enrolled" },
     ],
   },
   "/admissions": {
@@ -132,8 +132,8 @@ const SECTION_DETAILS = {
     category: "Financials & Cohorts",
     items: [
       { label: "Enrolled Students", href: "/admissions" },
-      { label: "Tuition Collections", href: "/admissions" },
-      { label: "0% EMI Loan Approvals", href: "/admissions" },
+      { label: "Tuition Collections", href: "/admissions?tab=collections" },
+      { label: "0% EMI Loan Approvals", href: "/admissions?tab=emi" },
       { label: "Pending Receivables", href: "/installments" },
     ],
   },
@@ -142,8 +142,8 @@ const SECTION_DETAILS = {
     category: "Financials & Receivables",
     items: [
       { label: "Receivables Ledger", href: "/installments" },
-      { label: "Overdue Alerts", href: "/installments" },
-      { label: "Upcoming 30 Days", href: "/installments" },
+      { label: "Overdue Alerts", href: "/installments?filter=overdue" },
+      { label: "Upcoming 30 Days", href: "/installments?filter=upcoming" },
       { label: "Admissions Hub", href: "/admissions" },
     ],
   },
@@ -152,8 +152,8 @@ const SECTION_DETAILS = {
     category: "Gamification & Payroll",
     items: [
       { label: "Sales Leaderboard", href: "/incentives" },
-      { label: "Commission Calculator", href: "/incentives" },
-      { label: "Manager Approval Ledger", href: "/incentives" },
+      { label: "Commission Calculator", href: "/incentives?tab=calculator" },
+      { label: "Manager Approval Ledger", href: "/incentives?tab=approvals" },
       { label: "Admissions Hub", href: "/admissions" },
     ],
   },
@@ -162,8 +162,8 @@ const SECTION_DETAILS = {
     category: "EdTech Operations",
     items: [
       { label: "Active Live Cohorts", href: "/cohorts" },
-      { label: "Capacity & Seat Ledger", href: "/cohorts" },
-      { label: "Faculty Allocations", href: "/cohorts" },
+      { label: "Capacity & Seat Ledger", href: "/cohorts?tab=capacity" },
+      { label: "Faculty Allocations", href: "/cohorts?tab=faculty" },
       { label: "Admissions Pipeline", href: "/admissions" },
     ],
   },
@@ -172,8 +172,8 @@ const SECTION_DETAILS = {
     category: "Lead Nurturing",
     items: [
       { label: "All Cadence Flows", href: "/cadences" },
-      { label: "WhatsApp Sequences", href: "/cadences" },
-      { label: "Email Auto-Drips", href: "/cadences" },
+      { label: "WhatsApp Sequences", href: "/cadences?channel=whatsapp" },
+      { label: "Email Auto-Drips", href: "/cadences?channel=email" },
       { label: "Omnichannel Inbox", href: "/inbox" },
     ],
   },
@@ -182,8 +182,8 @@ const SECTION_DETAILS = {
     category: "EOD Telecalling",
     items: [
       { label: "Daily Call Logs", href: "/eod" },
-      { label: "Connect Targets", href: "/eod" },
-      { label: "Supervisor Review", href: "/eod" },
+      { label: "Connect Targets", href: "/eod?tab=targets" },
+      { label: "Supervisor Review", href: "/eod?tab=review" },
     ],
   },
 };
@@ -195,9 +195,15 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
   const { openSoftphone } = useTelephony();
 
   const [expandedSection, setExpandedSection] = useState(null);
+  const [selectedSubHref, setSelectedSubHref] = useState("");
 
-  const audioRef = useRef(null);
-  const lastSoundPlayedRef = useRef(0);
+  // Sync active URL including query parameters
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const full = window.location.pathname + window.location.search;
+      setSelectedSubHref(full);
+    }
+  }, [pathname]);
 
   // Auto-expand section that matches current URL
   useEffect(() => {
@@ -344,26 +350,51 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
 
               {/* Submenu Accordion */}
               {item.hasSubmenu && isExpanded && subItems.length > 0 && (
-                <div className="ml-14 pl-2 pr-2 py-1 space-y-0.5 border-l-2 border-[#7C3AED]/25 animate-in slide-in-from-top-1 duration-150">
+                <div className="ml-14 pl-2 pr-2 py-1 space-y-1 border-l-2 border-[#7C3AED]/20 animate-in slide-in-from-top-1 duration-150">
                   {subItems.map((sub, idx) => {
-                    const isSubActive = pathname === sub.href;
+                    const isSubActive =
+                      selectedSubHref === sub.href ||
+                      (!selectedSubHref && pathname === sub.href && !sub.href.includes("?")) ||
+                      (selectedSubHref === pathname && sub.href === pathname);
+
                     return (
                       <Link
                         key={idx}
                         href={sub.href}
                         onClick={() => {
                           playClickSound();
+                          setSelectedSubHref(sub.href);
+                          if (typeof window !== "undefined") {
+                            window.dispatchEvent(new CustomEvent("lead-status-filter-change"));
+                          }
                           if (isMobile && onMobileClose) onMobileClose();
                         }}
-                        className={`flex items-center justify-between px-3 py-1.5 rounded-xl text-xs transition-colors ${
+                        className={`group/sub flex items-center justify-between px-3.5 py-2 rounded-2xl text-xs transition-all duration-150 cursor-pointer ${
                           isSubActive
-                            ? "bg-[#7C3AED]/15 text-[#7C3AED] font-bold"
-                            : "text-[#64748B] hover:text-[#1E293B] hover:bg-slate-100/70 font-medium"
+                            ? "bg-[#EDE9FE] text-[#7C3AED] font-bold shadow-xs"
+                            : "bg-transparent text-slate-600 hover:text-[#7C3AED] hover:bg-[#EDE9FE] hover:font-bold font-medium"
                         }`}
                       >
-                        <span className="truncate">{sub.label}</span>
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          {/* Visual clickable list dot */}
+                          <span
+                            className={`w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-150 ${
+                              isSubActive
+                                ? "bg-[#7C3AED] scale-125"
+                                : "bg-slate-300 group-hover/sub:bg-[#7C3AED] group-hover/sub:scale-125"
+                            }`}
+                          />
+                          <span className="truncate">{sub.label}</span>
+                        </div>
+
                         {sub.count !== undefined && (
-                          <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-[#7C3AED]/10 text-[#7C3AED] font-bold">
+                          <span
+                            className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full transition-colors ${
+                              isSubActive
+                                ? "bg-[#7C3AED]/20 text-[#7C3AED]"
+                                : "bg-slate-100 text-slate-500 group-hover/sub:bg-[#7C3AED]/20 group-hover/sub:text-[#7C3AED]"
+                            }`}
+                          >
                             {sub.count}
                           </span>
                         )}

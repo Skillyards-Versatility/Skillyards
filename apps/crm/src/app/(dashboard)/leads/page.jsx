@@ -233,6 +233,24 @@ export default function LeadsDirectoryPage() {
     }
   };
 
+  // Sync status filter from URL if present (e.g. ?status=new)
+  useEffect(() => {
+    const syncStatusFromUrl = () => {
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        const s = params.get("status") || "";
+        setStatusFilter((prev) => (prev !== s ? s : prev));
+      }
+    };
+    syncStatusFromUrl();
+    window.addEventListener("popstate", syncStatusFromUrl);
+    window.addEventListener("lead-status-filter-change", syncStatusFromUrl);
+    return () => {
+      window.removeEventListener("popstate", syncStatusFromUrl);
+      window.removeEventListener("lead-status-filter-change", syncStatusFromUrl);
+    };
+  }, []);
+
   useEffect(() => {
     fetchLeads();
     // Clear selection on filter tab change
