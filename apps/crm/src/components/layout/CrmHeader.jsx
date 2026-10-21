@@ -160,7 +160,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
   };
 
   return (
-    <header className="h-16 px-3 sm:px-6 bg-[#0c1316] border-b border-[rgba(98,146,158,0.15)] flex items-center justify-between sticky top-0 z-40 shadow-md w-full">
+    <header className="h-16 px-3 sm:px-6 bg-[#EDE9FE] border-b border-[#7C3AED]/20 flex items-center justify-between sticky top-0 z-40 shadow-xs w-full">
       {/* Left: Mobile Drawer Hamburger + Skillyards Logo + Search */}
       <div className="flex items-center gap-2 sm:gap-6 min-w-0">
         {/* Mobile Hamburger Drawer Button */}
@@ -168,9 +168,9 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
           type="button"
           onClick={onMenuToggle}
           aria-label="Toggle navigation drawer"
-          className="md:hidden p-2 rounded-xl text-[#7e939a] hover:text-white hover:bg-[rgba(98,146,158,0.15)] transition-colors active:scale-95 cursor-pointer shrink-0"
+          className="md:hidden p-2 rounded-xl text-[#7C3AED] hover:text-[#6D28D9] hover:bg-white/70 transition-colors active:scale-95 cursor-pointer shrink-0"
         >
-          {isMobileSidebarOpen ? <X className="w-5 h-5 text-white" /> : <Menu className="w-5 h-5" />}
+          {isMobileSidebarOpen ? <X className="w-5 h-5 text-[#7C3AED]" /> : <Menu className="w-5 h-5" />}
         </button>
 
         <Link
@@ -179,7 +179,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
           className="flex items-center group transition-transform active:scale-95 shrink-0"
         >
           <img
-            src="/logo/logo-light.svg"
+            src="/logo/logo-dark.svg"
             alt="Skillyards Logo"
             className="h-7 sm:h-8 w-auto object-contain transition-opacity group-hover:opacity-90"
           />
@@ -193,20 +193,20 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search leads (Press '/' to focus)..."
-            className="w-full bg-[#131d21] border border-[rgba(98,146,158,0.25)] rounded-lg pl-3.5 pr-14 py-1.5 text-xs text-white placeholder-[#7e939a] outline-none focus:border-[#62929e] focus:bg-[#162227] focus:ring-1 focus:ring-[#62929e]/40 transition-all"
+            className="w-full bg-white/90 border border-[#7C3AED]/25 rounded-xl pl-3.5 pr-14 py-1.5 text-xs text-slate-800 placeholder-slate-400 outline-none focus:border-[#7C3AED] focus:bg-white focus:ring-2 focus:ring-[#7C3AED]/20 shadow-xs transition-all"
           />
           <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-            <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[9.5px] font-mono text-[#7e939a] bg-[#0c1316] border border-[rgba(98,146,158,0.2)] rounded">
+            <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[9.5px] font-mono text-slate-400 bg-slate-100 border border-slate-200 rounded">
               /
             </kbd>
-            <Search className="w-3.5 h-3.5 text-[#7e939a] pointer-events-none" />
+            <Search className="w-3.5 h-3.5 text-slate-400 pointer-events-none" />
           </div>
         </form>
       </div>
 
       {/* Mobile Search Overlay Bar */}
       {showMobileSearch && (
-        <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#0c1316] border-b border-[rgba(98,146,158,0.25)] p-3 z-50 shadow-2xl animate-in slide-in-from-top-2 duration-150">
+        <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#EDE9FE] border-b border-[#7C3AED]/25 p-3 z-50 shadow-xl animate-in slide-in-from-top-2 duration-150">
           <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
             <div className="relative flex-1">
               <input
@@ -215,20 +215,20 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search leads by name, phone or email..."
-                className="w-full bg-[#131d21] border border-[rgba(98,146,158,0.35)] rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-[#7e939a] outline-none focus:border-[#62929e]"
+                className="w-full bg-white border border-[#7C3AED]/30 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 outline-none focus:border-[#7C3AED]"
               />
-              <Search className="w-4 h-4 text-[#7e939a] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
             <button
               type="submit"
-              className="crm-btn-primary !py-2 !px-3 text-xs shrink-0"
+              className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-bold !py-2 !px-3 rounded-xl text-xs shrink-0 shadow-xs"
             >
               Search
             </button>
             <button
               type="button"
               onClick={() => setShowMobileSearch(false)}
-              className="p-2 text-[#7e939a] hover:text-white rounded-lg transition-colors shrink-0"
+              className="p-2 text-slate-500 hover:text-slate-800 rounded-lg transition-colors shrink-0"
               title="Close search"
             >
               <X className="w-4 h-4" />
@@ -244,7 +244,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
           type="button"
           onClick={() => setShowMobileSearch((prev) => !prev)}
           aria-label="Toggle mobile search"
-          className="sm:hidden p-2 text-[#7e939a] hover:text-white hover:bg-[rgba(98,146,158,0.12)] rounded-lg transition-colors active:scale-95"
+          className="sm:hidden p-2 text-[#6D28D9] hover:text-[#7C3AED] hover:bg-white/70 rounded-xl transition-colors active:scale-95"
           title="Search Leads"
         >
           <Search className="w-4 h-4" />
@@ -255,12 +255,12 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
           <button
             type="button"
             onClick={() => setShowRoleSwitcher((prev) => !prev)}
-            className="p-1.5 sm:px-2.5 sm:py-1 rounded-full bg-[rgba(98,146,158,0.15)] hover:bg-[rgba(98,146,158,0.22)] border border-[rgba(98,146,158,0.3)] text-[11px] font-semibold text-[#a2c4cc] flex items-center gap-1 shadow-xs transition-colors"
+            className="p-1.5 sm:px-2.5 sm:py-1 rounded-full bg-white/80 hover:bg-white border border-[#7C3AED]/25 text-[11px] font-semibold text-[#6D28D9] flex items-center gap-1 shadow-xs transition-colors"
             title={`Persona: ${primaryRole.replace(/_/g, " ")} (Click to switch)`}
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-[#62929e] shrink-0" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#7C3AED] shrink-0" />
             <span className="hidden sm:inline capitalize truncate">{primaryRole.replace(/_/g, " ")}</span>
-            <ChevronDown className="w-3 h-3 text-[#7e939a] shrink-0 hidden sm:inline" />
+            <ChevronDown className="w-3 h-3 text-[#7C3AED]/60 shrink-0 hidden sm:inline" />
           </button>
 
           {showRoleSwitcher && (
@@ -321,12 +321,12 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
             type="button"
             onClick={() => setShowNotifications((prev) => !prev)}
             aria-label="View notifications"
-            className="p-2 relative text-[#7e939a] hover:text-white hover:bg-[rgba(98,146,158,0.12)] rounded-lg transition-colors active:scale-95"
+            className="p-2 relative text-[#6D28D9] hover:text-[#7C3AED] hover:bg-white/80 rounded-xl transition-colors active:scale-95"
             title="Activity Notifications"
           >
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
-              <span className="w-2 h-2 rounded-full bg-[#62929e] absolute top-2 right-2 ring-2 ring-[#0c1316] shadow-[0_0_6px_#62929e]" />
+              <span className="w-2 h-2 rounded-full bg-[#7C3AED] absolute top-2 right-2 ring-2 ring-[#EDE9FE] shadow-[0_0_6px_rgba(124,58,237,0.5)]" />
             )}
           </button>
 
@@ -400,7 +400,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
         {/* Fast Action */}
         <button
           onClick={onNewLeadClick}
-          className="crm-btn-primary shadow-sm hover:shadow-[#4A6D7C]/30 text-xs !py-1.5 !px-3 sm:!px-4"
+          className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-bold text-xs !py-1.5 !px-3 sm:!px-4 rounded-xl shadow-sm hover:shadow-md hover:shadow-[#7C3AED]/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
           title="Shortcut: Press 'N'"
         >
           <Plus className="w-3.5 h-3.5" />
