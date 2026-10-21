@@ -261,20 +261,20 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
     <div className="flex shrink-0 h-full select-none">
       {/* =========================================================================
           TIER 1: PRIMARY ACTIVITY BAR (Narrow Vertical Icon Strip ~56px)
-          Always visible, clean, high-precision dark aesthetic matching VS Code / top navbar
+          Lavender aesthetic (#EDE9FE) matching CRM purple branding
           ========================================================================= */}
-      <div className="w-14 bg-[#0c1316] border-r border-[rgba(98,146,158,0.15)] flex flex-col items-center justify-between py-2 h-full z-20 shadow-xl overflow-hidden shrink-0">
+      <div className="w-14 bg-[#EDE9FE] border-r border-[#7C3AED]/20 flex flex-col items-center justify-between py-2 h-full z-20 shadow-xs overflow-hidden shrink-0">
         {/* Navigation Icons (Scrollable without scrollbar if viewport is short) */}
-        <div className="flex-1 flex flex-col items-center gap-1 w-full pt-0.5 overflow-y-auto overflow-x-hidden no-scrollbar">
+        <div className="flex-1 flex flex-col items-center gap-1.5 w-full pt-0.5 overflow-y-auto overflow-x-hidden no-scrollbar">
           {/* Mobile Top Dismiss Button */}
           {isMobile && (
             <button
               type="button"
               onClick={onMobileClose}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-[#8ba3aa] hover:text-white bg-[rgba(98,146,158,0.12)] border border-[rgba(98,146,158,0.25)] mb-1 shrink-0 cursor-pointer active:scale-95 transition-all"
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-[#7C3AED] hover:text-white hover:bg-[#7C3AED] bg-white/70 border border-[#7C3AED]/25 mb-1 shrink-0 cursor-pointer active:scale-95 transition-all shadow-xs"
               title="Close Drawer"
             >
-              <X className="w-4 h-4 text-white" />
+              <X className="w-4 h-4" />
             </button>
           )}
 
@@ -290,26 +290,26 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                   title={item.label}
                   className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150 cursor-pointer ${
                     isSelected
-                      ? "text-white bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.4)] shadow-sm shadow-[#62929e]/10"
-                      : "text-[#7e939a] hover:text-white hover:bg-[rgba(98,146,158,0.08)]"
+                      ? "text-white bg-[#7C3AED] shadow-md shadow-[#7C3AED]/30"
+                      : "text-[#6D28D9]/75 hover:text-[#7C3AED] hover:bg-white/80 hover:shadow-xs"
                   }`}
                 >
                   {/* Active vertical left bar indicator */}
                   {isSelected && (
-                    <span className="absolute left-0 top-1.5 bottom-1.5 w-[2.5px] bg-[#62929e] rounded-r shadow-[0_0_6px_#62929e]" />
+                    <span className="absolute left-0 top-1.5 bottom-1.5 w-[3px] bg-white rounded-r shadow-xs" />
                   )}
 
                   <Icon
                     className={`w-5 h-5 transition-colors ${
                       isSelected
-                        ? "text-[#62929e] drop-shadow-[0_0_8px_rgba(98,146,158,0.5)]"
-                        : "text-[#7e939a] group-hover:text-white"
+                        ? "text-white"
+                        : "text-[#6D28D9]/80 group-hover:text-[#7C3AED]"
                     }`}
                   />
 
                   {/* Badge Pill */}
                   {item.badge && (
-                    <span className="absolute -bottom-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#7C3AED] text-white text-[9px] font-bold flex items-center justify-center shadow-md border border-[#0c1316]">
+                    <span className="absolute -bottom-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#7C3AED] text-white text-[9px] font-bold flex items-center justify-center shadow-md border-2 border-[#EDE9FE]">
                       {item.badge}
                     </span>
                   )}
@@ -317,9 +317,9 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
 
                 {/* Floating tooltip (desktop only) */}
                 {!isMobile && (
-                  <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1 rounded-md bg-[#121c1f] border border-[rgba(98,146,158,0.25)] text-white text-xs font-medium whitespace-nowrap shadow-xl z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150 backdrop-blur-md">
+                  <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2.5 py-1 rounded-md bg-slate-900 text-white text-xs font-medium whitespace-nowrap shadow-xl z-50 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                     {item.label}
-                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-[#121c1f]" />
+                    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-slate-900" />
                   </div>
                 )}
               </div>
@@ -328,7 +328,7 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
         </div>
 
         {/* Bottom: Quick Softphone Dialer & User Profile Avatar */}
-        <div className="flex flex-col items-center gap-2.5 w-full pt-2 border-t border-[rgba(98,146,158,0.12)] shrink-0 bg-[#0c1316]">
+        <div className="flex flex-col items-center gap-2.5 w-full pt-2 border-t border-[#7C3AED]/20 shrink-0 bg-[#EDE9FE]">
           <button
             type="button"
             onClick={() => {
@@ -337,14 +337,14 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
               if (isMobile && onMobileClose) onMobileClose();
             }}
             title="Open Softphone Dialer"
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-[#7e939a] hover:text-[#62929e] hover:bg-[rgba(98,146,158,0.12)] transition-all cursor-pointer"
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-[#6D28D9] hover:text-white hover:bg-[#7C3AED] hover:shadow-sm transition-all cursor-pointer"
           >
             <PhoneCall className="w-4 h-4" />
           </button>
 
           <div
             title={`${user?.name || "User"} (${crmRoles?.[0] || "Staff"})`}
-            className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#6D28D9] text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm border border-purple-400/30 cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+            className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#6D28D9] text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm border-2 border-white cursor-pointer hover:scale-105 active:scale-95 transition-transform"
           >
             {user?.name ? user.name[0] : "P"}
           </div>
