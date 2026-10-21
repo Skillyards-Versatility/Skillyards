@@ -356,19 +356,19 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
           Can be collapsed via the close button or clicking active icon
           ========================================================================= */}
       <div
-        className={`bg-white border-r border-slate-200/80 flex flex-col h-full overflow-hidden transition-[width,opacity] duration-200 ease-in-out z-10 shadow-lg ${
+        className={`bg-[#FAF6EE] border-r border-[rgba(71,86,87,0.18)] flex flex-col h-full overflow-hidden transition-[width,opacity] duration-200 ease-in-out z-10 shadow-lg ${
           isOpen ? "w-60 opacity-100" : "w-0 opacity-0 pointer-events-none border-r-0"
         }`}
       >
         {/* Panel Header */}
-        <div className="h-14 px-3.5 flex items-center justify-between border-b border-slate-100 bg-slate-50/80 shrink-0 min-w-[240px]">
+        <div className="h-14 px-3.5 flex items-center justify-between border-b border-[rgba(71,86,87,0.12)] bg-[#F5EEDB]/60 shrink-0 min-w-[240px]">
           <div className="flex items-center gap-2 min-w-0">
             <span className="w-2 h-2 rounded-full bg-[#7C3AED] shadow-[0_0_6px_rgba(124,58,237,0.5)]" />
             <div className="min-w-0">
-              <span className="text-xs font-bold tracking-wider text-slate-800 uppercase truncate block">
+              <span className="text-xs font-bold tracking-wider text-[#1C2527] uppercase truncate block">
                 {currentSectionData.title}
               </span>
-              <span className="text-[10px] text-slate-400 font-medium truncate block">
+              <span className="text-[10px] text-[#7e939a] font-medium truncate block">
                 {currentSectionData.category}
               </span>
             </div>
@@ -382,7 +382,7 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
             }}
             title="Collapse Drawer"
             aria-label="Collapse drawer"
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-800 hover:bg-slate-200/60 transition-colors cursor-pointer"
+            className="w-7 h-7 rounded-lg flex items-center justify-center text-[#7e939a] hover:text-[#1C2527] hover:bg-black/5 transition-colors cursor-pointer"
           >
             <X className="w-3.5 h-3.5" />
           </button>
@@ -411,7 +411,7 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                 className={`group/sub flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs transition-all duration-150 cursor-pointer ${
                   isSubActive
                     ? "bg-[#EDE9FE] text-[#7C3AED] font-bold shadow-xs"
-                    : "bg-transparent text-slate-600 hover:text-[#7C3AED] hover:bg-[#EDE9FE] hover:font-bold font-medium"
+                    : "bg-transparent text-[#475657] hover:text-[#7C3AED] hover:bg-[#EDE9FE] hover:font-bold font-medium"
                 }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
@@ -419,7 +419,7 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                     className={`w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-150 ${
                       isSubActive
                         ? "bg-[#7C3AED] scale-125 shadow-[0_0_6px_rgba(124,58,237,0.5)]"
-                        : "bg-slate-300 group-hover/sub:bg-[#7C3AED] group-hover/sub:scale-125"
+                        : "bg-[#4A6D7C]/40 group-hover/sub:bg-[#7C3AED] group-hover/sub:scale-125"
                     }`}
                   />
                   <span className="truncate">{sub.label}</span>
@@ -430,7 +430,7 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                     className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full transition-colors ${
                       isSubActive
                         ? "bg-[#7C3AED]/20 text-[#7C3AED]"
-                        : "bg-slate-100 text-slate-500 group-hover/sub:bg-[#7C3AED]/20 group-hover/sub:text-[#7C3AED]"
+                        : "bg-black/5 text-[#5A6E71] group-hover/sub:bg-[#7C3AED]/20 group-hover/sub:text-[#7C3AED]"
                     }`}
                   >
                     {sub.count}
@@ -441,8 +441,8 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
           })}
 
           {/* Quick Shortcuts Box */}
-          <div className="mt-4 pt-3 border-t border-slate-100 space-y-1">
-            <span className="text-[10px] font-bold tracking-wider text-slate-400 uppercase px-2 mb-1 block">
+          <div className="mt-4 pt-3 border-t border-[rgba(71,86,87,0.12)] space-y-1">
+            <span className="text-[10px] font-bold tracking-wider text-[#7e939a] uppercase px-2 mb-1 block">
               Quick Shortcuts
             </span>
             <Link
@@ -451,7 +451,7 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                 playClickSound();
                 if (isMobile && onMobileClose) onMobileClose();
               }}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-600 hover:text-[#7C3AED] hover:bg-[#EDE9FE]/50 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#475657] hover:text-[#7C3AED] hover:bg-[#EDE9FE]/60 transition-colors"
             >
               <Plus className="w-3.5 h-3.5 text-[#7C3AED]" />
               <span>Register New Lead</span>
@@ -463,7 +463,7 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                 openSoftphone();
                 if (isMobile && onMobileClose) onMobileClose();
               }}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-slate-600 hover:text-[#7C3AED] hover:bg-[#EDE9FE]/50 transition-colors text-left cursor-pointer"
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#475657] hover:text-[#7C3AED] hover:bg-[#EDE9FE]/60 transition-colors text-left cursor-pointer"
             >
               <PhoneCall className="w-3.5 h-3.5 text-[#7C3AED]" />
               <span>Open Softphone</span>
@@ -472,7 +472,7 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
         </div>
 
         {/* Panel Footer */}
-        <div className="p-3 border-t border-slate-100 bg-slate-50/80 flex items-center justify-between text-[11px] text-slate-500 shrink-0 min-w-[240px]">
+        <div className="p-3 border-t border-[rgba(71,86,87,0.12)] bg-[#F5EEDB]/50 flex items-center justify-between text-[11px] text-[#5A6E71] shrink-0 min-w-[240px]">
           <span className="truncate font-medium">Skillyards CRM</span>
           <span className="flex items-center gap-1.5 text-emerald-600 font-semibold text-[10.5px]">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
