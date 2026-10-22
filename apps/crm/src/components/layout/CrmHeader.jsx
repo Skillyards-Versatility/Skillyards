@@ -160,7 +160,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
   };
 
   return (
-    <header className="h-16 px-3 sm:px-6 bg-[#FFFFFF] border-b border-[#7C3AED]/20 flex items-center justify-between sticky top-0 z-40 shadow-xs w-full">
+    <header className="h-16 px-3 sm:px-6 bg-[#EDE9FE] border-b border-[#7C3AED]/20 flex items-center justify-between sticky top-0 z-40 shadow-xs w-full">
       {/* Left: Mobile Drawer Hamburger + Skillyards Logo + Search */}
       <div className="flex items-center gap-2 sm:gap-6 min-w-0">
         {/* Mobile Hamburger Drawer Button */}
@@ -179,7 +179,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
           className="flex items-center group transition-transform active:scale-95 shrink-0"
         >
           <img
-            src="/logo/logo-dark.svg"
+            src="/logo/logo-light.svg"
             alt="Skillyards Logo"
             className="h-7 sm:h-8 w-auto object-contain transition-opacity group-hover:opacity-90"
           />
