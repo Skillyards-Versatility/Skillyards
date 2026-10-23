@@ -91,7 +91,7 @@ export function CampaignDetailsDrawer({ isOpen, onClose, campaign, onToggleStatu
         {/* Cockpit Top Bar */}
         <div className="bg-[#0c1316] text-white px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)] shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#4A6D7C]/25 border border-[#4A6D7C]/50 flex items-center justify-center text-[#4A6D7C]">
+            <div className="w-8 h-8 rounded-lg bg-[#D97706]/25 border border-[#D97706]/50 flex items-center justify-center text-[#D97706]">
               <Target className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -152,7 +152,7 @@ export function CampaignDetailsDrawer({ isOpen, onClose, campaign, onToggleStatu
               </div>
               <div className="p-2.5 rounded-xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.1)]">
                 <span className="text-[10px] text-[#7E939A] uppercase block font-semibold">Blended CAC</span>
-                <span className="text-lg font-black text-[#4A6D7C] font-mono">₹{Math.round(campaign.cac)}</span>
+                <span className="text-lg font-black text-[#D97706] font-mono">₹{Math.round(campaign.cac)}</span>
               </div>
             </div>
 
@@ -164,7 +164,7 @@ export function CampaignDetailsDrawer({ isOpen, onClose, campaign, onToggleStatu
               </div>
               <div className="w-full h-2 rounded-full bg-[#FAF6EE] border border-[rgba(71,86,87,0.12)] overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-[#4A6D7C] to-[#2E7559] transition-all"
+                  className="h-full bg-gradient-to-r from-[#D97706] to-[#2E7559] transition-all"
                   style={{ width: `${spendPct}%` }}
                 />
               </div>
@@ -174,7 +174,7 @@ export function CampaignDetailsDrawer({ isOpen, onClose, campaign, onToggleStatu
           {/* Conversion Funnel Waterfall */}
           <div className="space-y-2">
             <h3 className="text-xs font-bold uppercase tracking-wider text-[#7E939A] flex items-center gap-1.5">
-              <TrendingUp className="w-3.5 h-3.5 text-[#4A6D7C]" />
+              <TrendingUp className="w-3.5 h-3.5 text-[#D97706]" />
               <span>Attribution Conversion Waterfall</span>
             </h3>
 
@@ -247,15 +247,15 @@ export function CampaignDetailsDrawer({ isOpen, onClose, campaign, onToggleStatu
           <div className="p-4 bg-white rounded-2xl border border-[rgba(71,86,87,0.16)] space-y-2 text-xs">
             <div className="flex items-center justify-between">
               <span className="text-[10.5px] uppercase font-bold text-[#7E939A] flex items-center gap-1">
-                <LinkIcon className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                <LinkIcon className="w-3.5 h-3.5 text-[#D97706]" />
                 <span>Live UTM Tracking URL</span>
               </span>
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="flex items-center gap-1 text-[11px] font-bold text-[#4A6D7C] hover:text-[#1C2527] transition-colors"
+                className="flex items-center gap-1 text-[11px] font-bold text-[#D97706] hover:text-[#B45309] transition-colors"
               >
-                {copied ? <Check className="w-3 h-3 text-[#2E7559]" /> : <Copy className="w-3 h-3 text-[#4A6D7C]" />}
+                {copied ? <Check className="w-3 h-3 text-[#2E7559]" /> : <Copy className="w-3 h-3 text-[#D97706]" />}
                 <span>{copied ? "Copied" : "Copy URL"}</span>
               </button>
             </div>

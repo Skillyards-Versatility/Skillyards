@@ -47,7 +47,7 @@ export function ActiveCallCockpit() {
       {/* Candidate Profile Avatar & Header */}
       <div className="relative mb-3 flex flex-col items-center">
         <div className="relative">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#4A6D7C] to-[#62929E] text-white flex items-center justify-center font-bold text-xl uppercase shadow-lg border-2 border-[rgba(98,146,158,0.4)]">
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#D97706] to-[#F59E0B] text-white flex items-center justify-center font-bold text-xl uppercase shadow-lg border-2 border-[#D97706]/40">
             {activeCall.name ? activeCall.name[0] : "P"}
           </div>
 
@@ -72,17 +72,17 @@ export function ActiveCallCockpit() {
       {/* Call State & Live Timer Display */}
       <div className="w-full my-3 p-3 rounded-xl bg-[#080d0f] border border-[rgba(98,146,158,0.2)] flex flex-col items-center justify-center">
         {callState === "DIALING" && (
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#62929e] animate-pulse">
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#D97706] animate-pulse">
             <Radio className="w-4 h-4 animate-spin" />
             <span>Connecting carrier line...</span>
           </div>
         )}
 
         {callState === "RINGING" && (
-          <div className="flex items-center gap-2 text-xs font-semibold text-[#62929e]">
+          <div className="flex items-center gap-2 text-xs font-semibold text-[#D97706]">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#62929e] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#62929e]" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#D97706] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#D97706]" />
             </span>
             <span className="animate-pulse">Ringing prospect phone...</span>
           </div>

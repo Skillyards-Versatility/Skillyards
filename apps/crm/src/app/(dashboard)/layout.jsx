@@ -48,7 +48,7 @@ function DashboardLayoutContent({ children }) {
   }, [callState, setIsSoftphoneOpen]);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-[#F0E6D6] text-[#1C2527] selection:bg-[#4A6D7C]/30 selection:text-[#1C2527]">
+    <div className="flex flex-col h-screen overflow-hidden bg-[#F0E6D6] text-[#1C2527] selection:bg-[#D97706]/30 selection:text-[#1C2527]">
       {/* Full-Width Top Header containing permanent Skillyards Logo, Search, Persona Switcher & Notifications */}
       <CrmHeader
         onNewLeadClick={() => setIsModalOpen(true)}
@@ -78,7 +78,7 @@ function DashboardLayoutContent({ children }) {
           <div className="w-full max-w-sm bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150">
             <div className="bg-[#0c1316] px-5 py-3.5 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)]">
               <div className="flex items-center gap-2">
-                <Keyboard className="w-4 h-4 text-[#62929e]" />
+                <Keyboard className="w-4 h-4 text-[#D97706]" />
                 <h3 className="text-sm font-bold text-white tracking-wide">Quick Hotkeys</h3>
               </div>
               <button

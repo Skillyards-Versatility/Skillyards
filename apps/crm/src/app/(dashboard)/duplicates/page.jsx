@@ -128,7 +128,7 @@ export default function DuplicateReviewsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.25)] text-[#4A6D7C] flex items-center justify-center shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-[#D97706]/15 border border-[#D97706]/25 text-[#D97706] flex items-center justify-center shadow-xs">
               <CopyCheck className="w-4 h-4" />
             </div>
             <h1 className="crm-page-title">Duplicate Candidate Reviews</h1>
@@ -167,7 +167,7 @@ export default function DuplicateReviewsPage() {
       {/* Review List */}
       {loading ? (
         <div className="py-24 flex flex-col items-center justify-center text-[#7e939a] gap-2">
-          <Loader2 className="w-6 h-6 animate-spin text-[#4A6D7C]" />
+          <Loader2 className="w-6 h-6 animate-spin text-[#D97706]" />
           <span className="text-xs">Checking duplicate candidates...</span>
         </div>
       ) : reviews.length === 0 ? (
@@ -214,13 +214,13 @@ export default function DuplicateReviewsPage() {
                   {/* Left: Existing Lead Candidate */}
                   <div className="p-4 rounded-xl bg-white border border-[rgba(71,86,87,0.16)] shadow-xs space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-[#4A6D7C] text-[11px] uppercase tracking-wider">
+                      <span className="font-bold text-[#D97706] text-[11px] uppercase tracking-wider">
                         Existing Registered Lead
                       </span>
                       {rev.candidateLeadId && (
                         <Link
                           href={`/leads/${rev.candidateLeadId}`}
-                          className="flex items-center gap-1 text-[11px] text-[#4A6D7C] hover:text-[#1C2527] font-semibold"
+                          className="flex items-center gap-1 text-[11px] text-[#D97706] hover:text-[#B45309] font-semibold"
                           target="_blank"
                         >
                           <span>Inspect Profile</span>

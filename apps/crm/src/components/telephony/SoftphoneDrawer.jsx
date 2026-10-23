@@ -60,7 +60,7 @@ export function SoftphoneDrawer() {
           {/* Header Bar */}
           <div className="h-13 px-4 bg-[#080d0f] border-b border-[rgba(98,146,158,0.18)] flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.35)] flex items-center justify-center text-[#62929e] shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-[#D97706]/18 border border-[#D97706]/35 flex items-center justify-center text-[#D97706] shrink-0">
                 <PhoneCall className="w-3.5 h-3.5" />
               </div>
               <div className="min-w-0">
@@ -94,7 +94,7 @@ export function SoftphoneDrawer() {
                 onClick={() => setActiveTab("keypad")}
                 className={`flex-1 py-2 flex items-center justify-center gap-1.5 text-xs font-semibold transition-all border-b-2 ${
                   activeTab === "keypad"
-                    ? "text-[#62929e] border-[#62929e] bg-[rgba(98,146,158,0.08)]"
+                    ? "text-[#D97706] border-[#D97706] bg-[#D97706]/10"
                     : "text-[#7e939a] border-transparent hover:text-white"
                 }`}
               >
@@ -106,7 +106,7 @@ export function SoftphoneDrawer() {
                 onClick={() => setActiveTab("recent")}
                 className={`flex-1 py-2 flex items-center justify-center gap-1.5 text-xs font-semibold transition-all border-b-2 ${
                   activeTab === "recent"
-                    ? "text-[#62929e] border-[#62929e] bg-[rgba(98,146,158,0.08)]"
+                    ? "text-[#D97706] border-[#D97706] bg-[#D97706]/10"
                     : "text-[#7e939a] border-transparent hover:text-white"
                 }`}
               >

@@ -447,7 +447,7 @@ export default function MarketingCampaignsPage() {
             onClick={handleExportCSV}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#1C2527] border border-[rgba(71,86,87,0.2)] text-xs font-semibold transition-colors shadow-xs"
           >
-            <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <Download className="w-3.5 h-3.5 text-[#D97706]" />
             <span>Export CSV</span>
           </button>
 
@@ -468,7 +468,7 @@ export default function MarketingCampaignsPage() {
         <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
           <div className="flex items-center justify-between text-[#5A6E71] text-xs mb-2">
             <span className="font-semibold uppercase tracking-wider text-[10px]">Total Ad Spend</span>
-            <div className="w-7 h-7 rounded-lg bg-[#4A6D7C]/15 flex items-center justify-center text-[#4A6D7C]">
+            <div className="w-7 h-7 rounded-lg bg-[#D97706]/15 flex items-center justify-center text-[#D97706]">
               <DollarSign className="w-3.5 h-3.5" />
             </div>
           </div>
@@ -535,7 +535,7 @@ export default function MarketingCampaignsPage() {
       <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] space-y-3 shadow-xs">
         <div className="flex items-center justify-between text-xs">
           <span className="font-bold uppercase tracking-wider text-[10.5px] text-[#7E939A] flex items-center gap-1.5">
-            <BarChart3 className="w-4 h-4 text-[#4A6D7C]" />
+            <BarChart3 className="w-4 h-4 text-[#D97706]" />
             <span>Channel Spend & RoAS Performance Comparison</span>
           </span>
           <span className="text-[11px] text-[#5A6E71]">Across 6 Advertising & Inbound Channels</span>
@@ -633,12 +633,12 @@ export default function MarketingCampaignsPage() {
       <div className="bg-[#FAF6EE] rounded-2xl border border-[rgba(71,86,87,0.18)] overflow-hidden shadow-xs">
         {loading ? (
           <div className="p-12 text-center text-[#5A6E71] text-xs space-y-2">
-            <RefreshCw className="w-5 h-5 animate-spin mx-auto text-[#4A6D7C]" />
+            <RefreshCw className="w-5 h-5 animate-spin mx-auto text-[#D97706]" />
             <p>Loading marketing campaigns and attribution metrics...</p>
           </div>
         ) : filteredCampaigns.length === 0 ? (
           <div className="p-12 text-center space-y-3">
-            <div className="w-12 h-12 rounded-2xl bg-white border border-[rgba(71,86,87,0.16)] flex items-center justify-center text-[#4A6D7C] mx-auto shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-white border border-[rgba(71,86,87,0.16)] flex items-center justify-center text-[#D97706] mx-auto shadow-xs">
               <Target className="w-6 h-6" />
             </div>
             <h3 className="text-sm font-bold text-[#1C2527]">No Campaigns Match Selection</h3>
@@ -693,7 +693,7 @@ export default function MarketingCampaignsPage() {
                             <span>{camp.name}</span>
                           </p>
                           <div className="flex items-center gap-2 text-[10.5px] text-[#5A6E71]">
-                            <span className="font-mono text-[#4A6D7C] font-semibold">{camp.code}</span>
+                            <span className="font-mono text-[#D97706] font-semibold">{camp.code}</span>
                             <span>•</span>
                             <span className="truncate max-w-[200px]">{camp.targetCourse}</span>
                           </div>
@@ -755,7 +755,7 @@ export default function MarketingCampaignsPage() {
                             camp.roas >= 10
                               ? "bg-[#2E7559]/15 text-[#2E7559] border border-[#2E7559]/30"
                               : camp.roas >= 5
-                              ? "bg-[#4A6D7C]/15 text-[#4A6D7C] border border-[#4A6D7C]/30"
+                              ? "bg-[#D97706]/15 text-[#D97706] border border-[#D97706]/30"
                               : "bg-amber-100 text-amber-800"
                           }`}
                         >
@@ -798,7 +798,7 @@ export default function MarketingCampaignsPage() {
                             }}
                             className="px-2.5 py-1.5 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#1C2527] border border-[rgba(71,86,87,0.2)] font-semibold text-xs flex items-center gap-1 transition-colors shadow-xs"
                           >
-                            <Eye className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                            <Eye className="w-3.5 h-3.5 text-[#D97706]" />
                             <span>Funnel</span>
                           </button>
                         </div>

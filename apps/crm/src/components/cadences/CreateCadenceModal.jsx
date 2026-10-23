@@ -27,7 +27,7 @@ const AVAILABLE_COURSES = [
 const CHANNEL_OPTIONS = [
   { value: "whatsapp", label: "WhatsApp Message", icon: MessageSquare, color: "text-[#25D366]" },
   { value: "call", label: "Phone Call Task", icon: Phone, color: "text-[#128C7E]" },
-  { value: "email", label: "Personalized Email", icon: Mail, color: "text-[#4A6D7C]" },
+  { value: "email", label: "Personalized Email", icon: Mail, color: "text-[#D97706]" },
   { value: "sms", label: "Direct SMS Alert", icon: Smartphone, color: "text-[#D97706]" },
 ];
 
@@ -291,7 +291,7 @@ export function CreateCadenceModal({ isOpen, onClose, onCadenceCreated, currentU
                     <div className="flex items-center gap-2">
                       {/* Day Offset */}
                       <div className="flex items-center gap-1 text-xs bg-[#FAF6EE] px-2.5 py-1 rounded-lg border border-[rgba(71,86,87,0.15)]">
-                        <Clock className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                        <Clock className="w-3.5 h-3.5 text-[#D97706]" />
                         <span className="text-[11px] font-semibold text-[#5A6E71]">Day:</span>
                         <input
                           type="number"

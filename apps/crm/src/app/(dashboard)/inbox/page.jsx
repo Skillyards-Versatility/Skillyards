@@ -527,7 +527,7 @@ export default function OmnichannelInboxPage() {
         {/* Target Program & Batch Card */}
         <div className="p-3.5 bg-white rounded-2xl border border-[rgba(71,86,87,0.16)] space-y-2 shadow-xs text-xs">
           <span className="text-[10px] uppercase font-bold text-[#7E939A]">Target Course</span>
-          <p className="font-bold text-[#4A6D7C]">{activeThread.courseName}</p>
+          <p className="font-bold text-[#D97706]">{activeThread.courseName}</p>
           <p className="text-[11px] text-[#5A6E71]">{activeThread.cohortName}</p>
           <div className="flex items-center justify-between pt-1 border-t border-[rgba(71,86,87,0.1)] text-[11px]">
             <span className="text-[#5A6E71]">Assigned Rep:</span>
@@ -541,7 +541,7 @@ export default function OmnichannelInboxPage() {
             <span className="text-[10px] uppercase font-bold text-[#7E939A]">Tuition Dues Status</span>
             <Link
               href="/installments"
-              className="text-[10.5px] font-bold text-[#4A6D7C] hover:underline flex items-center gap-0.5"
+              className="text-[10.5px] font-bold text-[#D97706] hover:underline flex items-center gap-0.5"
             >
               <span>Ledger</span>
               <ArrowUpRight className="w-3 h-3" />
@@ -737,7 +737,7 @@ export default function OmnichannelInboxPage() {
                         </span>
                       </div>
 
-                      <p className="text-[10.5px] text-[#4A6D7C] truncate font-medium">
+                      <p className="text-[10.5px] text-[#D97706] truncate font-medium">
                         {thread.courseName}
                       </p>
 
@@ -810,13 +810,13 @@ export default function OmnichannelInboxPage() {
                     <span>{activeThread.candidatePhone}</span>
                     <button
                       onClick={handleCopyPhone}
-                      className="text-[#4A6D7C] hover:text-[#1C2527] transition-colors shrink-0"
+                      className="text-[#D97706] hover:text-[#B45309] transition-colors shrink-0"
                       title="Copy phone"
                     >
                       {copiedPhone ? <Check className="w-3 h-3 text-[#2E7559]" /> : <Copy className="w-3 h-3" />}
                     </button>
                     <span className="hidden sm:inline">•</span>
-                    <span className="hidden sm:inline text-[#4A6D7C] font-semibold truncate">{activeThread.courseName}</span>
+                    <span className="hidden sm:inline text-[#D97706] font-semibold truncate">{activeThread.courseName}</span>
                   </div>
                 </div>
               </div>
@@ -884,8 +884,8 @@ export default function OmnichannelInboxPage() {
               if (isSystem) {
                 return (
                   <div key={msg.id} className="flex justify-center my-2">
-                    <div className="px-3 py-1.5 rounded-xl bg-[#FAF6EE] border border-[rgba(98,146,158,0.25)] text-center text-[11px] text-[#4A6D7C] max-w-md shadow-xs flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-[#B07238] shrink-0" />
+                    <div className="px-3 py-1.5 rounded-xl bg-[#FAF6EE] border border-[rgba(98,146,158,0.25)] text-center text-[11px] text-[#D97706] max-w-md shadow-xs flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#D97706] shrink-0" />
                       <span>{msg.content}</span>
                     </div>
                   </div>
@@ -967,7 +967,7 @@ export default function OmnichannelInboxPage() {
                   key={token.key}
                   type="button"
                   onClick={() => handleInsertToken(token.key)}
-                  className="px-2 py-0.5 rounded-md bg-[rgba(71,86,87,0.08)] hover:bg-[rgba(71,86,87,0.15)] text-[#4A6D7C] font-mono text-[10px] shrink-0 transition-colors cursor-pointer"
+                  className="px-2 py-0.5 rounded-md bg-[rgba(217,119,6,0.08)] hover:bg-[rgba(217,119,6,0.18)] text-[#D97706] font-mono text-[10px] shrink-0 transition-colors cursor-pointer"
                 >
                   {token.label}
                 </button>
@@ -985,7 +985,7 @@ export default function OmnichannelInboxPage() {
               <div className="flex items-center gap-1 bg-[#FAF6EE] p-1 rounded-xl border border-[rgba(71,86,87,0.14)]">
                 {[
                   { id: "whatsapp", label: "WhatsApp", icon: MessageSquare, color: "text-[#25D366]" },
-                  { id: "email", label: "Email", icon: Mail, color: "text-[#4A6D7C]" },
+                  { id: "email", label: "Email", icon: Mail, color: "text-[#D97706]" },
                   { id: "sms", label: "SMS", icon: Smartphone, color: "text-[#B07238]" },
                 ].map((c) => {
                   const Icon = c.icon;

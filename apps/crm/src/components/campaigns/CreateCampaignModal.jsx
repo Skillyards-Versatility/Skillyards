@@ -166,7 +166,7 @@ export function CreateCampaignModal({ isOpen, onClose, onCreated }) {
         {/* Cockpit Top Bar */}
         <div className="bg-[#0c1316] text-white px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#4A6D7C]/25 border border-[#4A6D7C]/50 flex items-center justify-center text-[#4A6D7C]">
+            <div className="w-8 h-8 rounded-lg bg-[#D97706]/25 border border-[#D97706]/50 flex items-center justify-center text-[#D97706]">
               <Target className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -284,13 +284,13 @@ export function CreateCampaignModal({ isOpen, onClose, onCreated }) {
           <div className="p-3.5 bg-white rounded-xl border border-[rgba(71,86,87,0.18)] space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-[10.5px] font-bold uppercase tracking-wider text-[#7E939A] flex items-center gap-1">
-                <LinkIcon className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                <LinkIcon className="w-3.5 h-3.5 text-[#D97706]" />
                 <span>Generated UTM Tracking Link</span>
               </span>
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="flex items-center gap-1 text-[11px] font-bold text-[#4A6D7C] hover:text-[#1C2527] transition-colors"
+                className="flex items-center gap-1 text-[11px] font-bold text-[#D97706] hover:text-[#B45309] transition-colors"
               >
                 {copied ? <Check className="w-3 h-3 text-[#2E7559]" /> : <Copy className="w-3 h-3" />}
                 <span>{copied ? "Copied" : "Copy Link"}</span>

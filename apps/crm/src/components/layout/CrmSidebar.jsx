@@ -32,17 +32,17 @@ import { useTelephony } from "@/context/TelephonyContext";
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
   { label: "Leads", href: "/leads", icon: Users, badge: "9", hasSubmenu: true },
-  { label: "Marketing Campaigns", href: "/campaigns", icon: Target, badge: "ROI", hasSubmenu: true },
+  { label: "Marketing Campaigns", href: "/campaigns", icon: Target, hasSubmenu: true },
   { label: "Duplicate Reviews", href: "/duplicates", icon: CopyCheck, badge: "1" },
   { label: "Call Queue", href: "/queue", icon: PhoneCall },
   { label: "Follow-ups", href: "/follow-ups", icon: CalendarClock },
   { label: "Omnichannel Inbox", href: "/inbox", icon: MessageSquare, badge: "3", hasSubmenu: true },
   { label: "Counselling", href: "/counselling", icon: GraduationCap, hasSubmenu: true },
-  { label: "Admissions & Fees", href: "/admissions", icon: Award, badge: "New", hasSubmenu: true },
-  { label: "Fee Installments", href: "/installments", icon: Banknote, badge: "Dues" },
-  { label: "Sales Incentives", href: "/incentives", icon: Trophy, badge: "Bonus" },
-  { label: "Academic Batches", href: "/cohorts", icon: Layers, badge: "Live", hasSubmenu: true },
-  { label: "Drip Cadences", href: "/cadences", icon: Workflow, badge: "Drip", hasSubmenu: true },
+  { label: "Admissions & Fees", href: "/admissions", icon: Award, hasSubmenu: true },
+  { label: "Fee Installments", href: "/installments", icon: Banknote },
+  { label: "Sales Incentives", href: "/incentives", icon: Trophy },
+  { label: "Academic Batches", href: "/cohorts", icon: Layers, hasSubmenu: true },
+  { label: "Drip Cadences", href: "/cadences", icon: Workflow, hasSubmenu: true },
   { label: "EOD Reports", href: "/eod", icon: FileSpreadsheet },
 ];
 
@@ -232,9 +232,9 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
       }
       if (audioRef.current) {
         audioRef.current.currentTime = 0;
-        audioRef.current.play().catch(() => {});
+        audioRef.current.play().catch(() => { });
       }
-    } catch {}
+    } catch { }
   };
 
   const handleActivityClick = (item, isMobile = false) => {
@@ -263,15 +263,15 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
           TIER 1: PRIMARY ACTIVITY BAR (Narrow Vertical Icon Strip ~56px)
           Lavender aesthetic (#EDE9FE) matching CRM purple branding
           ========================================================================= */}
-      <div className="w-14 bg-[#EDE9FE] border-r border-[#7C3AED]/20 flex flex-col items-center justify-between py-2 h-full z-20 shadow-xs overflow-hidden shrink-0">
+      <div className="w-14 bg-[#F6E3CC] border-r border-[#D97706]/20 flex flex-col items-center justify-between py-2 h-full z-20 shadow-xs overflow-hidden shrink-0">
         {/* Navigation Icons (Scrollable without scrollbar if viewport is short) */}
-        <div className="flex-1 flex flex-col items-center gap-1.5 w-full pt-0.5 overflow-y-auto overflow-x-hidden no-scrollbar">
+        <div className="flex-1 flex flex-col items-center gap-2 w-full py-1 overflow-y-auto overflow-x-hidden no-scrollbar">
           {/* Mobile Top Dismiss Button */}
           {isMobile && (
             <button
               type="button"
               onClick={onMobileClose}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-[#7C3AED] hover:text-white hover:bg-[#7C3AED] bg-white/70 border border-[#7C3AED]/25 mb-1 shrink-0 cursor-pointer active:scale-95 transition-all shadow-xs"
+              className="w-10 h-10 rounded-xl flex items-center justify-center text-[#D97706] hover:text-white hover:bg-[#D97706] bg-white/70 border border-[#D97706]/25 mb-1 shrink-0 cursor-pointer active:scale-95 transition-all shadow-xs"
               title="Close Drawer"
             >
               <X className="w-4 h-4" />
@@ -288,11 +288,10 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                   type="button"
                   onClick={() => handleActivityClick(item, isMobile)}
                   title={item.label}
-                  className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150 cursor-pointer ${
-                    isSelected
-                      ? "text-white bg-[#7C3AED] shadow-md shadow-[#7C3AED]/30"
-                      : "text-[#6D28D9]/75 hover:text-[#7C3AED] hover:bg-white/80 hover:shadow-xs"
-                  }`}
+                  className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150 cursor-pointer ${isSelected
+                    ? "text-white bg-[#D97706] shadow-md shadow-[#D97706]/30"
+                    : "text-[#D97706] hover:text-[#B45309] hover:bg-white/80 hover:shadow-xs"
+                    }`}
                 >
                   {/* Active vertical left bar indicator */}
                   {isSelected && (
@@ -300,16 +299,15 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                   )}
 
                   <Icon
-                    className={`w-5 h-5 transition-colors ${
-                      isSelected
-                        ? "text-white"
-                        : "text-[#6D28D9]/80 group-hover:text-[#7C3AED]"
-                    }`}
+                    className={`w-5 h-5 transition-colors ${isSelected
+                      ? "text-white"
+                      : "text-[#D97706] group-hover:text-[#B45309]"
+                      }`}
                   />
 
-                  {/* Badge Pill */}
+                  {/* Badge Pill (Anchored at top-right corner so it NEVER invades or disrupts vertical icon spacing) */}
                   {item.badge && (
-                    <span className="absolute -bottom-0.5 -right-0.5 min-w-[16px] h-4 px-1 rounded-full bg-[#7C3AED] text-white text-[9px] font-bold flex items-center justify-center shadow-md border-2 border-[#EDE9FE]">
+                    <span className="absolute -top-1 -right-1 min-w-[17px] h-[17px] px-1 rounded-full bg-[#D97706] text-white text-[9.5px] font-bold flex items-center justify-center shadow-xs border-2 border-[#F6E3CC] pointer-events-none z-10">
                       {item.badge}
                     </span>
                   )}
@@ -327,8 +325,8 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
           })}
         </div>
 
-        {/* Bottom: Quick Softphone Dialer & User Profile Avatar */}
-        <div className="flex flex-col items-center gap-2.5 w-full pt-2 border-t border-[#7C3AED]/20 shrink-0 bg-[#EDE9FE]">
+        {/* Bottom: Quick Softphone Dialer & User Profile Avatar (Exact matching gap & sizing) */}
+        <div className="flex flex-col items-center gap-2 w-full pt-2 border-t border-[#D97706]/20 shrink-0 bg-[#F6E3CC]">
           <button
             type="button"
             onClick={() => {
@@ -337,14 +335,14 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
               if (isMobile && onMobileClose) onMobileClose();
             }}
             title="Open Softphone Dialer"
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-[#6D28D9] hover:text-white hover:bg-[#7C3AED] hover:shadow-sm transition-all cursor-pointer"
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-[#D97706] hover:text-white hover:bg-[#D97706] hover:shadow-xs transition-all cursor-pointer"
           >
-            <PhoneCall className="w-4 h-4" />
+            <PhoneCall className="w-5 h-5" />
           </button>
 
           <div
             title={`${user?.name || "User"} (${crmRoles?.[0] || "Staff"})`}
-            className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7C3AED] to-[#6D28D9] text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm border-2 border-white cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+            className="w-8 h-8 rounded-full bg-gradient-to-br from-[#D97706] to-[#B45309] text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm border-2 border-white cursor-pointer hover:scale-105 active:scale-95 transition-transform"
           >
             {user?.name ? user.name[0] : "P"}
           </div>
@@ -356,14 +354,13 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
           Can be collapsed via the close button or clicking active icon
           ========================================================================= */}
       <div
-        className={`bg-[#FAF6EE] border-r border-[rgba(71,86,87,0.18)] flex flex-col h-full overflow-hidden transition-[width,opacity] duration-200 ease-in-out z-10 shadow-lg ${
-          isOpen ? "w-60 opacity-100" : "w-0 opacity-0 pointer-events-none border-r-0"
-        }`}
+        className={`bg-[#FAF6EE] border-r border-[rgba(71,86,87,0.18)] flex flex-col h-full overflow-hidden transition-[width,opacity] duration-200 ease-in-out z-10 shadow-lg ${isOpen ? "w-60 opacity-100" : "w-0 opacity-0 pointer-events-none border-r-0"
+          }`}
       >
         {/* Panel Header */}
         <div className="h-14 px-3.5 flex items-center justify-between border-b border-[rgba(71,86,87,0.12)] bg-[#F5EEDB]/60 shrink-0 min-w-[240px]">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="w-2 h-2 rounded-full bg-[#7C3AED] shadow-[0_0_6px_rgba(124,58,237,0.5)]" />
+            <span className="w-2 h-2 rounded-full bg-[#D97706] shadow-[0_0_6px_rgba(217,119,6,0.5)]" />
             <div className="min-w-0">
               <span className="text-xs font-bold tracking-wider text-[#1C2527] uppercase truncate block">
                 {currentSectionData.title}
@@ -408,30 +405,27 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                   }
                   if (isMobile && onMobileClose) onMobileClose();
                 }}
-                className={`group/sub flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs transition-all duration-150 cursor-pointer ${
-                  isSubActive
-                    ? "bg-[#EDE9FE] text-[#7C3AED] font-bold shadow-xs"
-                    : "bg-transparent text-[#475657] hover:text-[#7C3AED] hover:bg-[#EDE9FE] hover:font-bold font-medium"
-                }`}
+                className={`group/sub flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs transition-all duration-150 cursor-pointer ${isSubActive
+                  ? "bg-[#F6E3CC] text-[#D97706] font-bold shadow-xs"
+                  : "bg-transparent text-[#475657] hover:text-[#D97706] hover:bg-[#F6E3CC] hover:font-bold font-medium"
+                  }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <span
-                    className={`w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-150 ${
-                      isSubActive
-                        ? "bg-[#7C3AED] scale-125 shadow-[0_0_6px_rgba(124,58,237,0.5)]"
-                        : "bg-[#4A6D7C]/40 group-hover/sub:bg-[#7C3AED] group-hover/sub:scale-125"
-                    }`}
+                    className={`w-1.5 h-1.5 rounded-full shrink-0 transition-all duration-150 ${isSubActive
+                      ? "bg-[#D97706] scale-125 shadow-[0_0_6px_rgba(217,119,6,0.5)]"
+                      : "bg-[#D97706]/40 group-hover/sub:bg-[#D97706] group-hover/sub:scale-125"
+                      }`}
                   />
                   <span className="truncate">{sub.label}</span>
                 </div>
 
                 {sub.count !== undefined && (
                   <span
-                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full transition-colors ${
-                      isSubActive
-                        ? "bg-[#7C3AED]/20 text-[#7C3AED]"
-                        : "bg-black/5 text-[#5A6E71] group-hover/sub:bg-[#7C3AED]/20 group-hover/sub:text-[#7C3AED]"
-                    }`}
+                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full transition-colors ${isSubActive
+                      ? "bg-[#D97706]/20 text-[#D97706]"
+                      : "bg-black/5 text-[#5A6E71] group-hover/sub:bg-[#D97706]/20 group-hover/sub:text-[#D97706]"
+                      }`}
                   >
                     {sub.count}
                   </span>
@@ -451,9 +445,9 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                 playClickSound();
                 if (isMobile && onMobileClose) onMobileClose();
               }}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#475657] hover:text-[#7C3AED] hover:bg-[#EDE9FE]/60 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#475657] hover:text-[#D97706] hover:bg-[#F6E3CC]/60 transition-colors"
             >
-              <Plus className="w-3.5 h-3.5 text-[#7C3AED]" />
+              <Plus className="w-3.5 h-3.5 text-[#D97706]" />
               <span>Register New Lead</span>
             </Link>
             <button
@@ -463,9 +457,9 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                 openSoftphone();
                 if (isMobile && onMobileClose) onMobileClose();
               }}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#475657] hover:text-[#7C3AED] hover:bg-[#EDE9FE]/60 transition-colors text-left cursor-pointer"
+              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#475657] hover:text-[#D97706] hover:bg-[#F6E3CC]/60 transition-colors text-left cursor-pointer"
             >
-              <PhoneCall className="w-3.5 h-3.5 text-[#7C3AED]" />
+              <PhoneCall className="w-3.5 h-3.5 text-[#D97706]" />
               <span>Open Softphone</span>
             </button>
           </div>

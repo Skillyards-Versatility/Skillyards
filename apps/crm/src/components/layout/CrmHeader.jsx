@@ -51,8 +51,8 @@ const DEMO_NOTIFICATIONS = [
     unread: false,
     href: "/queue",
     icon: Users,
-    iconColor: "text-[#4A6D7C]",
-    iconBg: "bg-[#4A6D7C]/15",
+    iconColor: "text-[#D97706]",
+    iconBg: "bg-[#D97706]/15",
   },
   {
     id: "n-4",
@@ -160,7 +160,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
   };
 
   return (
-    <header className="h-16 px-3 sm:px-6 bg-[#EDE9FE] border-b border-[#7C3AED]/20 flex items-center justify-between sticky top-0 z-40 shadow-xs w-full">
+    <header className="h-16 px-3 sm:px-6 bg-[#F6E3CC] border-b border-[#D97706]/20 flex items-center justify-between sticky top-0 z-40 shadow-xs w-full">
       {/* Left: Mobile Drawer Hamburger + Skillyards Logo + Search */}
       <div className="flex items-center gap-2 sm:gap-6 min-w-0">
         {/* Mobile Hamburger Drawer Button */}
@@ -168,9 +168,9 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
           type="button"
           onClick={onMenuToggle}
           aria-label="Toggle navigation drawer"
-          className="md:hidden p-2 rounded-xl text-[#7C3AED] hover:text-[#6D28D9] hover:bg-white/70 transition-colors active:scale-95 cursor-pointer shrink-0"
+          className="md:hidden p-2 rounded-xl text-[#D97706] hover:text-[#B45309] hover:bg-white/70 transition-colors active:scale-95 cursor-pointer shrink-0"
         >
-          {isMobileSidebarOpen ? <X className="w-5 h-5 text-[#7C3AED]" /> : <Menu className="w-5 h-5" />}
+          {isMobileSidebarOpen ? <X className="w-5 h-5 text-[#D97706]" /> : <Menu className="w-5 h-5" />}
         </button>
 
         <Link
@@ -193,20 +193,20 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search leads (Press '/' to focus)..."
-            className="w-full bg-white/90 border border-[#7C3AED]/25 rounded-xl pl-3.5 pr-14 py-1.5 text-xs text-slate-800 placeholder-slate-400 outline-none focus:border-[#7C3AED] focus:bg-white focus:ring-2 focus:ring-[#7C3AED]/20 shadow-xs transition-all"
+            className="w-full bg-white/90 border border-[#D97706]/25 rounded-xl pl-3.5 pr-14 py-1.5 text-xs text-slate-800 placeholder-slate-400 outline-none focus:border-[#D97706] focus:bg-white focus:ring-2 focus:ring-[#D97706]/20 shadow-xs transition-all"
           />
           <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
-            <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[9.5px] font-mono text-slate-400 bg-slate-100 border border-slate-200 rounded">
+            <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[9.5px] font-mono text-[#D97706]/70 bg-[#F6E3CC]/60 border border-[#D97706]/25 rounded">
               /
             </kbd>
-            <Search className="w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+            <Search className="w-3.5 h-3.5 text-[#D97706] pointer-events-none" />
           </div>
         </form>
       </div>
 
       {/* Mobile Search Overlay Bar */}
       {showMobileSearch && (
-        <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#EDE9FE] border-b border-[#7C3AED]/25 p-3 z-50 shadow-xl animate-in slide-in-from-top-2 duration-150">
+        <div className="sm:hidden absolute top-16 left-0 right-0 bg-[#F6E3CC] border-b border-[#D97706]/25 p-3 z-50 shadow-xl animate-in slide-in-from-top-2 duration-150">
           <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
             <div className="relative flex-1">
               <input
@@ -215,13 +215,13 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search leads by name, phone or email..."
-                className="w-full bg-white border border-[#7C3AED]/30 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 outline-none focus:border-[#7C3AED]"
+                className="w-full bg-white border border-[#D97706]/30 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 outline-none focus:border-[#D97706]"
               />
-              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Search className="w-4 h-4 text-[#D97706] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
             </div>
             <button
               type="submit"
-              className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-bold !py-2 !px-3 rounded-xl text-xs shrink-0 shadow-xs"
+              className="bg-[#D97706] hover:bg-[#B45309] text-white font-bold !py-2 !px-3 rounded-xl text-xs shrink-0 shadow-xs"
             >
               Search
             </button>
@@ -244,7 +244,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
           type="button"
           onClick={() => setShowMobileSearch((prev) => !prev)}
           aria-label="Toggle mobile search"
-          className="sm:hidden p-2 text-[#6D28D9] hover:text-[#7C3AED] hover:bg-white/70 rounded-xl transition-colors active:scale-95"
+          className="sm:hidden p-2 text-[#D97706] hover:text-[#B45309] hover:bg-white/70 rounded-xl transition-colors active:scale-95"
           title="Search Leads"
         >
           <Search className="w-4 h-4" />
@@ -255,12 +255,12 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
           <button
             type="button"
             onClick={() => setShowRoleSwitcher((prev) => !prev)}
-            className="p-1.5 sm:px-2.5 sm:py-1 rounded-full bg-white/80 hover:bg-white border border-[#7C3AED]/25 text-[11px] font-semibold text-[#6D28D9] flex items-center gap-1 shadow-xs transition-colors"
+            className="p-1.5 sm:px-2.5 sm:py-1 rounded-full bg-white/80 hover:bg-white border border-[#D97706]/25 text-[11px] font-semibold text-[#D97706] hover:text-[#B45309] flex items-center gap-1 shadow-xs transition-colors"
             title={`Persona: ${primaryRole.replace(/_/g, " ")} (Click to switch)`}
           >
-            <ShieldCheck className="w-3.5 h-3.5 text-[#7C3AED] shrink-0" />
+            <ShieldCheck className="w-3.5 h-3.5 text-[#D97706] shrink-0" />
             <span className="hidden sm:inline capitalize truncate">{primaryRole.replace(/_/g, " ")}</span>
-            <ChevronDown className="w-3 h-3 text-[#7C3AED]/60 shrink-0 hidden sm:inline" />
+            <ChevronDown className="w-3 h-3 text-[#D97706]/70 shrink-0 hidden sm:inline" />
           </button>
 
           {showRoleSwitcher && (
@@ -290,7 +290,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
                       type="button"
                       onClick={() => handleSelectRole(r)}
                       className={`w-full p-2.5 rounded-xl text-left transition-all flex items-start justify-between gap-2 ${isActive
-                        ? "bg-white border border-[rgba(74,109,124,0.3)] shadow-xs"
+                        ? "bg-white border border-[#D97706]/40 shadow-xs"
                         : "hover:bg-white/60 border border-transparent"
                         }`}
                     >
@@ -320,12 +320,12 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
             type="button"
             onClick={() => setShowNotifications((prev) => !prev)}
             aria-label="View notifications"
-            className="p-2 relative text-[#6D28D9] hover:text-[#7C3AED] hover:bg-white/80 rounded-xl transition-colors active:scale-95"
+            className="p-2 relative text-[#D97706] hover:text-[#B45309] hover:bg-white/80 rounded-xl transition-colors active:scale-95 cursor-pointer"
             title="Activity Notifications"
           >
             <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
-              <span className="w-2 h-2 rounded-full bg-[#7C3AED] absolute top-2 right-2 ring-2 ring-[#EDE9FE] shadow-[0_0_6px_rgba(124,58,237,0.5)]" />
+              <span className="w-2 h-2 rounded-full bg-[#D97706] absolute top-2 right-2 ring-2 ring-[#F6E3CC] shadow-[0_0_6px_rgba(217,119,6,0.6)]" />
             )}
           </button>
 
@@ -335,7 +335,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
                 <div className="flex items-center gap-1.5">
                   <span className="text-xs font-bold text-[#1C2527]">Notifications</span>
                   {unreadCount > 0 && (
-                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-[#4A6D7C] text-white">
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-[#D97706] text-white">
                       {unreadCount} new
                     </span>
                   )}
@@ -343,7 +343,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
                 {unreadCount > 0 && (
                   <button
                     onClick={handleMarkAllRead}
-                    className="text-[10.5px] text-[#4A6D7C] hover:underline font-semibold"
+                    className="text-[10.5px] text-[#D97706] hover:text-[#B45309] hover:underline font-semibold"
                   >
                     Mark all read
                   </button>
@@ -386,7 +386,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
                 <Link
                   href="/follow-ups"
                   onClick={() => setShowNotifications(false)}
-                  className="text-[11px] font-bold text-[#4A6D7C] hover:underline"
+                  className="text-[11px] font-bold text-[#D97706] hover:text-[#B45309] hover:underline"
                 >
                   View All Action Reminders →
                 </Link>
@@ -398,7 +398,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
         {/* Fast Action */}
         <button
           onClick={onNewLeadClick}
-          className="bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-bold text-xs !py-1.5 !px-3 sm:!px-4 rounded-xl shadow-sm hover:shadow-md hover:shadow-[#7C3AED]/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+          className="bg-[#D97706] hover:bg-[#B45309] text-white font-bold text-xs !py-1.5 !px-3 sm:!px-4 rounded-xl shadow-sm hover:shadow-md hover:shadow-[#D97706]/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
           title="Shortcut: Press 'N'"
         >
           <Plus className="w-3.5 h-3.5" />

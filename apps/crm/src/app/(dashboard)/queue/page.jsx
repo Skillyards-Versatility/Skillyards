@@ -169,7 +169,7 @@ export default function CallQueuePage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.25)] text-[#4A6D7C] flex items-center justify-center shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-[#D97706]/15 border border-[#D97706]/25 text-[#D97706] flex items-center justify-center shadow-xs">
               <PhoneCall className="w-4 h-4" />
             </div>
             <h1 className="crm-page-title">Sales Call & Assignment Queue</h1>
@@ -226,7 +226,7 @@ export default function CallQueuePage() {
       {/* Queue Body */}
       {loading ? (
         <div className="py-24 flex flex-col items-center justify-center text-[#7e939a] gap-2">
-          <Loader2 className="w-6 h-6 animate-spin text-[#4A6D7C]" />
+          <Loader2 className="w-6 h-6 animate-spin text-[#D97706]" />
           <span className="text-xs">Fetching queue items...</span>
         </div>
       ) : activeTab === "teams" ? (
@@ -313,7 +313,7 @@ export default function CallQueuePage() {
       ) : queueItems.length === 0 ? (
         /* Empty State */
         <div className="crm-panel p-16 text-center space-y-3 max-w-lg mx-auto bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-sm rounded-2xl">
-          <div className="w-12 h-12 rounded-2xl bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.25)] text-[#4A6D7C] flex items-center justify-center mx-auto shadow-xs">
+          <div className="w-12 h-12 rounded-2xl bg-[#D97706]/15 border border-[#D97706]/25 text-[#D97706] flex items-center justify-center mx-auto shadow-xs">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <h3 className="text-sm font-bold text-[#1C2527]">
@@ -359,7 +359,7 @@ export default function CallQueuePage() {
                               className="crm-lead-link flex items-center gap-1.5 font-bold text-sm"
                             >
                               <span>{item.fullName || "Unnamed"}</span>
-                              <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#4A6D7C]" />
+                              <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#D97706]" />
                             </Link>
                           </div>
                         </div>

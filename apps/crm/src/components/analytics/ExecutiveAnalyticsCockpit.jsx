@@ -31,7 +31,7 @@ const ANALYTICS_DATA = {
       { stage: "Admissions Enrolled", count: 4, pct: 14.2, change: "+25%", drop: "50.0% drop" },
     ],
     leaderboard: [
-      { id: "1", name: "Priya Patel", role: "Sr. Counsellor", enrollments: 2, counselling: 4, dials: 38, attainment: 110, rank: 1, avatarColor: "from-[#4A6D7C] to-[#62929E]" },
+      { id: "1", name: "Priya Patel", role: "Sr. Counsellor", enrollments: 2, counselling: 4, dials: 38, attainment: 110, rank: 1, avatarColor: "from-[#D97706] to-[#F59E0B]" },
       { id: "2", name: "Vikram Malhotra", role: "Telecaller Rep", enrollments: 1, counselling: 3, dials: 52, attainment: 94, rank: 2, avatarColor: "from-[#2E7559] to-[#489977]" },
       { id: "3", name: "Amit Kumar", role: "Admissions Lead", enrollments: 1, counselling: 2, dials: 29, attainment: 88, rank: 3, avatarColor: "from-[#B07238] to-[#d68e4c]" },
       { id: "4", name: "Sneha Rao", role: "Education Advisor", enrollments: 0, counselling: 2, dials: 31, attainment: 72, rank: 4, avatarColor: "from-[#57686A] to-[#7e939a]" },
@@ -54,7 +54,7 @@ const ANALYTICS_DATA = {
       { stage: "Admissions Enrolled", count: 24, pct: 14.6, change: "+22%", drop: "47.8% drop" },
     ],
     leaderboard: [
-      { id: "1", name: "Priya Patel", role: "Sr. Counsellor", enrollments: 11, counselling: 19, dials: 184, attainment: 116, rank: 1, avatarColor: "from-[#4A6D7C] to-[#62929E]" },
+      { id: "1", name: "Priya Patel", role: "Sr. Counsellor", enrollments: 11, counselling: 19, dials: 184, attainment: 116, rank: 1, avatarColor: "from-[#D97706] to-[#F59E0B]" },
       { id: "2", name: "Vikram Malhotra", role: "Telecaller Rep", enrollments: 7, counselling: 14, dials: 245, attainment: 102, rank: 2, avatarColor: "from-[#2E7559] to-[#489977]" },
       { id: "3", name: "Amit Kumar", role: "Admissions Lead", enrollments: 4, counselling: 9, dials: 138, attainment: 89, rank: 3, avatarColor: "from-[#B07238] to-[#d68e4c]" },
       { id: "4", name: "Sneha Rao", role: "Education Advisor", enrollments: 2, counselling: 7, dials: 119, attainment: 78, rank: 4, avatarColor: "from-[#57686A] to-[#7e939a]" },
@@ -77,7 +77,7 @@ const ANALYTICS_DATA = {
       { stage: "Admissions Enrolled", count: 102, pct: 15.0, change: "+28%", drop: "48.4% drop" },
     ],
     leaderboard: [
-      { id: "1", name: "Priya Patel", role: "Sr. Counsellor", enrollments: 44, counselling: 78, dials: 740, attainment: 122, rank: 1, avatarColor: "from-[#4A6D7C] to-[#62929E]" },
+      { id: "1", name: "Priya Patel", role: "Sr. Counsellor", enrollments: 44, counselling: 78, dials: 740, attainment: 122, rank: 1, avatarColor: "from-[#D97706] to-[#F59E0B]" },
       { id: "2", name: "Vikram Malhotra", role: "Telecaller Rep", enrollments: 31, counselling: 59, dials: 980, attainment: 108, rank: 2, avatarColor: "from-[#2E7559] to-[#489977]" },
       { id: "3", name: "Amit Kumar", role: "Admissions Lead", enrollments: 18, counselling: 41, dials: 590, attainment: 92, rank: 3, avatarColor: "from-[#B07238] to-[#d68e4c]" },
       { id: "4", name: "Sneha Rao", role: "Education Advisor", enrollments: 9, counselling: 28, dials: 480, attainment: 81, rank: 4, avatarColor: "from-[#57686A] to-[#7e939a]" },
@@ -100,7 +100,7 @@ const ANALYTICS_DATA = {
       { stage: "Admissions Enrolled", count: 298, pct: 15.2, change: "+35%", drop: "47.2% drop" },
     ],
     leaderboard: [
-      { id: "1", name: "Priya Patel", role: "Sr. Counsellor", enrollments: 126, counselling: 218, dials: 2150, attainment: 128, rank: 1, avatarColor: "from-[#4A6D7C] to-[#62929E]" },
+      { id: "1", name: "Priya Patel", role: "Sr. Counsellor", enrollments: 126, counselling: 218, dials: 2150, attainment: 128, rank: 1, avatarColor: "from-[#D97706] to-[#F59E0B]" },
       { id: "2", name: "Vikram Malhotra", role: "Telecaller Rep", enrollments: 92, counselling: 165, dials: 2940, attainment: 114, rank: 2, avatarColor: "from-[#2E7559] to-[#489977]" },
       { id: "3", name: "Amit Kumar", role: "Admissions Lead", enrollments: 52, counselling: 114, dials: 1720, attainment: 96, rank: 3, avatarColor: "from-[#B07238] to-[#d68e4c]" },
       { id: "4", name: "Sneha Rao", role: "Education Advisor", enrollments: 28, counselling: 82, dials: 1410, attainment: 84, rank: 4, avatarColor: "from-[#57686A] to-[#7e939a]" },
@@ -186,7 +186,7 @@ export function ExecutiveAnalyticsCockpit() {
             <div className="flex items-center justify-between pb-3 border-b border-[rgba(71,86,87,0.14)]">
               <div>
                 <h3 className="text-sm font-bold text-[#1C2527] flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-[#4A6D7C]" />
+                  <TrendingUp className="w-4 h-4 text-[#D97706]" />
                   <span>Pipeline Stage-by-Stage Conversion Funnel</span>
                 </h3>
                 <p className="text-[11px] text-[#57686A] mt-0.5">
@@ -239,13 +239,13 @@ export function ExecutiveAnalyticsCockpit() {
           {/* Bottom Insights Banner */}
           <div className="mt-6 pt-4 border-t border-[rgba(71,86,87,0.12)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white/70 p-3 rounded-xl border">
             <div className="flex items-center gap-2 text-xs">
-              <Sparkles className="w-4 h-4 text-[#B07238] shrink-0" />
+              <Sparkles className="w-4 h-4 text-[#D97706] shrink-0" />
               <span className="text-[#2E3A3C]">
                 <strong>Key Optimization Note:</strong> Highest drop-off is between{" "}
                 <em>Qualified</em> to <em>Counselling Conducted</em> (44%).
               </span>
             </div>
-            <span className="text-[11px] font-bold text-[#4A6D7C] hover:underline cursor-pointer shrink-0">
+            <span className="text-[11px] font-bold text-[#D97706] hover:text-[#B45309] hover:underline cursor-pointer shrink-0">
               Improve Follow-up Timing →
             </span>
           </div>
@@ -258,7 +258,7 @@ export function ExecutiveAnalyticsCockpit() {
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-[rgba(71,86,87,0.14)]">
               <div className="flex items-center gap-2">
-                <Award className="w-4 h-4 text-[#B07238]" />
+                <Award className="w-4 h-4 text-[#D97706]" />
                 <h3 className="text-sm font-bold text-[#1C2527]">Sales Leaderboard</h3>
               </div>
               <span className="text-[10.5px] font-bold text-[#57686A] uppercase tracking-wider">
@@ -276,7 +276,7 @@ export function ExecutiveAnalyticsCockpit() {
                     key={rep.id}
                     className={`p-3 rounded-xl border transition-all duration-150 ${
                       isFirst
-                        ? "bg-white border-[#B07238]/40 shadow-sm ring-1 ring-[#B07238]/20"
+                        ? "bg-white border-[#D97706]/40 shadow-sm ring-1 ring-[#D97706]/20"
                         : "bg-white/80 border-[rgba(71,86,87,0.12)] hover:border-[rgba(71,86,87,0.25)]"
                     }`}
                   >
@@ -286,7 +286,7 @@ export function ExecutiveAnalyticsCockpit() {
                         <div
                           className={`w-6 h-6 rounded-full flex items-center justify-center font-black text-xs shrink-0 ${
                             rep.rank === 1
-                              ? "bg-[#B07238] text-white shadow-xs"
+                              ? "bg-[#D97706] text-white shadow-xs"
                               : rep.rank === 2
                               ? "bg-slate-300 text-slate-800"
                               : rep.rank === 3
@@ -320,7 +320,7 @@ export function ExecutiveAnalyticsCockpit() {
                           className={`inline-block px-2 py-0.5 rounded-full text-xs font-mono font-bold ${
                             rep.attainment >= 100
                               ? "bg-[#2E7559]/15 text-[#1e5842] border border-[#2E7559]/30"
-                              : "bg-[#4A6D7C]/12 text-[#194451] border border-[#4A6D7C]/25"
+                              : "bg-[#D97706]/12 text-[#92400E] border border-[#D97706]/25"
                           }`}
                         >
                           {rep.attainment}%
@@ -347,7 +347,7 @@ export function ExecutiveAnalyticsCockpit() {
           </div>
 
           <div className="mt-4 pt-3 border-t border-[rgba(71,86,87,0.12)] text-center">
-            <span className="text-[11px] font-semibold text-[#4A6D7C] hover:underline cursor-pointer">
+            <span className="text-[11px] font-semibold text-[#D97706] hover:text-[#B45309] hover:underline cursor-pointer">
               View Detailed Roster & Capacity →
             </span>
           </div>
@@ -364,7 +364,7 @@ export function ExecutiveAnalyticsCockpit() {
             <span className="text-[11px] font-bold text-[#57686A] uppercase tracking-wider">
               Revenue Attainment
             </span>
-            <Target className="w-4 h-4 text-[#4A6D7C]" />
+            <Target className="w-4 h-4 text-[#D97706]" />
           </div>
           <div className="mt-2 flex items-baseline justify-between">
             <span className="text-2xl font-black text-[#1C2527] font-mono">
@@ -377,7 +377,7 @@ export function ExecutiveAnalyticsCockpit() {
           <div className="mt-2.5 w-full h-2.5 bg-white rounded-full overflow-hidden border border-[rgba(71,86,87,0.12)] p-0.5">
             <div
               style={{ width: `${Math.min(data.pacing.pctAchieved, 100)}%` }}
-              className="h-full rounded-full bg-gradient-to-r from-[#4A6D7C] to-[#2E7559] transition-all duration-500 shadow-xs"
+              className="h-full rounded-full bg-gradient-to-r from-[#D97706] to-[#2E7559] transition-all duration-500 shadow-xs"
             />
           </div>
           <div className="mt-2 flex items-center justify-between text-[11px] text-[#2E7559] font-bold">

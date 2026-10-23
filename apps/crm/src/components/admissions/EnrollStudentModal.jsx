@@ -377,7 +377,7 @@ export function EnrollStudentModal({ isOpen, onClose, lead, onEnrollmentComplete
                   type="checkbox"
                   checked={applyGst}
                   onChange={(e) => setApplyGst(e.target.checked)}
-                  className="w-3.5 h-3.5 rounded text-[#4A6D7C] focus:ring-[#4A6D7C]"
+                  className="w-3.5 h-3.5 rounded text-[#D97706] focus:ring-[#D97706]"
                 />
                 <span>Include 18% GST (Official Invoice)</span>
               </label>
@@ -512,9 +512,9 @@ export function EnrollStudentModal({ isOpen, onClose, lead, onEnrollmentComplete
           </div>
 
           {/* Institutional Audit Notification */}
-          <div className="p-3.5 rounded-xl bg-[#FAF6EE] border border-[rgba(74,109,124,0.3)] text-xs text-[#2A5766] space-y-1">
-            <span className="font-bold text-[#194451] flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-[#4A6D7C]" />
+          <div className="p-3.5 rounded-xl bg-[#FAF6EE] border border-[#D97706]/25 text-xs text-[#92400E] space-y-1">
+            <span className="font-bold text-[#1C2527] flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4 text-[#D97706]" />
               <span>Automatic Lifecycle Synchronization:</span>
             </span>
             <p className="text-[11px] text-[#475657]">
