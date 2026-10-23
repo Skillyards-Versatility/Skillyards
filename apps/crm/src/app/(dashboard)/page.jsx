@@ -121,8 +121,8 @@ export default function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-1">
         <div>
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#62929E] animate-pulse" />
-            <span className="text-[11px] font-bold tracking-wider uppercase text-[#4A6D7C]">Live Operations Center</span>
+            <span className="w-2 h-2 rounded-full bg-[#D97706] animate-pulse" />
+            <span className="text-[11px] font-bold tracking-wider uppercase text-[#D97706]">Live Operations Center</span>
           </div>
           <h1 className="crm-page-title text-2xl font-bold mt-1">Sales Command Center</h1>
           <p className="crm-page-subtitle text-xs mt-0.5">
@@ -139,7 +139,7 @@ export default function DashboardPage() {
             href="/eod"
             className="crm-btn-secondary !py-1.5 !px-3 text-xs"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <FileSpreadsheet className="w-3.5 h-3.5 text-[#D97706]" />
             <span>EOD Sheet</span>
           </Link>
         </div>
@@ -153,17 +153,17 @@ export default function DashboardPage() {
           className="crm-card p-5 block group relative overflow-hidden"
         >
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5A6E71] group-hover:text-[#4A6D7C] transition-colors">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5A6E71] group-hover:text-[#D97706] transition-colors">
               Total Leads
             </span>
-            <div className="w-9 h-9 rounded-xl bg-[#4A6D7C]/12 border border-[#4A6D7C]/25 text-[#4A6D7C] flex items-center justify-center transition-transform group-hover:scale-110 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-[#D97706]/12 border border-[#D97706]/25 text-[#D97706] flex items-center justify-center transition-transform group-hover:scale-110 shadow-xs">
               <Users className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between">
             <span className="text-3xl font-black text-[#1C2527] tracking-tight">{totalLeads}</span>
-            <span className="text-[11px] bg-[#62929E]/15 text-[#164955] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#62929E]/30">
-              <TrendingUp className="w-3 h-3 text-[#216372]" /> Active
+            <span className="text-[11px] bg-[#D97706]/15 text-[#92400E] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 border border-[#D97706]/30">
+              <TrendingUp className="w-3 h-3 text-[#D97706]" /> Active
             </span>
           </div>
           <div className="mt-2 text-[11px] text-[#5A6E71] flex items-center gap-1">
@@ -177,10 +177,10 @@ export default function DashboardPage() {
           className="crm-card p-5 block group relative overflow-hidden"
         >
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5A6E71] group-hover:text-[#216372] transition-colors">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-[#5A6E71] group-hover:text-[#D97706] transition-colors">
               Active Call Queue
             </span>
-            <div className="w-9 h-9 rounded-xl bg-[#62929E]/12 border border-[#62929E]/25 text-[#216372] flex items-center justify-center transition-transform group-hover:scale-110 shadow-xs">
+            <div className="w-9 h-9 rounded-xl bg-[#D97706]/12 border border-[#D97706]/25 text-[#D97706] flex items-center justify-center transition-transform group-hover:scale-110 shadow-xs">
               <UserCheck className="w-4 h-4" />
             </div>
           </div>
@@ -188,7 +188,7 @@ export default function DashboardPage() {
             <span className="text-3xl font-black text-[#1C2527] tracking-tight">
               {leads.filter((l) => l.status === "new").length}
             </span>
-            <span className="text-[11px] bg-[#4A6D7C]/12 text-[#194451] font-bold px-2 py-0.5 rounded-full border border-[#4A6D7C]/25">
+            <span className="text-[11px] bg-[#D97706]/12 text-[#92400E] font-bold px-2 py-0.5 rounded-full border border-[#D97706]/25">
               Dialer Ready
             </span>
           </div>
@@ -254,9 +254,9 @@ export default function DashboardPage() {
       <ExecutiveAnalyticsCockpit />
 
       {/* EOD Attainment Action Box */}
-      <div className="bg-gradient-to-r from-[#FAF6EE] via-[#F6EDE0] to-[#ECE1CF] border border-[rgba(74,109,124,0.22)] rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="bg-gradient-to-r from-[#FAF6EE] via-[#F6EDE0] to-[#ECE1CF] border border-[#D97706]/25 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-[#4A6D7C] border border-[#3D5A66] text-white flex items-center justify-center shrink-0 shadow-md shadow-[#4A6D7C]/25">
+          <div className="w-10 h-10 rounded-xl bg-[#D97706] border border-[#B45309] text-white flex items-center justify-center shrink-0 shadow-md shadow-[#D97706]/25">
             <FileSpreadsheet className="w-5 h-5" />
           </div>
           <div>
@@ -285,7 +285,7 @@ export default function DashboardPage() {
           </div>
           <Link
             href="/leads"
-            className="flex items-center gap-1 text-xs font-bold text-[#4A6D7C] hover:text-[#275767] transition-colors"
+            className="flex items-center gap-1 text-xs font-bold text-[#D97706] hover:text-[#B45309] transition-colors"
           >
             <span>View All Pipeline</span>
             <ArrowRight className="w-3.5 h-3.5" />
@@ -294,7 +294,7 @@ export default function DashboardPage() {
 
         {loading ? (
           <div className="py-20 flex items-center justify-center text-[#5A6E71] gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-[#4A6D7C]" />
+            <Loader2 className="w-5 h-5 animate-spin text-[#D97706]" />
             <span className="text-xs font-medium">Loading leads data...</span>
           </div>
         ) : leads.length === 0 ? (
@@ -323,7 +323,7 @@ export default function DashboardPage() {
                     <tr key={lead.id} className="crm-tr group">
                       <td className="crm-td">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-[#4A6D7C]/15 border border-[#4A6D7C]/25 text-[#194451] font-bold text-xs flex items-center justify-center shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-[#D97706]/15 border border-[#D97706]/25 text-[#B45309] font-bold text-xs flex items-center justify-center shrink-0">
                             {initial}
                           </div>
                           <div>
@@ -355,7 +355,7 @@ export default function DashboardPage() {
                       <td className="crm-td">
                         {lead.assignedToUserName ? (
                           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] text-xs text-[#2E3E41] font-medium">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#4A6D7C]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]" />
                             <span>{lead.assignedToUserName}</span>
                           </div>
                         ) : (

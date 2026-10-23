@@ -26,7 +26,9 @@ import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
 import { useTelephony } from "@/context/TelephonyContext";
 import { useAuth } from "@/context/AuthContext";
 import { BulkOutreachModal } from "@/components/leads/BulkOutreachModal";
+import { MultiChannelOutreachModal } from "@/components/leads/MultiChannelOutreachModal";
 import { EnrollInCadenceModal } from "@/components/cadences/EnrollInCadenceModal";
+import { calculateLeadPropensityScore } from "@/lib/leadIntelligence";
 
 const STATUS_TABS = [
   { label: "All Leads", value: "" },
@@ -162,6 +164,7 @@ export default function LeadsDirectoryPage() {
   const [isBulkOutreachModalOpen, setIsBulkOutreachModalOpen] = useState(false);
   const [isBulkCadenceModalOpen, setIsBulkCadenceModalOpen] = useState(false);
   const [cadencesList, setCadencesList] = useState([]);
+  const [outreachLead, setOutreachLead] = useState(null);
 
   // Toast feedback state
   const [toast, setToast] = useState(null);
@@ -232,6 +235,24 @@ export default function LeadsDirectoryPage() {
       setLoading(false);
     }
   };
+
+  // Sync status filter from URL if present (e.g. ?status=new)
+  useEffect(() => {
+    const syncStatusFromUrl = () => {
+      if (typeof window !== "undefined") {
+        const params = new URLSearchParams(window.location.search);
+        const s = params.get("status") || "";
+        setStatusFilter((prev) => (prev !== s ? s : prev));
+      }
+    };
+    syncStatusFromUrl();
+    window.addEventListener("popstate", syncStatusFromUrl);
+    window.addEventListener("lead-status-filter-change", syncStatusFromUrl);
+    return () => {
+      window.removeEventListener("popstate", syncStatusFromUrl);
+      window.removeEventListener("lead-status-filter-change", syncStatusFromUrl);
+    };
+  }, []);
 
   useEffect(() => {
     fetchLeads();
@@ -517,20 +538,20 @@ export default function LeadsDirectoryPage() {
           {selectedIds.length > 0 && (
             <button
               onClick={() => handleExportCSV(true)}
-              className="crm-btn-secondary !bg-[#4A6D7C]/10 !text-[#194451] !border-[#4A6D7C]/30 shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5 cursor-pointer"
+              className="crm-btn-secondary !bg-[#D97706]/10 !text-[#92400E] !border-[#D97706]/30 shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5 cursor-pointer"
               title="Download CSV of selected leads"
             >
-              <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+              <Download className="w-3.5 h-3.5 text-[#D97706]" />
               <span>Export Selected ({selectedIds.length})</span>
             </button>
           )}
 
           <Link
             href="/campaigns"
-            className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5 font-bold !text-[#4A6D7C] border-[rgba(74,109,124,0.3)] bg-white hover:bg-[#FAF6EE]"
+            className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5 font-bold !text-[#D97706] border-[#D97706]/30 bg-white hover:bg-[#FAF6EE]"
             title="Open Marketing Campaigns & Lead Attribution"
           >
-            <Target className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <Target className="w-3.5 h-3.5 text-[#D97706]" />
             <span>Campaigns</span>
           </Link>
 
@@ -539,7 +560,7 @@ export default function LeadsDirectoryPage() {
             className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5"
             title="Download CSV of current leads"
           >
-            <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <Download className="w-3.5 h-3.5 text-[#D97706]" />
             <span>Export All CSV</span>
           </button>
 
@@ -594,7 +615,7 @@ export default function LeadsDirectoryPage() {
             <button
               type="button"
               onClick={clearSelection}
-              className="text-xs font-bold text-[#B07238] hover:underline cursor-pointer"
+              className="text-xs font-bold text-[#D97706] hover:underline cursor-pointer"
             >
               Clear
             </button>
@@ -606,12 +627,12 @@ export default function LeadsDirectoryPage() {
       <div className="bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-sm rounded-2xl overflow-hidden relative">
         {loading ? (
           <div className="py-20 flex items-center justify-center text-[#7e939a] gap-2">
-            <Loader2 className="w-5 h-5 animate-spin text-[#4A6D7C]" />
+            <Loader2 className="w-5 h-5 animate-spin text-[#D97706]" />
             <span className="text-xs">Fetching leads...</span>
           </div>
         ) : leads.length === 0 ? (
           <div className="py-20 text-center space-y-3 max-w-sm mx-auto">
-            <div className="w-12 h-12 rounded-2xl bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.25)] text-[#4A6D7C] flex items-center justify-center mx-auto shadow-xs">
+            <div className="w-12 h-12 rounded-2xl bg-[#D97706]/12 border border-[#D97706]/25 text-[#D97706] flex items-center justify-center mx-auto shadow-xs">
               <Search className="w-6 h-6" />
             </div>
             <h3 className="text-sm font-bold text-[#1C2527]">No Prospects Found</h3>
@@ -632,7 +653,7 @@ export default function LeadsDirectoryPage() {
                       }}
                       onChange={toggleSelectAll}
                       title={isAllSelected ? "Deselect all" : "Select all in view"}
-                      className="w-4 h-4 rounded border-[rgba(71,86,87,0.3)] text-[#4A6D7C] focus:ring-[#4A6D7C] cursor-pointer"
+                      className="w-4 h-4 rounded border-[rgba(71,86,87,0.3)] text-[#D97706] focus:ring-[#D97706] cursor-pointer"
                     />
                   </th>
                   <th className="crm-th">Lead Details</th>
@@ -656,7 +677,7 @@ export default function LeadsDirectoryPage() {
                       onClick={() => toggleSelectOne(lead.id)}
                       className={`crm-tr group cursor-pointer transition-colors ${
                         isSelected
-                          ? "!bg-[#4A6D7C]/12 border-l-4 !border-l-[#4A6D7C]"
+                          ? "!bg-[#D97706]/10 border-l-4 !border-l-[#D97706]"
                           : "hover:bg-[#FAF6EE]"
                       }`}
                     >
@@ -669,7 +690,7 @@ export default function LeadsDirectoryPage() {
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => toggleSelectOne(lead.id)}
-                          className="w-4 h-4 rounded border-[rgba(71,86,87,0.3)] text-[#4A6D7C] focus:ring-[#4A6D7C] cursor-pointer"
+                          className="w-4 h-4 rounded border-[rgba(71,86,87,0.3)] text-[#D97706] focus:ring-[#D97706] cursor-pointer"
                         />
                       </td>
 
@@ -678,8 +699,8 @@ export default function LeadsDirectoryPage() {
                           <div
                             className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center shrink-0 border transition-all ${
                               isSelected
-                                ? "bg-[#4A6D7C] text-white border-[#4A6D7C]"
-                                : "bg-[#4A6D7C]/15 border-[#4A6D7C]/25 text-[#194451]"
+                                ? "bg-[#D97706] text-white border-[#D97706]"
+                                : "bg-[#D97706]/15 border-[#D97706]/25 text-[#92400E]"
                             }`}
                           >
                             {isSelected ? <Check className="w-4 h-4" /> : initial}
@@ -691,7 +712,7 @@ export default function LeadsDirectoryPage() {
                               className="crm-lead-link font-bold text-xs flex items-center gap-1.5"
                             >
                               <span>{leadName}</span>
-                              <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#4A6D7C]" />
+                              <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#D97706]" />
                             </Link>
                             <div className="text-[10.5px] text-[#7E9396] font-mono mt-0.5">
                               ID: #{lead.id?.slice(0, 8) || "N/A"}
@@ -715,15 +736,30 @@ export default function LeadsDirectoryPage() {
                       </td>
 
                       <td className="crm-td">
-                        <span className={getStatusBadgeClass(lead.status)}>
-                          {formatStatusLabel(lead.status)}
-                        </span>
+                        <div className="flex flex-col gap-1 items-start">
+                          <span className={getStatusBadgeClass(lead.status)}>
+                            {formatStatusLabel(lead.status)}
+                          </span>
+                          {(() => {
+                            const prop = calculateLeadPropensityScore(lead);
+                            return (
+                              <span
+                                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold border shadow-2xs ${prop.color}`}
+                                title={`AI Conversion Propensity: ${prop.score}/100 • ${prop.label}\nRecommended: ${prop.recommendedAction}`}
+                              >
+                                <span>{prop.emoji}</span>
+                                <span>{prop.score}</span>
+                                <span className="font-semibold opacity-75">{prop.category.toUpperCase()}</span>
+                              </span>
+                            );
+                          })()}
+                        </div>
                       </td>
 
                       <td className="crm-td">
                         {lead.assignedToUserName ? (
                           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] text-xs text-[#2E3E41] font-medium">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#4A6D7C]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]" />
                             <span>{lead.assignedToUserName}</span>
                           </div>
                         ) : (
@@ -742,22 +778,36 @@ export default function LeadsDirectoryPage() {
                       <td className="crm-td text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1.5">
                           {(lead.normalizedPhone || lead.phone) && (
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                startCall({
-                                  leadId: lead.id,
-                                  name: leadName,
-                                  phone: lead.normalizedPhone || lead.phone,
-                                  courseInterest: lead.enquiryCourse || "Admissions Consultation",
-                                });
-                              }}
-                              title={`Call ${leadName} with Softphone`}
-                              className="p-1.5 rounded-lg bg-[#2E7559]/15 hover:bg-[#2E7559] text-[#1e5842] hover:text-white border border-[#2E7559]/30 transition-all active:scale-90 cursor-pointer shadow-xs inline-flex items-center justify-center"
-                            >
-                              <Phone className="w-3.5 h-3.5" />
-                            </button>
+                            <>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                   e.stopPropagation();
+                                  startCall({
+                                    leadId: lead.id,
+                                    name: leadName,
+                                    phone: lead.normalizedPhone || lead.phone,
+                                    courseInterest: lead.enquiryCourse || "Admissions Consultation",
+                                  });
+                                }}
+                                title={`Call ${leadName} with Softphone`}
+                                className="p-1.5 rounded-lg bg-[#2E7559]/15 hover:bg-[#2E7559] text-[#1e5842] hover:text-white border border-[#2E7559]/30 transition-all active:scale-90 cursor-pointer shadow-xs inline-flex items-center justify-center"
+                              >
+                                <Phone className="w-3.5 h-3.5" />
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOutreachLead(lead);
+                                }}
+                                title={`1-Click WhatsApp & Outreach to ${leadName}`}
+                                className="p-1.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366] text-[#128C7E] hover:text-white border border-[#25D366]/30 transition-all active:scale-90 cursor-pointer shadow-xs inline-flex items-center justify-center"
+                              >
+                                <MessageSquare className="w-3.5 h-3.5" />
+                              </button>
+                            </>
                           )}
                           <Link
                             href={`/leads/${lead.id}`}
@@ -782,7 +832,7 @@ export default function LeadsDirectoryPage() {
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-[#0c1316] text-[#FAF6EE] border border-[rgba(98,146,158,0.35)] shadow-2xl rounded-2xl px-4 sm:px-6 py-3 flex items-center gap-3 sm:gap-4 animate-slideUp backdrop-blur-md max-w-[95vw] overflow-x-auto">
           {/* Selected Count Pill */}
           <div className="flex items-center gap-2 pr-3 border-r border-white/15 shrink-0">
-            <span className="w-6 h-6 rounded-lg bg-[#4A6D7C] text-white font-bold text-xs flex items-center justify-center">
+            <span className="w-6 h-6 rounded-lg bg-[#D97706] text-white font-bold text-xs flex items-center justify-center">
               {selectedIds.length}
             </span>
             <span className="text-xs font-semibold whitespace-nowrap hidden sm:inline">
@@ -1042,6 +1092,17 @@ export default function LeadsDirectoryPage() {
         onEnrollComplete={({ count, cadenceName }) => {
           showToast(`Enrolled ${count} prospects into "${cadenceName}"!`);
           setSelectedIds([]);
+        }}
+      />
+
+      {/* 1-Click Multi-Channel / WhatsApp Quick Outreach Modal */}
+      <MultiChannelOutreachModal
+        isOpen={!!outreachLead}
+        onClose={() => setOutreachLead(null)}
+        lead={outreachLead}
+        currentUser={user}
+        onOutreachSent={({ channel, templateTitle }) => {
+          showToast(`Dispatched ${channel.toUpperCase()} template "${templateTitle}"!`);
         }}
       />
     </div>

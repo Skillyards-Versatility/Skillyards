@@ -467,7 +467,7 @@ export default function EodPage() {
       <div className="p-5 bg-gradient-to-r from-[#FAF6EE] via-[#F4ECE1] to-[#EBE0CF] border border-[rgba(71,86,87,0.18)] shadow-sm rounded-2xl">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.25)] text-[#4A6D7C] flex items-center justify-center shrink-0 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-[#D97706]/15 border border-[#D97706]/25 text-[#D97706] flex items-center justify-center shrink-0 shadow-xs">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
@@ -475,7 +475,7 @@ export default function EodPage() {
                 <h2 className="text-sm font-bold text-[#1C2527]">
                   Server-Owned Target Engine (Config v1.0)
                 </h2>
-                <span className="text-[10px] px-2 py-0.5 rounded-md bg-white text-[#4A6D7C] border border-[rgba(98,146,158,0.25)] font-mono font-bold shadow-xs">
+                <span className="text-[10px] px-2 py-0.5 rounded-md bg-white text-[#D97706] border border-[#D97706]/25 font-mono font-bold shadow-xs">
                   Locked Formula
                 </span>
               </div>
@@ -1014,7 +1014,7 @@ export default function EodPage() {
                 className="crm-btn-secondary !py-1 !px-2.5 text-xs shadow-xs"
                 title="Download CSV of EOD reports"
               >
-                <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                <Download className="w-3.5 h-3.5 text-[#D97706]" />
                 <span>Export CSV</span>
               </button>
 
@@ -1023,7 +1023,7 @@ export default function EodPage() {
                   <button
                     onClick={() => setHistoryScope("all")}
                     className={`px-3 py-1 rounded-lg transition-all ${
-                      historyScope === "all" ? "bg-[#4A6D7C] text-white font-bold shadow-xs" : "text-[#5A6E71] hover:text-[#1C2527]"
+                      historyScope === "all" ? "bg-[#D97706] text-white font-bold shadow-xs" : "text-[#5A6E71] hover:text-[#1C2527]"
                     }`}
                   >
                     All Team
@@ -1031,7 +1031,7 @@ export default function EodPage() {
                   <button
                     onClick={() => setHistoryScope("my")}
                     className={`px-3 py-1 rounded-lg transition-all ${
-                      historyScope === "my" ? "bg-[#4A6D7C] text-white font-bold shadow-xs" : "text-[#5A6E71] hover:text-[#1C2527]"
+                      historyScope === "my" ? "bg-[#D97706] text-white font-bold shadow-xs" : "text-[#5A6E71] hover:text-[#1C2527]"
                     }`}
                   >
                     My Submissions
@@ -1166,7 +1166,7 @@ export default function EodPage() {
             {/* Modal Header */}
             <div className="bg-[#0c1316] px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)]">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.3)] text-[#62929e] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#D97706]/20 border border-[#D97706]/40 text-[#D97706] flex items-center justify-center">
                   <Edit3 className="w-4 h-4" />
                 </div>
                 <div>
@@ -1188,7 +1188,7 @@ export default function EodPage() {
 
             <div className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
               <div className="p-3.5 bg-white rounded-xl border border-[rgba(71,86,87,0.16)] text-xs space-y-1 shadow-xs">
-                <div className="text-[#1C2527] font-semibold">Current Revision: <span className="font-mono text-[#4A6D7C] font-bold">v{amendReport.data?.revision || 1}</span></div>
+                <div className="text-[#1C2527] font-semibold">Current Revision: <span className="font-mono text-[#D97706] font-bold">v{amendReport.data?.revision || 1}</span></div>
                 <div className="text-[11px] text-[#5A6E71]">
                   Authorizing this amendment creates <strong className="text-[#1C2527]">Revision v{(amendReport.data?.revision || 1) + 1}</strong> with full immutability audit logging.
                 </div>
@@ -1277,7 +1277,7 @@ export default function EodPage() {
             {/* Drawer Header */}
             <div className="bg-[#0c1316] px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)] shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.3)] text-[#62929e] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#D97706]/20 border border-[#D97706]/40 text-[#D97706] flex items-center justify-center">
                   <History className="w-4 h-4" />
                 </div>
                 <div>
@@ -1321,7 +1321,7 @@ export default function EodPage() {
                   {detailedHistory?.data?.revisions?.map((rev, idx) => (
                     <div key={idx} className="p-4 rounded-xl bg-white border border-[rgba(71,86,87,0.16)] text-xs space-y-2.5 shadow-xs">
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-[#194451] bg-[#4A6D7C]/10 px-2 py-0.5 rounded-md text-xs border border-[#4A6D7C]/20">
+                        <span className="font-bold text-[#92400E] bg-[#D97706]/10 px-2 py-0.5 rounded-md text-xs border border-[#D97706]/25">
                           Revision v{rev.revision}
                         </span>
                         <span className="text-[10.5px] text-[#7E9396] font-mono">

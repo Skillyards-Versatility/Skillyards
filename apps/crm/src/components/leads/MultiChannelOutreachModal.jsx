@@ -134,6 +134,30 @@ Let me know if you would like me to assist you with the digital EMI approval in 
 Regards,
 {{counsellor_name}} | Skillyards`,
   },
+  {
+    id: "seat_token_reservation",
+    category: "finance",
+    title: "Reserve Cohort Seat (₹5,000 Token Hold)",
+    badge: "Immediate Action",
+    icon: CreditCard,
+    subject: "Lock In Your Cohort Seat — ₹5,000 Token Reservation for {{course_name}}",
+    body: `Hi {{candidate_name}},
+
+Seats for the upcoming {{course_name}} batch are filling fast! 🎯
+
+To guarantee your seat and lock in current early-bird tuition fees, you can reserve your spot with an initial refundable token of ₹5,000:
+
+🔒 Secure Token Checkout: https://pay.skillyards.com/token/{{candidate_code}}
+• Instant digital receipt & seat confirmation letter
+• Balance payable via 0% EMI before cohort orientation
+• 100% money-back guarantee within 7 days
+
+Please share the payment reference once completed so our admissions desk can generate your student ID!
+
+Warm regards,
+{{counsellor_name}}
+Skillyards Admissions Committee`,
+  },
 ];
 
 export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSent, currentUser }) {
@@ -275,7 +299,7 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
             ========================================================================= */}
         <div className="px-5 py-3.5 bg-[#0c1316] text-white border-b border-[rgba(98,146,158,0.2)] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.35)] flex items-center justify-center text-[#62929e] shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-[#D97706]/20 border border-[#D97706]/40 flex items-center justify-center text-[#D97706] shrink-0">
               <MessageSquare className="w-4 h-4" />
             </div>
             <div className="min-w-0">
@@ -283,7 +307,7 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
                 <h2 className="text-sm font-bold text-white tracking-wide truncate">
                   Multi-Channel Outreach & Template Engine
                 </h2>
-                <span className="px-2 py-0.2 rounded-full bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.3)] text-[10px] text-[#a3cdd8] font-mono hidden sm:inline-block">
+                <span className="px-2 py-0.2 rounded-full bg-[#D97706]/15 border border-[#D97706]/30 text-[10px] text-[#D97706] font-mono hidden sm:inline-block">
                   Verified EdTech Templates
                 </span>
               </div>
@@ -330,7 +354,7 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
             onClick={() => setActiveChannel("email")}
             className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeChannel === "email"
-                ? "bg-[#4A6D7C] text-white shadow-md shadow-[#4A6D7C]/20 font-black"
+                ? "bg-[#D97706] text-white shadow-md shadow-[#D97706]/20 font-black"
                 : "text-[#8ba3aa] hover:text-white bg-[rgba(98,146,158,0.08)] hover:bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.15)]"
             }`}
           >
@@ -375,15 +399,15 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
                   onClick={() => setSelectedTemplateId(tmpl.id)}
                   className={`w-full p-3 rounded-xl border text-left transition-all duration-150 flex items-start gap-2.5 cursor-pointer ${
                     isSelected
-                      ? "bg-white border-[#4A6D7C] shadow-sm ring-1 ring-[#4A6D7C]"
+                      ? "bg-white border-[#D97706] shadow-sm ring-1 ring-[#D97706]"
                       : "bg-white/80 border-[rgba(71,86,87,0.12)] hover:border-[rgba(71,86,87,0.3)] hover:bg-white"
                   }`}
                 >
                   <div
                     className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
                       isSelected
-                        ? "bg-[#4A6D7C] text-white shadow-xs"
-                        : "bg-[rgba(74,109,124,0.12)] text-[#2b4c57]"
+                        ? "bg-[#D97706] text-white shadow-xs"
+                        : "bg-[#D97706]/15 text-[#D97706]"
                     }`}
                   >
                     <Icon className="w-3.5 h-3.5" />
@@ -395,7 +419,7 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
                         {tmpl.title}
                       </span>
                     </div>
-                    <span className="mt-1 inline-block px-1.5 py-0.2 rounded-full text-[9.5px] font-semibold bg-[rgba(74,109,124,0.1)] text-[#26444e] border border-[rgba(74,109,124,0.2)]">
+                    <span className="mt-1 inline-block px-1.5 py-0.2 rounded-full text-[9.5px] font-semibold bg-[#D97706]/10 text-[#92400E] border border-[#D97706]/20">
                       {tmpl.badge}
                     </span>
                   </div>
@@ -417,7 +441,7 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
                     type="text"
                     value={customSubject}
                     onChange={(e) => setCustomSubject(e.target.value)}
-                    className="w-full px-3 py-2 rounded-xl bg-white border border-[rgba(71,86,87,0.2)] text-xs text-[#1C2527] font-semibold focus:outline-none focus:ring-2 focus:ring-[#4A6D7C]"
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-[rgba(71,86,87,0.2)] text-xs text-[#1C2527] font-semibold focus:outline-none focus:ring-2 focus:ring-[#D97706]"
                   />
                 </div>
               )}
@@ -438,7 +462,7 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
                       activeChannel === "whatsapp"
                         ? "bg-[#25D366]/20 text-[#128C7E]"
                         : activeChannel === "email"
-                        ? "bg-[#4A6D7C]/20 text-[#244b58]"
+                        ? "bg-[#D97706]/20 text-[#92400E]"
                         : "bg-[#B07238]/20 text-[#8f5620]"
                     }`}
                   >
@@ -454,7 +478,7 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
                   rows={10}
                   value={customText}
                   onChange={(e) => setCustomText(e.target.value)}
-                  className="w-full p-3 rounded-xl bg-white border border-[rgba(71,86,87,0.2)] text-xs text-[#1C2527] font-sans leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#4A6D7C] shadow-xs"
+                  className="w-full p-3 rounded-xl bg-white border border-[rgba(71,86,87,0.2)] text-xs text-[#1C2527] font-sans leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#D97706] shadow-xs"
                 />
               </div>
 
@@ -475,7 +499,7 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
                       key={tok.key}
                       type="button"
                       onClick={() => handleInsertToken(tok.key)}
-                      className="px-2 py-1 rounded-md bg-white border border-[rgba(71,86,87,0.18)] hover:bg-[rgba(74,109,124,0.1)] hover:border-[#4A6D7C]/40 text-[10.5px] font-semibold text-[#2E3A3C] transition-colors cursor-pointer"
+                      className="px-2 py-1 rounded-md bg-white border border-[rgba(71,86,87,0.18)] hover:bg-[#D97706]/10 hover:border-[#D97706]/40 text-[10.5px] font-semibold text-[#2E3A3C] transition-colors cursor-pointer"
                     >
                       + {tok.label}
                     </button>
@@ -512,7 +536,7 @@ export function MultiChannelOutreachModal({ isOpen, onClose, lead, onOutreachSen
                   <button
                     type="button"
                     onClick={handleSendEmail}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#4A6D7C] hover:bg-[#3d5a66] text-white font-bold text-xs shadow-md shadow-[#4A6D7C]/25 transition-all active:scale-95 cursor-pointer"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#D97706] hover:bg-[#B45309] text-white font-bold text-xs shadow-md shadow-[#D97706]/25 transition-all active:scale-95 cursor-pointer"
                   >
                     <Mail className="w-4 h-4" />
                     <span>Send via Email Client</span>

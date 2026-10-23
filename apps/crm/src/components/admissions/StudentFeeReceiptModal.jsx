@@ -110,7 +110,7 @@ export function StudentFeeReceiptModal({ isOpen, onClose, enrollment }) {
               <p className="font-bold text-sm text-[#1C2527]">{enrollment.studentName || enrollment.fullName}</p>
               <p className="text-[#475657] font-mono text-[11px]">{enrollment.studentPhone || enrollment.phone}</p>
               <p className="text-[#475657] text-[11px]">{enrollment.studentEmail || enrollment.email}</p>
-              <p className="text-[11px] text-[#4A6D7C] font-mono font-bold mt-1">
+              <p className="text-[11px] text-[#D97706] font-mono font-bold mt-1">
                 Student ID: {enrollment.studentId || "SKY-2026-881"}
               </p>
             </div>
@@ -226,7 +226,7 @@ export function StudentFeeReceiptModal({ isOpen, onClose, enrollment }) {
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-lg bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] flex items-center justify-center text-[#4A6D7C]">
+              <div className="w-12 h-12 rounded-lg bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] flex items-center justify-center text-[#D97706]">
                 <ShieldCheck className="w-6 h-6 text-[#2E7559]" />
               </div>
               <div className="text-[11px] text-[#5A6E71]">

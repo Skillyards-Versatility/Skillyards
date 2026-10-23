@@ -196,7 +196,7 @@ export function CollectInstallmentModal({ isOpen, onClose, installment, onCollec
             </div>
             <div className="text-right space-y-0.5">
               <span className="text-[10px] uppercase font-bold text-[#7E939A] tracking-wider">Milestone</span>
-              <p className="font-bold text-xs text-[#4A6D7C]">{installment.installmentTitle}</p>
+              <p className="font-bold text-xs text-[#D97706]">{installment.installmentTitle}</p>
               <p className="text-[11px] text-[#B07238] font-bold">
                 Due: ₹{currentDue.toLocaleString("en-IN")}
               </p>

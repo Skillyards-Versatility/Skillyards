@@ -361,7 +361,7 @@ export default function AdmissionsPage() {
             className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5"
             title="Download CSV of current admissions"
           >
-            <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <Download className="w-3.5 h-3.5 text-[#D97706]" />
             <span>Export CSV</span>
           </button>
 
@@ -382,7 +382,7 @@ export default function AdmissionsPage() {
         <div className="p-4 bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] rounded-2xl shadow-sm hover:shadow-md transition-all space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#5A6E71]">Enrolled Students</span>
-            <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.15)] flex items-center justify-center text-[#4A6D7C]">
+            <div className="w-8 h-8 rounded-lg bg-[#D97706]/15 flex items-center justify-center text-[#D97706]">
               <GraduationCap className="w-4 h-4" />
             </div>
           </div>
@@ -522,7 +522,7 @@ export default function AdmissionsPage() {
                             <span className="font-bold text-xs text-[#1C2527] block">
                               {item.studentName}
                             </span>
-                            <span className="text-[10.5px] text-[#4A6D7C] font-mono font-semibold">
+                            <span className="text-[10.5px] text-[#D97706] font-mono font-semibold">
                               {item.studentId}
                             </span>
                           </div>
@@ -594,7 +594,7 @@ export default function AdmissionsPage() {
                             isFull
                               ? "bg-[#25D366]/15 border-[#25D366]/40 text-[#128C7E]"
                               : isEmi
-                              ? "bg-[#4A6D7C]/15 border-[#4A6D7C]/40 text-[#4A6D7C]"
+                              ? "bg-[#D97706]/15 border-[#D97706]/40 text-[#D97706]"
                               : "bg-[#B07238]/15 border-[#B07238]/40 text-[#B07238]"
                           }`}
                         >
@@ -611,7 +611,7 @@ export default function AdmissionsPage() {
                             className="crm-btn-secondary !py-1 !px-2 text-[11px] flex items-center gap-1 shadow-xs cursor-pointer"
                             title="View official fee receipt"
                           >
-                            <Receipt className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                            <Receipt className="w-3.5 h-3.5 text-[#D97706]" />
                             <span>Receipt</span>
                           </button>
 

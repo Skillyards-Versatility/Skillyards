@@ -41,6 +41,8 @@ import { useAuth } from "@/context/AuthContext";
 import { MultiChannelOutreachModal } from "@/components/leads/MultiChannelOutreachModal";
 import { EnrollStudentModal } from "@/components/admissions/EnrollStudentModal";
 import { StudentFeeReceiptModal } from "@/components/admissions/StudentFeeReceiptModal";
+import { CallRecordingAudioPlayer } from "@/components/leads/CallRecordingAudioPlayer";
+import { calculateLeadPropensityScore, generateAiCallSummary } from "@/lib/leadIntelligence";
 
 const STATUSES = [
   { value: "new", label: "New" },
@@ -72,6 +74,7 @@ export default function LeadDetailPage() {
   const { user } = useAuth();
 
   const [lead, setLead] = useState(null);
+  const propensity = React.useMemo(() => calculateLeadPropensityScore(lead), [lead]);
   const [isOutreachModalOpen, setIsOutreachModalOpen] = useState(false);
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
@@ -482,10 +485,18 @@ export default function LeadDetailPage() {
               {(lead.fullName || "U").charAt(0).toUpperCase()}
             </div>
             <div>
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2.5 flex-wrap">
                 <h1 className="crm-page-title text-xl font-bold">{lead.fullName}</h1>
                 <span className={getStatusBadgeClass(lead.status)}>
                   {formatStatusLabel(lead.status)}
+                </span>
+                <span
+                  className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border shadow-xs cursor-default ${propensity.color}`}
+                  title={`AI Conversion Propensity: ${propensity.score}/100\n• ${propensity.reasons.join("\n• ")}\nRecommended Action: ${propensity.recommendedAction}`}
+                >
+                  <span>{propensity.emoji}</span>
+                  <span>{propensity.score}/100</span>
+                  <span className="hidden sm:inline font-medium opacity-90">• {propensity.label}</span>
                 </span>
               </div>
               <p className="crm-page-subtitle text-xs mt-0.5">
@@ -532,7 +543,7 @@ export default function LeadDetailPage() {
             className="crm-btn-secondary !bg-white hover:!bg-[#FAF6EE] text-[#1C2527] shadow-xs cursor-pointer flex items-center gap-1.5"
             title="Open full 2-way conversation in Omnichannel Inbox"
           >
-            <MessageSquare className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <MessageSquare className="w-3.5 h-3.5 text-[#D97706]" />
             <span>Chat in Inbox</span>
           </Link>
 
@@ -592,7 +603,7 @@ export default function LeadDetailPage() {
           <div className="p-5 bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-sm hover:shadow-md transition-all rounded-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-[rgba(71,86,87,0.14)] pb-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.25)] text-[#4A6D7C] flex items-center justify-center shadow-xs">
+                <div className="w-8 h-8 rounded-xl bg-[#D97706]/12 border border-[#D97706]/25 text-[#D97706] flex items-center justify-center shadow-xs">
                   <PhoneCall className="w-4 h-4" />
                 </div>
                 <div>
@@ -617,7 +628,7 @@ export default function LeadDetailPage() {
                       onClick={() => setCallOutcome(out.value)}
                       className={`px-3 py-2 rounded-xl text-xs font-bold border text-center transition-all shadow-xs ${
                         callOutcome === out.value
-                          ? "bg-[#4A6D7C] border-[#4A6D7C] text-white shadow-xs"
+                          ? "bg-[#D97706] border-[#D97706] text-white shadow-xs"
                           : "bg-white border-[rgba(71,86,87,0.16)] text-[#1C2527] hover:bg-[#FAF6EE]"
                       }`}
                     >
@@ -648,7 +659,7 @@ export default function LeadDetailPage() {
                           key={sec}
                           type="button"
                           onClick={() => setCallDuration(sec)}
-                          className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-white border border-[rgba(71,86,87,0.16)] text-[#1C2527] hover:border-[#4A6D7C] transition-colors"
+                          className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-white border border-[rgba(71,86,87,0.16)] text-[#1C2527] hover:border-[#D97706] transition-colors"
                         >
                           {sec < 60 ? `${sec}s` : `${sec / 60}m`}
                         </button>
@@ -676,11 +687,25 @@ export default function LeadDetailPage() {
 
               {/* Call Notes */}
               <div>
-                <label className="crm-label font-bold text-[#1C2527]">
-                  Discussion Notes & Remarks
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="crm-label !mb-0 font-bold text-[#1C2527]">
+                    Discussion Notes & Remarks
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const summary = generateAiCallSummary(callNotes, lead, callOutcome);
+                      setCallNotes(summary);
+                    }}
+                    className="text-[11px] font-bold text-[#D97706] hover:text-[#B45309] flex items-center gap-1 transition-colors cursor-pointer px-2 py-0.5 rounded-lg bg-[#D97706]/10 hover:bg-[#D97706]/15 border border-[#D97706]/25"
+                    title="Auto-format rough remarks into structured executive bullet points"
+                  >
+                    <Sparkles className="w-3 h-3 text-[#D97706]" />
+                    <span>✨ AI Polish & Summarize</span>
+                  </button>
+                </div>
                 <textarea
-                  rows="2"
+                  rows="3"
                   value={callNotes}
                   onChange={(e) => setCallNotes(e.target.value)}
                   placeholder="Record summary of conversation, prospect's interest, objections, or next steps..."
@@ -710,11 +735,11 @@ export default function LeadDetailPage() {
                 onClick={() => setActiveTab("timeline")}
                 className={`py-3.5 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors ${
                   activeTab === "timeline"
-                    ? "border-[#4A6D7C] text-[#1C2527]"
+                    ? "border-[#D97706] text-[#D97706]"
                     : "border-transparent text-[#5A6E71] hover:text-[#1C2527]"
                 }`}
               >
-                <History className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                <History className="w-3.5 h-3.5 text-[#D97706]" />
                 <span>Activity Timeline ({lead.timeline?.length || 0})</span>
               </button>
 
@@ -722,11 +747,11 @@ export default function LeadDetailPage() {
                 onClick={() => setActiveTab("counselling")}
                 className={`py-3.5 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors ${
                   activeTab === "counselling"
-                    ? "border-[#4A6D7C] text-[#1C2527]"
+                    ? "border-[#D97706] text-[#D97706]"
                     : "border-transparent text-[#5A6E71] hover:text-[#1C2527]"
                 }`}
               >
-                <GraduationCap className="w-3.5 h-3.5 text-[#62929e]" />
+                <GraduationCap className="w-3.5 h-3.5 text-[#D97706]" />
                 <span>Counselling ({lead.counsellingSessions?.length || 0})</span>
               </button>
 
@@ -734,11 +759,11 @@ export default function LeadDetailPage() {
                 onClick={() => setActiveTab("enquiries")}
                 className={`py-3.5 px-4 text-xs font-bold border-b-2 flex items-center gap-2 transition-colors ${
                   activeTab === "enquiries"
-                    ? "border-[#4A6D7C] text-[#1C2527]"
+                    ? "border-[#D97706] text-[#D97706]"
                     : "border-transparent text-[#5A6E71] hover:text-[#1C2527]"
                 }`}
               >
-                <FileText className="w-3.5 h-3.5 text-[#2E7559]" />
+                <FileText className="w-3.5 h-3.5 text-[#D97706]" />
                 <span>Website Submissions ({lead.enquiries?.length || 0})</span>
               </button>
             </div>
@@ -780,17 +805,17 @@ export default function LeadDetailPage() {
                                 : isOutreachWhatsapp
                                 ? "bg-[#25D366]/15 border-[#25D366]/40 text-[#128C7E]"
                                 : isOutreachEmail
-                                ? "bg-[rgba(74,109,124,0.15)] border-[rgba(74,109,124,0.4)] text-[#4A6D7C]"
+                                ? "bg-[rgba(217,119,6,0.15)] border-[rgba(217,119,6,0.4)] text-[#D97706]"
                                 : isOutreachSms
                                 ? "bg-[rgba(176,114,56,0.15)] border-[rgba(176,114,56,0.4)] text-[#B07238]"
                                 : isCall
-                                ? "bg-[rgba(98,146,158,0.15)] border-[rgba(98,146,158,0.4)] text-[#4A6D7C]"
+                                ? "bg-[rgba(217,119,6,0.15)] border-[rgba(217,119,6,0.4)] text-[#D97706]"
                                 : isStatus
                                 ? "bg-[rgba(176,114,56,0.15)] border-[rgba(176,114,56,0.4)] text-[#B07238]"
                                 : isEnquiry
                                 ? "bg-[rgba(46,117,89,0.15)] border-[rgba(46,117,89,0.4)] text-[#2E7559]"
                                 : isCounselling
-                                ? "bg-[rgba(98,146,158,0.2)] border-[rgba(98,146,158,0.5)] text-[#1C2527]"
+                                ? "bg-[rgba(217,119,6,0.15)] border-[rgba(217,119,6,0.4)] text-[#1C2527]"
                                 : "bg-white border-[rgba(71,86,87,0.3)] text-[#5A6E71]"
                             }`}
                           >
@@ -803,7 +828,7 @@ export default function LeadDetailPage() {
                             ) : isOutreachWhatsapp ? (
                               <MessageSquare className="w-3 h-3 text-[#25D366]" />
                             ) : isOutreachEmail ? (
-                              <Mail className="w-3 h-3 text-[#4A6D7C]" />
+                              <Mail className="w-3 h-3 text-[#D97706]" />
                             ) : isOutreachSms ? (
                               <Smartphone className="w-3 h-3 text-[#B07238]" />
                             ) : isCall ? (
@@ -832,18 +857,39 @@ export default function LeadDetailPage() {
                               By <span className="font-bold text-[#1C2527]">{item.actorName}</span>
                             </p>
 
-                            {/* Call Details */}
+                            {/* Call Details & Recording Audio Player */}
                             {isCall && (
-                              <div className="bg-[#FAF6EE] p-3 rounded-lg border border-[rgba(71,86,87,0.12)] space-y-1.5 mt-1 text-[#1C2527] text-[11px]">
-                                <div className="flex items-center gap-3 text-[#5A6E71]">
-                                  <span>Duration: <strong className="text-[#1C2527] font-mono">{item.duration}s</strong></span>
-                                  {item.callbackAt && (
-                                    <span className="text-[#2E7559] font-bold">
-                                      Callback Scheduled: {new Date(item.callbackAt).toLocaleString()}
-                                    </span>
-                                  )}
+                              <div className="space-y-2 mt-1">
+                                <div className="bg-[#FAF6EE] p-3 rounded-lg border border-[rgba(71,86,87,0.12)] space-y-1.5 text-[#1C2527] text-[11px]">
+                                  <div className="flex items-center gap-3 text-[#5A6E71]">
+                                    <span>Duration: <strong className="text-[#1C2527] font-mono">{item.duration}s</strong></span>
+                                    {item.callbackAt && (
+                                      <span className="text-[#2E7559] font-bold">
+                                        Callback Scheduled: {new Date(item.callbackAt).toLocaleString()}
+                                      </span>
+                                    )}
+                                  </div>
+                                  {item.notes && <p className="italic text-[#1C2527]">"{item.notes}"</p>}
                                 </div>
-                                {item.notes && <p className="italic text-[#1C2527]">"{item.notes}"</p>}
+
+                                {/* Interactive Call Recording Player with Waveform & Transcript */}
+                                <CallRecordingAudioPlayer
+                                  callId={item.id}
+                                  leadName={lead.fullName}
+                                  durationSeconds={item.duration || 85}
+                                  sentiment={
+                                    item.title?.toLowerCase().includes("reached") || item.title?.toLowerCase().includes("interested")
+                                      ? "positive"
+                                      : item.notes?.toLowerCase().includes("fee") || item.notes?.toLowerCase().includes("emi")
+                                      ? "objection"
+                                      : "neutral"
+                                  }
+                                  transcript={
+                                    item.notes ||
+                                    `Discussed cohort curriculum for ${lead.courseInterest || "Full Stack Web Development"}. Candidate asked about live mentorship and tuition installment options.`
+                                  }
+                                  counsellorName={item.actorName || "Counsellor"}
+                                />
                               </div>
                             )}
 
@@ -885,7 +931,7 @@ export default function LeadDetailPage() {
                                   </span>
                                   <Link
                                     href="/admissions"
-                                    className="text-[10.5px] font-bold text-[#4A6D7C] hover:underline flex items-center gap-1"
+                                    className="text-[10.5px] font-bold text-[#D97706] hover:underline flex items-center gap-1"
                                   >
                                     <span>Admissions Ledger</span>
                                     <ArrowUpRight className="w-3 h-3" />
@@ -906,7 +952,7 @@ export default function LeadDetailPage() {
                                   </span>
                                   <Link
                                     href="/installments"
-                                    className="text-[10.5px] font-bold text-[#4A6D7C] hover:underline flex items-center gap-1"
+                                    className="text-[10.5px] font-bold text-[#D97706] hover:underline flex items-center gap-1"
                                   >
                                     <span>Installments Desk</span>
                                     <ArrowUpRight className="w-3 h-3" />
@@ -927,7 +973,7 @@ export default function LeadDetailPage() {
                                   </span>
                                   <Link
                                     href="/installments"
-                                    className="text-[10.5px] font-bold text-[#4A6D7C] hover:underline flex items-center gap-1"
+                                    className="text-[10.5px] font-bold text-[#D97706] hover:underline flex items-center gap-1"
                                   >
                                     <span>Review Dues</span>
                                     <ArrowUpRight className="w-3 h-3" />
@@ -947,7 +993,7 @@ export default function LeadDetailPage() {
                                     isOutreachWhatsapp
                                       ? "bg-[#25D366]/10 border-[#25D366]/30 text-[#128C7E]"
                                       : isOutreachEmail
-                                      ? "bg-[#4A6D7C]/10 border-[#4A6D7C]/30 text-[#4A6D7C]"
+                                      ? "bg-[#D97706]/10 border-[#D97706]/30 text-[#D97706]"
                                       : "bg-[#B07238]/10 border-[#B07238]/30 text-[#B07238]"
                                   }`}>
                                     {isOutreachWhatsapp ? "WhatsApp Dispatch" : isOutreachEmail ? "Direct Email" : "SMS Dispatch"}
@@ -1112,7 +1158,7 @@ export default function LeadDetailPage() {
                 <ChevronDown className="w-4 h-4 text-[#7e939a] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
               {updatingStatus && (
-                <p className="text-[11px] text-[#4A6D7C] mt-1 flex items-center gap-1 font-semibold">
+                <p className="text-[11px] text-[#D97706] mt-1 flex items-center gap-1 font-semibold">
                   <Loader2 className="w-3 h-3 animate-spin" />
                   <span>Updating status...</span>
                 </p>
@@ -1161,7 +1207,7 @@ export default function LeadDetailPage() {
                 <ChevronDown className="w-4 h-4 text-[#7e939a] absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
               {updatingAssignment && (
-                <p className="text-[11px] text-[#4A6D7C] mt-1 flex items-center gap-1 font-semibold">
+                <p className="text-[11px] text-[#D97706] mt-1 flex items-center gap-1 font-semibold">
                   <Loader2 className="w-3 h-3 animate-spin" />
                   <span>Transferring lead...</span>
                 </p>
@@ -1220,7 +1266,7 @@ export default function LeadDetailPage() {
             {/* Modal Header */}
             <div className="bg-[#0c1316] px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)]">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.3)] text-[#62929e] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#D97706]/20 border border-[#D97706]/40 text-[#D97706] flex items-center justify-center">
                   <GraduationCap className="w-4 h-4" />
                 </div>
                 <div>

@@ -25,7 +25,7 @@ import { crmApi } from "@/lib/api";
 const CHANNEL_ICONS = {
   whatsapp: { icon: MessageSquare, label: "WhatsApp", color: "text-[#25D366] bg-[#25D366]/10 border-[#25D366]/30" },
   call: { icon: Phone, label: "Phone Call", color: "text-[#128C7E] bg-[#128C7E]/10 border-[#128C7E]/30" },
-  email: { icon: Mail, label: "Email", color: "text-[#4A6D7C] bg-[#4A6D7C]/10 border-[#4A6D7C]/30" },
+  email: { icon: Mail, label: "Email", color: "text-[#D97706] bg-[#D97706]/10 border-[#D97706]/30" },
   sms: { icon: Smartphone, label: "SMS", color: "text-[#D97706] bg-[#D97706]/10 border-[#D97706]/30" },
 };
 
@@ -122,7 +122,7 @@ export function CadenceDetailsDrawer({ isOpen, onClose, cadence, onToggleStatus 
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#4A6D7C]/20 border border-[#4A6D7C]/40 text-[#a3cdd8]">
+                <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#D97706]/20 border border-[#D97706]/40 text-[#D97706]">
                   {cadence.code || "CADENCE"}
                 </span>
                 <h3 className="font-bold text-sm sm:text-base text-white truncate max-w-[280px]">
@@ -249,7 +249,7 @@ export function CadenceDetailsDrawer({ isOpen, onClose, cadence, onToggleStatus 
                 onClick={handleExportCSV}
                 className="crm-btn-secondary !py-1 !px-2.5 text-xs flex items-center gap-1.5 shadow-xs self-start"
               >
-                <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                <Download className="w-3.5 h-3.5 text-[#D97706]" />
                 <span>Roster CSV</span>
               </button>
             </div>
@@ -290,8 +290,8 @@ export function CadenceDetailsDrawer({ isOpen, onClose, cadence, onToggleStatus 
                             lead.status === "converted"
                               ? "bg-[#25D366]/10 text-[#128C7E] border-[#25D366]/30"
                               : lead.status === "replied"
-                              ? "bg-[#194451]/10 text-[#194451] border-[#194451]/30"
-                              : "bg-[#4A6D7C]/10 text-[#4A6D7C] border-[#4A6D7C]/30"
+                              ? "bg-[#D97706]/15 text-[#92400E] border-[#D97706]/30"
+                              : "bg-[#D97706]/10 text-[#D97706] border-[#D97706]/30"
                           }`}
                         >
                           {lead.status.toUpperCase()}

@@ -294,7 +294,7 @@ export default function SalesIncentivesPage() {
             onClick={handleExportCSV}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#1C2527] border border-[rgba(71,86,87,0.2)] text-xs font-semibold transition-colors shadow-xs"
           >
-            <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <Download className="w-3.5 h-3.5 text-[#D97706]" />
             <span>Export Payroll CSV</span>
           </button>
 
@@ -332,7 +332,7 @@ export default function SalesIncentivesPage() {
         <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
           <div className="flex items-center justify-between text-[#5A6E71] text-xs mb-2">
             <span className="font-semibold uppercase tracking-wider text-[10px]">Team Target Attainment</span>
-            <div className="w-7 h-7 rounded-lg bg-[#4A6D7C]/15 flex items-center justify-center text-[#4A6D7C]">
+            <div className="w-7 h-7 rounded-lg bg-[#D97706]/15 flex items-center justify-center text-[#D97706]">
               <TrendingUp className="w-3.5 h-3.5" />
             </div>
           </div>
@@ -474,7 +474,7 @@ export default function SalesIncentivesPage() {
               setCalculatorInitialCount(15);
               setCalculatorOpen(true);
             }}
-            className="text-[11px] font-bold text-[#4A6D7C] hover:underline flex items-center gap-1"
+            className="text-[11px] font-bold text-[#D97706] hover:underline flex items-center gap-1"
           >
             <Calculator className="w-3 h-3" />
             <span>Interactive Calculator</span>

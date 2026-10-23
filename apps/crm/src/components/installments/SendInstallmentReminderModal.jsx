@@ -182,7 +182,7 @@ export function SendInstallmentReminderModal({ isOpen, onClose, installment, onD
             <div className="grid grid-cols-3 gap-2">
               {[
                 { id: "whatsapp", label: "WhatsApp Web", icon: MessageSquare, color: "text-[#25D366]" },
-                { id: "email", label: "Email Client", icon: Mail, color: "text-[#4A6D7C]" },
+                { id: "email", label: "Email Client", icon: Mail, color: "text-[#D97706]" },
                 { id: "sms", label: "Mobile SMS", icon: Smartphone, color: "text-[#B07238]" },
               ].map((c) => {
                 const Icon = c.icon;
@@ -216,7 +216,7 @@ export function SendInstallmentReminderModal({ isOpen, onClose, installment, onD
                   onClick={() => setSelectedTemplateId(tmpl.id)}
                   className={`p-2.5 rounded-xl text-left border transition-all text-xs ${
                     selectedTemplateId === tmpl.id
-                      ? "bg-[#4A6D7C]/15 border-[#4A6D7C] text-[#1C2527] font-bold shadow-xs"
+                      ? "bg-[#D97706]/15 border-[#D97706] text-[#1C2527] font-bold shadow-xs"
                       : "bg-white border-[rgba(71,86,87,0.16)] text-[#5A6E71] hover:bg-[#FAF6EE]"
                   }`}
                 >
@@ -238,7 +238,7 @@ export function SendInstallmentReminderModal({ isOpen, onClose, installment, onD
               <button
                 type="button"
                 onClick={handleCopy}
-                className="flex items-center gap-1 text-[#4A6D7C] hover:text-[#1C2527] font-semibold transition-colors"
+                className="flex items-center gap-1 text-[#D97706] hover:text-[#B45309] font-semibold transition-colors"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-[#2E7559]" /> : <Copy className="w-3.5 h-3.5" />}
                 <span>{copied ? "Copied" : "Copy Message"}</span>

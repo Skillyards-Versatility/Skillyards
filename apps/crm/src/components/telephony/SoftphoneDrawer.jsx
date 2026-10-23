@@ -53,49 +53,14 @@ export function SoftphoneDrawer() {
   return (
     <>
       {/* =========================================================================
-          1. FLOATING DOCKED TRIGGER PILL (Bottom-Right, Always Visible)
-          ========================================================================= */}
-      {!isSoftphoneOpen && (
-        <div className="fixed bottom-4 right-4 sm:right-6 z-30 animate-fadeIn">
-          <button
-            type="button"
-            onClick={openSoftphone}
-            title="Open Telecalling Softphone"
-            className={`flex items-center gap-2.5 px-3.5 py-2 rounded-full shadow-2xl border backdrop-blur-md transition-all duration-200 active:scale-95 cursor-pointer ${
-              isCallActive
-                ? "bg-[#0c1316] text-white border-emerald-500/50 shadow-emerald-950/40 ring-2 ring-emerald-500/30"
-                : "bg-[#0c1316]/95 hover:bg-[#0c1316] text-[#FAF6EE] border-[rgba(98,146,158,0.25)] hover:border-[rgba(98,146,158,0.45)]"
-            }`}
-          >
-            <div className="relative">
-              <PhoneCall className={`w-4 h-4 ${isCallActive ? "text-[#10b981] animate-bounce" : "text-[#62929e]"}`} />
-              <span className={`absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full ${isCallActive ? "bg-[#10b981] animate-ping" : "bg-[#10b981]"}`} />
-            </div>
-
-            <span className="text-xs font-bold tracking-wide">
-              {isCallActive ? "Call in Progress" : "Dialer"}
-            </span>
-
-            {isCallActive ? (
-              <span className="font-mono text-xs font-bold text-[#10b981] px-1.5 py-0.2 rounded bg-emerald-950/60 border border-emerald-500/30">
-                {formatTimer(callDuration)}
-              </span>
-            ) : (
-              <span className="text-[10px] font-semibold text-[#7e939a] uppercase">Ready</span>
-            )}
-          </button>
-        </div>
-      )}
-
-      {/* =========================================================================
-          2. EXPANDED SOFTPHONE WINDOW (Docked Bottom-Right)
+          EXPANDED SOFTPHONE WINDOW (Docked Bottom-Right when opened)
           ========================================================================= */}
       {isSoftphoneOpen && (
-        <div className="fixed bottom-4 right-4 sm:right-6 z-40 w-[320px] sm:w-[350px] bg-[#0c1316] border border-[rgba(98,146,158,0.25)] rounded-2xl shadow-2xl overflow-hidden flex flex-col text-white animate-fadeIn select-none backdrop-blur-xl">
+        <div className="fixed bottom-4 right-3 sm:right-6 z-40 w-[calc(100vw-1.5rem)] sm:w-[350px] max-w-[360px] bg-[#0c1316] border border-[rgba(98,146,158,0.25)] rounded-2xl shadow-2xl overflow-hidden flex flex-col text-white animate-fadeIn select-none backdrop-blur-xl">
           {/* Header Bar */}
           <div className="h-13 px-4 bg-[#080d0f] border-b border-[rgba(98,146,158,0.18)] flex items-center justify-between shrink-0">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.35)] flex items-center justify-center text-[#62929e] shrink-0">
+              <div className="w-7 h-7 rounded-lg bg-[#D97706]/18 border border-[#D97706]/35 flex items-center justify-center text-[#D97706] shrink-0">
                 <PhoneCall className="w-3.5 h-3.5" />
               </div>
               <div className="min-w-0">
@@ -129,7 +94,7 @@ export function SoftphoneDrawer() {
                 onClick={() => setActiveTab("keypad")}
                 className={`flex-1 py-2 flex items-center justify-center gap-1.5 text-xs font-semibold transition-all border-b-2 ${
                   activeTab === "keypad"
-                    ? "text-[#62929e] border-[#62929e] bg-[rgba(98,146,158,0.08)]"
+                    ? "text-[#D97706] border-[#D97706] bg-[#D97706]/10"
                     : "text-[#7e939a] border-transparent hover:text-white"
                 }`}
               >
@@ -141,7 +106,7 @@ export function SoftphoneDrawer() {
                 onClick={() => setActiveTab("recent")}
                 className={`flex-1 py-2 flex items-center justify-center gap-1.5 text-xs font-semibold transition-all border-b-2 ${
                   activeTab === "recent"
-                    ? "text-[#62929e] border-[#62929e] bg-[rgba(98,146,158,0.08)]"
+                    ? "text-[#D97706] border-[#D97706] bg-[#D97706]/10"
                     : "text-[#7e939a] border-transparent hover:text-white"
                 }`}
               >

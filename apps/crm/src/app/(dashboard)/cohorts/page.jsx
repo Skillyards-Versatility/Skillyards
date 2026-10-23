@@ -363,7 +363,7 @@ export default function CohortsPage() {
             className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5"
             title="Export all cohorts to CSV"
           >
-            <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <Download className="w-3.5 h-3.5 text-[#D97706]" />
             <span>Export CSV</span>
           </button>
 
@@ -396,7 +396,7 @@ export default function CohortsPage() {
             <span className="text-xs font-bold text-[#5A6E71] uppercase tracking-wider">
               Total Cohorts
             </span>
-            <div className="w-8 h-8 rounded-lg bg-[#4A6D7C]/15 border border-[#4A6D7C]/30 flex items-center justify-center text-[#194451]">
+            <div className="w-8 h-8 rounded-lg bg-[#D97706]/15 border border-[#D97706]/30 flex items-center justify-center text-[#D97706]">
               <Layers className="w-4 h-4" />
             </div>
           </div>
@@ -552,7 +552,7 @@ export default function CohortsPage() {
         </div>
       ) : cohorts.length === 0 ? (
         <div className="p-16 text-center rounded-2xl bg-[#FAF6EE] border border-dashed border-[rgba(71,86,87,0.25)] space-y-3">
-          <Layers className="w-10 h-10 text-[#4A6D7C] mx-auto opacity-60" />
+          <Layers className="w-10 h-10 text-[#D97706] mx-auto opacity-60" />
           <h3 className="font-bold text-base text-[#1C2527]">No cohorts found</h3>
           <p className="text-xs text-[#5A6E71]">
             Try adjusting your search criteria or create a new course cohort.
@@ -584,7 +584,7 @@ export default function CohortsPage() {
                 {/* Top Banner with Code & Status */}
                 <div className="px-5 py-3.5 bg-white border-b border-[rgba(71,86,87,0.12)] flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-md font-mono text-[10px] font-bold bg-[#4A6D7C]/15 border border-[#4A6D7C]/30 text-[#194451]">
+                    <span className="px-2.5 py-0.5 rounded-md font-mono text-[10px] font-bold bg-[#D97706]/15 border border-[#D97706]/30 text-[#92400E]">
                       {cohort.code || "SKY-COHORT"}
                     </span>
                     <span className="text-[11px] font-bold text-[#5A6E71] truncate max-w-[130px]">
@@ -615,11 +615,11 @@ export default function CohortsPage() {
                     {/* Schedule & Timing Pill */}
                     <div className="mt-2.5 space-y-1.5 text-xs text-[#5A6E71]">
                       <div className="flex items-center gap-2">
-                        <Clock className="w-3.5 h-3.5 text-[#4A6D7C] shrink-0" />
+                        <Clock className="w-3.5 h-3.5 text-[#D97706] shrink-0" />
                         <span className="truncate">{cohort.schedule || "Weekend Live"}</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-3.5 h-3.5 text-[#4A6D7C] shrink-0" />
+                        <Calendar className="w-3.5 h-3.5 text-[#D97706] shrink-0" />
                         <span>
                           Launch:{" "}
                           <strong>
@@ -773,7 +773,7 @@ export default function CohortsPage() {
                       {/* Code & Title */}
                       <td className="py-3 px-4">
                         <div className="flex items-center gap-2">
-                          <span className="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-[#4A6D7C]/15 border border-[#4A6D7C]/30 text-[#194451]">
+                          <span className="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-[#D97706]/15 border border-[#D97706]/30 text-[#92400E]">
                             {cohort.code || "SKY-COHORT"}
                           </span>
                           <span className="font-bold text-[#1C2527] group-hover:text-[#194451]">
@@ -791,7 +791,7 @@ export default function CohortsPage() {
                       <td className="py-3 px-4">
                         <div className="space-y-0.5">
                           <div className="flex items-center gap-1.5 text-[#1C2527] font-medium">
-                            <Clock className="w-3 h-3 text-[#4A6D7C]" />
+                            <Clock className="w-3 h-3 text-[#D97706]" />
                             <span>{cohort.schedule || "Weekend Live"}</span>
                           </div>
                           <div className="text-[10px] text-[#7E939A]">

@@ -26,6 +26,8 @@ import {
   CalendarClock,
   Filter,
   ChevronRight,
+  ChevronLeft,
+  X,
   ShieldCheck,
   PhoneCall,
   Copy,
@@ -291,6 +293,8 @@ export default function OmnichannelInboxPage() {
   const [isSending, setIsSending] = useState(false);
   const [repNotes, setRepNotes] = useState("");
   const [copiedPhone, setCopiedPhone] = useState(false);
+  const [mobileView, setMobileView] = useState("threads"); // "threads" | "chat"
+  const [showMobileDossier, setShowMobileDossier] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -367,6 +371,7 @@ export default function OmnichannelInboxPage() {
   // Select a thread and clear unread count
   const handleSelectThread = (threadId) => {
     setSelectedThreadId(threadId);
+    setMobileView("chat");
     setThreads((prev) =>
       prev.map((t) => (t.id === threadId ? { ...t, unreadCount: 0 } : t))
     );
@@ -482,42 +487,147 @@ export default function OmnichannelInboxPage() {
     } catch (_) {}
   };
 
+  const renderCandidateDossier = () => {
+    if (!activeThread) return null;
+    return (
+      <div className="space-y-4">
+        {/* Candidate Dossier Header */}
+        <div className="p-4 bg-white rounded-2xl border border-[rgba(71,86,87,0.16)] text-center space-y-2 shadow-xs">
+          <div className="w-14 h-14 rounded-full bg-[#0c1316] text-white flex items-center justify-center font-bold text-base mx-auto shadow-sm">
+            {activeThread.candidateName.slice(0, 2).toUpperCase()}
+          </div>
+          <div>
+            <h3 className="font-bold text-sm text-[#1C2527]">{activeThread.candidateName}</h3>
+            <p className="text-[11px] text-[#5A6E71] font-mono">{activeThread.candidatePhone}</p>
+            <p className="text-[11px] text-[#5A6E71]">{activeThread.candidateEmail}</p>
+          </div>
+
+          {/* Status Selector */}
+          <div className="pt-2 border-t border-[rgba(71,86,87,0.1)]">
+            <label className="text-[10px] uppercase font-bold text-[#7E939A] block mb-1">
+              Lifecycle Stage:
+            </label>
+            <select
+              value={activeThread.leadStatus}
+              onChange={(e) => handleChangeStatus(e.target.value)}
+              className="w-full px-2.5 py-1.5 rounded-xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] text-xs font-bold text-[#1C2527] focus:outline-none focus:ring-1 focus:ring-[#2E7559]"
+            >
+              <option value="new">New Prospect</option>
+              <option value="contacted">Contacted</option>
+              <option value="in_followup">In Follow-up</option>
+              <option value="counselling_scheduled">Counselling Scheduled</option>
+              <option value="qualified">Qualified</option>
+              <option value="converted">Converted / Enrolled</option>
+              <option value="cold">Cold</option>
+              <option value="lost">Lost</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Target Program & Batch Card */}
+        <div className="p-3.5 bg-white rounded-2xl border border-[rgba(71,86,87,0.16)] space-y-2 shadow-xs text-xs">
+          <span className="text-[10px] uppercase font-bold text-[#7E939A]">Target Course</span>
+          <p className="font-bold text-[#D97706]">{activeThread.courseName}</p>
+          <p className="text-[11px] text-[#5A6E71]">{activeThread.cohortName}</p>
+          <div className="flex items-center justify-between pt-1 border-t border-[rgba(71,86,87,0.1)] text-[11px]">
+            <span className="text-[#5A6E71]">Assigned Rep:</span>
+            <strong className="text-[#1C2527]">{activeThread.counselorName}</strong>
+          </div>
+        </div>
+
+        {/* Financial & Tuition Ledger Snippet */}
+        <div className="p-3.5 bg-white rounded-2xl border border-[rgba(71,86,87,0.16)] space-y-2 shadow-xs text-xs">
+          <div className="flex items-center justify-between">
+            <span className="text-[10px] uppercase font-bold text-[#7E939A]">Tuition Dues Status</span>
+            <Link
+              href="/installments"
+              className="text-[10.5px] font-bold text-[#D97706] hover:underline flex items-center gap-0.5"
+            >
+              <span>Ledger</span>
+              <ArrowUpRight className="w-3 h-3" />
+            </Link>
+          </div>
+
+          <div className="space-y-1 font-mono">
+            <div className="flex justify-between text-[11px]">
+              <span className="text-[#5A6E71]">Program Fee:</span>
+              <span suppressHydrationWarning className="font-bold text-[#1C2527]">₹{(activeThread.totalFee || 45135).toLocaleString("en-IN")}</span>
+            </div>
+            <div className="flex justify-between text-[11px]">
+              <span className="text-[#5A6E71]">Amount Paid:</span>
+              <span suppressHydrationWarning className="font-bold text-[#2E7559]">₹{(activeThread.amountPaid || 0).toLocaleString("en-IN")}</span>
+            </div>
+            <div className="flex justify-between text-[11px] pt-1 border-t border-[rgba(71,86,87,0.1)]">
+              <span className="text-[#5A6E71]">Balance Due:</span>
+              <span suppressHydrationWarning className="font-black text-[#B07238]">₹{(activeThread.balanceDue || 0).toLocaleString("en-IN")}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Rep Internal Notepad (Local Storage Persisted) */}
+        <div className="p-3.5 bg-white rounded-2xl border border-[rgba(71,86,87,0.16)] space-y-2 shadow-xs text-xs">
+          <span className="text-[10px] uppercase font-bold text-[#7E939A]">Internal Rep Notes</span>
+          <textarea
+            rows={3}
+            value={repNotes}
+            onChange={(e) => handleSaveNotes(e.target.value)}
+            placeholder="Add private sales notes, callback preferences, objection details..."
+            className="w-full p-2 rounded-xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] text-[11px] text-[#1C2527] focus:outline-none focus:ring-1 focus:ring-[#2E7559] resize-none placeholder-[#7E939A]"
+          />
+          <p className="text-[10px] text-[#7E939A] italic">
+            * Auto-saved locally for this candidate.
+          </p>
+        </div>
+
+        {/* Quick Link to Lead Profile */}
+        <Link
+          href={`/leads/${activeThread.id}`}
+          className="w-full py-2.5 rounded-xl bg-white hover:bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] text-xs font-bold text-[#1C2527] flex items-center justify-center gap-1.5 transition-colors shadow-xs"
+        >
+          <span>View Full Lead Profile & Activity</span>
+          <ChevronRight className="w-4 h-4 text-[#7E939A]" />
+        </Link>
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col h-full w-full overflow-hidden bg-[#FAF6EE]">
       
       {/* Top Banner Cockpit */}
-      <div className="px-5 py-2.5 bg-[#0c1316] text-white flex items-center justify-between border-b border-[rgba(98,146,158,0.2)] shrink-0">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center text-[#25D366]">
-            <MessageSquare className="w-4 h-4" />
+      <div className="px-3 sm:px-5 py-2 sm:py-2.5 bg-[#0c1316] text-white flex items-center justify-between border-b border-[rgba(98,146,158,0.2)] shrink-0">
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[#25D366]/20 border border-[#25D366]/40 flex items-center justify-center text-[#25D366] shrink-0">
+            <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </div>
-          <div>
+          <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <h1 className="text-sm font-bold tracking-wide">Omnichannel Communications Center</h1>
-              <span className="px-2 py-0.5 rounded-full bg-[#25D366]/20 text-[#25D366] text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+              <h1 className="text-xs sm:text-sm font-bold tracking-wide truncate">Omnichannel Inbox</h1>
+              <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-[#25D366]/20 text-[#25D366] text-[10px] font-bold uppercase tracking-wider items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] animate-pulse" />
-                <span>Live WhatsApp Gateway</span>
+                <span>Live WhatsApp</span>
               </span>
             </div>
-            <p className="text-[11px] text-[#7E939A]">
+            <p className="hidden md:block text-[11px] text-[#7E939A] truncate">
               Unified two-way candidate conversations, instant EdTech macro triggers, and CRM intelligence
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 text-xs">
-          <div className="hidden md:flex items-center gap-2 text-[#7E939A]">
-            <span>Active Threads: <strong className="text-white">{threads.length}</strong></span>
+        <div className="flex items-center gap-2 sm:gap-3 text-xs shrink-0">
+          <div className="hidden sm:flex items-center gap-2 text-[#7E939A]">
+            <span>Active: <strong className="text-white">{threads.length}</strong></span>
             <span>•</span>
             <span className="text-[#25D366]">Unread: <strong className="text-[#25D366]">{threads.filter((t) => t.unreadCount > 0).length}</strong></span>
           </div>
 
           <Link
             href="/cadences"
-            className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold border border-white/20 transition-colors"
+            className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white text-[11px] sm:text-xs font-semibold border border-white/20 transition-colors"
           >
-            <span>Drip Cadences</span>
-            <ArrowUpRight className="w-3.5 h-3.5 text-[#7E939A]" />
+            <span className="hidden sm:inline">Drip Cadences</span>
+            <span className="sm:hidden">Cadences</span>
+            <ArrowUpRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-[#7E939A]" />
           </Link>
         </div>
       </div>
@@ -528,7 +638,7 @@ export default function OmnichannelInboxPage() {
         {/* ======================================================== */}
         {/* COLUMN 1: Conversation Threads Roster (~320px) */}
         {/* ======================================================== */}
-        <div className="w-80 md:w-88 border-r border-[rgba(71,86,87,0.18)] bg-[#FAF6EE] flex flex-col h-full min-h-0 shrink-0">
+        <div className={`${mobileView === "chat" ? "hidden md:flex" : "flex"} w-full md:w-80 lg:w-88 border-r border-[rgba(71,86,87,0.18)] bg-[#FAF6EE] flex-col h-full min-h-0 shrink-0`}>
           
           {/* Search & Channel Tabs */}
           <div className="p-3 border-b border-[rgba(71,86,87,0.14)] space-y-2.5 shrink-0">
@@ -627,7 +737,7 @@ export default function OmnichannelInboxPage() {
                         </span>
                       </div>
 
-                      <p className="text-[10.5px] text-[#4A6D7C] truncate font-medium">
+                      <p className="text-[10.5px] text-[#D97706] truncate font-medium">
                         {thread.courseName}
                       </p>
 
@@ -668,48 +778,58 @@ export default function OmnichannelInboxPage() {
         {/* ======================================================== */}
         {/* COLUMN 2: Center Chat Stream & Multi-Channel Composer */}
         {/* ======================================================== */}
-        <div className="flex-1 flex flex-col min-h-0 bg-[#F4ECDF] overflow-hidden">
+        <div className={`${mobileView === "threads" ? "hidden md:flex" : "flex"} flex-1 flex-col min-h-0 bg-[#F4ECDF] overflow-hidden`}>
           
           {/* Chat Header */}
           {activeThread && (
-            <div className="px-5 py-3 bg-[#FAF6EE] border-b border-[rgba(71,86,87,0.18)] flex items-center justify-between shadow-xs shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#0c1316] text-white flex items-center justify-center font-bold text-xs shrink-0">
+            <div className="px-3 sm:px-5 py-2.5 sm:py-3 bg-[#FAF6EE] border-b border-[rgba(71,86,87,0.18)] flex items-center justify-between shadow-xs shrink-0 gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                {/* Mobile Back to Threads list */}
+                <button
+                  type="button"
+                  onClick={() => setMobileView("threads")}
+                  className="md:hidden p-1.5 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#5A6E71] border border-[rgba(71,86,87,0.2)] transition-colors active:scale-95 shrink-0"
+                  title="Back to conversations list"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                </button>
+
+                <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#0c1316] text-white flex items-center justify-center font-bold text-xs shrink-0">
                   {activeThread.candidateName.slice(0, 2).toUpperCase()}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-bold text-[#1C2527]">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <h3 className="text-xs sm:text-sm font-bold text-[#1C2527] truncate">
                       {activeThread.candidateName}
                     </h3>
-                    <span className={getStatusBadgeClass(activeThread.leadStatus)}>
+                    <span className={`${getStatusBadgeClass(activeThread.leadStatus)} text-[9.5px] sm:text-[11px] truncate`}>
                       {formatStatusLabel(activeThread.leadStatus)}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-[11px] text-[#5A6E71] font-mono mt-0.5">
+                  <div className="flex items-center gap-1.5 sm:gap-2 text-[10.5px] sm:text-[11px] text-[#5A6E71] font-mono mt-0.5 truncate">
                     <span>{activeThread.candidatePhone}</span>
                     <button
                       onClick={handleCopyPhone}
-                      className="text-[#4A6D7C] hover:text-[#1C2527] transition-colors"
+                      className="text-[#D97706] hover:text-[#B45309] transition-colors shrink-0"
                       title="Copy phone"
                     >
                       {copiedPhone ? <Check className="w-3 h-3 text-[#2E7559]" /> : <Copy className="w-3 h-3" />}
                     </button>
-                    <span>•</span>
-                    <span className="text-[#4A6D7C] font-semibold">{activeThread.courseName}</span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="hidden sm:inline text-[#D97706] font-semibold truncate">{activeThread.courseName}</span>
                   </div>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
                 <button
                   onClick={handleCall}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#2E7559] hover:bg-[#256149] text-white text-xs font-bold transition-all shadow-xs"
+                  className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#2E7559] hover:bg-[#256149] text-white text-xs font-bold transition-all shadow-xs"
                   title="Initiate softphone call"
                 >
                   <Phone className="w-3.5 h-3.5" />
-                  <span>Call</span>
+                  <span className="hidden sm:inline">Call</span>
                 </button>
 
                 <a
@@ -719,17 +839,27 @@ export default function OmnichannelInboxPage() {
                   })()}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1ebd5b] text-white text-xs font-bold transition-all shadow-xs"
+                  className="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#25D366] hover:bg-[#1ebd5b] text-white text-xs font-bold transition-all shadow-xs"
                   title="Launch WhatsApp Web"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
-                  <span>WhatsApp Web</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <span className="hidden md:inline">WhatsApp Web</span>
+                  <ExternalLink className="w-3 h-3 hidden md:inline" />
                 </a>
+
+                {/* Candidate Intelligence Toggle (Tablet & Mobile) */}
+                <button
+                  type="button"
+                  onClick={() => setShowMobileDossier(true)}
+                  className="lg:hidden p-1.5 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#5A6E71] border border-[rgba(71,86,87,0.2)] transition-colors active:scale-95 shrink-0"
+                  title="View Candidate Dossier"
+                >
+                  <ShieldCheck className="w-4 h-4 text-[#2E7559]" />
+                </button>
 
                 <Link
                   href={`/leads/${activeThread.id}`}
-                  className="p-1.5 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#5A6E71] border border-[rgba(71,86,87,0.2)] transition-colors"
+                  className="p-1.5 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#5A6E71] border border-[rgba(71,86,87,0.2)] transition-colors shrink-0"
                   title="Open full candidate profile"
                 >
                   <User className="w-4 h-4" />
@@ -754,8 +884,8 @@ export default function OmnichannelInboxPage() {
               if (isSystem) {
                 return (
                   <div key={msg.id} className="flex justify-center my-2">
-                    <div className="px-3 py-1.5 rounded-xl bg-[#FAF6EE] border border-[rgba(98,146,158,0.25)] text-center text-[11px] text-[#4A6D7C] max-w-md shadow-xs flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-[#B07238] shrink-0" />
+                    <div className="px-3 py-1.5 rounded-xl bg-[#FAF6EE] border border-[rgba(98,146,158,0.25)] text-center text-[11px] text-[#D97706] max-w-md shadow-xs flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-[#D97706] shrink-0" />
                       <span>{msg.content}</span>
                     </div>
                   </div>
@@ -837,7 +967,7 @@ export default function OmnichannelInboxPage() {
                   key={token.key}
                   type="button"
                   onClick={() => handleInsertToken(token.key)}
-                  className="px-2 py-0.5 rounded-md bg-[rgba(71,86,87,0.08)] hover:bg-[rgba(71,86,87,0.15)] text-[#4A6D7C] font-mono text-[10px] shrink-0 transition-colors cursor-pointer"
+                  className="px-2 py-0.5 rounded-md bg-[rgba(217,119,6,0.08)] hover:bg-[rgba(217,119,6,0.18)] text-[#D97706] font-mono text-[10px] shrink-0 transition-colors cursor-pointer"
                 >
                   {token.label}
                 </button>
@@ -855,7 +985,7 @@ export default function OmnichannelInboxPage() {
               <div className="flex items-center gap-1 bg-[#FAF6EE] p-1 rounded-xl border border-[rgba(71,86,87,0.14)]">
                 {[
                   { id: "whatsapp", label: "WhatsApp", icon: MessageSquare, color: "text-[#25D366]" },
-                  { id: "email", label: "Email", icon: Mail, color: "text-[#4A6D7C]" },
+                  { id: "email", label: "Email", icon: Mail, color: "text-[#D97706]" },
                   { id: "sms", label: "SMS", icon: Smartphone, color: "text-[#B07238]" },
                 ].map((c) => {
                   const Icon = c.icon;
@@ -924,108 +1054,38 @@ export default function OmnichannelInboxPage() {
         {/* ======================================================== */}
         {activeThread && (
           <div className="hidden lg:flex w-80 border-l border-[rgba(71,86,87,0.18)] bg-[#FAF6EE] flex-col h-full min-h-0 overflow-y-auto p-4 space-y-4 shrink-0">
-            
-            {/* Candidate Dossier Header */}
-            <div className="p-4 bg-white rounded-2xl border border-[rgba(71,86,87,0.16)] text-center space-y-2 shadow-xs">
-              <div className="w-14 h-14 rounded-full bg-[#0c1316] text-white flex items-center justify-center font-bold text-base mx-auto shadow-sm">
-                {activeThread.candidateName.slice(0, 2).toUpperCase()}
-              </div>
-              <div>
-                <h3 className="font-bold text-sm text-[#1C2527]">{activeThread.candidateName}</h3>
-                <p className="text-[11px] text-[#5A6E71] font-mono">{activeThread.candidatePhone}</p>
-                <p className="text-[11px] text-[#5A6E71]">{activeThread.candidateEmail}</p>
-              </div>
-
-              {/* Status Selector */}
-              <div className="pt-2 border-t border-[rgba(71,86,87,0.1)]">
-                <label className="text-[10px] uppercase font-bold text-[#7E939A] block mb-1">
-                  Lifecycle Stage:
-                </label>
-                <select
-                  value={activeThread.leadStatus}
-                  onChange={(e) => handleChangeStatus(e.target.value)}
-                  className="w-full px-2.5 py-1.5 rounded-xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] text-xs font-bold text-[#1C2527] focus:outline-none focus:ring-1 focus:ring-[#2E7559]"
-                >
-                  <option value="new">New Prospect</option>
-                  <option value="contacted">Contacted</option>
-                  <option value="in_followup">In Follow-up</option>
-                  <option value="counselling_scheduled">Counselling Scheduled</option>
-                  <option value="qualified">Qualified</option>
-                  <option value="converted">Converted / Enrolled</option>
-                  <option value="cold">Cold</option>
-                  <option value="lost">Lost</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Target Program & Batch Card */}
-            <div className="p-3.5 bg-white rounded-2xl border border-[rgba(71,86,87,0.16)] space-y-2 shadow-xs text-xs">
-              <span className="text-[10px] uppercase font-bold text-[#7E939A]">Target Course</span>
-              <p className="font-bold text-[#4A6D7C]">{activeThread.courseName}</p>
-              <p className="text-[11px] text-[#5A6E71]">{activeThread.cohortName}</p>
-              <div className="flex items-center justify-between pt-1 border-t border-[rgba(71,86,87,0.1)] text-[11px]">
-                <span className="text-[#5A6E71]">Assigned Rep:</span>
-                <strong className="text-[#1C2527]">{activeThread.counselorName}</strong>
-              </div>
-            </div>
-
-            {/* Financial & Tuition Ledger Snippet */}
-            <div className="p-3.5 bg-white rounded-2xl border border-[rgba(71,86,87,0.16)] space-y-2 shadow-xs text-xs">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] uppercase font-bold text-[#7E939A]">Tuition Dues Status</span>
-                <Link
-                  href="/installments"
-                  className="text-[10.5px] font-bold text-[#4A6D7C] hover:underline flex items-center gap-0.5"
-                >
-                  <span>Ledger</span>
-                  <ArrowUpRight className="w-3 h-3" />
-                </Link>
-              </div>
-
-              <div className="space-y-1 font-mono">
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-[#5A6E71]">Program Fee:</span>
-                  <span suppressHydrationWarning className="font-bold text-[#1C2527]">₹{(activeThread.totalFee || 45135).toLocaleString("en-IN")}</span>
-                </div>
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-[#5A6E71]">Amount Paid:</span>
-                  <span suppressHydrationWarning className="font-bold text-[#2E7559]">₹{(activeThread.amountPaid || 0).toLocaleString("en-IN")}</span>
-                </div>
-                <div className="flex justify-between text-[11px] pt-1 border-t border-[rgba(71,86,87,0.1)]">
-                  <span className="text-[#5A6E71]">Balance Due:</span>
-                  <span suppressHydrationWarning className="font-black text-[#B07238]">₹{(activeThread.balanceDue || 0).toLocaleString("en-IN")}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Rep Internal Notepad (Local Storage Persisted) */}
-            <div className="p-3.5 bg-white rounded-2xl border border-[rgba(71,86,87,0.16)] space-y-2 shadow-xs text-xs">
-              <span className="text-[10px] uppercase font-bold text-[#7E939A]">Internal Rep Notes</span>
-              <textarea
-                rows={3}
-                value={repNotes}
-                onChange={(e) => handleSaveNotes(e.target.value)}
-                placeholder="Add private sales notes, callback preferences, objection details..."
-                className="w-full p-2 rounded-xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] text-[11px] text-[#1C2527] focus:outline-none focus:ring-1 focus:ring-[#2E7559] resize-none placeholder-[#7E939A]"
-              />
-              <p className="text-[10px] text-[#7E939A] italic">
-                * Auto-saved locally for this candidate.
-              </p>
-            </div>
-
-            {/* Quick Link to Lead Profile */}
-            <Link
-              href={`/leads/${activeThread.id}`}
-              className="w-full py-2.5 rounded-xl bg-white hover:bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] text-xs font-bold text-[#1C2527] flex items-center justify-center gap-1.5 transition-colors shadow-xs"
-            >
-              <span>View Full Lead Profile & Activity</span>
-              <ChevronRight className="w-4 h-4 text-[#7E939A]" />
-            </Link>
-
+            {renderCandidateDossier()}
           </div>
         )}
 
       </div>
+
+      {/* Mobile & Tablet Candidate Intelligence Slide-over Modal */}
+      {showMobileDossier && activeThread && (
+        <div className="fixed inset-0 z-50 flex justify-end lg:hidden animate-in fade-in duration-200">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-200"
+            onClick={() => setShowMobileDossier(false)}
+          />
+          <div className="relative z-10 w-full max-w-sm bg-[#FAF6EE] border-l border-[rgba(71,86,87,0.2)] h-full overflow-y-auto p-4 space-y-4 shadow-2xl animate-in slide-in-from-right duration-200 flex flex-col">
+            <div className="flex items-center justify-between pb-2 border-b border-[rgba(71,86,87,0.14)]">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-[#2E7559]" />
+                <h3 className="text-xs font-bold text-[#1C2527]">Candidate Intelligence</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowMobileDossier(false)}
+                className="p-1 rounded-lg text-[#7E939A] hover:text-[#1C2527] bg-white border border-[rgba(71,86,87,0.18)] active:scale-95 transition-all"
+                title="Close Dossier"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            {renderCandidateDossier()}
+          </div>
+        </div>
+      )}
 
     </div>
   );
