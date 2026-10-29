@@ -297,9 +297,9 @@
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  background-color: rgba(98, 146, 158, 0.14);
-  border: 1px solid rgba(98, 146, 158, 0.4);
-  color: #1F4F5B;
+  background-color: rgba(46, 117, 89, 0.14);
+  border: 1px solid rgba(46, 117, 89, 0.38);
+  color: #1e5842;
   font-weight: 600;
   font-size: 0.75rem;
   padding: 0.4rem 0.8rem;
@@ -308,8 +308,10 @@
 }
 
 .crm-btn-call:hover {
-  background-color: rgba(98, 146, 158, 0.25);
-  color: #13343C;
+  background-color: #2E7559;
+  border-color: #2E7559;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(46, 117, 89, 0.25);
 }
 
 .crm-btn-email {

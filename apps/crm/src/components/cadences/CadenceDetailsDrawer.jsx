@@ -115,9 +115,9 @@ export function CadenceDetailsDrawer({ isOpen, onClose, cadence, onToggleStatus 
     <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm animate-fadeIn flex justify-end">
       <div className="w-full max-w-2xl bg-[#FAF6EE] h-full shadow-2xl flex flex-col border-l border-[rgba(71,86,87,0.25)] animate-slideLeft">
         {/* Cockpit Header */}
-        <div className="px-5 py-4 bg-[#0c1316] text-[#FAF6EE] border-b border-[rgba(98,146,158,0.2)] flex items-center justify-between shrink-0">
+        <div className="px-5 py-4 bg-[#0c1316] text-[#FAF6EE] border-b border-white/10 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.35)] flex items-center justify-center text-white">
+            <div className="w-10 h-10 rounded-xl bg-[#D97706]/20 border border-[#D97706]/40 flex items-center justify-center text-[#D97706]">
               <Workflow className="w-5 h-5" />
             </div>
             <div>
