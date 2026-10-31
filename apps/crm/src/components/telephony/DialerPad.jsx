@@ -70,8 +70,8 @@ export function DialerPad() {
       {/* Number Display Screen */}
       <div className="relative mb-3.5 bg-[#080d0f] border border-[rgba(98,146,158,0.2)] rounded-xl p-3 flex flex-col items-center justify-center min-h-[68px]">
         {matchedProspect && (
-          <div className="flex items-center gap-1.5 mb-1 px-2 py-0.5 rounded-full bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.3)] text-[10.5px] text-[#a3cdd8] font-medium animate-fadeIn">
-            <User className="w-3 h-3 text-[#62929e]" />
+          <div className="flex items-center gap-1.5 mb-1 px-2 py-0.5 rounded-full bg-[#D97706]/15 border border-[#D97706]/30 text-[10.5px] text-[#F6E3CC] font-medium animate-fadeIn">
+            <User className="w-3 h-3 text-[#D97706]" />
             <span className="font-semibold">{matchedProspect.name}</span>
             <span className="opacity-60">•</span>
             <span className="truncate max-w-[110px]">{matchedProspect.course}</span>
@@ -109,7 +109,7 @@ export function DialerPad() {
             onClick={() => handleKeyPress(k.char)}
             className="h-12 rounded-xl bg-[rgba(98,146,158,0.06)] hover:bg-[rgba(98,146,158,0.18)] active:bg-[rgba(98,146,158,0.3)] border border-[rgba(98,146,158,0.14)] hover:border-[rgba(98,146,158,0.35)] flex flex-col items-center justify-center transition-all duration-100 active:scale-95 shadow-sm group"
           >
-            <span className="text-lg font-bold text-white group-hover:text-[#62929e] transition-colors leading-tight">
+            <span className="text-lg font-bold text-white group-hover:text-[#D97706] transition-colors leading-tight">
               {k.char}
             </span>
             {k.sub ? (
@@ -129,9 +129,9 @@ export function DialerPad() {
           <button
             type="button"
             onClick={() => setInputNumber(matchedProspect.phone)}
-            className="flex-1 flex items-center justify-center gap-1.5 h-11 px-3 rounded-xl bg-[rgba(98,146,158,0.12)] hover:bg-[rgba(98,146,158,0.22)] border border-[rgba(98,146,158,0.25)] text-xs text-[#a2c8d2] font-semibold transition-all"
+            className="flex-1 flex items-center justify-center gap-1.5 h-11 px-3 rounded-xl bg-[#D97706]/15 hover:bg-[#D97706]/25 border border-[#D97706]/30 text-xs text-[#F6E3CC] font-semibold transition-all"
           >
-            <Sparkles className="w-3.5 h-3.5 text-[#62929e]" />
+            <Sparkles className="w-3.5 h-3.5 text-[#D97706]" />
             <span className="truncate">Auto-Fill {matchedProspect.name}</span>
           </button>
         )}

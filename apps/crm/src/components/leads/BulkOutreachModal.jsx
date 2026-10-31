@@ -255,7 +255,7 @@ export function BulkOutreachModal({ isOpen, onClose, selectedLeads = [], onBatch
         {/* Obsidian Cockpit Header */}
         <div className="px-5 py-4 bg-[#0c1316] text-[#FAF6EE] border-b border-[rgba(98,146,158,0.2)] flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.35)] flex items-center justify-center text-[#4A6D7C]">
+            <div className="w-9 h-9 rounded-xl bg-[#D97706]/18 border border-[#D97706]/35 flex items-center justify-center text-[#D97706]">
               <Users className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -303,7 +303,7 @@ export function BulkOutreachModal({ isOpen, onClose, selectedLeads = [], onBatch
               onClick={() => setActiveChannel("email")}
               className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 activeChannel === "email"
-                  ? "bg-[#4A6D7C] text-white shadow-sm"
+                  ? "bg-[#D97706] text-white shadow-sm"
                   : "bg-white text-[#475657] hover:bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)]"
               }`}
             >
@@ -347,15 +347,15 @@ export function BulkOutreachModal({ isOpen, onClose, selectedLeads = [], onBatch
                     onClick={() => setSelectedTemplateId(tmpl.id)}
                     className={`text-left p-3 rounded-xl border transition-all cursor-pointer flex items-start gap-2.5 ${
                       isSelected
-                        ? "bg-white border-[#4A6D7C] ring-2 ring-[#4A6D7C]/20 shadow-xs"
+                        ? "bg-white border-[#D97706] ring-2 ring-[#D97706]/20 shadow-xs"
                         : "bg-white/70 hover:bg-white border-[rgba(71,86,87,0.18)]"
                     }`}
                   >
                     <div
                       className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
                         isSelected
-                          ? "bg-[#4A6D7C] text-white"
-                          : "bg-[rgba(98,146,158,0.15)] text-[#4A6D7C]"
+                          ? "bg-[#D97706] text-white"
+                          : "bg-[#D97706]/15 text-[#D97706]"
                       }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
@@ -448,7 +448,7 @@ export function BulkOutreachModal({ isOpen, onClose, selectedLeads = [], onBatch
                         <td className="py-2 px-3 text-[#5A6E71] text-[11px]">
                           {lead.normalizedEmail || lead.email || "-"}
                         </td>
-                        <td className="py-2 px-3 text-[#4A6D7C] text-[11px]">
+                        <td className="py-2 px-3 text-[#D97706] text-[11px]">
                           {lead.enquiryCourse || "Full Stack AI"}
                         </td>
                         <td className="py-2 px-3 text-right">
@@ -473,7 +473,7 @@ export function BulkOutreachModal({ isOpen, onClose, selectedLeads = [], onBatch
                               )}&body=${encodeURIComponent(getPersonalizedMessage(lead))}`}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#4A6D7C] hover:bg-[#3d5a67] text-white shadow-xs"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-[#D97706] hover:bg-[#B45309] text-white shadow-xs"
                             >
                               <Mail className="w-3 h-3" />
                               <span>Email</span>

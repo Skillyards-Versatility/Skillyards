@@ -455,7 +455,7 @@ export default function CounsellingPage() {
               <button
                 onClick={() => setScope("all")}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
-                  scope === "all" ? "bg-[#4A6D7C] text-white font-bold shadow-xs" : "text-[#5A6E71] hover:text-[#1C2527]"
+                  scope === "all" ? "bg-[#D97706] text-white font-bold shadow-xs" : "text-[#5A6E71] hover:text-[#1C2527]"
                 }`}
               >
                 All Team
@@ -463,7 +463,7 @@ export default function CounsellingPage() {
               <button
                 onClick={() => setScope("my")}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
-                  scope === "my" ? "bg-[#4A6D7C] text-white font-bold shadow-xs" : "text-[#5A6E71] hover:text-[#1C2527]"
+                  scope === "my" ? "bg-[#D97706] text-white font-bold shadow-xs" : "text-[#5A6E71] hover:text-[#1C2527]"
                 }`}
               >
                 My Sessions
@@ -476,7 +476,7 @@ export default function CounsellingPage() {
             className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs"
             title="Export CSV of current filtered sessions"
           >
-            <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <Download className="w-3.5 h-3.5 text-[#D97706]" />
             <span>Export CSV</span>
           </button>
 
@@ -571,7 +571,7 @@ export default function CounsellingPage() {
         <div className="p-4 bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-sm hover:shadow-md transition-all rounded-2xl">
           <div className="flex items-center justify-between text-[#5A6E71] text-xs font-semibold">
             <span>Total Sessions</span>
-            <GraduationCap className="w-4 h-4 text-[#4A6D7C]" />
+            <GraduationCap className="w-4 h-4 text-[#D97706]" />
           </div>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-2xl font-black text-[#1C2527] font-mono">
@@ -623,7 +623,7 @@ export default function CounsellingPage() {
         <div className="p-4 bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-sm hover:shadow-md transition-all rounded-2xl col-span-2 md:col-span-1">
           <div className="flex items-center justify-between text-[#5A6E71] text-xs font-semibold">
             <span>Conversions</span>
-            <Sparkles className="w-4 h-4 text-[#4A6D7C]" />
+            <Sparkles className="w-4 h-4 text-[#D97706]" />
           </div>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="text-2xl font-black text-[#1C2527] font-mono">
@@ -753,7 +753,7 @@ export default function CounsellingPage() {
       <div className="bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-sm rounded-2xl overflow-hidden">
         {loading ? (
           <div className="p-12 text-center text-[#7e939a]">
-            <div className="w-8 h-8 border-2 border-[#4A6D7C] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <div className="w-8 h-8 border-2 border-[#D97706] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             <p className="text-xs">Loading counselling sessions...</p>
           </div>
         ) : error ? (
@@ -843,7 +843,7 @@ export default function CounsellingPage() {
                             className="crm-lead-link inline-flex items-center gap-1.5 text-xs font-bold"
                           >
                             <span>{session.leadFullName || "Lead Record"}</span>
-                            <ArrowRight className="w-3 h-3 text-[#4A6D7C]" />
+                            <ArrowRight className="w-3 h-3 text-[#D97706]" />
                           </Link>
                         ) : (
                           <span className="text-[#7e939a] text-xs italic">
@@ -961,7 +961,7 @@ export default function CounsellingPage() {
             {/* Modal Header */}
             <div className="bg-[#0c1316] px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)]">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.3)] text-[#62929e] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#D97706]/20 border border-[#D97706]/40 text-[#D97706] flex items-center justify-center">
                   <GraduationCap className="w-4 h-4" />
                 </div>
                 <div>
@@ -1118,7 +1118,7 @@ export default function CounsellingPage() {
             {/* Modal Header */}
             <div className="bg-[#0c1316] px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)]">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.3)] text-[#62929e] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#D97706]/20 border border-[#D97706]/40 text-[#D97706] flex items-center justify-center">
                   <CalendarClock className="w-4 h-4" />
                 </div>
                 <div>
@@ -1208,7 +1208,7 @@ export default function CounsellingPage() {
             {/* Modal Header */}
             <div className="bg-[#0c1316] px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)]">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.3)] text-[#62929e] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#D97706]/20 border border-[#D97706]/40 text-[#D97706] flex items-center justify-center">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
                 <div>
@@ -1314,7 +1314,7 @@ export default function CounsellingPage() {
             {/* Drawer Header */}
             <div className="bg-[#0c1316] px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)] shrink-0">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.3)] text-[#62929e] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#D97706]/20 border border-[#D97706]/40 text-[#D97706] flex items-center justify-center">
                   <History className="w-4 h-4" />
                 </div>
                 <div>
@@ -1365,7 +1365,7 @@ export default function CounsellingPage() {
                   <div className="relative pl-6 space-y-4 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-[rgba(71,86,87,0.2)]">
                     {sessionHistory.map((ev) => (
                       <div key={ev.id} className="relative text-xs">
-                        <div className="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-[#4A6D7C] ring-4 ring-[#FAF6EE]" />
+                        <div className="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-[#D97706] ring-4 ring-[#FAF6EE]" />
                         <div className="font-bold text-[#1C2527]">
                           {ev.action?.replace(/_/g, " ")}
                         </div>

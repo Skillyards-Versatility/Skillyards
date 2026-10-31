@@ -31,7 +31,7 @@ import { CadenceDetailsDrawer } from "@/components/cadences/CadenceDetailsDrawer
 const CHANNEL_BADGES = {
   whatsapp: { icon: MessageSquare, color: "text-[#25D366] bg-[#25D366]/10 border-[#25D366]/30" },
   call: { icon: Phone, color: "text-[#128C7E] bg-[#128C7E]/10 border-[#128C7E]/30" },
-  email: { icon: Mail, color: "text-[#4A6D7C] bg-[#4A6D7C]/10 border-[#4A6D7C]/30" },
+  email: { icon: Mail, color: "text-[#D97706] bg-[#D97706]/10 border-[#D97706]/30" },
   sms: { icon: Smartphone, color: "text-[#D97706] bg-[#D97706]/10 border-[#D97706]/30" },
 };
 
@@ -292,7 +292,7 @@ export default function CadencesPage() {
             className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5"
             title="Export all cadences to CSV"
           >
-            <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <Download className="w-3.5 h-3.5 text-[#D97706]" />
             <span>Export CSV</span>
           </button>
 
@@ -325,7 +325,7 @@ export default function CadencesPage() {
             <span className="text-xs font-bold text-[#5A6E71] uppercase tracking-wider">
               Active Sequences
             </span>
-            <div className="w-8 h-8 rounded-lg bg-[#4A6D7C]/15 border border-[#4A6D7C]/30 flex items-center justify-center text-[#194451]">
+            <div className="w-8 h-8 rounded-lg bg-[#D97706]/15 border border-[#D97706]/30 flex items-center justify-center text-[#D97706]">
               <Workflow className="w-4 h-4" />
             </div>
           </div>
@@ -431,7 +431,7 @@ export default function CadencesPage() {
         </div>
       ) : cadences.length === 0 ? (
         <div className="p-16 text-center rounded-2xl bg-[#FAF6EE] border border-dashed border-[rgba(71,86,87,0.25)] space-y-3">
-          <Workflow className="w-10 h-10 text-[#4A6D7C] mx-auto opacity-60" />
+          <Workflow className="w-10 h-10 text-[#D97706] mx-auto opacity-60" />
           <h3 className="font-bold text-base text-[#1C2527]">No cadences found</h3>
           <p className="text-xs text-[#5A6E71]">
             Create your first multi-channel automated drip sequence to nurture cold leads.
@@ -459,7 +459,7 @@ export default function CadencesPage() {
                 {/* Top Banner */}
                 <div className="px-5 py-3.5 bg-white border-b border-[rgba(71,86,87,0.12)] flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-md font-mono text-[10px] font-bold bg-[#4A6D7C]/15 border border-[#4A6D7C]/30 text-[#194451]">
+                    <span className="px-2.5 py-0.5 rounded-md font-mono text-[10px] font-bold bg-[#D97706]/15 border border-[#D97706]/30 text-[#92400E]">
                       {cadence.code || "CADENCE"}
                     </span>
                     <span className="text-[11px] font-bold text-[#5A6E71] truncate max-w-[140px]">

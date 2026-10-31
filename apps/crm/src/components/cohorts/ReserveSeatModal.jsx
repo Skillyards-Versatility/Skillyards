@@ -120,7 +120,7 @@ export function ReserveSeatModal({ isOpen, onClose, cohort, onSeatReserved }) {
           {/* Cohort Summary Strip */}
           <div className="p-3 rounded-xl bg-white border border-[rgba(71,86,87,0.15)] flex items-center justify-between text-xs">
             <div>
-              <span className="font-mono text-[10px] font-bold text-[#4A6D7C] block">
+              <span className="font-mono text-[10px] font-bold text-[#D97706] block">
                 {cohort.code || "COHORT"}
               </span>
               <span className="font-bold text-[#1C2527]">{cohort.name}</span>

@@ -254,7 +254,7 @@ export default function FollowUpsPage() {
               onClick={() => setScope("my")}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 scope === "my"
-                  ? "bg-[#4A6D7C] text-white shadow-xs font-bold"
+                  ? "bg-[#D97706] text-white shadow-xs font-bold"
                   : "text-[#5A6E71] hover:text-[#1C2527]"
               }`}
             >
@@ -264,7 +264,7 @@ export default function FollowUpsPage() {
               onClick={() => setScope("all")}
               className={`px-3 py-1.5 rounded-lg transition-all ${
                 scope === "all"
-                  ? "bg-[#4A6D7C] text-white shadow-xs font-bold"
+                  ? "bg-[#D97706] text-white shadow-xs font-bold"
                   : "text-[#5A6E71] hover:text-[#1C2527]"
               }`}
             >
@@ -304,29 +304,29 @@ export default function FollowUpsPage() {
           onClick={() => setActiveTab("dueToday")}
           className={`crm-card p-4 cursor-pointer transition-all ${
             activeTab === "dueToday"
-              ? "!border-[#4A6D7C] bg-white ring-2 ring-[#4A6D7C]/20 shadow-md"
+              ? "!border-[#D97706] bg-white ring-2 ring-[#D97706]/20 shadow-md"
               : "hover:border-[rgba(71,86,87,0.3)]"
           }`}
         >
           <div className="flex items-center justify-between text-[#5A6E71] text-xs font-semibold uppercase tracking-wider">
             <span>Due Today</span>
-            <Clock className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <Clock className="w-3.5 h-3.5 text-[#D97706]" />
           </div>
           <p className="text-3xl font-black text-[#1C2527] mt-1.5 tracking-tight">{data.counts.dueToday}</p>
-          <span className="text-[11px] text-[#4A6D7C] font-semibold">Scheduled for today</span>
+          <span className="text-[11px] text-[#D97706] font-semibold">Scheduled for today</span>
         </div>
 
         <div
           onClick={() => setActiveTab("upcoming")}
           className={`crm-card p-4 cursor-pointer transition-all ${
             activeTab === "upcoming"
-              ? "!border-[#62929E] bg-white ring-2 ring-[#62929E]/20 shadow-md"
+              ? "!border-[#D97706] bg-white ring-2 ring-[#D97706]/20 shadow-md"
               : "hover:border-[rgba(71,86,87,0.3)]"
           }`}
         >
           <div className="flex items-center justify-between text-[#5A6E71] text-xs font-semibold uppercase tracking-wider">
             <span>Upcoming Agenda</span>
-            <Calendar className="w-3.5 h-3.5 text-[#216372]" />
+            <Calendar className="w-3.5 h-3.5 text-[#D97706]" />
           </div>
           <p className="text-3xl font-black text-[#1C2527] mt-1.5 tracking-tight">{data.counts.upcoming}</p>
           <span className="text-[11px] text-[#5A6E71]">Tomorrow & onwards</span>
@@ -376,7 +376,7 @@ export default function FollowUpsPage() {
       {/* Tasks List */}
       {loading ? (
         <div className="py-24 flex flex-col items-center justify-center text-[#7e939a] gap-2">
-          <Loader2 className="w-6 h-6 animate-spin text-[#4A6D7C]" />
+          <Loader2 className="w-6 h-6 animate-spin text-[#D97706]" />
           <span className="text-xs">Loading follow-up tasks...</span>
         </div>
       ) : displayedTasks.length === 0 ? (
@@ -433,7 +433,7 @@ export default function FollowUpsPage() {
                           className="crm-lead-link text-sm font-bold flex items-center gap-1"
                         >
                           <span>{task.leadFullName}</span>
-                          <ExternalLink className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                          <ExternalLink className="w-3.5 h-3.5 text-[#D97706]" />
                         </Link>
                       ) : (
                         <span className="font-bold text-[#1C2527] text-sm">{task.leadFullName}</span>
@@ -535,7 +535,7 @@ export default function FollowUpsPage() {
             {/* Modal Header */}
             <div className="bg-[#0c1316] px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)]">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.3)] text-[#62929e] flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg bg-[#D97706]/20 border border-[#D97706]/40 text-[#D97706] flex items-center justify-center">
                   {modalMode === "complete" ? <Check className="w-4 h-4" /> : <Clock className="w-4 h-4" />}
                 </div>
                 <div>
@@ -574,7 +574,7 @@ export default function FollowUpsPage() {
                 <>
                   <div>
                     <label className="crm-label font-bold text-[#1C2527] flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                      <Clock className="w-3.5 h-3.5 text-[#D97706]" />
                       <span>New Callback Schedule *</span>
                     </label>
                     <input

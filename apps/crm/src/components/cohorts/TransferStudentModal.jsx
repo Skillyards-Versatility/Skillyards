@@ -98,7 +98,7 @@ export function TransferStudentModal({
         {/* Cockpit Top Bar */}
         <div className="bg-[#0c1316] text-white px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#4A6D7C]/20 border border-[#4A6D7C]/40 flex items-center justify-center text-[#a3cdd8]">
+            <div className="w-8 h-8 rounded-lg bg-[#D97706]/20 border border-[#D97706]/40 flex items-center justify-center text-[#D97706]">
               <ArrowRightLeft className="w-4 h-4" />
             </div>
             <div>
@@ -146,7 +146,7 @@ export function TransferStudentModal({
               </span>
             </div>
 
-            <div className="w-8 h-8 rounded-full bg-white border border-[rgba(71,86,87,0.2)] flex items-center justify-center text-[#4A6D7C] shrink-0 shadow-2xs">
+            <div className="w-8 h-8 rounded-full bg-white border border-[rgba(71,86,87,0.2)] flex items-center justify-center text-[#D97706] shrink-0 shadow-2xs">
               <ArrowRight className="w-4 h-4" />
             </div>
 

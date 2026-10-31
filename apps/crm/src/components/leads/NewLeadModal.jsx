@@ -74,7 +74,7 @@ export function NewLeadModal({ isOpen, onClose, onSuccess }) {
         {/* Modal Header with Navbar Dark Cockpit Theme */}
         <div className="bg-[#0c1316] px-6 py-4 flex items-center justify-between border-b border-[rgba(98,146,158,0.2)]">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.3)] text-[#62929e] flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-[#D97706]/15 border border-[#D97706]/30 text-[#D97706] flex items-center justify-center">
               <span className="font-bold text-sm">+</span>
             </div>
             <div>

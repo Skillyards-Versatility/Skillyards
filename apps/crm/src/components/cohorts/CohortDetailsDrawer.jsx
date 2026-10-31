@@ -267,7 +267,7 @@ export function CohortDetailsDrawer({
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#4A6D7C]/20 border border-[#4A6D7C]/40 text-[#a3cdd8]">
+                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-[#D97706]/20 border border-[#D97706]/40 text-[#D97706]">
                     {cohort.code || "COHORT"}
                   </span>
                   <h3 className="font-bold text-sm sm:text-base text-white truncate max-w-[280px]">
@@ -342,11 +342,11 @@ export function CohortDetailsDrawer({
               {/* Schedule Details Row */}
               <div className="pt-2 border-t border-[rgba(71,86,87,0.1)] grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="flex items-center gap-2 text-[#5A6E71]">
-                  <Clock className="w-3.5 h-3.5 text-[#4A6D7C] shrink-0" />
+                  <Clock className="w-3.5 h-3.5 text-[#D97706] shrink-0" />
                   <span className="truncate">{cohort.schedule || "Weekend Live"}</span>
                 </div>
                 <div className="flex items-center gap-2 text-[#5A6E71]">
-                  <Calendar className="w-3.5 h-3.5 text-[#4A6D7C] shrink-0" />
+                  <Calendar className="w-3.5 h-3.5 text-[#D97706] shrink-0" />
                   <span>
                     Starts:{" "}
                     {new Date(cohort.startDate || Date.now()).toLocaleDateString("en-IN", {
@@ -441,7 +441,7 @@ export function CohortDetailsDrawer({
                     className="crm-btn-secondary !py-1 !px-2.5 text-xs flex items-center gap-1.5 shadow-xs"
                     title="Download CSV roster"
                   >
-                    <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+                    <Download className="w-3.5 h-3.5 text-[#D97706]" />
                     <span>Roster CSV</span>
                   </button>
 
@@ -557,12 +557,12 @@ export function CohortDetailsDrawer({
                           </div>
                           <div className="flex items-center gap-3 text-[11px] text-[#5A6E71] mt-0.5">
                             <span className="flex items-center gap-1">
-                              <Phone className="w-3 h-3 text-[#4A6D7C]" />
+                              <Phone className="w-3 h-3 text-[#D97706]" />
                               {st.phone}
                             </span>
                             {st.email && (
                               <span className="flex items-center gap-1 truncate hidden sm:inline-flex">
-                                <Mail className="w-3 h-3 text-[#4A6D7C]" />
+                                <Mail className="w-3 h-3 text-[#D97706]" />
                                 {st.email}
                               </span>
                             )}
@@ -597,7 +597,7 @@ export function CohortDetailsDrawer({
                           type="button"
                           onClick={() => setTransferStudentTarget(st)}
                           title="Transfer student to another cohort"
-                          className="p-1.5 rounded-lg bg-[#FAF6EE] hover:bg-[#F0E6D6] text-[#4A6D7C] hover:text-[#194451] border border-[rgba(71,86,87,0.18)] transition-all cursor-pointer shadow-2xs"
+                          className="p-1.5 rounded-lg bg-[#FAF6EE] hover:bg-[#F0E6D6] text-[#D97706] hover:text-[#B45309] border border-[rgba(71,86,87,0.18)] transition-all cursor-pointer shadow-2xs"
                         >
                           <ArrowRightLeft className="w-3.5 h-3.5" />
                         </button>

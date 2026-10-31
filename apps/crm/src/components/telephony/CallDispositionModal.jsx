@@ -25,7 +25,7 @@ const OUTCOMES = [
     id: "counselling_booked",
     label: "Counselling Scheduled",
     desc: "Candidate agreed to admissions 1-on-1 counseling",
-    badge: "bg-[#4A6D7C]/20 text-[#62929e] border-[#4A6D7C]/40",
+    badge: "bg-[#D97706]/20 text-[#D97706] border-[#D97706]/40",
   },
   {
     id: "callback_requested",
@@ -116,7 +116,7 @@ export function CallDispositionModal() {
         {/* Modal Dark Cockpit Header */}
         <div className="px-5 py-3.5 bg-[#0c1316] text-white border-b border-[rgba(98,146,158,0.2)] flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.35)] flex items-center justify-center text-[#62929e]">
+            <div className="w-8 h-8 rounded-lg bg-[#D97706]/20 border border-[#D97706]/40 flex items-center justify-center text-[#D97706]">
               <PhoneCall className="w-4 h-4" />
             </div>
             <div>
@@ -129,7 +129,7 @@ export function CallDispositionModal() {
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[rgba(98,146,158,0.15)] border border-[rgba(98,146,158,0.3)] text-xs font-mono font-semibold text-[#62929e]">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#D97706]/15 border border-[#D97706]/30 text-xs font-mono font-semibold text-[#D97706]">
             <Clock className="w-3.5 h-3.5 text-[#10b981]" />
             <span>{formatDuration(callDuration)}</span>
           </div>
@@ -140,7 +140,7 @@ export function CallDispositionModal() {
           {/* Candidate Card Summary */}
           <div className="p-3 rounded-xl bg-white border border-[rgba(71,86,87,0.14)] flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#4A6D7C] to-[#62929E] text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm">
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#D97706] to-[#F59E0B] text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm">
                 {activeCall.name ? activeCall.name[0] : "P"}
               </div>
               <div>
@@ -149,7 +149,7 @@ export function CallDispositionModal() {
               </div>
             </div>
             <div className="text-right">
-              <span className="px-2 py-0.5 rounded-full bg-[rgba(74,109,124,0.12)] border border-[rgba(74,109,124,0.25)] text-[10.5px] font-semibold text-[#2b4c57]">
+              <span className="px-2 py-0.5 rounded-full bg-[#D97706]/10 border border-[#D97706]/25 text-[10.5px] font-semibold text-[#92400E]">
                 {activeCall.courseInterest}
               </span>
             </div>
@@ -170,7 +170,7 @@ export function CallDispositionModal() {
                     onClick={() => setSelectedOutcome(item.id)}
                     className={`p-2.5 rounded-xl border text-left transition-all duration-150 flex items-start justify-between cursor-pointer ${
                       isSelected
-                        ? "bg-[#4A6D7C]/12 border-[#4A6D7C] shadow-sm ring-1 ring-[#4A6D7C]"
+                        ? "bg-[#D97706]/12 border-[#D97706] shadow-sm ring-1 ring-[#D97706]"
                         : "bg-white border-[rgba(71,86,87,0.14)] hover:border-[rgba(71,86,87,0.3)]"
                     }`}
                   >
@@ -183,7 +183,7 @@ export function CallDispositionModal() {
                       </div>
                     </div>
                     {isSelected && (
-                      <CheckCircle2 className="w-4 h-4 text-[#4A6D7C] shrink-0 ml-1.5" />
+                      <CheckCircle2 className="w-4 h-4 text-[#D97706] shrink-0 ml-1.5" />
                     )}
                   </button>
                 );
@@ -240,7 +240,7 @@ export function CallDispositionModal() {
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
               placeholder="Record candidate feedback, objections, fee discussion, or commitments made..."
-              className="w-full p-2.5 rounded-xl bg-white border border-[rgba(71,86,87,0.2)] text-xs text-[#1C2527] placeholder-[#7E939A] focus:outline-none focus:ring-2 focus:ring-[#4A6D7C]"
+              className="w-full p-2.5 rounded-xl bg-white border border-[rgba(71,86,87,0.2)] text-xs text-[#1C2527] placeholder-[#7E939A] focus:outline-none focus:ring-2 focus:ring-[#D97706]"
             />
 
             {/* Quick Tags Pills */}
@@ -250,7 +250,7 @@ export function CallDispositionModal() {
                   key={tag}
                   type="button"
                   onClick={() => handleQuickTag(tag)}
-                  className="px-2 py-0.5 rounded-md bg-white border border-[rgba(71,86,87,0.15)] text-[10.5px] text-[#2E3A3C] hover:bg-[#4A6D7C]/10 hover:border-[#4A6D7C]/30 transition-colors"
+                  className="px-2 py-0.5 rounded-md bg-white border border-[rgba(71,86,87,0.15)] text-[10.5px] text-[#2E3A3C] hover:bg-[#D97706]/10 hover:border-[#D97706]/30 transition-colors"
                 >
                   + {tag}
                 </button>

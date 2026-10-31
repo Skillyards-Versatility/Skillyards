@@ -173,7 +173,7 @@ export function InstallmentReceiptModal({ isOpen, onClose, data }) {
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-xl font-black tracking-tight text-[#0c1316]">SKILLYARDS</span>
-                <span className="text-xs px-2 py-0.5 rounded bg-[#4A6D7C] text-white font-semibold uppercase tracking-wider">
+                <span className="text-xs px-2 py-0.5 rounded bg-[#D97706] text-white font-semibold uppercase tracking-wider">
                   Versatility
                 </span>
               </div>
@@ -206,7 +206,7 @@ export function InstallmentReceiptModal({ isOpen, onClose, data }) {
 
             <div className="space-y-1 text-right">
               <span className="text-[10px] uppercase font-bold text-[#7E939A] tracking-wider">Program & Cohort</span>
-              <p className="font-bold text-sm text-[#4A6D7C]">{courseName}</p>
+              <p className="font-bold text-sm text-[#D97706]">{courseName}</p>
               <p className="text-[#5A6E71] text-[11px]">{cohortName}</p>
               <p className="text-[11px] text-[#B07238] font-medium">{installmentTitle}</p>
             </div>
@@ -306,7 +306,7 @@ export function InstallmentReceiptModal({ isOpen, onClose, data }) {
 
             <div className="text-right">
               <div className="w-36 h-10 border-b border-dashed border-[#1C2527] mb-1 flex items-end justify-center">
-                <span className="text-[10px] font-mono text-[#4A6D7C] tracking-widest uppercase">
+                <span className="text-[10px] font-mono text-[#D97706] tracking-widest uppercase">
                   [DIGITAL STAMP]
                 </span>
               </div>

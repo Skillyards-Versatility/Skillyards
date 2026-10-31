@@ -461,7 +461,7 @@ export default function InstallmentsPage() {
             onClick={handleExportCSV}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#1C2527] border border-[rgba(71,86,87,0.2)] text-xs font-semibold transition-colors shadow-xs"
           >
-            <Download className="w-3.5 h-3.5 text-[#4A6D7C]" />
+            <Download className="w-3.5 h-3.5 text-[#D97706]" />
             <span>Export CSV</span>
           </button>
 
@@ -482,7 +482,7 @@ export default function InstallmentsPage() {
         <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
           <div className="flex items-center justify-between text-[#5A6E71] text-xs mb-2">
             <span className="font-semibold uppercase tracking-wider text-[10px]">Total Receivables</span>
-            <div className="w-7 h-7 rounded-lg bg-[#4A6D7C]/15 flex items-center justify-center text-[#4A6D7C]">
+            <div className="w-7 h-7 rounded-lg bg-[#D97706]/15 flex items-center justify-center text-[#D97706]">
               <Banknote className="w-3.5 h-3.5" />
             </div>
           </div>
@@ -661,7 +661,7 @@ export default function InstallmentsPage() {
       <div className="bg-[#FAF6EE] rounded-2xl border border-[rgba(71,86,87,0.18)] overflow-hidden shadow-xs">
         {loading ? (
           <div className="p-12 text-center text-[#5A6E71] text-xs space-y-2">
-            <RefreshCw className="w-5 h-5 animate-spin mx-auto text-[#4A6D7C]" />
+            <RefreshCw className="w-5 h-5 animate-spin mx-auto text-[#D97706]" />
             <p>Synchronizing fee installments ledger...</p>
           </div>
         ) : filteredInstallments.length === 0 ? (
@@ -734,7 +734,7 @@ export default function InstallmentsPage() {
                               {inst.studentName}
                             </p>
                             <div className="flex items-center gap-2 text-[11px] text-[#5A6E71] mt-0.5">
-                              <span className="font-mono text-[#4A6D7C] font-semibold">{inst.studentId}</span>
+                              <span className="font-mono text-[#D97706] font-semibold">{inst.studentId}</span>
                               <span>•</span>
                               <span>{inst.studentPhone}</span>
                             </div>
