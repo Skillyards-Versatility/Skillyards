@@ -6,6 +6,8 @@ import {
   startRingbackTone,
   playCallConnectedChime,
   playCallEndedTone,
+  startHoldMusic,
+  playCarrierDialTone,
 } from "@/lib/telephonyAudio";
 import { crmApi } from "@/lib/api";
 
@@ -56,10 +58,18 @@ export function TelephonyProvider({ children }) {
   const [isOnHold, setIsOnHold] = useState(false);
   const [isSoftphoneOpen, setIsSoftphoneOpen] = useState(false);
   const [recentCalls, setRecentCalls] = useState(DEFAULT_RECENT_CALLS);
+  const [audioBars, setAudioBars] = useState([25, 45, 60, 85, 95, 70, 50, 80, 65, 40, 55, 30]);
+  const [hasMicPermission, setHasMicPermission] = useState(null);
+  const [quickNotes, setQuickNotes] = useState("");
 
   const ringbackStopperRef = useRef(null);
+  const holdMusicStopperRef = useRef(null);
   const timerIntervalRef = useRef(null);
   const stateTimeoutRef = useRef(null);
+  const micStreamRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const analyserRef = useRef(null);
+  const animationFrameRef = useRef(null);
 
   // Load recent calls from localStorage on mount
   useEffect(() => {
@@ -91,24 +101,138 @@ export function TelephonyProvider({ children }) {
     };
   }, [callState, isOnHold]);
 
+  // Audio spectrum & microphone stream processing
+  useEffect(() => {
+    if (callState !== "CONNECTED") {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      return;
+    }
+
+    let isSubscribed = true;
+
+    // Try to acquire real microphone stream for true WebRTC realism
+    if (typeof navigator !== "undefined" && navigator.mediaDevices?.getUserMedia) {
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          if (!isSubscribed) {
+            stream.getTracks().forEach((t) => t.stop());
+            return;
+          }
+          micStreamRef.current = stream;
+          setHasMicPermission(true);
+
+          try {
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            const ctx = new AudioContextClass();
+            audioContextRef.current = ctx;
+            const source = ctx.createMediaStreamSource(stream);
+            const analyser = ctx.createAnalyser();
+            analyser.fftSize = 64;
+            analyser.smoothingTimeConstant = 0.8;
+            source.connect(analyser);
+            analyserRef.current = analyser;
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            const updateVisualizer = () => {
+              if (!isSubscribed || callState !== "CONNECTED") return;
+              if (isOnHold) {
+                // Dimmed rhythm when on hold
+                setAudioBars([15, 20, 25, 20, 15, 20, 25, 20, 15, 20, 15, 10]);
+              } else if (isMuted) {
+                // Flatline when muted
+                setAudioBars([5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]);
+              } else {
+                analyser.getByteFrequencyData(dataArray);
+                // Sample 12 frequency bins and scale from 15% to 100%
+                const samples = [];
+                for (let i = 0; i < 12; i++) {
+                  const val = dataArray[i * 2] || 0;
+                  const pct = Math.min(100, Math.max(12, Math.round((val / 255) * 100)));
+                  samples.push(pct);
+                }
+                setAudioBars(samples);
+              }
+              animationFrameRef.current = requestAnimationFrame(updateVisualizer);
+            };
+
+            animationFrameRef.current = requestAnimationFrame(updateVisualizer);
+          } catch (e) {
+            console.debug("Web Audio Analyser fallback:", e);
+          }
+        })
+        .catch((err) => {
+          setHasMicPermission(false);
+          console.debug("Mic access denied or unavailable, using simulated voice stream:", err.message);
+
+          // Simulated organic voice activity
+          const simInterval = setInterval(() => {
+            if (!isSubscribed || callState !== "CONNECTED") {
+              clearInterval(simInterval);
+              return;
+            }
+            if (isOnHold) {
+              setAudioBars([15, 20, 25, 20, 15, 20, 25, 20, 15, 20, 15, 10]);
+            } else if (isMuted) {
+              setAudioBars([5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]);
+            } else {
+              setAudioBars((prev) =>
+                prev.map(() => Math.floor(Math.random() * 75) + 20)
+              );
+            }
+          }, 140);
+
+          return () => clearInterval(simInterval);
+        });
+    }
+
+    return () => {
+      isSubscribed = false;
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+    };
+  }, [callState, isOnHold, isMuted]);
+
   // Clean up audio & timeouts on unmount
   useEffect(() => {
     return () => {
       if (ringbackStopperRef.current) ringbackStopperRef.current();
+      if (holdMusicStopperRef.current) holdMusicStopperRef.current();
       if (stateTimeoutRef.current) clearTimeout(stateTimeoutRef.current);
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+      if (micStreamRef.current) {
+        micStreamRef.current.getTracks().forEach((track) => track.stop());
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close().catch(() => {});
+      }
     };
   }, []);
 
   /**
-   * Start an outbound call to a lead
+   * Start an outbound call to a lead with 1-click
    */
-  const startCall = ({ leadId = null, name = "Prospect", phone = "", courseInterest = "Career Acceleration", avatar = null }) => {
+  const startCall = ({
+    leadId = null,
+    name = "Prospect",
+    phone = "",
+    courseInterest = "Career Acceleration",
+    avatar = null,
+  }) => {
     if (!phone) return;
 
-    // Stop any existing call or ringtone
+    // Stop any existing call or tones
     if (ringbackStopperRef.current) ringbackStopperRef.current();
+    if (holdMusicStopperRef.current) holdMusicStopperRef.current();
     if (stateTimeoutRef.current) clearTimeout(stateTimeoutRef.current);
+    if (micStreamRef.current) {
+      micStreamRef.current.getTracks().forEach((t) => t.stop());
+      micStreamRef.current = null;
+    }
 
     setActiveCall({
       leadId: leadId || `prospect-${Date.now()}`,
@@ -123,10 +247,13 @@ export function TelephonyProvider({ children }) {
     setIsMuted(false);
     setIsOnHold(false);
     setIsSoftphoneOpen(true);
+    setQuickNotes("");
     setCallState("DIALING");
-    playDtmfTone("1");
 
-    // After 600ms transition to RINGING with simulated ringback audio
+    // Play subtle carrier connection tone
+    playCarrierDialTone();
+
+    // After 600ms transition to RINGING with standard telecom ringback audio
     stateTimeoutRef.current = setTimeout(() => {
       setCallState("RINGING");
       ringbackStopperRef.current = startRingbackTone();
@@ -151,9 +278,17 @@ export function TelephonyProvider({ children }) {
       ringbackStopperRef.current();
       ringbackStopperRef.current = null;
     }
+    if (holdMusicStopperRef.current) {
+      holdMusicStopperRef.current();
+      holdMusicStopperRef.current = null;
+    }
     if (stateTimeoutRef.current) {
       clearTimeout(stateTimeoutRef.current);
       stateTimeoutRef.current = null;
+    }
+    if (micStreamRef.current) {
+      micStreamRef.current.getTracks().forEach((t) => t.stop());
+      micStreamRef.current = null;
     }
 
     playCallEndedTone();
@@ -253,14 +388,35 @@ export function TelephonyProvider({ children }) {
     setCallDuration(0);
     setIsMuted(false);
     setIsOnHold(false);
+    setQuickNotes("");
   };
 
   const toggleMute = () => {
-    setIsMuted((prev) => !prev);
+    setIsMuted((prev) => {
+      const next = !prev;
+      if (micStreamRef.current) {
+        micStreamRef.current.getAudioTracks().forEach((track) => {
+          track.enabled = !next;
+        });
+      }
+      return next;
+    });
   };
 
   const toggleHold = () => {
-    setIsOnHold((prev) => !prev);
+    setIsOnHold((prev) => {
+      const next = !prev;
+      if (next) {
+        if (holdMusicStopperRef.current) holdMusicStopperRef.current();
+        holdMusicStopperRef.current = startHoldMusic();
+      } else {
+        if (holdMusicStopperRef.current) {
+          holdMusicStopperRef.current();
+          holdMusicStopperRef.current = null;
+        }
+      }
+      return next;
+    });
   };
 
   const openSoftphone = () => setIsSoftphoneOpen(true);
@@ -280,6 +436,10 @@ export function TelephonyProvider({ children }) {
         isOnHold,
         isSoftphoneOpen,
         recentCalls,
+        audioBars,
+        hasMicPermission,
+        quickNotes,
+        setQuickNotes,
         startCall,
         hangupCall,
         submitDisposition,

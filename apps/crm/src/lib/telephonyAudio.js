@@ -194,3 +194,105 @@ export function playCallEndedTone() {
     console.debug("Call ended tone error:", err);
   }
 }
+
+/**
+ * Play gentle, ambient telecom on-hold music loop
+ * Synthesized using soft warm sine chords
+ * Returns a stop() function to cleanly silence the music
+ */
+export function startHoldMusic() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return () => {};
+
+    let isPlaying = true;
+    let timerId = null;
+    let currentOscs = [];
+
+    // Chords: Cmaj7, Am7, Fmaj7, Gsus4
+    const chords = [
+      [261.63, 329.63, 392.0, 493.88],
+      [220.0, 261.63, 329.63, 392.0],
+      [174.61, 220.0, 261.63, 329.63],
+      [196.0, 261.63, 293.66, 392.0],
+    ];
+
+    let chordIdx = 0;
+
+    const playChord = () => {
+      if (!isPlaying) return;
+      const notes = chords[chordIdx % chords.length];
+      chordIdx++;
+
+      const now = ctx.currentTime;
+      const duration = 2.0;
+
+      const chordGain = ctx.createGain();
+      chordGain.gain.setValueAtTime(0, now);
+      chordGain.gain.linearRampToValueAtTime(0.045, now + 0.25);
+      chordGain.gain.setValueAtTime(0.045, now + duration - 0.4);
+      chordGain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+      chordGain.connect(ctx.destination);
+
+      currentOscs = notes.map((freq) => {
+        const osc = ctx.createOscillator();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now);
+        osc.connect(chordGain);
+        osc.start(now);
+        osc.stop(now + duration);
+        return osc;
+      });
+
+      timerId = setTimeout(() => {
+        if (isPlaying) playChord();
+      }, 1950);
+    };
+
+    playChord();
+
+    return () => {
+      isPlaying = false;
+      if (timerId) clearTimeout(timerId);
+      currentOscs.forEach((osc) => {
+        try {
+          osc.stop();
+        } catch {}
+      });
+    };
+  } catch (err) {
+    console.debug("Hold music error:", err);
+    return () => {};
+  }
+}
+
+/**
+ * Play authentic carrier dial tone burst (350Hz + 440Hz standard)
+ */
+export function playCarrierDialTone() {
+  try {
+    const ctx = getAudioContext();
+    if (!ctx) return;
+
+    const now = ctx.currentTime;
+    const duration = 0.35;
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(0.12, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    gain.connect(ctx.destination);
+
+    [350, 440].forEach((freq) => {
+      const osc = ctx.createOscillator();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(freq, now);
+      osc.connect(gain);
+      osc.start(now);
+      osc.stop(now + duration);
+    });
+  } catch (err) {
+    console.debug("Dial tone error:", err);
+  }
+}
+
