@@ -67,4 +67,4 @@ async function sendReminderHandler(req, { ctx }) {
   }
 }
 
-export const POST = createProtectedRoute(canAccessCrm, sendReminderHandler);
+export const POST = createProtectedRoute(sendReminderHandler, { policy: canAccessCrm });

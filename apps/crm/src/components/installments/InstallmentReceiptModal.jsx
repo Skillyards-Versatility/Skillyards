@@ -116,8 +116,6 @@ export function InstallmentReceiptModal({ isOpen, onClose, data }) {
     window.open(`https://wa.me/${targetPhone}?text=${text}`, "_blank");
   };
 
-  if (!isOpen || !plan || !receipt) return null;
-
   return (
     <div
       onClick={(e) => {

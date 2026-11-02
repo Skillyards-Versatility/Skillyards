@@ -33,6 +33,7 @@ import {
   Receipt,
   Banknote,
   ArrowUpRight,
+  Zap,
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
@@ -41,6 +42,7 @@ import { useAuth } from "@/context/AuthContext";
 import { MultiChannelOutreachModal } from "@/components/leads/MultiChannelOutreachModal";
 import { EnrollStudentModal } from "@/components/admissions/EnrollStudentModal";
 import { StudentFeeReceiptModal } from "@/components/admissions/StudentFeeReceiptModal";
+import { RazorpayPaymentModal } from "@/components/payments/RazorpayPaymentModal";
 import { CallRecordingAudioPlayer } from "@/components/leads/CallRecordingAudioPlayer";
 import { calculateLeadPropensityScore, generateAiCallSummary } from "@/lib/leadIntelligence";
 
@@ -78,6 +80,7 @@ export default function LeadDetailPage() {
   const [isOutreachModalOpen, setIsOutreachModalOpen] = useState(false);
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const [isRazorpayModalOpen, setIsRazorpayModalOpen] = useState(false);
   const [activeEnrollment, setActiveEnrollment] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -510,6 +513,16 @@ export default function LeadDetailPage() {
         {/* Header Quick Actions */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Enroll Student Action */}
+          <button
+            type="button"
+            onClick={() => setIsRazorpayModalOpen(true)}
+            className="crm-btn-primary !bg-gradient-to-r !from-[#D97706] !to-[#F59E0B] hover:!from-[#B45309] hover:!to-[#D97706] text-white shadow-xs cursor-pointer flex items-center gap-1.5 font-bold"
+            title="Generate official Razorpay checkout link for Seat Reservation Token Fee"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            <span>Collect Token Fee</span>
+          </button>
+
           <button
             type="button"
             onClick={() => setIsEnrollModalOpen(true)}
@@ -1431,6 +1444,16 @@ export default function LeadDetailPage() {
         isOpen={isReceiptModalOpen}
         onClose={() => setIsReceiptModalOpen(false)}
         enrollment={activeEnrollment}
+      />
+
+      {/* Razorpay Token Fee Modal */}
+      <RazorpayPaymentModal
+        isOpen={isRazorpayModalOpen}
+        onClose={() => setIsRazorpayModalOpen(false)}
+        lead={lead}
+        onPaymentSuccess={() => {
+          fetchLeadDetails();
+        }}
       />
     </div>
   );

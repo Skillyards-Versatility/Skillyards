@@ -386,6 +386,6 @@ async function postInstallmentHandler(req, { ctx }) {
   }
 }
 
-export const GET = createProtectedRoute(canAccessCrm, getInstallmentsHandler);
-export const POST = createProtectedRoute(canAccessCrm, postInstallmentHandler);
+export const GET = createProtectedRoute(getInstallmentsHandler, { policy: canAccessCrm });
+export const POST = createProtectedRoute(postInstallmentHandler, { policy: canAccessCrm });
 export { runtimeInstallments };
