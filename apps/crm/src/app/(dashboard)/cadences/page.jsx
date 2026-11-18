@@ -22,11 +22,19 @@ import {
   Pause,
   ArrowRight,
   Check,
+  Zap,
+  Layers,
+  FileText,
+  AlertCircle,
+  Copy,
+  Sliders,
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 import { CreateCadenceModal } from "@/components/cadences/CreateCadenceModal";
 import { CadenceDetailsDrawer } from "@/components/cadences/CadenceDetailsDrawer";
+import { VisualWorkflowBuilder } from "@/components/cadences/VisualWorkflowBuilder";
+import { WorkflowSimulatorModal } from "@/components/cadences/WorkflowSimulatorModal";
 
 const CHANNEL_BADGES = {
   whatsapp: { icon: MessageSquare, color: "text-[#25D366] bg-[#25D366]/10 border-[#25D366]/30" },
@@ -38,26 +46,24 @@ const CHANNEL_BADGES = {
 const BASE_DEMO_CADENCES = [
   {
     id: "cad-101",
-    name: "7-Day High Intent Prospect Nurture",
-    code: "CAD-7D-INTENT",
+    name: "Zero-Drop Web Enquiry Nurture & Callback",
+    code: "CAD-ZERO-DROP",
     targetCourse: "Full Stack Web Development (MERN)",
-    description: "Automated 5-step multi-channel cadence for fresh web enquiries, converting interest into counselling.",
+    description: "Automated sequence: Instant WhatsApp syllabus ➔ Day 1 Demo SMS ➔ Day 3 Queue Callback task.",
     status: "active",
-    enrolledCount: 28,
-    activeCount: 19,
-    completedCount: 9,
-    convertedCount: 6,
-    conversionRate: 21.4,
-    responseRate: 46.4,
-    channels: ["whatsapp", "call", "email", "sms"],
+    enrolledCount: 34,
+    activeCount: 22,
+    completedCount: 12,
+    convertedCount: 8,
+    conversionRate: 23.5,
+    responseRate: 52.9,
+    channels: ["whatsapp", "sms", "call"],
     steps: [
-      { stepNumber: 1, dayOffset: 0, channel: "whatsapp", title: "Instant Course Brochure & Welcome" },
-      { stepNumber: 2, dayOffset: 1, channel: "call", title: "Discovery Phone Consultation Task" },
-      { stepNumber: 3, dayOffset: 3, channel: "email", title: "Career Counselling Session Invite" },
-      { stepNumber: 4, dayOffset: 5, channel: "whatsapp", title: "15% Academic Merit Scholarship Grant" },
-      { stepNumber: 5, dayOffset: 7, channel: "call", title: "Final Cohort Seat Reservation Call" },
+      { stepNumber: 1, dayOffset: 0, channel: "whatsapp", title: "Instant Course Brochure & Welcome Pack" },
+      { stepNumber: 2, dayOffset: 1, channel: "sms", title: "Free Demo Class & Masterclass VIP Pass" },
+      { stepNumber: 3, dayOffset: 3, channel: "call", title: "Urgent Telecaller Softphone Queue Callback" },
     ],
-    createdAt: new Date(Date.now() - 20 * 86400000).toISOString(),
+    createdAt: new Date(Date.now() - 15 * 86400000).toISOString(),
   },
   {
     id: "cad-102",
@@ -104,8 +110,51 @@ const BASE_DEMO_CADENCES = [
   },
 ];
 
+const PREBUILT_RECIPES = [
+  {
+    id: "recipe-1",
+    title: "Zero-Drop Web Enquiry Nurture",
+    tag: "High Conversion • EdTech Essential",
+    desc: "The gold standard 3-stage funnel: Instant WhatsApp syllabus ➔ Day 1 Demo Masterclass SMS ➔ Day 3 Queue Call Task if unresponsive.",
+    course: "All Courses",
+    channels: ["whatsapp", "sms", "call"],
+    steps: [
+      { day: "Day 0", text: "Instant WhatsApp Welcome + Curriculum Syllabus PDF" },
+      { day: "Day 1 (11 AM)", text: "Free Live Demo Class VIP Pass via SMS" },
+      { day: "Day 3", text: "Condition check: If silent, inject urgent call task in Telecaller Queue" },
+    ],
+  },
+  {
+    id: "recipe-2",
+    title: "Demo Class No-Show Recovery Sequence",
+    tag: "Student Re-Engagement",
+    desc: "Recovers students who registered for counselling/demo class but missed the meeting.",
+    course: "Full Stack & AI Accelerator",
+    channels: ["whatsapp", "call"],
+    steps: [
+      { day: "Day 0 (+2h)", text: "WhatsApp: 'We missed you! Here is the session recording & summary'" },
+      { day: "Day 1", text: "Priority Phone Call Task to reschedule 1-on-1 career consultation" },
+      { day: "Day 3", text: "WhatsApp: Direct 1-click slot picker for upcoming batch" },
+    ],
+  },
+  {
+    id: "recipe-3",
+    title: "Weekend Cohort Urgency Countdown (Last 3 Seats)",
+    tag: "Admissions Closing Booster",
+    desc: "Creates FOMO and urgency during the final 72 hours before academic batch start.",
+    course: "Upcoming Batch Start",
+    channels: ["whatsapp", "sms", "call"],
+    steps: [
+      { day: "Day 0", text: "WhatsApp: Batch 85% filled alert with remaining seat count" },
+      { day: "Day 1", text: "SMS: Fast-track instant EMI financing link" },
+      { day: "Day 2", text: "Direct Softphone Call from Admissions Director" },
+    ],
+  },
+];
+
 export default function CadencesPage() {
   const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState("visual"); // 'visual' | 'sequences' | 'recipes'
   const [cadences, setCadences] = useState([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("");
@@ -113,6 +162,7 @@ export default function CadencesPage() {
 
   // Modals & Drawers state
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
   const [selectedCadence, setSelectedCadence] = useState(null);
   const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
 
@@ -205,6 +255,7 @@ export default function CadencesPage() {
   const handleCadenceCreated = (newCadence) => {
     setCadences((prev) => [newCadence, ...prev]);
     showToast(`Created cadence "${newCadence.name}" successfully!`);
+    setActiveTab("sequences");
   };
 
   const handleToggleCadenceStatus = async (cadenceId) => {
@@ -220,6 +271,41 @@ export default function CadencesPage() {
       prev.map((c) => (c.id === cadenceId ? { ...c, status: newStatus } : c))
     );
     showToast(`Cadence is now ${newStatus}`);
+  };
+
+  const handleDeployRecipe = (recipe) => {
+    const newCadence = {
+      id: `cad-${Date.now()}`,
+      name: recipe.title,
+      code: `CAD-${recipe.title.slice(0, 4).toUpperCase()}`,
+      targetCourse: recipe.course,
+      description: recipe.desc,
+      status: "active",
+      enrolledCount: 0,
+      activeCount: 0,
+      completedCount: 0,
+      convertedCount: 0,
+      conversionRate: 0,
+      responseRate: 0,
+      channels: recipe.channels,
+      steps: recipe.steps.map((s, idx) => ({
+        stepNumber: idx + 1,
+        dayOffset: idx * 2,
+        channel: recipe.channels[idx % recipe.channels.length],
+        title: s.text,
+      })),
+      createdAt: new Date().toISOString(),
+    };
+
+    try {
+      const stored = JSON.parse(localStorage.getItem("skillyards_custom_cadences") || "[]");
+      stored.unshift(newCadence);
+      localStorage.setItem("skillyards_custom_cadences", JSON.stringify(stored));
+    } catch (_) {}
+
+    setCadences((prev) => [newCadence, ...prev]);
+    showToast(`Activated Recipe "${recipe.title}"! Sequence is running live.`);
+    setActiveTab("sequences");
   };
 
   const handleExportCSV = () => {
@@ -271,7 +357,7 @@ export default function CadencesPage() {
         </div>
       )}
 
-      {/* Header */}
+      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-2.5">
@@ -281,294 +367,439 @@ export default function CadencesPage() {
             </span>
           </div>
           <p className="crm-page-subtitle">
-            Multi-channel automated drip sequences across WhatsApp, Phone tasks, Emails, and Scholarship triggers
+            Multi-channel automated drip sequences: Instant WhatsApp ➔ Day 1 Demo SMS ➔ Queue Call Task
           </p>
         </div>
 
         <div className="flex items-center gap-2 self-start flex-wrap">
+          {/* Test Simulator Button */}
           <button
             type="button"
-            onClick={handleExportCSV}
-            className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5"
-            title="Export all cadences to CSV"
+            onClick={() => setIsSimulatorOpen(true)}
+            className="crm-btn-primary shadow-md !py-2 !px-4 text-xs flex items-center gap-2 font-bold cursor-pointer"
+            title="Simulate automated drip sequence on real student"
           >
-            <Download className="w-3.5 h-3.5 text-[#D97706]" />
-            <span>Export CSV</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={fetchCadences}
-            className="crm-btn-secondary shadow-xs !py-1.5 !px-3 text-xs flex items-center gap-1.5"
-            title="Refresh Cadences"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
-            <span>Refresh</span>
+            <Play className="w-3.5 h-3.5 fill-current" />
+            <span>Test Automation Run</span>
           </button>
 
           <button
             type="button"
             onClick={() => setIsCreateModalOpen(true)}
-            className="crm-btn-primary shadow-md !py-1.5 !px-4 text-xs flex items-center gap-1.5 font-bold"
+            className="crm-btn-secondary shadow-xs !py-2 !px-3 text-xs flex items-center gap-1.5 font-bold cursor-pointer"
           >
-            <Plus className="w-4 h-4" />
-            <span>+ Create Cadence</span>
+            <Plus className="w-3.5 h-3.5 text-[#D97706]" />
+            <span>+ Create Custom Sequence</span>
           </button>
         </div>
       </div>
 
-      {/* 4 Performance KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* KPI 1: Active Cadences */}
-        <div className="crm-metric-card p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[#5A6E71] uppercase tracking-wider">
-              Active Sequences
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-[#D97706]/15 border border-[#D97706]/30 flex items-center justify-center text-[#D97706]">
-              <Workflow className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-[#1C2527]">{metrics.activeCadences}</span>
-            <span className="text-xs font-semibold text-[#128C7E]">Running live</span>
-          </div>
-          <p className="text-[11px] text-[#7e939a] mt-1">Multi-touch automated nurturing</p>
-        </div>
+      {/* Main Tabs Navigation */}
+      <div className="flex border-b border-[rgba(71,86,87,0.18)] bg-white rounded-t-2xl px-2 pt-2 gap-1 shadow-xs">
+        <button
+          type="button"
+          onClick={() => setActiveTab("visual")}
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold transition-all border-b-2 cursor-pointer ${
+            activeTab === "visual"
+              ? "text-[#D97706] border-[#D97706] bg-[#D97706]/10 rounded-t-xl"
+              : "text-[#5A6E71] border-transparent hover:text-[#1C2527]"
+          }`}
+        >
+          <Workflow className="w-4 h-4" />
+          <span>Visual Workflow Flowchart</span>
+          <span className="px-1.5 py-0.2 rounded-full bg-emerald-500/15 text-emerald-700 text-[10px] font-bold">
+            Live
+          </span>
+        </button>
 
-        {/* KPI 2: Prospects in Drip */}
-        <div className="crm-metric-card p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[#5A6E71] uppercase tracking-wider">
-              Prospects In Drip
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-[#128C7E]/15 border border-[#128C7E]/30 flex items-center justify-center text-[#128C7E]">
-              <Users className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-[#1C2527]">{metrics.totalEnrolled}</span>
-            <span className="text-xs font-bold text-[#128C7E]">Active Candidates</span>
-          </div>
-          <p className="text-[11px] text-[#7e939a] mt-1">Nurturing across sequences</p>
-        </div>
+        <button
+          type="button"
+          onClick={() => setActiveTab("sequences")}
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold transition-all border-b-2 cursor-pointer ${
+            activeTab === "sequences"
+              ? "text-[#D97706] border-[#D97706] bg-[#D97706]/10 rounded-t-xl"
+              : "text-[#5A6E71] border-transparent hover:text-[#1C2527]"
+          }`}
+        >
+          <Layers className="w-4 h-4" />
+          <span>Active Sequences ({cadences.length})</span>
+        </button>
 
-        {/* KPI 3: Average Reply Rate */}
-        <div className="crm-metric-card p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[#5A6E71] uppercase tracking-wider">
-              Avg Reply Rate
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-[#25D366]/15 border border-[#25D366]/30 flex items-center justify-center text-[#128C7E]">
-              <TrendingUp className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-[#1C2527]">{metrics.avgResponseRate}%</span>
-            <span className="text-xs font-bold text-[#128C7E]">High Engagement</span>
-          </div>
-          <div className="w-full h-1.5 rounded-full bg-[rgba(71,86,87,0.15)] mt-2 overflow-hidden">
-            <div
-              className="h-full bg-[#128C7E] rounded-full transition-all duration-500"
-              style={{ width: `${metrics.avgResponseRate}%` }}
-            />
-          </div>
-        </div>
-
-        {/* KPI 4: Cadence Conversions */}
-        <div className="crm-metric-card p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[#5A6E71] uppercase tracking-wider">
-              Admissions Closed
-            </span>
-            <div className="w-8 h-8 rounded-lg bg-[#D97706]/15 border border-[#D97706]/30 flex items-center justify-center text-[#D97706]">
-              <Award className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-2xl font-black text-[#D97706]">{metrics.totalConverted}</span>
-            <span className="text-xs font-bold text-[#194451]">Direct Conversions</span>
-          </div>
-          <p className="text-[11px] text-[#7e939a] mt-1">Closed via automated drip</p>
-        </div>
+        <button
+          type="button"
+          onClick={() => setActiveTab("recipes")}
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold transition-all border-b-2 cursor-pointer ${
+            activeTab === "recipes"
+              ? "text-[#D97706] border-[#D97706] bg-[#D97706]/10 rounded-t-xl"
+              : "text-[#5A6E71] border-transparent hover:text-[#1C2527]"
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-[#D97706]" />
+          <span>1-Click EdTech Recipes</span>
+          <span className="px-1.5 py-0.2 rounded-full bg-[#D97706]/20 text-[#B45309] text-[10px] font-mono">
+            3 Templates
+          </span>
+        </button>
       </div>
 
-      {/* Search & Status Filters */}
-      <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
-        <form onSubmit={handleSearchSubmit} className="relative w-full sm:w-80">
-          <Search className="w-3.5 h-3.5 text-[#5A6E71] absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Search cadence title, course, code..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="crm-input !pl-8 !py-1.5 bg-white text-xs font-medium"
-          />
-        </form>
+      {/* =========================================================================
+          TAB 1: VISUAL WORKFLOW CANVAS (Flowchart view)
+          ========================================================================= */}
+      {activeTab === "visual" && (
+        <VisualWorkflowBuilder onOpenSimulator={() => setIsSimulatorOpen(true)} />
+      )}
 
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          {["", "active", "paused"].map((st) => (
-            <button
-              key={st}
-              type="button"
-              onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                statusFilter === st
-                  ? "bg-[#0c1316] text-white shadow-xs"
-                  : "bg-white text-[#5A6E71] hover:text-[#1C2527] border border-[rgba(71,86,87,0.15)]"
-              }`}
-            >
-              {st === "" ? "All Cadences" : st === "active" ? "Active" : "Paused"}
-            </button>
-          ))}
-        </div>
-      </div>
+      {/* =========================================================================
+          TAB 2: ACTIVE SEQUENCES (Table / Grid View + KPIs)
+          ========================================================================= */}
+      {activeTab === "sequences" && (
+        <div className="space-y-6 animate-fadeIn">
+          {/* 4 Performance KPI Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* KPI 1: Active Cadences */}
+            <div className="crm-metric-card p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#5A6E71] uppercase tracking-wider">
+                  Active Sequences
+                </span>
+                <div className="w-8 h-8 rounded-lg bg-[#D97706]/15 border border-[#D97706]/30 flex items-center justify-center text-[#D97706]">
+                  <Workflow className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="text-2xl font-black text-[#1C2527]">{metrics.activeCadences}</span>
+                <span className="text-xs font-semibold text-[#128C7E]">Running live</span>
+              </div>
+              <p className="text-[11px] text-[#7e939a] mt-1">Multi-touch automated nurturing</p>
+            </div>
 
-      {/* Cadence Cards Grid */}
-      {loading ? (
-        <div className="p-16 text-center text-sm font-semibold text-[#5A6E71]">
-          Loading sales automation cadences...
-        </div>
-      ) : cadences.length === 0 ? (
-        <div className="p-16 text-center rounded-2xl bg-[#FAF6EE] border border-dashed border-[rgba(71,86,87,0.25)] space-y-3">
-          <Workflow className="w-10 h-10 text-[#D97706] mx-auto opacity-60" />
-          <h3 className="font-bold text-base text-[#1C2527]">No cadences found</h3>
-          <p className="text-xs text-[#5A6E71]">
-            Create your first multi-channel automated drip sequence to nurture cold leads.
-          </p>
-          <button
-            type="button"
-            onClick={() => setIsCreateModalOpen(true)}
-            className="crm-btn-primary !py-2 !px-4 text-xs font-bold"
-          >
-            + Create New Cadence
-          </button>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {cadences.map((cadence) => {
-            const isPaused = cadence.status === "paused";
+            {/* KPI 2: Prospects in Drip */}
+            <div className="crm-metric-card p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#5A6E71] uppercase tracking-wider">
+                  Prospects In Drip
+                </span>
+                <div className="w-8 h-8 rounded-lg bg-[#128C7E]/15 border border-[#128C7E]/30 flex items-center justify-center text-[#128C7E]">
+                  <Users className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="text-2xl font-black text-[#1C2527]">{metrics.totalEnrolled}</span>
+                <span className="text-xs font-bold text-[#128C7E]">Active Candidates</span>
+              </div>
+              <p className="text-[11px] text-[#7e939a] mt-1">Nurturing across sequences</p>
+            </div>
 
-            return (
-              <div
-                key={cadence.id}
-                className={`rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] hover:border-[rgba(71,86,87,0.35)] hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden group shadow-xs ${
-                  isPaused ? "opacity-75" : ""
-                }`}
+            {/* KPI 3: Average Reply Rate */}
+            <div className="crm-metric-card p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#5A6E71] uppercase tracking-wider">
+                  Avg Reply Rate
+                </span>
+                <div className="w-8 h-8 rounded-lg bg-[#25D366]/15 border border-[#25D366]/30 flex items-center justify-center text-[#128C7E]">
+                  <TrendingUp className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="text-2xl font-black text-[#1C2527]">{metrics.avgResponseRate}%</span>
+                <span className="text-xs font-bold text-[#128C7E]">High Engagement</span>
+              </div>
+              <div className="w-full h-1.5 rounded-full bg-[rgba(71,86,87,0.15)] mt-2 overflow-hidden">
+                <div
+                  className="h-full bg-[#128C7E] rounded-full transition-all duration-500"
+                  style={{ width: `${metrics.avgResponseRate}%` }}
+                />
+              </div>
+            </div>
+
+            {/* KPI 4: Cadence Conversions */}
+            <div className="crm-metric-card p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold text-[#5A6E71] uppercase tracking-wider">
+                  Admissions Closed
+                </span>
+                <div className="w-8 h-8 rounded-lg bg-[#D97706]/15 border border-[#D97706]/30 flex items-center justify-center text-[#D97706]">
+                  <Award className="w-4 h-4" />
+                </div>
+              </div>
+              <div className="mt-2 flex items-baseline gap-2">
+                <span className="text-2xl font-black text-[#D97706]">{metrics.totalConverted}</span>
+                <span className="text-xs font-bold text-[#194451]">Direct Conversions</span>
+              </div>
+              <p className="text-[11px] text-[#7e939a] mt-1">Closed via automated drip</p>
+            </div>
+          </div>
+
+          {/* Search & Status Filters */}
+          <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs flex flex-col sm:flex-row items-center justify-between gap-3">
+            <form onSubmit={handleSearchSubmit} className="relative w-full sm:w-80">
+              <Search className="w-3.5 h-3.5 text-[#5A6E71] absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search cadence title, course, code..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="crm-input !pl-8 !py-1.5 bg-white text-xs font-medium"
+              />
+            </form>
+
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              {["", "active", "paused"].map((st) => (
+                <button
+                  key={st}
+                  type="button"
+                  onClick={() => setStatusFilter(st)}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    statusFilter === st
+                      ? "bg-[#0c1316] text-white shadow-xs"
+                      : "bg-white text-[#5A6E71] hover:text-[#1C2527] border border-[rgba(71,86,87,0.15)]"
+                  }`}
+                >
+                  {st === "" ? "All Cadences" : st === "active" ? "Active" : "Paused"}
+                </button>
+              ))}
+
+              <button
+                type="button"
+                onClick={handleExportCSV}
+                className="crm-btn-secondary !py-1 !px-2.5 text-xs flex items-center gap-1 ml-2"
+                title="Export CSV"
               >
-                {/* Top Banner */}
-                <div className="px-5 py-3.5 bg-white border-b border-[rgba(71,86,87,0.12)] flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-0.5 rounded-md font-mono text-[10px] font-bold bg-[#D97706]/15 border border-[#D97706]/30 text-[#92400E]">
-                      {cadence.code || "CADENCE"}
-                    </span>
-                    <span className="text-[11px] font-bold text-[#5A6E71] truncate max-w-[140px]">
-                      {cadence.targetCourse}
-                    </span>
-                  </div>
+                <Download className="w-3.5 h-3.5 text-[#D97706]" />
+                <span>CSV</span>
+              </button>
+            </div>
+          </div>
 
-                  <span
-                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
-                      isPaused
-                        ? "bg-[#5A6E71]/10 text-[#5A6E71] border-[#5A6E71]/30"
-                        : "bg-[#25D366]/15 text-[#128C7E] border-[#25D366]/35"
+          {/* Cadence Cards Grid */}
+          {loading ? (
+            <div className="p-16 text-center text-sm font-semibold text-[#5A6E71]">
+              Loading sales automation cadences...
+            </div>
+          ) : cadences.length === 0 ? (
+            <div className="p-16 text-center rounded-2xl bg-[#FAF6EE] border border-dashed border-[rgba(71,86,87,0.25)] space-y-3">
+              <Workflow className="w-10 h-10 text-[#D97706] mx-auto opacity-60" />
+              <h3 className="font-bold text-base text-[#1C2527]">No cadences found</h3>
+              <p className="text-xs text-[#5A6E71]">
+                Create your first multi-channel automated drip sequence to nurture cold leads.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsCreateModalOpen(true)}
+                className="crm-btn-primary !py-2 !px-4 text-xs font-bold"
+              >
+                + Create New Cadence
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {cadences.map((cadence) => {
+                const isPaused = cadence.status === "paused";
+
+                return (
+                  <div
+                    key={cadence.id}
+                    className={`rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] hover:border-[rgba(71,86,87,0.35)] hover:shadow-lg transition-all duration-300 flex flex-col overflow-hidden group shadow-xs ${
+                      isPaused ? "opacity-75" : ""
                     }`}
                   >
-                    {isPaused ? "Paused" : "Active Drip"}
-                  </span>
-                </div>
+                    {/* Top Banner */}
+                    <div className="px-5 py-3.5 bg-white border-b border-[rgba(71,86,87,0.12)] flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2.5 py-0.5 rounded-md font-mono text-[10px] font-bold bg-[#D97706]/15 border border-[#D97706]/30 text-[#92400E]">
+                          {cadence.code || "CADENCE"}
+                        </span>
+                        <span className="text-[11px] font-bold text-[#5A6E71] truncate max-w-[140px]">
+                          {cadence.targetCourse}
+                        </span>
+                      </div>
 
-                {/* Card Main Body */}
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                  <div>
-                    <h3 className="font-bold text-base text-[#1C2527] group-hover:text-[#194451] transition-colors leading-snug">
-                      {cadence.name}
-                    </h3>
-                    <p className="text-xs text-[#5A6E71] mt-1 line-clamp-2">
-                      {cadence.description}
-                    </p>
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
+                          isPaused
+                            ? "bg-[#5A6E71]/10 text-[#5A6E71] border-[#5A6E71]/30"
+                            : "bg-[#25D366]/15 text-[#128C7E] border-[#25D366]/35"
+                        }`}
+                      >
+                        {isPaused ? "Paused" : "Active Drip"}
+                      </span>
+                    </div>
+
+                    {/* Card Main Body */}
+                    <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                      <div>
+                        <h3 className="font-bold text-base text-[#1C2527] group-hover:text-[#D97706] transition-colors leading-snug">
+                          {cadence.name}
+                        </h3>
+                        <p className="text-xs text-[#5A6E71] mt-1 line-clamp-2">
+                          {cadence.description}
+                        </p>
+                      </div>
+
+                      {/* Step Journey Flow Preview */}
+                      <div className="p-3 rounded-xl bg-white border border-[rgba(71,86,87,0.14)] space-y-2">
+                        <span className="text-[10px] uppercase font-bold text-[#5A6E71] tracking-wider block">
+                          Sequence Roadmap ({cadence.steps?.length || 3} Touchpoints)
+                        </span>
+
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          {(cadence.steps || []).map((step, idx) => {
+                            const chan = CHANNEL_BADGES[step.channel] || CHANNEL_BADGES.whatsapp;
+                            const IconComp = chan.icon;
+
+                            return (
+                              <div key={idx} className="flex items-center gap-1">
+                                <span
+                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border ${chan.color}`}
+                                  title={`Day ${step.dayOffset}: ${step.title}`}
+                                >
+                                  <IconComp className="w-2.5 h-2.5" />
+                                  <span>D{step.dayOffset}</span>
+                                </span>
+                                {idx < (cadence.steps?.length || 3) - 1 && (
+                                  <ArrowRight className="w-2.5 h-2.5 text-[#5A6E71]/60" />
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* Performance Statistics Row */}
+                      <div className="grid grid-cols-3 gap-2 text-center pt-1 border-t border-[rgba(71,86,87,0.1)]">
+                        <div className="p-2 rounded-lg bg-white/70 border border-[rgba(71,86,87,0.1)]">
+                          <span className="text-[10px] text-[#7e939a] block">Enrolled</span>
+                          <span className="font-bold text-xs text-[#1C2527]">
+                            {cadence.enrolledCount || 0}
+                          </span>
+                        </div>
+
+                        <div className="p-2 rounded-lg bg-white/70 border border-[rgba(71,86,87,0.1)]">
+                          <span className="text-[10px] text-[#7e939a] block">Replies</span>
+                          <span className="font-bold text-xs text-[#128C7E]">
+                            {cadence.responseRate || 0}%
+                          </span>
+                        </div>
+
+                        <div className="p-2 rounded-lg bg-white/70 border border-[rgba(71,86,87,0.1)]">
+                          <span className="text-[10px] text-[#7e939a] block">Converted</span>
+                          <span className="font-bold text-xs text-[#D97706]">
+                            {cadence.convertedCount || 0}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card Action Footer */}
+                    <div className="px-5 py-3.5 bg-white border-t border-[rgba(71,86,87,0.12)] flex items-center justify-between gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedCadence(cadence);
+                          setIsDetailsDrawerOpen(true);
+                        }}
+                        className="crm-btn-primary !py-1.5 !px-3 text-xs flex-1 flex items-center justify-center gap-1.5 font-bold shadow-xs cursor-pointer"
+                      >
+                        <span>Inspect Enrolled ({cadence.enrolledCount || 0})</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => handleToggleCadenceStatus(cadence.id)}
+                        className="w-8 h-8 rounded-lg bg-[#FAF6EE] hover:bg-white border border-[rgba(71,86,87,0.2)] text-[#5A6E71] hover:text-[#1C2527] flex items-center justify-center transition-all cursor-pointer shrink-0"
+                        title={isPaused ? "Resume Cadence" : "Pause Cadence"}
+                      >
+                        {isPaused ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
                   </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
-                  {/* Step Journey Flow Preview */}
-                  <div className="p-3 rounded-xl bg-white border border-[rgba(71,86,87,0.14)] space-y-2">
-                    <span className="text-[10px] uppercase font-bold text-[#5A6E71] tracking-wider block">
-                      Sequence Roadmap ({cadence.steps?.length || 5} Touchpoints)
+      {/* =========================================================================
+          TAB 3: 1-CLICK EDTECH RECIPES (Prebuilt Automation Templates)
+          ========================================================================= */}
+      {activeTab === "recipes" && (
+        <div className="space-y-6 animate-fadeIn">
+          <div className="p-4 rounded-2xl bg-white border border-[rgba(71,86,87,0.18)] shadow-xs">
+            <h3 className="font-bold text-sm text-[#1C2527]">
+              Pre-built EdTech Drip Recipes
+            </h3>
+            <p className="text-xs text-[#5A6E71] mt-0.5">
+              Launch proven multi-channel sequences with 1-click. Fully customized for Indian EdTech admission lifecycles.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {PREBUILT_RECIPES.map((recipe) => (
+              <div
+                key={recipe.id}
+                className="p-5 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] shadow-xs hover:shadow-md transition-all flex flex-col justify-between space-y-4"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#D97706]/15 text-[#B45309] border border-[#D97706]/30">
+                      {recipe.tag}
                     </span>
-
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      {(cadence.steps || []).map((step, idx) => {
-                        const chan = CHANNEL_BADGES[step.channel] || CHANNEL_BADGES.whatsapp;
-                        const IconComp = chan.icon;
-
+                    <div className="flex items-center gap-1">
+                      {recipe.channels.map((ch) => {
+                        const Icon =
+                          ch === "whatsapp"
+                            ? MessageSquare
+                            : ch === "call"
+                            ? Phone
+                            : ch === "sms"
+                            ? Smartphone
+                            : Mail;
                         return (
-                          <div key={idx} className="flex items-center gap-1">
-                            <span
-                              className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold border ${chan.color}`}
-                              title={`Day ${step.dayOffset}: ${step.title}`}
-                            >
-                              <IconComp className="w-2.5 h-2.5" />
-                              <span>D{step.dayOffset}</span>
-                            </span>
-                            {idx < (cadence.steps?.length || 5) - 1 && (
-                              <ArrowRight className="w-2.5 h-2.5 text-[#5A6E71]/60" />
-                            )}
-                          </div>
+                          <span
+                            key={ch}
+                            className="p-1 rounded-md bg-white border border-[rgba(71,86,87,0.15)] text-[#5A6E71]"
+                          >
+                            <Icon className="w-3 h-3" />
+                          </span>
                         );
                       })}
                     </div>
                   </div>
 
-                  {/* Performance Statistics Row */}
-                  <div className="grid grid-cols-3 gap-2 text-center pt-1 border-t border-[rgba(71,86,87,0.1)]">
-                    <div className="p-2 rounded-lg bg-white/70 border border-[rgba(71,86,87,0.1)]">
-                      <span className="text-[10px] text-[#7e939a] block">Enrolled</span>
-                      <span className="font-bold text-xs text-[#1C2527]">
-                        {cadence.enrolledCount || 0}
-                      </span>
-                    </div>
+                  <div>
+                    <h4 className="font-bold text-base text-[#1C2527]">{recipe.title}</h4>
+                    <p className="text-xs text-[#5A6E71] mt-1 leading-relaxed">{recipe.desc}</p>
+                  </div>
 
-                    <div className="p-2 rounded-lg bg-white/70 border border-[rgba(71,86,87,0.1)]">
-                      <span className="text-[10px] text-[#7e939a] block">Replies</span>
-                      <span className="font-bold text-xs text-[#128C7E]">
-                        {cadence.responseRate || 0}%
-                      </span>
-                    </div>
-
-                    <div className="p-2 rounded-lg bg-white/70 border border-[rgba(71,86,87,0.1)]">
-                      <span className="text-[10px] text-[#7e939a] block">Converted</span>
-                      <span className="font-bold text-xs text-[#194451]">
-                        {cadence.convertedCount || 0}
-                      </span>
-                    </div>
+                  {/* Steps List */}
+                  <div className="space-y-2 pt-2 border-t border-[rgba(71,86,87,0.12)]">
+                    <span className="text-[10.5px] uppercase font-bold text-[#5A6E71] tracking-wider block">
+                      Sequence Execution Blueprint:
+                    </span>
+                    {recipe.steps.map((st, i) => (
+                      <div key={i} className="flex items-start gap-2 text-xs">
+                        <span className="font-mono font-bold text-[#D97706] text-[11px] shrink-0">
+                          {st.day}:
+                        </span>
+                        <span className="text-[#1C2527] leading-snug">{st.text}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {/* Card Action Footer */}
-                <div className="px-5 py-3.5 bg-white border-t border-[rgba(71,86,87,0.12)] flex items-center justify-between gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSelectedCadence(cadence);
-                      setIsDetailsDrawerOpen(true);
-                    }}
-                    className="crm-btn-primary !py-1.5 !px-3 text-xs flex-1 flex items-center justify-center gap-1.5 font-bold shadow-xs cursor-pointer"
-                  >
-                    <span>Inspect Enrolled ({cadence.enrolledCount || 0})</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => handleToggleCadenceStatus(cadence.id)}
-                    className="w-8 h-8 rounded-lg bg-[#FAF6EE] hover:bg-white border border-[rgba(71,86,87,0.2)] text-[#5A6E71] hover:text-[#1C2527] flex items-center justify-center transition-all cursor-pointer shrink-0"
-                    title={isPaused ? "Resume Cadence" : "Pause Cadence"}
-                  >
-                    {isPaused ? <Play className="w-3.5 h-3.5" /> : <Pause className="w-3.5 h-3.5" />}
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => handleDeployRecipe(recipe)}
+                  className="w-full crm-btn-primary !py-2 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  <span>Activate This Recipe</span>
+                </button>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       )}
 
@@ -589,6 +820,15 @@ export default function CadencesPage() {
         }}
         cadence={selectedCadence}
         onToggleStatus={handleToggleCadenceStatus}
+      />
+
+      {/* Interactive Workflow Simulator Modal */}
+      <WorkflowSimulatorModal
+        isOpen={isSimulatorOpen}
+        onClose={() => setIsSimulatorOpen(false)}
+        onSimulationSuccess={(lead, task) => {
+          showToast(`Automated callback task generated for ${lead.name} in Dialer Queue!`);
+        }}
       />
     </div>
   );

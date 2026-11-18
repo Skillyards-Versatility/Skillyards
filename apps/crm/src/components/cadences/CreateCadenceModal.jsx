@@ -180,9 +180,9 @@ export function CreateCadenceModal({ isOpen, onClose, onCadenceCreated, currentU
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/60 backdrop-blur-sm animate-fadeIn">
       <div className="bg-[#FAF6EE] border border-[rgba(71,86,87,0.25)] rounded-2xl shadow-2xl max-w-3xl w-full max-h-[92vh] flex flex-col overflow-hidden animate-scaleUp">
         {/* Cockpit Header */}
-        <div className="px-5 py-4 bg-[#0c1316] text-[#FAF6EE] border-b border-[rgba(98,146,158,0.2)] flex items-center justify-between shrink-0">
+        <div className="px-5 py-4 bg-[#0c1316] text-[#FAF6EE] border-b border-white/10 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-[rgba(98,146,158,0.18)] border border-[rgba(98,146,158,0.35)] flex items-center justify-center text-white">
+            <div className="w-9 h-9 rounded-xl bg-[#D97706]/20 border border-[#D97706]/40 flex items-center justify-center text-[#D97706]">
               <Workflow className="w-5 h-5" />
             </div>
             <div>

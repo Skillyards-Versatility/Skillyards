@@ -76,12 +76,12 @@ function formatDuration(secs) {
 }
 
 export function CallDispositionModal() {
-  const { activeCall, callDuration, submitDisposition } = useTelephony();
+  const { activeCall, callDuration, submitDisposition, quickNotes } = useTelephony();
 
   const [selectedOutcome, setSelectedOutcome] = useState(
     callDuration > 10 ? "connected" : "no_answer"
   );
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState(quickNotes || "");
   const [callbackDate, setCallbackDate] = useState(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);

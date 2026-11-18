@@ -17,8 +17,10 @@ import {
   X,
   Keyboard,
   Menu,
+  PhoneCall,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useTelephony } from "@/context/TelephonyContext";
 
 const DEMO_NOTIFICATIONS = [
   {
@@ -91,6 +93,8 @@ const ROLES_LIST = [
 export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen }) {
   const router = useRouter();
   const { user, crmRoles, setUser, setCrmRoles } = useAuth();
+  const { setIsSoftphoneOpen, isSoftphoneOpen, callState } = useTelephony();
+  const isCallActive = ["DIALING", "RINGING", "CONNECTED", "ENDED"].includes(callState);
   const [searchQuery, setSearchQuery] = useState("");
   const [showNotifications, setShowNotifications] = useState(false);
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false);
@@ -394,6 +398,26 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
             </div>
           )}
         </div>
+
+        {/* WebRTC Softphone Dialer Toggle */}
+        <button
+          type="button"
+          onClick={() => setIsSoftphoneOpen((prev) => !prev)}
+          aria-label="Toggle Softphone Dialer"
+          className={`p-2 relative rounded-xl transition-all cursor-pointer active:scale-95 ${
+            isCallActive
+              ? "bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/30"
+              : isSoftphoneOpen
+              ? "bg-[#D97706] text-white shadow-xs"
+              : "text-[#D97706] hover:text-[#B45309] hover:bg-white/80"
+          }`}
+          title="Toggle WebRTC Softphone (Hotkey: D)"
+        >
+          <PhoneCall className="w-4 h-4" />
+          {isCallActive && (
+            <span className="w-2 h-2 rounded-full bg-emerald-400 absolute top-1.5 right-1.5 ring-2 ring-white animate-ping" />
+          )}
+        </button>
 
         {/* Fast Action */}
         <button

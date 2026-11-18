@@ -107,13 +107,13 @@ export function DialerPad() {
             key={k.char}
             type="button"
             onClick={() => handleKeyPress(k.char)}
-            className="h-12 rounded-xl bg-[rgba(98,146,158,0.06)] hover:bg-[rgba(98,146,158,0.18)] active:bg-[rgba(98,146,158,0.3)] border border-[rgba(98,146,158,0.14)] hover:border-[rgba(98,146,158,0.35)] flex flex-col items-center justify-center transition-all duration-100 active:scale-95 shadow-sm group"
+            className="h-12 rounded-xl bg-white/5 hover:bg-white/15 active:bg-[#D97706]/20 border border-white/10 hover:border-[#D97706]/40 flex flex-col items-center justify-center transition-all duration-100 active:scale-95 shadow-sm group cursor-pointer"
           >
             <span className="text-lg font-bold text-white group-hover:text-[#D97706] transition-colors leading-tight">
               {k.char}
             </span>
             {k.sub ? (
-              <span className="text-[9px] font-semibold text-[#6d8288] group-hover:text-[#a0bcc3] tracking-widest uppercase">
+              <span className="text-[9px] font-semibold text-[#7e939a] group-hover:text-[#F59E0B] tracking-widest uppercase">
                 {k.sub}
               </span>
             ) : (

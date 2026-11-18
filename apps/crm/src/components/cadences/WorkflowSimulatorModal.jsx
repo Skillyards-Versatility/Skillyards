@@ -186,16 +186,18 @@ export function WorkflowSimulatorModal({ isOpen, onClose, onSimulationSuccess })
                   type="button"
                   disabled={simulationState === "RUNNING"}
                   onClick={() => setSelectedLead(lead)}
-                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2.5 ${selectedLead.id === lead.id
+                  className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2.5 ${
+                    selectedLead.id === lead.id
                       ? "bg-[#D97706]/10 border-[#D97706] text-[#1C2527] shadow-xs"
                       : "bg-[#FAF6EE] border-[rgba(71,86,87,0.15)] text-[#5A6E71] hover:text-[#1C2527]"
-                    }`}
+                  }`}
                 >
                   <div
-                    className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${selectedLead.id === lead.id
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 ${
+                      selectedLead.id === lead.id
                         ? "bg-[#D97706] text-white"
                         : "bg-[rgba(71,86,87,0.12)] text-[#1C2527]"
-                      }`}
+                    }`}
                   >
                     {lead.name[0]}
                   </div>
@@ -233,12 +235,13 @@ export function WorkflowSimulatorModal({ isOpen, onClose, onSimulationSuccess })
                 return (
                   <div
                     key={idx}
-                    className={`p-2 rounded-xl border transition-all ${isCurrent
+                    className={`p-2 rounded-xl border transition-all ${
+                      isCurrent
                         ? "bg-[#D97706]/15 border-[#D97706] text-[#D97706] shadow-xs animate-pulse font-bold"
                         : isPassed
-                          ? "bg-[#10b981]/15 border-[#10b981]/40 text-[#10b981] font-bold"
-                          : "bg-[#FAF6EE] border-[rgba(71,86,87,0.12)] text-[#7e939a]"
-                      }`}
+                        ? "bg-[#10b981]/15 border-[#10b981]/40 text-[#10b981] font-bold"
+                        : "bg-[#FAF6EE] border-[rgba(71,86,87,0.12)] text-[#7e939a]"
+                    }`}
                   >
                     <span className="block font-bold text-xs">{step.title}</span>
                     <span className="text-[10px] block opacity-80">{step.desc}</span>

@@ -782,7 +782,7 @@ export default function LeadsDirectoryPage() {
                               <button
                                 type="button"
                                 onClick={(e) => {
-                                   e.stopPropagation();
+                                  e.stopPropagation();
                                   startCall({
                                     leadId: lead.id,
                                     name: leadName,
@@ -790,10 +790,10 @@ export default function LeadsDirectoryPage() {
                                     courseInterest: lead.enquiryCourse || "Admissions Consultation",
                                   });
                                 }}
-                                title={`Call ${leadName} with Softphone`}
-                                className="p-1.5 rounded-lg bg-[#2E7559]/15 hover:bg-[#2E7559] text-[#1e5842] hover:text-white border border-[#2E7559]/30 transition-all active:scale-90 cursor-pointer shadow-xs inline-flex items-center justify-center"
+                                title={`1-Click WebRTC Call to ${leadName} (${lead.normalizedPhone || lead.phone})`}
+                                className="p-1.5 rounded-lg bg-[#2E7559]/15 hover:bg-[#2E7559] text-[#1e5842] hover:text-white border border-[#2E7559]/35 hover:shadow-md hover:shadow-[#2E7559]/25 transition-all duration-150 active:scale-90 cursor-pointer shadow-xs inline-flex items-center justify-center group"
                               >
-                                <Phone className="w-3.5 h-3.5" />
+                                <Phone className="w-3.5 h-3.5 group-hover:scale-110 transition-transform" />
                               </button>
 
                               <button
