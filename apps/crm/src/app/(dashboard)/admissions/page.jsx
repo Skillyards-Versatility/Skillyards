@@ -23,11 +23,13 @@ import {
   Banknote,
   Trophy,
   Layers,
+  Zap,
 } from "lucide-react";
 import { useTelephony } from "@/context/TelephonyContext";
 import { useAuth } from "@/context/AuthContext";
 import { EnrollStudentModal } from "@/components/admissions/EnrollStudentModal";
 import { StudentFeeReceiptModal } from "@/components/admissions/StudentFeeReceiptModal";
+import { RazorpayPaymentModal } from "@/components/payments/RazorpayPaymentModal";
 import { crmApi } from "@/lib/api";
 
 const DEMO_ENROLLMENTS = [
@@ -177,6 +179,8 @@ export default function AdmissionsPage() {
   const [isEnrollModalOpen, setIsEnrollModalOpen] = useState(false);
   const [selectedReceipt, setSelectedReceipt] = useState(null);
   const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false);
+  const [isRazorpayModalOpen, setIsRazorpayModalOpen] = useState(false);
+  const [selectedForRazorpay, setSelectedForRazorpay] = useState(null);
 
   // Load enrollments from backend API with localStorage & demo fallbacks
   const fetchEnrollments = async () => {
@@ -605,6 +609,21 @@ export default function AdmissionsPage() {
                       {/* Actions */}
                       <td className="crm-td text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          {item.balanceDue > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSelectedForRazorpay(item);
+                                setIsRazorpayModalOpen(true);
+                              }}
+                              className="p-1 px-2 rounded-lg bg-[#D97706]/15 hover:bg-[#D97706]/25 text-[#D97706] border border-[#D97706]/40 text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
+                              title="Generate Razorpay Payment Link for Balance Due"
+                            >
+                              <Zap className="w-3.5 h-3.5" />
+                              <span>Razorpay</span>
+                            </button>
+                          )}
+
                           <button
                             type="button"
                             onClick={() => handleOpenReceipt(item)}
@@ -642,6 +661,19 @@ export default function AdmissionsPage() {
           </div>
         )}
       </div>
+
+      {/* Razorpay Payment Modal */}
+      <RazorpayPaymentModal
+        isOpen={isRazorpayModalOpen}
+        onClose={() => {
+          setIsRazorpayModalOpen(false);
+          setSelectedForRazorpay(null);
+        }}
+        student={selectedForRazorpay}
+        onPaymentSuccess={() => {
+          fetchEnrollments();
+        }}
+      />
 
       {/* New Student Enrollment Modal */}
       <EnrollStudentModal

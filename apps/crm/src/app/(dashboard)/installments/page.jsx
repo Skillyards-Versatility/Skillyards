@@ -21,6 +21,7 @@ import {
   ShieldAlert,
   Sparkles,
   Filter,
+  Zap,
 } from "lucide-react";
 import { useTelephony } from "@/context/TelephonyContext";
 import { useAuth } from "@/context/AuthContext";
@@ -28,6 +29,7 @@ import { crmApi } from "@/lib/api";
 import { CollectInstallmentModal } from "@/components/installments/CollectInstallmentModal";
 import { SendInstallmentReminderModal } from "@/components/installments/SendInstallmentReminderModal";
 import { InstallmentReceiptModal } from "@/components/installments/InstallmentReceiptModal";
+import { RazorpayPaymentModal } from "@/components/payments/RazorpayPaymentModal";
 
 const INITIAL_FALLBACK_INSTALLMENTS = [
   {
@@ -173,6 +175,9 @@ export default function InstallmentsPage() {
 
   const [receiptModalOpen, setReceiptModalOpen] = useState(false);
   const [receiptModalData, setReceiptModalData] = useState(null);
+
+  const [razorpayModalOpen, setRazorpayModalOpen] = useState(false);
+  const [selectedForRazorpay, setSelectedForRazorpay] = useState(null);
 
   const showToast = (msg) => {
     setToastMessage(msg);
@@ -421,6 +426,11 @@ export default function InstallmentsPage() {
     });
   };
 
+  const handleRazorpay = (inst) => {
+    setSelectedForRazorpay(inst);
+    setRazorpayModalOpen(true);
+  };
+
   return (
     <div className="space-y-6 pb-12">
       
@@ -444,14 +454,22 @@ export default function InstallmentsPage() {
             </span>
           </div>
           <p className="text-xs text-[#5A6E71] mt-1 font-medium">
-            Monitor upcoming tuition milestones, dispatch automated 1-click WhatsApp payment reminders, and issue digital fee vouchers.
+            Monitor upcoming tuition milestones, dispatch automated 1-click WhatsApp payment reminders, and generate Razorpay checkout links.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            onClick={() => handleRazorpay(null)}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-[#D97706] to-[#F59E0B] hover:from-[#B45309] hover:to-[#D97706] text-white text-xs font-bold transition-all shadow-md cursor-pointer"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            <span>Generate Razorpay Link</span>
+          </button>
+
           <button
             onClick={fetchInstallments}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#1C2527] border border-[rgba(71,86,87,0.2)] text-xs font-semibold transition-colors shadow-xs"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#1C2527] border border-[rgba(71,86,87,0.2)] text-xs font-semibold transition-colors shadow-xs cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 text-[#5A6E71] ${loading ? "animate-spin" : ""}`} />
             <span>Sync</span>
@@ -855,6 +873,18 @@ export default function InstallmentsPage() {
                             </button>
                           )}
 
+                          {/* Razorpay Link Button (for unpaid) */}
+                          {!isPaid && (
+                            <button
+                              onClick={() => handleRazorpay(inst)}
+                              title="Generate Razorpay Link / UPI QR"
+                              className="px-2.5 py-1.5 rounded-xl bg-[#D97706]/15 hover:bg-[#D97706]/25 border border-[#D97706]/40 text-[#D97706] text-xs font-bold transition-colors flex items-center gap-1 shadow-2xs cursor-pointer"
+                            >
+                              <Zap className="w-3.5 h-3.5" />
+                              <span>Razorpay</span>
+                            </button>
+                          )}
+
                           {/* Collect Fee Button (for unpaid) */}
                           {!isPaid ? (
                             <button
@@ -887,6 +917,19 @@ export default function InstallmentsPage() {
       </div>
 
       {/* Modals */}
+      <RazorpayPaymentModal
+        isOpen={razorpayModalOpen}
+        onClose={() => {
+          setRazorpayModalOpen(false);
+          setSelectedForRazorpay(null);
+        }}
+        installment={selectedForRazorpay}
+        onPaymentSuccess={(data) => {
+          showToast(`Tuition fee payment of ₹${(data.amount || 0).toLocaleString("en-IN")} verified via Razorpay Webhook!`);
+          fetchInstallments();
+        }}
+      />
+
       <CollectInstallmentModal
         isOpen={collectModalOpen}
         onClose={() => {

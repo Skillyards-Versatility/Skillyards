@@ -131,8 +131,6 @@ export function SendInstallmentReminderModal({ isOpen, onClose, installment, onD
     }
   };
 
-  if (!isOpen || !plan || !installment) return null;
-
   return (
     <div
       onClick={(e) => {

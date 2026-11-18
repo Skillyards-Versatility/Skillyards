@@ -14,17 +14,30 @@ import { corsHeaders } from "../utils/cors";
  * 5. Request Correlation (requestId)
  */
 
-export function createProtectedRoute(
-  handler,
-  {
+export function createProtectedRoute(arg1, arg2 = {}) {
+  let handler;
+  let options = {};
+
+  if (typeof arg1 === "function" && typeof arg2 === "function") {
+    // Signature: createProtectedRoute(policy, handler)
+    handler = arg2;
+    options = { policy: arg1 };
+  } else {
+    // Standard Signature: createProtectedRoute(handler, options)
+    handler = arg1;
+    options = typeof arg2 === "object" && arg2 !== null ? arg2 : {};
+  }
+
+  const {
     policy,
     resourceLoader,
     isPublic = false,
     internalServiceOnly = false,
     rateLimit,
-  },
-) {
+  } = options;
+
   return async (req, context) => {
+
     const ctx = await getRequestContext(req);
     const headers = corsHeaders(req);
 

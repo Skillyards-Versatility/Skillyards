@@ -108,7 +108,7 @@ export function WorkflowSimulatorModal({ isOpen, onClose, onSimulationSuccess })
         const stored = JSON.parse(localStorage.getItem("skillyards_custom_followups") || "[]");
         stored.unshift(newTask);
         localStorage.setItem("skillyards_custom_followups", JSON.stringify(stored));
-      } catch (_) {}
+      } catch (_) { }
 
       setExecutionLogs((prev) => [
         ...prev,

@@ -24,6 +24,7 @@ import {
   MessageSquare,
   Target,
   Trophy,
+  BarChart3,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useTelephony } from "@/context/TelephonyContext";
@@ -31,6 +32,7 @@ import { useTelephony } from "@/context/TelephonyContext";
 // Primary Navigation Activity Items
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/", icon: LayoutDashboard },
+  { label: "Executive Analytics", href: "/analytics", icon: BarChart3, badge: "MIS", hasSubmenu: true },
   { label: "Leads", href: "/leads", icon: Users, badge: "9", hasSubmenu: true },
   { label: "Marketing Campaigns", href: "/campaigns", icon: Target, hasSubmenu: true },
   { label: "Duplicate Reviews", href: "/duplicates", icon: CopyCheck, badge: "1" },
@@ -56,6 +58,17 @@ const SECTION_DETAILS = {
       { label: "Pipeline Overview", href: "/leads" },
       { label: "Dialer Queue", href: "/queue" },
       { label: "Follow-up Schedule", href: "/follow-ups" },
+    ],
+  },
+  "/analytics": {
+    title: "Executive MIS & Analytics",
+    category: "Business Intelligence",
+    items: [
+      { label: "Funnel Conversion MIS", href: "/analytics#funnel" },
+      { label: "Counsellor Leaderboard", href: "/analytics#leaderboard" },
+      { label: "Marketing Channel Attribution", href: "/analytics#channels" },
+      { label: "Cohort Fill Rates", href: "/cohorts" },
+      { label: "EOD Telecalling Actuals", href: "/eod" },
     ],
   },
   "/leads": {

@@ -154,8 +154,6 @@ export function CollectInstallmentModal({ isOpen, onClose, installment, onCollec
     }
   };
 
-  if (!isOpen || !plan) return null;
-
   return (
     <div
       onClick={(e) => {
