@@ -160,7 +160,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
   };
 
   return (
-    <header className="h-16 px-3 sm:px-6 bg-[#F6E3CC] border-b border-[#D97706]/20 flex items-center justify-between sticky top-0 z-40 shadow-xs w-full">
+    <header className="h-16 px-3 sm:px-6 bg-gradient-to-r from-[#FFFDF9] via-[#F6ECE0] to-[#EFE0CC] border-b border-[#D97706]/30 flex items-center justify-between sticky top-0 z-40 shadow-[0_4px_20px_-3px_rgba(217,119,6,0.12)] w-full backdrop-blur-md">
       {/* Left: Mobile Drawer Hamburger + Skillyards Logo + Search */}
       <div className="flex items-center gap-2 sm:gap-6 min-w-0">
         {/* Mobile Hamburger Drawer Button */}
@@ -193,7 +193,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search leads (Press '/' to focus)..."
-            className="w-full bg-white/90 border border-[#D97706]/25 rounded-xl pl-3.5 pr-14 py-1.5 text-xs text-slate-800 placeholder-slate-400 outline-none focus:border-[#D97706] focus:bg-white focus:ring-2 focus:ring-[#D97706]/20 shadow-xs transition-all"
+            className="w-full bg-gradient-to-r from-white to-[#FDFBF7] border border-[#D97706]/30 rounded-xl pl-3.5 pr-14 py-1.5 text-xs text-slate-800 placeholder-slate-400 outline-none focus:border-[#D97706] focus:bg-white focus:ring-2 focus:ring-[#D97706]/20 shadow-xs transition-all"
           />
           <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1">
             <kbd className="hidden md:inline-block px-1.5 py-0.5 text-[9.5px] font-mono text-[#D97706]/70 bg-[#F6E3CC]/60 border border-[#D97706]/25 rounded">
@@ -255,7 +255,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
           <button
             type="button"
             onClick={() => setShowRoleSwitcher((prev) => !prev)}
-            className="p-1.5 sm:px-2.5 sm:py-1 rounded-full bg-white/80 hover:bg-white border border-[#D97706]/25 text-[11px] font-semibold text-[#D97706] hover:text-[#B45309] flex items-center gap-1 shadow-xs transition-colors"
+            className="p-1.5 sm:px-2.5 sm:py-1 rounded-full bg-gradient-to-b from-white to-[#FAF4EB] hover:from-white hover:to-[#F5EADB] border border-[#D97706]/30 text-[11px] font-semibold text-[#92400E] hover:text-[#78350F] flex items-center gap-1 shadow-xs transition-all cursor-pointer"
             title={`Persona: ${primaryRole.replace(/_/g, " ")} (Click to switch)`}
           >
             <ShieldCheck className="w-3.5 h-3.5 text-[#D97706] shrink-0" />
@@ -264,7 +264,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
           </button>
 
           {showRoleSwitcher && (
-            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-72 max-w-sm bg-[#FAF6EE] border border-[rgba(71,86,87,0.2)] rounded-2xl shadow-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
+            <div className="absolute right-0 mt-2 w-[calc(100vw-2rem)] sm:w-72 max-w-sm bg-gradient-to-b from-white via-[#FAF6EE] to-[#F5EBDE] border border-[#D97706]/30 rounded-2xl shadow-2xl p-2.5 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
               <div className="px-2.5 py-1.5 border-b border-[rgba(71,86,87,0.12)] mb-1 flex items-center justify-between">
                 <div>
                   <p className="text-xs font-bold text-[#1C2527]">Switch CRM Persona</p>
@@ -289,7 +289,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
                       key={i}
                       type="button"
                       onClick={() => handleSelectRole(r)}
-                      className={`w-full p-2.5 rounded-xl text-left transition-all flex items-start justify-between gap-2 ${isActive
+                      className={`w-full p-2.5 rounded-xl text-left transition-all flex items-start justify-between gap-2 cursor-pointer ${isActive
                         ? "bg-white border border-[#D97706]/40 shadow-xs"
                         : "hover:bg-white/60 border border-transparent"
                         }`}
@@ -320,7 +320,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
             type="button"
             onClick={() => setShowNotifications((prev) => !prev)}
             aria-label="View notifications"
-            className="p-2 relative text-[#D97706] hover:text-[#B45309] hover:bg-white/80 rounded-xl transition-colors active:scale-95 cursor-pointer"
+            className="p-2 relative text-[#D97706] hover:text-[#B45309] bg-gradient-to-b from-white to-[#FAF4EB] hover:from-white hover:to-[#F5EADB] border border-[#D97706]/25 rounded-xl transition-all active:scale-95 cursor-pointer shadow-xs"
             title="Activity Notifications"
           >
             <Bell className="w-4 h-4" />
@@ -398,7 +398,7 @@ export function CrmHeader({ onNewLeadClick, onMenuToggle, isMobileSidebarOpen })
         {/* Fast Action */}
         <button
           onClick={onNewLeadClick}
-          className="bg-[#D97706] hover:bg-[#B45309] text-white font-bold text-xs !py-1.5 !px-3 sm:!px-4 rounded-xl shadow-sm hover:shadow-md hover:shadow-[#D97706]/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+          className="crm-btn-primary !py-1.5 !px-3 sm:!px-4 text-xs font-bold shadow-md hover:shadow-lg transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
           title="Shortcut: Press 'N'"
         >
           <Plus className="w-3.5 h-3.5" />

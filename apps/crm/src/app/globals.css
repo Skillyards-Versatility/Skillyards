@@ -117,7 +117,7 @@
   }
 
   body {
-    background-color: #F0E6D6 !important;
+    background: radial-gradient(135% 100% at 50% 0%, #FFFDF9 0%, #F5E8D6 40%, #EBD8BE 75%, #DFC5A4 100%) !important;
     color: #1C2527 !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Helvetica Neue", Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -161,8 +161,8 @@
 /* --- PANELS & CARDS --- */
 .crm-panel,
 .glass-panel {
-  background: #FAF6EE;
-  border: 1px solid rgba(71, 86, 87, 0.16);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAF5EB 50%, #F5EBDD 100%);
+  border: 1px solid rgba(217, 119, 6, 0.22);
   border-radius: 1rem;
   box-shadow: 
     0 1px 3px rgba(71, 86, 87, 0.05),
@@ -171,8 +171,8 @@
 
 .crm-card,
 .glass-card {
-  background: #FAF6EE;
-  border: 1px solid rgba(71, 86, 87, 0.15);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAF6EE 55%, #F4EAD9 100%);
+  border: 1px solid rgba(217, 119, 6, 0.2);
   border-radius: 1rem;
   transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 
@@ -184,10 +184,41 @@
 .glass-card:hover {
   border-color: #D97706;
   transform: translateY(-2px);
-  background: #FFFFFF;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FFFDF8 60%, #FBF3E6 100%);
   box-shadow: 
-    0 14px 30px -6px rgba(71, 86, 87, 0.13),
-    0 0 0 1px rgba(217, 119, 6, 0.25);
+    0 14px 30px -6px rgba(71, 86, 87, 0.12),
+    0 0 0 1px rgba(217, 119, 6, 0.3);
+}
+
+.crm-metric-card {
+  background: linear-gradient(145deg, #FFFFFF 0%, #FAF3E6 50%, #F2E4CD 100%);
+  border: 1px solid rgba(217, 119, 6, 0.24);
+  box-shadow: 
+    0 1px 3px rgba(71, 86, 87, 0.05),
+    0 4px 14px -3px rgba(71, 86, 87, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.crm-metric-card:hover {
+  background: linear-gradient(145deg, #FFFFFF 0%, #FFFBF2 50%, #F8ECD8 100%);
+  border-color: rgba(217, 119, 6, 0.45);
+  box-shadow: 
+    0 4px 12px -2px rgba(71, 86, 87, 0.08),
+    0 12px 24px -4px rgba(217, 119, 6, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  transform: translateY(-1.5px);
+}
+
+.crm-table-box {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAF6EE 45%, #F4EAD9 100%);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  border-radius: 1rem;
+  box-shadow: 
+    0 1px 3px rgba(71, 86, 87, 0.05),
+    0 8px 24px -4px rgba(71, 86, 87, 0.07);
+  overflow: hidden;
+  position: relative;
 }
 
 /* --- BUTTONS --- */
@@ -195,82 +226,127 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
+  gap: 0.45rem;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%);
   color: #ffffff;
-  font-weight: 600;
-  font-size: 0.75rem;
-  letter-spacing: 0.01em;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.015em;
+  padding: 0.55rem 1.15rem;
+  border-radius: 0.65rem;
   border: 1px solid #D97706;
-  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 4px 12px -2px rgba(217, 119, 6, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
 }
 
 .crm-btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #B45309 0%, #D97706 100%);
-  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+  background: linear-gradient(135deg, #FBBF24 0%, #D97706 55%, #92400E 100%);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.08),
+    0 6px 18px -2px rgba(217, 119, 6, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
   transform: translateY(-1px);
 }
 
 .crm-btn-primary:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.3);
 }
 
 .crm-btn-primary:disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .crm-btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  background: #FAF6EE;
+  gap: 0.45rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAF5EC 100%);
   color: #2E3A3C;
-  border: 1px solid rgba(71, 86, 87, 0.22);
-  font-weight: 500;
-  font-size: 0.75rem;
-  padding: 0.5rem 0.95rem;
-  border-radius: 0.5rem;
+  border: 1px solid rgba(71, 86, 87, 0.2);
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 0.525rem 1.05rem;
+  border-radius: 0.65rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), inset 0 1px 0 #ffffff;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .crm-btn-secondary:hover:not(:disabled) {
-  background: #FFFFFF;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5ECDF 100%);
   border-color: #D97706;
   color: #1C2527;
+  box-shadow: 0 4px 12px -2px rgba(217, 119, 6, 0.15), inset 0 1px 0 #ffffff;
   transform: translateY(-1px);
 }
 
 .crm-btn-secondary:disabled {
-  opacity: 0.4;
+  opacity: 0.45;
   cursor: not-allowed;
+  transform: none;
+}
+
+.crm-btn-success {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: linear-gradient(135deg, #2E7559 0%, #1e5842 55%, #144432 100%);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 0.65rem;
+  border: 1px solid #1e5842;
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 4px 12px -2px rgba(46, 117, 89, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+}
+
+.crm-btn-success:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3D8C6E 0%, #23654D 55%, #0F3728 100%);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.08),
+    0 6px 18px -2px rgba(46, 117, 89, 0.48),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
 }
 
 .crm-btn-danger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.375rem;
-  background: #c3473c;
+  gap: 0.4rem;
+  background: linear-gradient(135deg, #E11D48 0%, #BE123C 50%, #9F1239 100%);
   color: #ffffff;
-  border: 1px solid #9c3930;
-  font-weight: 600;
-  font-size: 0.75rem;
-  padding: 0.5rem 0.9rem;
-  border-radius: 0.5rem;
+  border: 1px solid #9F1239;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  padding: 0.525rem 1rem;
+  border-radius: 0.65rem;
+  box-shadow: 0 4px 12px rgba(190, 18, 60, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .crm-btn-danger:hover:not(:disabled) {
-  background: #a9372d;
-  box-shadow: 0 4px 12px rgba(195, 71, 60, 0.3);
+  background: linear-gradient(135deg, #F43F5E 0%, #BE123C 55%, #881337 100%);
+  box-shadow: 0 6px 16px rgba(190, 18, 60, 0.4);
+  transform: translateY(-1px);
 }
 
 .crm-btn-ghost {
@@ -418,37 +494,41 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.45rem 0.85rem;
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 600;
+  padding: 0.5rem 0.95rem;
+  border-radius: 0.6rem;
+  font-size: 0.78125rem;
+  font-weight: 700;
   white-space: nowrap;
-  background: #D97706;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 60%, #B45309 100%);
   color: #ffffff;
   border: 1px solid #B45309;
-  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.28);
   transition: all 0.2s ease;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
 }
 
 .crm-tab-inactive {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.45rem 0.85rem;
-  border-radius: 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 500;
+  padding: 0.5rem 0.95rem;
+  border-radius: 0.6rem;
+  font-size: 0.78125rem;
+  font-weight: 600;
   white-space: nowrap;
   color: #475657;
-  background: #FAF6EE;
-  border: 1px solid rgba(71, 86, 87, 0.12);
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAF5EC 100%);
+  border: 1px solid rgba(71, 86, 87, 0.18);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
   transition: all 0.2s ease;
 }
 
 .crm-tab-inactive:hover {
   color: #1C2527;
-  background: #FFFFFF;
-  border-color: rgba(71, 86, 87, 0.25);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F5ECDF 100%);
+  border-color: rgba(217, 119, 6, 0.35);
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.1);
+  transform: translateY(-0.5px);
 }
 
 .crm-tab-badge-active {
@@ -473,29 +553,42 @@
 .crm-table {
   width: 100%;
   text-align: left;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   border-collapse: separate;
   border-spacing: 0;
 }
 
+@media (min-width: 1024px) {
+  .crm-table {
+    font-size: 0.875rem;
+  }
+}
+
 .crm-thead {
-  background-color: #E6DBCA;
-  color: #2E3A3C;
+  background: linear-gradient(180deg, #EFE2CE 0%, #E2CFB4 100%);
+  color: #1C2527;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 11px;
-  font-weight: 600;
-  border-bottom: 1px solid rgba(71, 86, 87, 0.18);
+  letter-spacing: 0.05em;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-bottom: 2px solid rgba(217, 119, 6, 0.35);
+}
+
+@media (min-width: 1024px) {
+  .crm-thead {
+    font-size: 0.75rem;
+  }
 }
 
 .crm-th {
   padding: 0.75rem 1rem;
   white-space: nowrap;
+  vertical-align: middle;
 }
 
 @media (min-width: 640px) {
   .crm-th {
-    padding: 0.85rem 1.5rem;
+    padding: 0.85rem 1.15rem;
   }
 }
 
@@ -506,35 +599,49 @@
 .crm-tr {
   border-bottom: 1px solid rgba(71, 86, 87, 0.1);
   transition: background-color 0.15s ease;
+  vertical-align: middle;
 }
 
 .crm-tr:hover {
-  background-color: rgba(217, 119, 6, 0.05);
+  background-color: rgba(217, 119, 6, 0.04);
 }
 
 .crm-td {
   padding: 0.75rem 1rem;
   border-bottom: 1px solid rgba(71, 86, 87, 0.1);
+  vertical-align: middle;
 }
 
 @media (min-width: 640px) {
   .crm-td {
-    padding: 0.95rem 1.5rem;
+    padding: 0.85rem 1.15rem;
   }
 }
 
 /* --- TYPOGRAPHY --- */
 .crm-page-title {
   font-size: 1.35rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #1C2527;
   letter-spacing: -0.025em;
 }
 
+@media (min-width: 1024px) {
+  .crm-page-title {
+    font-size: 1.625rem;
+  }
+}
+
 .crm-page-subtitle {
-  font-size: 0.75rem;
-  color: #475657;
-  margin-top: 0.2rem;
+  font-size: 0.8125rem;
+  color: #5A6E71;
+  margin-top: 0.25rem;
+}
+
+@media (min-width: 1024px) {
+  .crm-page-subtitle {
+    font-size: 0.875rem;
+  }
 }
 
 .crm-lead-link {

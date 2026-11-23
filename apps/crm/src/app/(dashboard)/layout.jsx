@@ -28,9 +28,6 @@ function DashboardLayoutContent({ children }) {
       if (e.key === "n" || e.key === "N") {
         e.preventDefault();
         setIsModalOpen(true);
-      } else if (e.key === "d" || e.key === "D") {
-        e.preventDefault();
-        setIsSoftphoneOpen((prev) => !prev);
       } else if (e.key === "?") {
         e.preventDefault();
         setShowShortcutsModal((prev) => !prev);
@@ -48,7 +45,7 @@ function DashboardLayoutContent({ children }) {
   }, [callState, setIsSoftphoneOpen]);
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-[#F0E6D6] text-[#1C2527] selection:bg-[#D97706]/30 selection:text-[#1C2527]">
+    <div className="flex flex-col h-screen overflow-hidden bg-[radial-gradient(135%_100%_at_50%_0%,#FFFDF9_0%,#F5E8D6_40%,#EBD8BE_75%,#DFC5A4_100%)] text-[#1C2527] selection:bg-[#D97706]/30 selection:text-[#1C2527]">
       {/* Full-Width Top Header containing permanent Skillyards Logo, Search, Persona Switcher & Notifications */}
       <CrmHeader
         onNewLeadClick={() => setIsModalOpen(true)}
@@ -65,12 +62,16 @@ function DashboardLayoutContent({ children }) {
         {isFullBleedPage ? (
           <main className="flex-1 h-full overflow-hidden flex flex-col min-h-0 min-w-0">{children}</main>
         ) : (
-          <main className="flex-1 p-3 sm:p-5 md:p-8 overflow-y-auto">{children}</main>
+          <main className="flex-1 p-3.5 sm:p-5 md:p-6 lg:p-8 overflow-y-auto min-w-0">
+            <div className="w-full max-w-7xl xl:max-w-[1440px] 2xl:max-w-[1540px] mx-auto min-w-0">
+              {children}
+            </div>
+          </main>
         )}
       </div>
 
-      {/* Persistent Floating Softphone Widget & Disposition Runner */}
-      <SoftphoneDrawer />
+      {/* Persistent Floating Softphone Widget & Disposition Runner (Disabled for now per documentation) */}
+      {/* <SoftphoneDrawer /> */}
 
       {/* Keyboard Shortcuts Cheatsheet Modal */}
       {showShortcutsModal && (
@@ -92,7 +93,6 @@ function DashboardLayoutContent({ children }) {
             <div className="p-5 space-y-3">
               {[
                 { key: "N", desc: "Open Register New Lead modal from anywhere" },
-                { key: "D", desc: "Toggle Telecalling Softphone Dialer" },
                 { key: "/", desc: "Focus Global Search in top navbar" },
                 { key: "?", desc: "Toggle this Keyboard Shortcuts guide" },
                 { key: "Esc", desc: "Close any open modal or dropdown" },

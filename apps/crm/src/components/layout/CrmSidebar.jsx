@@ -27,7 +27,6 @@ import {
   BarChart3,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useTelephony } from "@/context/TelephonyContext";
 
 // Primary Navigation Activity Items
 const NAV_ITEMS = [
@@ -206,7 +205,6 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, crmRoles } = useAuth();
-  const { openSoftphone } = useTelephony();
 
   const [activeSection, setActiveSection] = useState("/");
   const [isOpen, setIsOpen] = useState(true);
@@ -274,9 +272,9 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
     <div className="flex shrink-0 h-full select-none">
       {/* =========================================================================
           TIER 1: PRIMARY ACTIVITY BAR (Narrow Vertical Icon Strip ~56px)
-          Lavender aesthetic (#EDE9FE) matching CRM purple branding
+          Warm Gold/Linen aesthetic matching CRM branding
           ========================================================================= */}
-      <div className="w-14 bg-[#F6E3CC] border-r border-[#D97706]/20 flex flex-col items-center justify-between py-2 h-full z-20 shadow-xs overflow-hidden shrink-0">
+      <div className="w-14 bg-gradient-to-b from-[#F5E2CC] via-[#EBCFB0] to-[#DFBE99] border-r border-[#D97706]/35 flex flex-col items-center justify-between py-2 h-full z-20 shadow-[2px_0_12px_rgba(217,119,6,0.08)] overflow-hidden shrink-0">
         {/* Navigation Icons (Scrollable without scrollbar if viewport is short) */}
         <div className="flex-1 flex flex-col items-center gap-2 w-full py-1 overflow-y-auto overflow-x-hidden no-scrollbar">
           {/* Mobile Top Dismiss Button */}
@@ -302,8 +300,8 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                   onClick={() => handleActivityClick(item, isMobile)}
                   title={item.label}
                   className={`relative w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150 cursor-pointer ${isSelected
-                    ? "text-white bg-[#D97706] shadow-md shadow-[#D97706]/30"
-                    : "text-[#D97706] hover:text-[#B45309] hover:bg-white/80 hover:shadow-xs"
+                    ? "text-white bg-gradient-to-br from-[#F59E0B] via-[#D97706] to-[#B45309] shadow-md shadow-[#D97706]/40 border border-[#B45309]"
+                    : "text-[#92400E] hover:text-[#78350F] hover:bg-white/80 hover:shadow-xs"
                     }`}
                 >
                   {/* Active vertical left bar indicator */}
@@ -314,7 +312,7 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                   <Icon
                     className={`w-5 h-5 transition-colors ${isSelected
                       ? "text-white"
-                      : "text-[#D97706] group-hover:text-[#B45309]"
+                      : "text-[#92400E] group-hover:text-[#78350F]"
                       }`}
                   />
 
@@ -338,21 +336,8 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
           })}
         </div>
 
-        {/* Bottom: Quick Softphone Dialer & User Profile Avatar (Exact matching gap & sizing) */}
-        <div className="flex flex-col items-center gap-2 w-full pt-2 border-t border-[#D97706]/20 shrink-0 bg-[#F6E3CC]">
-          <button
-            type="button"
-            onClick={() => {
-              playClickSound();
-              openSoftphone();
-              if (isMobile && onMobileClose) onMobileClose();
-            }}
-            title="Open Softphone Dialer"
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-[#D97706] hover:text-white hover:bg-[#D97706] hover:shadow-xs transition-all cursor-pointer"
-          >
-            <PhoneCall className="w-5 h-5" />
-          </button>
-
+        {/* Bottom: User Profile Avatar */}
+        <div className="flex flex-col items-center gap-2 w-full pt-2 pb-2 border-t border-[#D97706]/25 shrink-0 bg-gradient-to-b from-[#E7CCAE] to-[#DCBA94]">
           <div
             title={`${user?.name || "User"} (${crmRoles?.[0] || "Staff"})`}
             className="w-8 h-8 rounded-full bg-gradient-to-br from-[#D97706] to-[#B45309] text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm border-2 border-white cursor-pointer hover:scale-105 active:scale-95 transition-transform"
@@ -367,11 +352,11 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
           Can be collapsed via the close button or clicking active icon
           ========================================================================= */}
       <div
-        className={`bg-[#FAF6EE] border-r border-[rgba(71,86,87,0.18)] flex flex-col h-full overflow-hidden transition-[width,opacity] duration-200 ease-in-out z-10 shadow-lg ${isOpen ? "w-60 opacity-100" : "w-0 opacity-0 pointer-events-none border-r-0"
+        className={`bg-gradient-to-b from-[#FCF8F2] via-[#F7EFE2] to-[#EFE1CE] border-r border-[#D97706]/25 flex flex-col h-full overflow-hidden transition-[width,opacity] duration-200 ease-in-out z-10 shadow-xl ${isOpen ? "w-60 opacity-100" : "w-0 opacity-0 pointer-events-none border-r-0"
           }`}
       >
         {/* Panel Header */}
-        <div className="h-14 px-3.5 flex items-center justify-between border-b border-[rgba(71,86,87,0.12)] bg-[#F5EEDB]/60 shrink-0 min-w-[240px]">
+        <div className="h-14 px-3.5 flex items-center justify-between border-b border-[#D97706]/20 bg-gradient-to-r from-[#F6E6D2] to-[#EFE0CA] shrink-0 min-w-[240px]">
           <div className="flex items-center gap-2 min-w-0">
             <span className="w-2 h-2 rounded-full bg-[#D97706] shadow-[0_0_6px_rgba(217,119,6,0.5)]" />
             <div className="min-w-0">
@@ -419,8 +404,8 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
                   if (isMobile && onMobileClose) onMobileClose();
                 }}
                 className={`group/sub flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs transition-all duration-150 cursor-pointer ${isSubActive
-                  ? "bg-[#F6E3CC] text-[#D97706] font-bold shadow-xs"
-                  : "bg-transparent text-[#475657] hover:text-[#D97706] hover:bg-[#F6E3CC] hover:font-bold font-medium"
+                  ? "bg-gradient-to-r from-[#FDEFD9] to-[#F5DEC0] text-[#92400E] font-bold shadow-xs border border-[#D97706]/35"
+                  : "bg-transparent text-[#475657] hover:text-[#92400E] hover:bg-[#F9EDE0] hover:font-bold font-medium"
                   }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0">
@@ -463,18 +448,6 @@ export function CrmSidebar({ isMobileOpen = false, onMobileClose }) {
               <Plus className="w-3.5 h-3.5 text-[#D97706]" />
               <span>Register New Lead</span>
             </Link>
-            <button
-              type="button"
-              onClick={() => {
-                playClickSound();
-                openSoftphone();
-                if (isMobile && onMobileClose) onMobileClose();
-              }}
-              className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-[#475657] hover:text-[#D97706] hover:bg-[#F6E3CC]/60 transition-colors text-left cursor-pointer"
-            >
-              <PhoneCall className="w-3.5 h-3.5 text-[#D97706]" />
-              <span>Open Softphone</span>
-            </button>
           </div>
         </div>
 

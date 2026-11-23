@@ -25,7 +25,6 @@ import {
   Layers,
   Zap,
 } from "lucide-react";
-import { useTelephony } from "@/context/TelephonyContext";
 import { useAuth } from "@/context/AuthContext";
 import { EnrollStudentModal } from "@/components/admissions/EnrollStudentModal";
 import { StudentFeeReceiptModal } from "@/components/admissions/StudentFeeReceiptModal";
@@ -168,7 +167,6 @@ const PAYMENT_TABS = [
 ];
 
 export default function AdmissionsPage() {
-  const { startCall } = useTelephony();
   const { user } = useAuth();
   const [enrollments, setEnrollments] = useState([]);
   const [paymentFilter, setPaymentFilter] = useState("");
@@ -327,7 +325,7 @@ export default function AdmissionsPage() {
           <button
             type="button"
             onClick={() => setIsEnrollModalOpen(true)}
-            className="crm-btn-primary !bg-[#2E7559] hover:!bg-[#235d46] shadow-md flex items-center gap-1.5"
+            className="crm-btn-success flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4 text-white" />
             <span>+ Enroll Student</span>
@@ -383,7 +381,7 @@ export default function AdmissionsPage() {
       {/* 4 Financial & Enrollment KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Enrolled */}
-        <div className="p-4 bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] rounded-2xl shadow-sm hover:shadow-md transition-all space-y-2">
+        <div className="crm-metric-card p-4 rounded-2xl space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#5A6E71]">Enrolled Students</span>
             <div className="w-8 h-8 rounded-lg bg-[#D97706]/15 flex items-center justify-center text-[#D97706]">
@@ -400,7 +398,7 @@ export default function AdmissionsPage() {
         </div>
 
         {/* Tuition Collected */}
-        <div className="p-4 bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] rounded-2xl shadow-sm hover:shadow-md transition-all space-y-2">
+        <div className="crm-metric-card p-4 rounded-2xl space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#5A6E71]">Tuition Collected</span>
             <div className="w-8 h-8 rounded-lg bg-[#25D366]/15 flex items-center justify-center text-[#128C7E]">
@@ -419,7 +417,7 @@ export default function AdmissionsPage() {
         </div>
 
         {/* Pending Receivables */}
-        <div className="p-4 bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] rounded-2xl shadow-sm hover:shadow-md transition-all space-y-2">
+        <div className="crm-metric-card p-4 rounded-2xl space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#5A6E71]">Pending Receivables</span>
             <div className="w-8 h-8 rounded-lg bg-[#B07238]/15 flex items-center justify-center text-[#B07238]">
@@ -436,7 +434,7 @@ export default function AdmissionsPage() {
         </div>
 
         {/* 0% EMI Disbursed */}
-        <div className="p-4 bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] rounded-2xl shadow-sm hover:shadow-md transition-all space-y-2">
+        <div className="crm-metric-card p-4 rounded-2xl space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-[#5A6E71]">0% EMI Disbursals</span>
             <div className="w-8 h-8 rounded-lg bg-[rgba(98,146,158,0.2)] flex items-center justify-center text-[#1C2527]">
@@ -484,7 +482,7 @@ export default function AdmissionsPage() {
       </form>
 
       {/* Enrolled Students Table */}
-      <div className="bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-sm rounded-2xl overflow-hidden">
+      <div className="crm-table-box">
         {enrollments.length === 0 ? (
           <div className="py-20 text-center space-y-3 max-w-sm mx-auto">
             <div className="w-12 h-12 rounded-2xl bg-[#25D366]/15 text-[#128C7E] flex items-center justify-center mx-auto shadow-xs">
@@ -495,17 +493,17 @@ export default function AdmissionsPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="crm-table">
+            <table className="crm-table w-full min-w-[960px]">
               <thead className="crm-thead">
                 <tr>
-                  <th className="crm-th">Student Details</th>
-                  <th className="crm-th">Contact</th>
-                  <th className="crm-th">Enrolled Program & Cohort</th>
-                  <th className="crm-th">Total Fee</th>
-                  <th className="crm-th">Amount Paid</th>
-                  <th className="crm-th">Balance Due</th>
-                  <th className="crm-th">Payment Status</th>
-                  <th className="crm-th text-right">Actions</th>
+                  <th className="crm-th min-w-[210px]">Student Details</th>
+                  <th className="crm-th min-w-[170px]">Contact</th>
+                  <th className="crm-th min-w-[220px]">Enrolled Program & Cohort</th>
+                  <th className="crm-th min-w-[120px]">Total Fee</th>
+                  <th className="crm-th min-w-[120px]">Amount Paid</th>
+                  <th className="crm-th min-w-[130px]">Balance Due</th>
+                  <th className="crm-th min-w-[150px]">Payment Status</th>
+                  <th className="crm-th min-w-[140px] text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="crm-tbody">
@@ -519,14 +517,14 @@ export default function AdmissionsPage() {
                       {/* Student Info */}
                       <td className="crm-td">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-[#25D366]/20 border border-[#25D366]/40 text-[#128C7E] font-bold text-xs flex items-center justify-center shrink-0">
+                          <div className="w-9 h-9 rounded-full bg-[#25D366]/20 border border-[#25D366]/40 text-[#128C7E] font-bold text-xs sm:text-sm flex items-center justify-center shrink-0">
                             {initial}
                           </div>
-                          <div>
-                            <span className="font-bold text-xs text-[#1C2527] block">
+                          <div className="min-w-0">
+                            <span className="font-bold text-xs sm:text-sm lg:text-[14.5px] text-[#1C2527] block truncate">
                               {item.studentName}
                             </span>
-                            <span className="text-[10.5px] text-[#D97706] font-mono font-semibold">
+                            <span className="text-[11px] sm:text-xs text-[#D97706] font-mono font-semibold">
                               {item.studentId}
                             </span>
                           </div>
@@ -535,25 +533,25 @@ export default function AdmissionsPage() {
 
                       {/* Contact */}
                       <td className="crm-td">
-                        <div className="space-y-0.5 text-xs">
-                          <div className="flex items-center gap-1.5 font-semibold text-[#1C2527]">
-                            <Phone className="w-3 h-3 text-[#5A6E71]" />
-                            <span className="font-mono text-[11px]">{item.studentPhone}</span>
+                        <div className="space-y-0.5 text-xs sm:text-sm">
+                          <div className="flex items-center gap-1.5 font-semibold text-[#1C2527] whitespace-nowrap">
+                            <Phone className="w-3.5 h-3.5 text-[#5A6E71] shrink-0" />
+                            <span className="font-mono text-xs sm:text-sm">{item.studentPhone}</span>
                           </div>
-                          <div className="flex items-center gap-1.5 text-[#5A6E71] text-[11px]">
-                            <Mail className="w-3 h-3 text-[#7E9396]" />
-                            <span className="truncate max-w-[140px]">{item.studentEmail}</span>
+                          <div className="flex items-center gap-1.5 text-[#5A6E71] text-xs sm:text-sm">
+                            <Mail className="w-3.5 h-3.5 text-[#7E9396] shrink-0" />
+                            <span className="truncate max-w-[150px]">{item.studentEmail}</span>
                           </div>
                         </div>
                       </td>
 
                       {/* Program & Batch */}
                       <td className="crm-td">
-                        <div className="space-y-0.5 text-xs">
-                          <span className="font-bold text-[#1C2527] block truncate max-w-[200px]">
+                        <div className="space-y-0.5">
+                          <span className="font-bold text-xs sm:text-sm text-[#1C2527] block truncate max-w-[220px]">
                             {item.courseName}
                           </span>
-                          <span className="text-[10.5px] text-[#5A6E71] block truncate max-w-[200px]">
+                          <span className="text-[11px] sm:text-xs text-[#5A6E71] block truncate max-w-[220px]">
                             {item.cohortName}
                           </span>
                         </div>
@@ -561,14 +559,14 @@ export default function AdmissionsPage() {
 
                       {/* Total Investment */}
                       <td className="crm-td">
-                        <span className="font-mono font-bold text-xs text-[#1C2527]">
+                        <span className="font-mono font-bold text-xs sm:text-sm text-[#1C2527]">
                           ₹{Number(item.totalAmount).toLocaleString("en-IN")}
                         </span>
                       </td>
 
                       {/* Amount Paid */}
                       <td className="crm-td">
-                        <span className="font-mono font-bold text-xs text-[#128C7E]">
+                        <span className="font-mono font-bold text-xs sm:text-sm text-[#128C7E]">
                           ₹{Number(item.amountPaid).toLocaleString("en-IN")}
                         </span>
                       </td>
@@ -577,24 +575,24 @@ export default function AdmissionsPage() {
                       <td className="crm-td">
                         {item.balanceDue > 0 ? (
                           <div>
-                            <span className="font-mono font-bold text-xs text-[#B07238] block">
+                            <span className="font-mono font-bold text-xs sm:text-sm text-[#B07238] block">
                               ₹{Number(item.balanceDue).toLocaleString("en-IN")}
                             </span>
                             {item.balanceDueDate && (
-                              <span className="text-[10px] text-[#7E9396] block">
+                              <span className="text-[11px] text-[#7E9396] block">
                                 Due: {item.balanceDueDate}
                               </span>
                             )}
                           </div>
                         ) : (
-                          <span className="text-xs text-[#2E7559] font-bold">Settled</span>
+                          <span className="text-xs sm:text-sm text-[#2E7559] font-bold">Settled</span>
                         )}
                       </td>
 
                       {/* Payment Status Badge */}
                       <td className="crm-td">
                         <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border ${
                             isFull
                               ? "bg-[#25D366]/15 border-[#25D366]/40 text-[#128C7E]"
                               : isEmi
@@ -616,10 +614,10 @@ export default function AdmissionsPage() {
                                 setSelectedForRazorpay(item);
                                 setIsRazorpayModalOpen(true);
                               }}
-                              className="p-1 px-2 rounded-lg bg-[#D97706]/15 hover:bg-[#D97706]/25 text-[#D97706] border border-[#D97706]/40 text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-xs"
+                              className="p-1.5 px-2.5 rounded-lg bg-gradient-to-r from-[#D97706] to-[#B45309] hover:from-[#B45309] hover:to-[#92400E] text-white text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs border border-[#B45309]"
                               title="Generate Razorpay Payment Link for Balance Due"
                             >
-                              <Zap className="w-3.5 h-3.5" />
+                              <Zap className="w-3.5 h-3.5 text-amber-200" />
                               <span>Razorpay</span>
                             </button>
                           )}
@@ -627,30 +625,12 @@ export default function AdmissionsPage() {
                           <button
                             type="button"
                             onClick={() => handleOpenReceipt(item)}
-                            className="crm-btn-secondary !py-1 !px-2 text-[11px] flex items-center gap-1 shadow-xs cursor-pointer"
+                            className="crm-btn-secondary !py-1.5 !px-2.5 text-xs flex items-center gap-1 shadow-xs cursor-pointer"
                             title="View official fee receipt"
                           >
                             <Receipt className="w-3.5 h-3.5 text-[#D97706]" />
                             <span>Receipt</span>
                           </button>
-
-                          {item.studentPhone && (
-                            <button
-                              type="button"
-                              onClick={() =>
-                                startCall({
-                                  leadId: item.leadId || item.id,
-                                  name: item.studentName,
-                                  phone: item.studentPhone,
-                                  courseInterest: item.courseName,
-                                })
-                              }
-                              className="p-1.5 rounded-lg bg-[#2E7559]/15 hover:bg-[#2E7559] text-[#1e5842] hover:text-white border border-[#2E7559]/30 transition-all cursor-pointer shadow-xs"
-                              title={`Call ${item.studentName}`}
-                            >
-                              <Phone className="w-3.5 h-3.5" />
-                            </button>
-                          )}
                         </div>
                       </td>
                     </tr>

@@ -23,7 +23,6 @@ import {
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { getStatusBadgeClass, formatStatusLabel } from "@/lib/status";
-import { useTelephony } from "@/context/TelephonyContext";
 import { useAuth } from "@/context/AuthContext";
 import { BulkOutreachModal } from "@/components/leads/BulkOutreachModal";
 import { MultiChannelOutreachModal } from "@/components/leads/MultiChannelOutreachModal";
@@ -140,7 +139,6 @@ const DEMO_LEADS = [
 ];
 
 export default function LeadsDirectoryPage() {
-  const { startCall } = useTelephony();
   const { user } = useAuth();
   const [leads, setLeads] = useState([]);
   const [statusFilter, setStatusFilter] = useState("");
@@ -521,10 +519,10 @@ export default function LeadsDirectoryPage() {
       )}
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="crm-page-title">Leads Pipeline</h1>
-          <p className="crm-page-subtitle">
+          <h1 className="text-xl sm:text-2xl font-black text-[#1C2527] tracking-tight">Leads Pipeline</h1>
+          <p className="text-xs text-[#5A6E71] mt-0.5">
             Showing {leads.length} of {total} registered prospects
             {selectedIds.length > 0 && (
               <span className="font-bold text-[#128C7E] ml-2">
@@ -534,7 +532,7 @@ export default function LeadsDirectoryPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 self-start flex-wrap">
+        <div className="flex items-center gap-1.5 sm:gap-2 self-start sm:self-auto flex-wrap">
           {selectedIds.length > 0 && (
             <button
               onClick={() => handleExportCSV(true)}
@@ -576,7 +574,7 @@ export default function LeadsDirectoryPage() {
       </div>
 
       {/* Status Filter Tabs */}
-      <div className="crm-tab-bar">
+      <div className="crm-tab-bar -mx-3.5 px-3.5 sm:mx-0 sm:px-0 scrollbar-none flex-nowrap">
         {STATUS_TABS.map((tab) => (
           <button
             key={tab.value}
@@ -624,7 +622,7 @@ export default function LeadsDirectoryPage() {
       </div>
 
       {/* Leads Table with Checkboxes */}
-      <div className="bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-sm rounded-2xl overflow-hidden relative">
+      <div className="crm-table-box">
         {loading ? (
           <div className="py-20 flex items-center justify-center text-[#7e939a] gap-2">
             <Loader2 className="w-5 h-5 animate-spin text-[#D97706]" />
@@ -640,11 +638,11 @@ export default function LeadsDirectoryPage() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="crm-table">
+            <table className="crm-table w-full min-w-[960px]">
               <thead className="crm-thead">
                 <tr>
                   {/* Select All Checkbox */}
-                  <th className="crm-th !w-12 !px-3 text-center">
+                  <th className="crm-th w-12 !px-3 text-center">
                     <input
                       type="checkbox"
                       checked={isAllSelected}
@@ -656,13 +654,13 @@ export default function LeadsDirectoryPage() {
                       className="w-4 h-4 rounded border-[rgba(71,86,87,0.3)] text-[#D97706] focus:ring-[#D97706] cursor-pointer"
                     />
                   </th>
-                  <th className="crm-th">Lead Details</th>
-                  <th className="crm-th">Phone</th>
-                  <th className="crm-th">Email</th>
-                  <th className="crm-th">Lifecycle Status</th>
-                  <th className="crm-th">Assigned Rep</th>
-                  <th className="crm-th">Registered At</th>
-                  <th className="crm-th text-right">Action</th>
+                  <th className="crm-th min-w-[220px]">Lead Details</th>
+                  <th className="crm-th min-w-[150px]">Phone</th>
+                  <th className="crm-th min-w-[190px]">Email</th>
+                  <th className="crm-th min-w-[165px]">Lifecycle Status</th>
+                  <th className="crm-th min-w-[150px]">Assigned Rep</th>
+                  <th className="crm-th min-w-[125px]">Registered At</th>
+                  <th className="crm-th min-w-[95px] text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="crm-tbody">
@@ -683,7 +681,7 @@ export default function LeadsDirectoryPage() {
                     >
                       {/* Row Checkbox */}
                       <td
-                        className="crm-td !w-12 !px-3 text-center"
+                        className="crm-td w-12 !px-3 text-center"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <input
@@ -697,7 +695,7 @@ export default function LeadsDirectoryPage() {
                       <td className="crm-td">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-8 h-8 rounded-full font-bold text-xs flex items-center justify-center shrink-0 border transition-all ${
+                            className={`w-9 h-9 rounded-full font-bold text-xs sm:text-sm flex items-center justify-center shrink-0 border transition-all ${
                               isSelected
                                 ? "bg-[#D97706] text-white border-[#D97706]"
                                 : "bg-[#D97706]/15 border-[#D97706]/25 text-[#92400E]"
@@ -705,16 +703,16 @@ export default function LeadsDirectoryPage() {
                           >
                             {isSelected ? <Check className="w-4 h-4" /> : initial}
                           </div>
-                          <div>
+                          <div className="min-w-0">
                             <Link
                               href={`/leads/${lead.id}`}
                               onClick={(e) => e.stopPropagation()}
-                              className="crm-lead-link font-bold text-xs flex items-center gap-1.5"
+                              className="crm-lead-link font-bold text-xs sm:text-sm lg:text-[14.5px] flex items-center gap-1.5"
                             >
-                              <span>{leadName}</span>
-                              <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#D97706]" />
+                              <span className="truncate">{leadName}</span>
+                              <ArrowUpRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-[#D97706] shrink-0" />
                             </Link>
-                            <div className="text-[10.5px] text-[#7E9396] font-mono mt-0.5">
+                            <div className="text-[11px] sm:text-xs text-[#7E9396] font-mono mt-0.5">
                               ID: #{lead.id?.slice(0, 8) || "N/A"}
                             </div>
                           </div>
@@ -722,29 +720,29 @@ export default function LeadsDirectoryPage() {
                       </td>
 
                       <td className="crm-td">
-                        <div className="flex items-center gap-1.5 text-xs font-semibold text-[#1C2527]">
-                          <Phone className="w-3.5 h-3.5 text-[#5A6E71]" />
+                        <div className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#1C2527] whitespace-nowrap">
+                          <Phone className="w-3.5 h-3.5 text-[#5A6E71] shrink-0" />
                           <span>{lead.normalizedPhone || lead.phone || "-"}</span>
                         </div>
                       </td>
 
                       <td className="crm-td">
-                        <div className="flex items-center gap-1.5 text-xs text-[#5A6E71]">
-                          <Mail className="w-3.5 h-3.5 text-[#7E9396]" />
-                          <span>{lead.normalizedEmail || lead.email || "-"}</span>
+                        <div className="flex items-center gap-1.5 text-xs sm:text-sm text-[#425559] truncate max-w-[210px]" title={lead.normalizedEmail || lead.email}>
+                          <Mail className="w-3.5 h-3.5 text-[#7E9396] shrink-0" />
+                          <span className="truncate">{lead.normalizedEmail || lead.email || "-"}</span>
                         </div>
                       </td>
 
                       <td className="crm-td">
                         <div className="flex flex-col gap-1 items-start">
-                          <span className={getStatusBadgeClass(lead.status)}>
+                          <span className={`${getStatusBadgeClass(lead.status)} text-xs sm:text-[12.5px] font-semibold py-0.5 px-2.5`}>
                             {formatStatusLabel(lead.status)}
                           </span>
                           {(() => {
                             const prop = calculateLeadPropensityScore(lead);
                             return (
                               <span
-                                className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold border shadow-2xs ${prop.color}`}
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] sm:text-xs font-bold border shadow-2xs ${prop.color}`}
                                 title={`AI Conversion Propensity: ${prop.score}/100 • ${prop.label}\nRecommended: ${prop.recommendedAction}`}
                               >
                                 <span>{prop.emoji}</span>
@@ -758,16 +756,16 @@ export default function LeadsDirectoryPage() {
 
                       <td className="crm-td">
                         {lead.assignedToUserName ? (
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] text-xs text-[#2E3E41] font-medium">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#D97706]" />
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] text-xs sm:text-sm text-[#2E3E41] font-medium whitespace-nowrap">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#D97706] shrink-0" />
                             <span>{lead.assignedToUserName}</span>
                           </div>
                         ) : (
-                          <span className="text-[#889C9E] italic text-xs">Unassigned</span>
+                          <span className="text-[#889C9E] italic text-xs sm:text-sm">Unassigned</span>
                         )}
                       </td>
 
-                      <td className="crm-td text-xs text-[#5A6E71]">
+                      <td className="crm-td text-xs sm:text-sm text-[#5A6E71] whitespace-nowrap">
                         {new Date(lead.createdAt).toLocaleDateString(undefined, {
                           month: "short",
                           day: "numeric",
@@ -778,36 +776,17 @@ export default function LeadsDirectoryPage() {
                       <td className="crm-td text-right" onClick={(e) => e.stopPropagation()}>
                         <div className="flex items-center justify-end gap-1.5">
                           {(lead.normalizedPhone || lead.phone) && (
-                            <>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                   e.stopPropagation();
-                                  startCall({
-                                    leadId: lead.id,
-                                    name: leadName,
-                                    phone: lead.normalizedPhone || lead.phone,
-                                    courseInterest: lead.enquiryCourse || "Admissions Consultation",
-                                  });
-                                }}
-                                title={`Call ${leadName} with Softphone`}
-                                className="p-1.5 rounded-lg bg-[#2E7559]/15 hover:bg-[#2E7559] text-[#1e5842] hover:text-white border border-[#2E7559]/30 transition-all active:scale-90 cursor-pointer shadow-xs inline-flex items-center justify-center"
-                              >
-                                <Phone className="w-3.5 h-3.5" />
-                              </button>
-
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setOutreachLead(lead);
-                                }}
-                                title={`1-Click WhatsApp & Outreach to ${leadName}`}
-                                className="p-1.5 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366] text-[#128C7E] hover:text-white border border-[#25D366]/30 transition-all active:scale-90 cursor-pointer shadow-xs inline-flex items-center justify-center"
-                              >
-                                <MessageSquare className="w-3.5 h-3.5" />
-                              </button>
-                            </>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOutreachLead(lead);
+                              }}
+                              title={`1-Click WhatsApp & Outreach to ${leadName}`}
+                              className="p-1.5 sm:p-2 rounded-lg bg-[#25D366]/15 hover:bg-[#25D366] text-[#128C7E] hover:text-white border border-[#25D366]/30 transition-all active:scale-90 cursor-pointer shadow-xs inline-flex items-center justify-center"
+                            >
+                              <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            </button>
                           )}
                           <Link
                             href={`/leads/${lead.id}`}

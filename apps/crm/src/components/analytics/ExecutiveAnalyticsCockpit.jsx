@@ -13,6 +13,7 @@ import {
   GraduationCap,
   Sparkles,
 } from "lucide-react";
+import { PipelineFunnelChart } from "./PipelineFunnelChart";
 
 const TIME_RANGES = [
   { label: "Today", value: "today" },
@@ -179,82 +180,20 @@ export function ExecutiveAnalyticsCockpit() {
       {/* Grid: 2/3 Pipeline Funnel + 1/3 Sales Leaderboard */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* =========================================================================
-            PANEL 1: MULTI-STAGE CONVERSION FUNNEL (2 COLUMNS)
+            PANEL 1: MULTI-STAGE CONVERSION FUNNEL (2 COLUMNS - UI CHART)
             ========================================================================= */}
-        <div className="lg:col-span-2 bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between pb-3 border-b border-[rgba(71,86,87,0.14)]">
-              <div>
-                <h3 className="text-sm font-bold text-[#1C2527] flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-[#D97706]" />
-                  <span>Pipeline Stage-by-Stage Conversion Funnel</span>
-                </h3>
-                <p className="text-[11px] text-[#57686A] mt-0.5">
-                  Tracks velocity and drop-off from initial web intake down to confirmed enrollment
-                </p>
-              </div>
-
-              <span className="px-2.5 py-1 rounded-full bg-[#2E7559]/15 border border-[#2E7559]/30 text-[11px] font-bold text-[#1e5842]">
-                Conversion: {data.funnel[4].pct}%
-              </span>
-            </div>
-
-            {/* Funnel Stages List */}
-            <div className="mt-5 space-y-4">
-              {data.funnel.map((item, idx) => (
-                <div key={item.stage} className="space-y-1.5 group">
-                  <div className="flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-md bg-[#0c1316] text-white font-mono text-[10px] font-bold flex items-center justify-center shadow-xs">
-                        {idx + 1}
-                      </span>
-                      <span className="font-bold text-[#1C2527]">{item.stage}</span>
-                      {item.drop && (
-                        <span className="text-[10px] font-semibold text-[#889C9E] bg-white px-1.5 py-0.2 rounded border border-[rgba(71,86,87,0.1)]">
-                          {item.drop}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-2 font-mono">
-                      <span className="font-bold text-[#1C2527] text-sm">
-                        {item.count.toLocaleString()}
-                      </span>
-                      <span className="text-[11px] text-[#57686A]">({item.pct}%)</span>
-                    </div>
-                  </div>
-
-                  {/* Horizontal Bar with Proportional Width */}
-                  <div className="w-full h-3.5 bg-white rounded-full overflow-hidden border border-[rgba(71,86,87,0.12)] p-0.5 shadow-inner">
-                    <div
-                      style={{ width: `${item.pct}%` }}
-                      className={`h-full rounded-full bg-gradient-to-r ${STAGE_COLORS[idx]} transition-all duration-500 shadow-xs relative group-hover:brightness-110`}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Bottom Insights Banner */}
-          <div className="mt-6 pt-4 border-t border-[rgba(71,86,87,0.12)] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white/70 p-3 rounded-xl border">
-            <div className="flex items-center gap-2 text-xs">
-              <Sparkles className="w-4 h-4 text-[#D97706] shrink-0" />
-              <span className="text-[#2E3A3C]">
-                <strong>Key Optimization Note:</strong> Highest drop-off is between{" "}
-                <em>Qualified</em> to <em>Counselling Conducted</em> (44%).
-              </span>
-            </div>
-            <span className="text-[11px] font-bold text-[#D97706] hover:text-[#B45309] hover:underline cursor-pointer shrink-0">
-              Improve Follow-up Timing →
-            </span>
-          </div>
+        <div className="lg:col-span-2">
+          <PipelineFunnelChart
+            stages={data.funnel}
+            title="Pipeline Stage-by-Stage Conversion Funnel"
+            subtitle="Tracks velocity and drop-off from initial web intake down to confirmed enrollment"
+          />
         </div>
 
         {/* =========================================================================
             PANEL 2: SALES TEAM LEADERBOARD (1 COLUMN)
             ========================================================================= */}
-        <div className="bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] rounded-2xl p-5 sm:p-6 shadow-sm flex flex-col justify-between">
+        <div className="crm-table-box p-5 sm:p-6 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-[rgba(71,86,87,0.14)]">
               <div className="flex items-center gap-2">

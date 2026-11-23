@@ -278,7 +278,7 @@ export default function DashboardPage() {
       {/* Recent Leads Table Box */}
       <div className="crm-panel overflow-hidden">
         {/* Table Header Bar */}
-        <div className="px-6 py-4 flex items-center justify-between border-b border-[rgba(71,86,87,0.14)] bg-[#FAF6EE]">
+        <div className="px-6 py-4 flex items-center justify-between border-b border-[#D97706]/20 bg-gradient-to-r from-[#FFFDF9] via-[#FAF6EE] to-[#F4ECDF]">
           <div>
             <h2 className="text-sm font-bold text-[#1C2527]">Recent Prospects</h2>
             <p className="text-xs text-[#5A6E71]">Latest leads registered across website, marketing & campaigns</p>

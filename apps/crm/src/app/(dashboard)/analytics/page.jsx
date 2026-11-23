@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
+import { PipelineFunnelChart } from "@/components/analytics/PipelineFunnelChart";
 
 const TIME_RANGES = [
   { label: "Today", value: "today" },
@@ -528,90 +529,13 @@ export default function AnalyticsPage() {
       </div>
 
       {/* =========================================================================
-          SECTION 2: MULTI-STAGE ADMISSIONS FUNNEL & BOTTLENECK DIAGNOSTICS
+          SECTION 2: MULTI-STAGE ADMISSIONS FUNNEL & BOTTLENECK DIAGNOSTICS (UI CHART)
           ========================================================================= */}
-      <div className="p-5 rounded-2xl bg-white border border-[rgba(71,86,87,0.18)] shadow-xs space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[rgba(71,86,87,0.12)] pb-3">
-          <div>
-            <h3 className="text-sm font-bold text-[#1C2527] flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-[#D97706]" />
-              <span>Full Multi-Stage Admissions Funnel (Conversion Drop-off)</span>
-            </h3>
-            <p className="text-xs text-[#5A6E71]">
-              Shows exact volume drop-off at every milestone from raw enquiry to course enrollment
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-[#FAF6EE] text-[#5A6E71] border border-[rgba(71,86,87,0.15)]">
-              Total Prospects: {data.funnel?.[0]?.count || 680}
-            </span>
-          </div>
-        </div>
-
-        {/* Visual Stepped Funnel */}
-        <div className="space-y-3">
-          {(data.funnel || []).map((stage, idx) => (
-            <div key={idx} className="space-y-1.5">
-              <div className="flex items-center justify-between text-xs font-semibold">
-                <div className="flex items-center gap-2">
-                  <span className="w-5 h-5 rounded-full bg-[#0c1316] text-white flex items-center justify-center text-[10px] font-bold font-mono">
-                    {idx + 1}
-                  </span>
-                  <span className="text-[#1C2527] font-bold">{stage.stage}</span>
-                  <span className="text-[11px] text-[#7e939a] hidden md:inline">
-                    ({stage.description})
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-3 font-mono">
-                  <span className="font-bold text-[#1C2527]">{stage.count} leads</span>
-                  <span className="px-2 py-0.5 rounded-md bg-[#FAF6EE] text-[#D97706] font-bold text-[11px] border border-[rgba(71,86,87,0.12)]">
-                    {stage.pct}%
-                  </span>
-                  {stage.drop && (
-                    <span className="text-rose-600 font-semibold text-[10.5px]">
-                      {stage.drop}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Funnel Bar */}
-              <div className="w-full h-3 rounded-full bg-[#FAF6EE] overflow-hidden p-0.5 border border-[rgba(71,86,87,0.1)]">
-                <div
-                  className={`h-full rounded-full transition-all duration-700 ${
-                    idx === 0
-                      ? "bg-[#D97706]"
-                      : idx === 1
-                      ? "bg-[#F59E0B]"
-                      : idx === 2
-                      ? "bg-[#10b981]"
-                      : idx === 3
-                      ? "bg-[#2E7559]"
-                      : "bg-[#0c1316]"
-                  }`}
-                  style={{ width: `${stage.pct}%` }}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Bottleneck Diagnostic Banner */}
-        <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs flex items-start gap-3 text-amber-900">
-          <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-          <div className="space-y-0.5">
-            <span className="font-bold block">
-              Diagnostic Bottleneck Identified: Qualified ➔ 1-on-1 Counselling Attendance (44% Drop)
-            </span>
-            <p className="text-[11px] text-amber-800 leading-relaxed">
-              Prospects qualify academically but miss their demo/counselling appointments.
-              <strong> Solution:</strong> The newly deployed <em>"Free Demo Class VIP SMS & WhatsApp Reminder"</em> drip cadence will reduce no-shows by ~35%.
-            </p>
-          </div>
-        </div>
-      </div>
+      <PipelineFunnelChart
+        stages={data.funnel}
+        title="Full Multi-Stage Admissions Funnel (Conversion Drop-off Chart)"
+        subtitle="Interactive waterfall flow & 3D stepped funnel tracking exact volume drop-off at every milestone"
+      />
 
       {/* =========================================================================
           SECTION 3: COUNSELLOR LEADERBOARD & ATTAINMENT MATRIX

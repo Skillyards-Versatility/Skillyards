@@ -8,7 +8,6 @@ import {
   TrendingUp,
   Download,
   RefreshCw,
-  Calculator,
   ShieldCheck,
   CheckCircle2,
   Lock,
@@ -23,7 +22,6 @@ import {
 } from "lucide-react";
 import { crmApi } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
-import { CommissionCalculatorModal } from "@/components/incentives/CommissionCalculatorModal";
 import { ApprovePayoutModal } from "@/components/incentives/ApprovePayoutModal";
 
 const INITIAL_REPS = [
@@ -123,9 +121,6 @@ export default function SalesIncentivesPage() {
   const [toastMessage, setToastMessage] = useState(null);
 
   // Modals
-  const [calculatorOpen, setCalculatorOpen] = useState(false);
-  const [calculatorInitialCount, setCalculatorInitialCount] = useState(12);
-
   const [approveModalOpen, setApproveModalOpen] = useState(false);
   const [selectedRepForApproval, setSelectedRepForApproval] = useState(null);
 
@@ -265,23 +260,23 @@ export default function SalesIncentivesPage() {
       )}
 
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
         <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-black text-[#1C2527] tracking-tight">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-[#1C2527] tracking-tight">
               Sales Gamification & Commission Desk
             </h1>
-            <span className="px-2.5 py-0.5 rounded-full bg-[#B07238]/15 border border-[#B07238]/30 text-[#B07238] text-[11px] font-bold uppercase tracking-wider flex items-center gap-1">
+            <span className="px-2.5 py-0.5 rounded-full bg-[#B07238]/15 border border-[#B07238]/30 text-[#B07238] text-[10px] sm:text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 shrink-0">
               <Trophy className="w-3.5 h-3.5" />
               <span>October Sprint</span>
             </span>
           </div>
-          <p className="text-xs text-[#5A6E71] mt-1 font-medium">
+          <p className="text-xs text-[#5A6E71] mt-1 font-medium max-w-2xl">
             Live rep leaderboard podium, slab-based admissions commission calculation, and manager payroll verification ledger.
           </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 self-start md:self-auto flex-wrap shrink-0">
           <button
             onClick={fetchIncentives}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#1C2527] border border-[rgba(71,86,87,0.2)] text-xs font-semibold transition-colors shadow-xs"
@@ -292,84 +287,73 @@ export default function SalesIncentivesPage() {
 
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#1C2527] border border-[rgba(71,86,87,0.2)] text-xs font-semibold transition-colors shadow-xs"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-[#FAF6EE] text-[#1C2527] border border-[rgba(71,86,87,0.2)] text-xs font-semibold transition-colors shadow-xs"
           >
             <Download className="w-3.5 h-3.5 text-[#D97706]" />
             <span>Export Payroll CSV</span>
-          </button>
-
-          <button
-            onClick={() => {
-              setCalculatorInitialCount(12);
-              setCalculatorOpen(true);
-            }}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#2E7559] hover:bg-[#256149] text-white text-xs font-bold transition-all shadow-sm"
-          >
-            <Calculator className="w-4 h-4 text-white" />
-            <span>Simulate Earnings</span>
           </button>
         </div>
       </div>
 
       {/* 4 Executive Incentive KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 2xl:gap-5">
         
         {/* Total Commission Pool */}
-        <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-white via-[#FAF6EE] to-[#F3F9F5] border border-[rgba(71,86,87,0.18)] hover:border-[#2E7559]/40 shadow-xs hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-[#5A6E71] text-xs mb-2">
             <span className="font-semibold uppercase tracking-wider text-[10px]">Commission Pool Earned</span>
-            <div className="w-7 h-7 rounded-lg bg-[#2E7559]/15 flex items-center justify-center text-[#2E7559]">
-              <DollarSign className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-lg bg-[#2E7559]/15 border border-[#2E7559]/25 flex items-center justify-center text-[#2E7559]">
+              <DollarSign className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-xl md:text-2xl font-black text-[#2E7559] font-mono tracking-tight">
+          <div className="text-xl sm:text-2xl lg:text-3xl font-black text-[#2E7559] font-mono tracking-tight">
             ₹{kpis.totalPoolEarned.toLocaleString("en-IN")}
           </div>
-          <p className="text-[11px] text-[#5A6E71] mt-1">Across {reps.length} active sales representatives</p>
+          <p className="text-[11px] sm:text-xs text-[#5A6E71] mt-1">Across {reps.length} active sales representatives</p>
         </div>
 
         {/* Team Target Attainment */}
-        <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-white via-[#FAF6EE] to-[#FFF8EE] border border-[rgba(71,86,87,0.18)] hover:border-[#D97706]/40 shadow-xs hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-[#5A6E71] text-xs mb-2">
             <span className="font-semibold uppercase tracking-wider text-[10px]">Team Target Attainment</span>
-            <div className="w-7 h-7 rounded-lg bg-[#D97706]/15 flex items-center justify-center text-[#D97706]">
-              <TrendingUp className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-lg bg-[#D97706]/15 border border-[#D97706]/25 flex items-center justify-center text-[#D97706]">
+              <TrendingUp className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-xl md:text-2xl font-black text-[#1C2527] font-mono tracking-tight">
+          <div className="text-xl sm:text-2xl lg:text-3xl font-black text-[#1C2527] font-mono tracking-tight">
             {kpis.teamAttainmentRate}%
           </div>
-          <p className="text-[11px] text-[#5A6E71] mt-1">
-            {kpis.totalAdmissions} of {kpis.totalTarget} monthly admissions target
+          <p className="text-[11px] sm:text-xs text-[#5A6E71] mt-1">
+            {kpis.totalAdmissions} of {kpis.totalTarget} monthly target
           </p>
         </div>
 
         {/* Gross Tuition Generated */}
-        <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(71,86,87,0.18)] shadow-xs">
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-white via-[#FAF6EE] to-[#FDF5ED] border border-[rgba(71,86,87,0.18)] hover:border-[#B07238]/40 shadow-xs hover:shadow-md transition-all">
           <div className="flex items-center justify-between text-[#5A6E71] text-xs mb-2">
             <span className="font-semibold uppercase tracking-wider text-[10px]">Tuition Revenue Closed</span>
-            <div className="w-7 h-7 rounded-lg bg-[#B07238]/15 flex items-center justify-center text-[#B07238]">
-              <Award className="w-3.5 h-3.5" />
+            <div className="w-8 h-8 rounded-lg bg-[#B07238]/15 border border-[#B07238]/25 flex items-center justify-center text-[#B07238]">
+              <Award className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-xl md:text-2xl font-black text-[#1C2527] font-mono tracking-tight">
+          <div className="text-xl sm:text-2xl lg:text-3xl font-black text-[#1C2527] font-mono tracking-tight">
             ₹{(kpis.totalTuitionRevenue / 100000).toFixed(2)}L
           </div>
-          <p className="text-[11px] text-[#5A6E71] mt-1">Generated by closing sales team</p>
+          <p className="text-[11px] sm:text-xs text-[#5A6E71] mt-1">Generated by closing sales team</p>
         </div>
 
         {/* Top Podium Champion */}
-        <div className="p-4 rounded-2xl bg-[#FAF6EE] border border-[rgba(176,114,56,0.3)] shadow-xs relative overflow-hidden">
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-white via-[#FFF8EC] to-[#F7ECDB] border-2 border-[#B07238]/35 shadow-xs hover:shadow-md transition-all relative overflow-hidden">
           <div className="flex items-center justify-between text-[#5A6E71] text-xs mb-2">
-            <span className="font-semibold uppercase tracking-wider text-[10px] text-[#B07238]">🥇 Podium Champion</span>
-            <div className="w-7 h-7 rounded-lg bg-[#B07238]/20 flex items-center justify-center text-[#B07238]">
-              <Trophy className="w-3.5 h-3.5" />
+            <span className="font-bold uppercase tracking-wider text-[10px] text-[#B07238]">🥇 Podium Champion</span>
+            <div className="w-8 h-8 rounded-lg bg-[#B07238]/20 border border-[#B07238]/30 flex items-center justify-center text-[#B07238]">
+              <Trophy className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-lg md:text-xl font-black text-[#1C2527] truncate">
+          <div className="text-lg sm:text-xl lg:text-2xl font-black text-[#1C2527] truncate">
             {kpis.topEarner?.repName || "Priya Patel"}
           </div>
-          <p className="text-[11px] text-[#2E7559] font-bold mt-1 font-mono">
+          <p className="text-[11px] sm:text-xs text-[#2E7559] font-bold mt-1 font-mono">
             ₹{kpis.topEarner?.commissionEarned.toLocaleString("en-IN")} payout ({kpis.topEarner?.closedAdmissions} admissions)
           </p>
         </div>
@@ -377,7 +361,7 @@ export default function SalesIncentivesPage() {
       </div>
 
       {/* Interactive Podium Stage (1st, 2nd, 3rd Place) */}
-      <div className="p-6 bg-gradient-to-b from-[#FAF6EE] to-[#F4ECDF] rounded-2xl border border-[rgba(71,86,87,0.18)] shadow-xs">
+      <div className="p-6 bg-gradient-to-b from-[#FFFDF8] via-[#FAF3E6] to-[#EFE2CE] rounded-2xl border border-[#D97706]/25 shadow-sm">
         <div className="text-center space-y-1 mb-6">
           <h2 className="text-base font-black text-[#1C2527] flex items-center justify-center gap-2">
             <Trophy className="w-5 h-5 text-[#B07238]" />
@@ -388,11 +372,11 @@ export default function SalesIncentivesPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end max-w-3xl mx-auto">
           
           {/* 🥈 2nd Place Podium */}
           {rankedReps[1] && (
-            <div className="p-4 bg-white rounded-2xl border border-slate-300 text-center space-y-2 shadow-xs md:order-1">
+            <div className="p-4 bg-gradient-to-b from-white to-[#F5F8FA] rounded-2xl border border-slate-300 text-center space-y-2 shadow-xs order-2 md:order-1">
               <span className="text-2xl">🥈</span>
               <div className="w-12 h-12 rounded-full bg-slate-800 text-white font-bold flex items-center justify-center text-sm mx-auto shadow-xs">
                 {rankedReps[1].avatar}
@@ -414,7 +398,7 @@ export default function SalesIncentivesPage() {
 
           {/* 🥇 1st Place Podium (Elevated) */}
           {rankedReps[0] && (
-            <div className="p-5 bg-gradient-to-b from-white to-[#FFF9F0] rounded-2xl border-2 border-[#B07238] text-center space-y-2 shadow-md md:order-2 md:-translate-y-4 relative">
+            <div className="p-5 bg-gradient-to-b from-white via-[#FFF8EC] to-[#F7ECDB] rounded-2xl border-2 border-[#D97706] text-center space-y-2 shadow-md order-1 md:order-2 md:-translate-y-4 relative">
               <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-[#B07238] text-white text-[10px] font-black uppercase tracking-wider flex items-center gap-1 shadow-sm">
                 <Trophy className="w-3 h-3" />
                 <span>Leader</span>
@@ -440,7 +424,7 @@ export default function SalesIncentivesPage() {
 
           {/* 🥉 3rd Place Podium */}
           {rankedReps[2] && (
-            <div className="p-4 bg-white rounded-2xl border border-amber-300 text-center space-y-2 shadow-xs md:order-3">
+            <div className="p-4 bg-gradient-to-b from-white to-[#FAF6EE] rounded-2xl border border-amber-300/80 text-center space-y-2 shadow-xs order-3 md:order-3">
               <span className="text-2xl">🥉</span>
               <div className="w-12 h-12 rounded-full bg-slate-800 text-white font-bold flex items-center justify-center text-sm mx-auto shadow-xs">
                 {rankedReps[2].avatar}
@@ -469,16 +453,6 @@ export default function SalesIncentivesPage() {
           <span className="font-bold uppercase tracking-wider text-[10.5px] text-[#7E939A]">
             Official Commission Policy Slabs
           </span>
-          <button
-            onClick={() => {
-              setCalculatorInitialCount(15);
-              setCalculatorOpen(true);
-            }}
-            className="text-[11px] font-bold text-[#D97706] hover:underline flex items-center gap-1"
-          >
-            <Calculator className="w-3 h-3" />
-            <span>Interactive Calculator</span>
-          </button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
@@ -510,10 +484,10 @@ export default function SalesIncentivesPage() {
       </div>
 
       {/* Rep Performance & Payroll Approval Ledger Table */}
-      <div className="bg-[#FAF6EE] rounded-2xl border border-[rgba(71,86,87,0.18)] overflow-hidden shadow-xs">
+      <div className="crm-table-box">
         
         {/* Table Filter & Search Header */}
-        <div className="p-4 border-b border-[rgba(71,86,87,0.14)] flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="p-3.5 sm:p-4 border-b border-[rgba(71,86,87,0.14)] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <div className="relative flex-1 w-full sm:max-w-xs">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#7E939A]" />
             <input
@@ -525,11 +499,11 @@ export default function SalesIncentivesPage() {
             />
           </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-1.5 rounded-xl bg-white border border-[rgba(71,86,87,0.2)] text-xs text-[#1C2527] focus:outline-none focus:ring-1 focus:ring-[#2E7559]"
+              className="w-full sm:w-auto px-3 py-1.5 rounded-xl bg-white border border-[rgba(71,86,87,0.2)] text-xs text-[#1C2527] focus:outline-none focus:ring-1 focus:ring-[#2E7559]"
             >
               <option value="all">All Approval States</option>
               <option value="approved">Approved & Locked</option>
@@ -540,16 +514,16 @@ export default function SalesIncentivesPage() {
 
         {/* Table Body */}
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead className="bg-[#FAF6EE] border-b border-[rgba(71,86,87,0.16)] text-[#5A6E71] uppercase tracking-wider text-[10px]">
+          <table className="crm-table w-full min-w-[760px] text-left text-xs sm:text-sm">
+            <thead className="crm-thead">
               <tr>
-                <th className="py-3 px-4 font-semibold">Representative</th>
-                <th className="py-3 px-4 font-semibold">Admissions Attainment</th>
-                <th className="py-3 px-4 font-semibold text-right">Tuition Closed</th>
-                <th className="py-3 px-4 font-semibold text-right">Commission Payout</th>
-                <th className="py-3 px-4 font-semibold">Special Badges</th>
-                <th className="py-3 px-4 font-semibold text-center">Status</th>
-                <th className="py-3 px-4 font-semibold text-right">Actions</th>
+                <th className="py-3 px-4 font-bold min-w-[210px]">Representative</th>
+                <th className="py-3 px-4 font-bold min-w-[170px]">Admissions Attainment</th>
+                <th className="py-3 px-4 font-bold text-right min-w-[130px]">Tuition Closed</th>
+                <th className="py-3 px-4 font-bold text-right min-w-[140px]">Commission Payout</th>
+                <th className="py-3 px-4 font-bold min-w-[150px]">Special Badges</th>
+                <th className="py-3 px-4 font-bold text-center min-w-[110px]">Status</th>
+                <th className="py-3 px-4 font-bold text-right min-w-[100px]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[rgba(71,86,87,0.1)] text-[#1C2527]">
@@ -563,12 +537,12 @@ export default function SalesIncentivesPage() {
                     {/* Rep Particulars */}
                     <td className="py-3 px-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-[#0c1316] text-white flex items-center justify-center font-bold text-[11px] shadow-xs">
+                        <div className="w-9 h-9 rounded-full bg-[#0c1316] text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
                           {rep.avatar}
                         </div>
-                        <div>
-                          <p className="font-bold text-sm text-[#1C2527]">{rep.repName}</p>
-                          <p className="text-[10.5px] text-[#5A6E71]">{rep.role} • {rep.email}</p>
+                        <div className="min-w-0">
+                          <p className="font-bold text-xs sm:text-sm lg:text-[14.5px] text-[#1C2527]">{rep.repName}</p>
+                          <p className="text-[11px] sm:text-xs text-[#5A6E71]">{rep.role} • {rep.email}</p>
                         </div>
                       </div>
                     </td>
@@ -576,7 +550,7 @@ export default function SalesIncentivesPage() {
                     {/* Admissions Progress Track */}
                     <td className="py-3 px-4">
                       <div className="space-y-1 max-w-xs">
-                        <div className="flex items-center justify-between text-[11px]">
+                        <div className="flex items-center justify-between text-xs sm:text-sm">
                           <span className="font-bold text-[#1C2527] font-mono">
                             {rep.closedAdmissions} of {rep.targetAdmissions}
                           </span>
@@ -601,20 +575,20 @@ export default function SalesIncentivesPage() {
 
                     {/* Tuition Closed */}
                     <td className="py-3 px-4 text-right">
-                      <span className="font-mono font-bold text-xs text-[#1C2527] block">
+                      <span className="font-mono font-bold text-xs sm:text-sm text-[#1C2527] block">
                         ₹{(rep.tuitionRevenueClosed / 100000).toFixed(2)}L
                       </span>
-                      <span className="text-[10px] text-[#7E939A]">
+                      <span className="text-[11px] text-[#7E939A]">
                         Avg: ₹{Math.round(rep.avgDealSize).toLocaleString("en-IN")}
                       </span>
                     </td>
 
                     {/* Commission Payout */}
                     <td className="py-3 px-4 text-right">
-                      <span className="font-mono font-black text-sm text-[#2E7559] block">
+                      <span className="font-mono font-black text-xs sm:text-sm text-[#2E7559] block">
                         ₹{rep.commissionEarned.toLocaleString("en-IN")}
                       </span>
-                      <span className="text-[10.5px] text-[#7E939A]">Slab calculated</span>
+                      <span className="text-[11px] text-[#7E939A]">Slab calculated</span>
                     </td>
 
                     {/* Badges */}
@@ -623,7 +597,7 @@ export default function SalesIncentivesPage() {
                         {rep.badges.slice(0, 2).map((b) => (
                           <span
                             key={b}
-                            className="px-2 py-0.5 rounded-md bg-white border border-[rgba(71,86,87,0.15)] text-[10px] font-bold text-[#1C2527]"
+                            className="px-2 py-0.5 rounded-md bg-white border border-[rgba(71,86,87,0.18)] text-[11px] sm:text-xs font-semibold text-[#1C2527]"
                           >
                             {b}
                           </span>
@@ -634,12 +608,12 @@ export default function SalesIncentivesPage() {
                     {/* Status */}
                     <td className="py-3 px-4 text-center">
                       {isApproved ? (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#2E7559]/15 border border-[#2E7559]/30 text-[#2E7559] text-[10.5px] font-bold">
-                          <CheckCircle2 className="w-3 h-3" />
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#2E7559]/15 border border-[#2E7559]/30 text-[#2E7559] text-xs font-bold">
+                          <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Locked</span>
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10.5px] font-bold">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-xs font-bold">
                           <span>Pending Signoff</span>
                         </span>
                       )}
@@ -648,18 +622,6 @@ export default function SalesIncentivesPage() {
                     {/* Actions */}
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
-                        {/* Simulate Calculator */}
-                        <button
-                          onClick={() => {
-                            setCalculatorInitialCount(rep.closedAdmissions);
-                            setCalculatorOpen(true);
-                          }}
-                          title="Simulate earnings in calculator"
-                          className="p-1.5 rounded-lg bg-white hover:bg-[#FAF6EE] text-[#5A6E71] border border-[rgba(71,86,87,0.2)] transition-colors shadow-xs"
-                        >
-                          <Calculator className="w-3.5 h-3.5" />
-                        </button>
-
                         {/* Approve Payout */}
                         {!isApproved ? (
                           <button
@@ -667,13 +629,13 @@ export default function SalesIncentivesPage() {
                               setSelectedRepForApproval(rep);
                               setApproveModalOpen(true);
                             }}
-                            className="px-2.5 py-1.5 rounded-xl bg-[#2E7559] hover:bg-[#256149] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1"
+                            className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-[#2E7559] to-[#1e5842] hover:from-[#1e5842] hover:to-[#144432] text-white text-xs font-bold transition-all shadow-xs flex items-center gap-1.5 cursor-pointer border border-[#1e5842]"
                           >
                             <ShieldCheck className="w-3.5 h-3.5" />
                             <span>Approve</span>
                           </button>
                         ) : (
-                          <span className="text-[10px] text-[#7E939A] font-mono px-2 py-1">
+                          <span className="text-xs text-[#7E939A] font-mono px-2 py-1 font-semibold">
                             Verified
                           </span>
                         )}
@@ -689,12 +651,6 @@ export default function SalesIncentivesPage() {
       </div>
 
       {/* Modals */}
-      <CommissionCalculatorModal
-        isOpen={calculatorOpen}
-        onClose={() => setCalculatorOpen(false)}
-        initialAdmissions={calculatorInitialCount}
-      />
-
       <ApprovePayoutModal
         isOpen={approveModalOpen}
         onClose={() => {
