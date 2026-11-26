@@ -7,7 +7,7 @@ const skillsData = [
     name: "Performance Marketing",
     category: "core",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
       </svg>
     ),
@@ -16,7 +16,7 @@ const skillsData = [
     name: "Programmatic Advertising",
     category: "core",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <rect x="2" y="5" width="20" height="14" rx="3" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M6 12h2.5m-2.5 0a1.5 1.5 0 011.5-1.5h.5A1.5 1.5 0 019.5 12v0a1.5 1.5 0 01-1.5 1.5H7A1 1 0 016 12zm8-2.5v5m0-5h2a2 2 0 012 2v1a2 2 0 01-2 2h-2" />
       </svg>
@@ -26,7 +26,7 @@ const skillsData = [
     name: "Search Engine Optimization",
     category: "core",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <circle cx="10" cy="10" r="7" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m-8-5l3-3 2 2 4-4" />
       </svg>
@@ -36,7 +36,7 @@ const skillsData = [
     name: "Search Engine Marketing",
     category: "core",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M11 18a7 7 0 100-14 7 7 0 000 14z" />
         <path strokeLinecap="round" strokeLinejoin="round" d="M8 9h2m-1-1v2" />
       </svg>
@@ -46,7 +46,7 @@ const skillsData = [
     name: "Copywriting & Creative Thinking",
     category: "core",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
       </svg>
     ),
@@ -55,7 +55,7 @@ const skillsData = [
     name: "Problem Solving",
     category: "core",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
       </svg>
     ),
@@ -64,7 +64,7 @@ const skillsData = [
     name: "CV and Interview Prep",
     category: "core",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
       </svg>
     ),
@@ -73,7 +73,7 @@ const skillsData = [
     name: "Excel Reporting and Analysis",
     category: "core",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
     ),
@@ -84,7 +84,7 @@ const skillsData = [
     name: "AI & Automation Skills",
     category: "ai",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M3 9h2m-2 6h2m16-6h2m-2 6h2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
       </svg>
     ),
@@ -93,7 +93,7 @@ const skillsData = [
     name: "LLM optimization",
     category: "ai",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
       </svg>
     ),
@@ -102,7 +102,7 @@ const skillsData = [
     name: "Answer Engine Optimization",
     category: "ai",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
       </svg>
     ),
@@ -111,7 +111,7 @@ const skillsData = [
     name: "AI-Powered Audience Targeting",
     category: "ai",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
       </svg>
     ),
@@ -120,7 +120,7 @@ const skillsData = [
     name: "Generative AI for Content",
     category: "ai",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
       </svg>
     ),
@@ -129,7 +129,7 @@ const skillsData = [
     name: "AI Creative & Ad Generation",
     category: "ai",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
     ),
@@ -138,7 +138,7 @@ const skillsData = [
     name: "Predictive Analytics & Forecasting",
     category: "ai",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" />
       </svg>
     ),
@@ -147,7 +147,7 @@ const skillsData = [
     name: "AI Prompt Engineering",
     category: "ai",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
     ),
@@ -158,7 +158,7 @@ const skillsData = [
     name: "Brand Marketing",
     category: "strategy",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
       </svg>
     ),
@@ -167,7 +167,7 @@ const skillsData = [
     name: "Conversion Rate Optimization",
     category: "strategy",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
       </svg>
     ),
@@ -176,7 +176,7 @@ const skillsData = [
     name: "Content Marketing",
     category: "strategy",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
       </svg>
     ),
@@ -185,7 +185,7 @@ const skillsData = [
     name: "Analytics & Data Interpretation",
     category: "strategy",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
       </svg>
     ),
@@ -194,7 +194,7 @@ const skillsData = [
     name: "Social Media Marketing",
     category: "strategy",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
       </svg>
     ),
@@ -203,7 +203,7 @@ const skillsData = [
     name: "Workplace Communication",
     category: "strategy",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
       </svg>
     ),
@@ -212,7 +212,7 @@ const skillsData = [
     name: "Personal Storytelling",
     category: "strategy",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
       </svg>
     ),
@@ -221,7 +221,7 @@ const skillsData = [
     name: "Interpersonal & behavioral skills",
     category: "strategy",
     icon: (
-      <svg className="h-6 w-6 text-[#00b4d8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <svg className="h-6 w-6 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
       </svg>
     ),
@@ -437,11 +437,11 @@ const projectsData = [
   {
     id: 6,
     tag: "PROJECT 6:",
-    tagColor: "text-[#ca8a04]",
+    tagColor: "text-[#1E7CBC]",
     title: "Blog creation Projects",
     duration: "30 hours",
     description:
-      "You will create SEO optimised blogs, publish them and analyse performance for two brands: Top of the funnel for Kraftshala: Dissecting a brand strategy, Middle and Bottom of the funnel for Unleavables- for your own Shopify Page",
+      "You will create SEO optimised blogs, publish them and analyse performance for two brands: Top of the funnel for SkillYards: Dissecting a brand strategy, Middle and Bottom of the funnel for Unleavables- for your own Shopify Page",
     checklist: [
       "Project briefing",
       "Creating the blog strategy",
@@ -449,7 +449,7 @@ const projectsData = [
       "Publishing the blogs",
     ],
     presentation: "Presentations",
-    presentationColor: "text-[#ca8a04] border-[#ca8a04]",
+    presentationColor: "text-[#1E7CBC] border-[#1E7CBC]",
     footnote: "*Brands change every batch",
     tools: [
       { name: "Perplexity", type: "perplexity" },
@@ -670,7 +670,7 @@ function ToolBadge({ tool }) {
       return (
         <div className="flex items-center gap-1 text-xs font-bold text-gray-800">
           <span className="rounded bg-[#2874f0] px-1.5 py-0.5 text-white">Flipkart</span>
-          <span className="text-yellow-600">Ads</span>
+          <span className="text-[#1E7CBC]">Ads</span>
         </div>
       );
     case "ga":
@@ -821,7 +821,7 @@ function ToolBadge({ tool }) {
       );
     case "claude":
       return (
-        <span className="flex items-center gap-1 font-bold text-amber-700">
+        <span className="flex items-center gap-1 font-bold text-[#1E7CBC]">
           ✳ <span className="text-xs font-semibold text-gray-800">Claude</span>
         </span>
       );
@@ -871,15 +871,22 @@ export default function ProjectsSection({ id = "projects" }) {
   const filteredProjects = projectsData;
 
   return (
-    <section id={id} className="w-full bg-[#faf9f5] px-4 py-16 font-sans sm:px-6 lg:px-8 lg:py-24">
+    <section id={id} className="w-full bg-[#faf9f6] px-4 py-16 font-sans sm:px-6 lg:px-8 lg:py-24 scroll-mt-20 lg:scroll-mt-24">
       <div className="mx-auto max-w-7xl">
 
         {/* ============================================================ */}
         {/* SECTION 1: DIGITAL MARKETING SKILLS THAT YOU'LL LEARN        */}
         {/* ============================================================ */}
-        <div className="mb-20 text-center sm:mb-24">
-          <h2 className="text-2xl font-bold tracking-tight text-[#444] sm:text-4xl lg:text-[42px]">
-            Digital Marketing Skills That You'll Learn
+        <div className="mb-16 text-center sm:mb-20">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#1E7CBC]/30 bg-[#1E7CBC]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1E7CBC] mb-4">
+            High-Demand Industry Competencies
+          </div>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold tracking-tight text-gray-900 leading-tight">
+            Digital Marketing Skills{" "}
+            <span className="bg-gradient-to-r from-[#1E7CBC] to-blue-600 bg-clip-text text-transparent">
+              That You'll Master
+            </span>
           </h2>
 
           <div className="relative mx-auto mt-4 h-[6px] w-[240px] sm:w-[420px]">
@@ -887,25 +894,25 @@ export default function ProjectsSection({ id = "projects" }) {
           </div>
 
           {/* 3-Column 24-Skills Grid */}
-          <div className="mt-14 grid grid-cols-1 gap-x-10 gap-y-5 text-left sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-4 text-left sm:grid-cols-2 lg:grid-cols-3">
             {skillsData.map((skill, index) => (
               <div
                 key={index}
-                className="group flex items-center gap-3.5 rounded-xl bg-white/70 p-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_6px_20px_rgba(0,0,0,0.05)] sm:p-4"
+                className="group flex items-center gap-3.5 rounded-xl bg-white border border-gray-100 p-3.5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(30,124,188,0.08)] hover:border-[#1E7CBC]/30 sm:p-4"
               >
-                {/* Cyan Skill Icon */}
-                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#e8f7fa] transition-colors group-hover:bg-[#d8f2f7]">
+                {/* Blue Skill Icon */}
+                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#1E7CBC]/10 transition-colors group-hover:bg-[#1E7CBC]/20">
                   {skill.icon}
 
                   {/* AI Badge on Column 2 AI Skills */}
                   {skill.category === "ai" && (
-                    <span className="absolute -top-1 -right-1 rounded bg-[#00b4d8] px-1 py-0.2 text-[9px] font-bold uppercase text-white shadow-xs">
+                    <span className="absolute -top-1 -right-1 rounded bg-[#1E7CBC] px-1 py-0.2 text-[9px] font-bold uppercase text-white shadow-xs">
                       AI
                     </span>
                   )}
                 </div>
 
-                <span className="text-[15px] font-medium leading-snug text-[#444] transition-colors group-hover:text-[#111] sm:text-base">
+                <span className="text-[15px] font-medium leading-snug text-gray-700 transition-colors group-hover:text-gray-900 sm:text-base">
                   {skill.name}
                 </span>
               </div>
@@ -916,13 +923,16 @@ export default function ProjectsSection({ id = "projects" }) {
         {/* ============================================================ */}
         {/* SECTION 2: DIGITAL MARKETING LIVE PROJECTS HEADER            */}
         {/* ============================================================ */}
-        <div className="mb-14 text-center sm:mb-16">
-          <p className="mb-3 text-xs font-bold uppercase tracking-wider text-[#e5a700] sm:text-sm">
-            DIGITAL MARKETING LIVE PROJECTS
-          </p>
+        <div className="mb-12 text-center sm:mb-16">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#1E7CBC]/30 bg-[#1E7CBC]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1E7CBC] mb-4">
+            Real Client Experience
+          </div>
 
-          <h2 className="mx-auto max-w-4xl text-2xl font-bold leading-tight tracking-tight text-[#444] sm:text-3xl lg:text-4xl">
-            Gain real experience with LIVE projects for hands-on Digital Marketing Learning
+          <h2 className="mx-auto max-w-4xl text-3xl sm:text-4xl lg:text-[42px] font-extrabold leading-tight tracking-tight text-gray-900">
+            Gain Real Experience with{" "}
+            <span className="bg-gradient-to-r from-[#1E7CBC] to-blue-600 bg-clip-text text-transparent">
+              LIVE Client Projects
+            </span>
           </h2>
 
           <div className="relative mx-auto mt-4 h-[6px] w-[240px] sm:w-[440px]">
@@ -931,19 +941,18 @@ export default function ProjectsSection({ id = "projects" }) {
         </div>
 
         {/* ============================================================ */}
-        {/* SECTION 3: THE 9 LIVE PROJECT CARDS (STICKY STACKING CARDS)  */}
+        {/* SECTION 3: THE 9 LIVE PROJECT CARDS (STICKY ON SCROLL)       */}
         {/* ============================================================ */}
-        <div className="relative pb-32 sm:pb-48">
+        <div className="relative pb-6 sm:pb-8">
           {filteredProjects.map((project, index) => (
             <div
               key={project.id}
               style={{
-                top: `${88 + index * 6}px`,
                 zIndex: index + 10,
               }}
-              className="sticky mb-16 rounded-[28px] border border-[#e8e6e0] bg-white p-6 shadow-[0_12px_40px_rgba(0,0,0,0.08),0_2px_8px_rgba(0,0,0,0.04)] transition-shadow duration-200 hover:shadow-[0_16px_50px_rgba(0,0,0,0.12)] sm:mb-24 sm:p-10 lg:mb-32"
+              className="sticky top-[76px] mb-8 sm:mb-10 last:mb-0 rounded-[24px] sm:rounded-[28px] border border-gray-200/90 bg-white p-6 sm:p-8 shadow-[0_6px_25px_rgba(0,0,0,0.05)] transition-all duration-200 hover:border-[#1E7CBC]/50"
             >
-              <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-12">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8">
                 {/* Left Column: Project Overview */}
                 <div className="lg:col-span-7">
                   <span className={`block text-xs font-bold uppercase tracking-wider sm:text-sm ${project.tagColor}`}>
@@ -954,11 +963,11 @@ export default function ProjectsSection({ id = "projects" }) {
                     {project.title}
                   </h3>
 
-                  <p className="mt-3 text-sm font-semibold text-[#555] sm:text-base">
+                  <p className="mt-2.5 text-sm font-semibold text-[#555] sm:text-base">
                     Duration: {project.duration}
                   </p>
 
-                  <div className="mt-4">
+                  <div className="mt-3.5">
                     <span className="block text-sm font-bold text-[#444]">
                       Description:
                     </span>
@@ -970,7 +979,7 @@ export default function ProjectsSection({ id = "projects" }) {
 
                 {/* Right Column: Checklist & Mock Reviews */}
                 <div className="flex flex-col justify-between lg:col-span-5">
-                  <ul className="space-y-3">
+                  <ul className="space-y-2.5">
                     {project.checklist.map((item, idx) => (
                       <li key={idx} className="flex items-start gap-2.5 text-sm text-[#555] sm:text-[15px]">
                         <svg
@@ -988,7 +997,7 @@ export default function ProjectsSection({ id = "projects" }) {
                   </ul>
 
                   {/* Presentations & Mock Interviews Target Badge */}
-                  <div className="mt-6 flex flex-col items-start gap-2 sm:mt-8">
+                  <div className="mt-5 flex flex-col items-start gap-1.5 sm:mt-6">
                     <div className="flex items-center gap-2.5 font-bold">
                       <svg
                         className={`h-6 w-6 shrink-0 ${project.tagColor}`}
@@ -1014,7 +1023,7 @@ export default function ProjectsSection({ id = "projects" }) {
               </div>
 
               {/* Tools Used Shelf */}
-              <div className="mt-8 flex flex-wrap items-center justify-start gap-4 rounded-2xl bg-[#fafafa] px-6 py-4 border border-[#f0eee9] sm:gap-8 sm:px-8">
+              <div className="mt-6 flex flex-wrap items-center justify-start gap-3.5 rounded-2xl bg-[#fafafa] px-5 py-3.5 border border-[#f0eee9] sm:gap-6 sm:px-6">
                 {project.tools.map((tool, idx) => (
                   <ToolBadge key={idx} tool={tool} />
                 ))}
@@ -1022,16 +1031,16 @@ export default function ProjectsSection({ id = "projects" }) {
 
               {/* Applied AI Examples (Optional Banner) */}
               {project.aiExamples && project.aiExamples.length > 0 && (
-                <div className={`mt-6 rounded-2xl p-5 sm:p-7 ${project.aiBg}`}>
+                <div className={`mt-5 rounded-2xl p-4 sm:p-6 ${project.aiBg}`}>
                   <h4 className={`text-sm font-bold uppercase tracking-wide sm:text-base ${project.aiTitleColor}`}>
                     Applied AI Examples
                   </h4>
 
-                  <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="mt-3 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                     {project.aiExamples.map((ex, idx) => (
                       <div
                         key={idx}
-                        className={`rounded-xl bg-white p-4 shadow-xs border-l-4 ${project.aiAccent}`}
+                        className={`rounded-xl bg-white p-3.5 shadow-xs border-l-4 ${project.aiAccent}`}
                       >
                         <p className="text-xs leading-relaxed text-[#444] sm:text-sm">
                           <strong className="text-[#222]">{ex.title} </strong>

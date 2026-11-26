@@ -2,22 +2,19 @@
 
 import dynamic from "next/dynamic";
 import MarketingHero from "./marketing-hero";
-import KraftshalaSection from "./kraftshala-section";
+import KraftshalaSection from "./skillyards-section";
 import ProjectsSection from "./projects-section";
+import AlumniSection from "./alumni-section";
+import CertificationsSection from "./certifications-section";
+import CampusPhotosSection from "./campus-photos-section";
+import CampaignFooter from "./CampaignFooter";
 
-const StickyCTABar = dynamic(
-  () => import("@/components/campaigns/StickyCTABar").then((m) => m.StickyCTABar),
-  { ssr: false }
+const PartnersSlider = dynamic(
+  () => import("@/components/common/PartnersSlider")
 );
 
-const DGMCurriculum = dynamic(() =>
-  import("@/components/landingPageDGM/Curriculum").then((m) => m.DGMCurriculum)
-);
 const DGMEducators = dynamic(() =>
   import("@/components/landingPageDGM/Educators").then((m) => m.DGMEducators)
-);
-const DGMAdmissionProcess = dynamic(() =>
-  import("@/components/landingPageDGM/AdmissionProcess").then((m) => m.DGMAdmissionProcess)
 );
 const DGMFAQ = dynamic(() =>
   import("@/components/landingPageDGM/FAQ").then((m) => m.DGMFAQ)
@@ -30,42 +27,41 @@ export default function DigitalMarketingCampaignClient({ faqs = [], educators = 
     "Hi, I'm interested in the Digital Marketing Course at SkillYards. I'd like to know more about the scholarship and curriculum."
   )}`;
 
-  const panels = {
-    curriculum: (
-      <div className="py-6">
-        <DGMCurriculum />
-      </div>
-    ),
-    experts: (
-      <div className="py-6">
-        <DGMEducators educators={educators} />
-      </div>
-    ),
-    admissions: (
-      <div className="py-6">
-        <DGMAdmissionProcess />
-      </div>
-    ),
-    faqs: faqs?.length > 0 ? (
-      <div className="py-6">
-        <DGMFAQ faqs={faqs} />
-      </div>
-    ) : null,
-  };
-
   return (
-    <div className="relative min-h-screen w-full bg-white text-gray-900 selection:bg-amber-100 selection:text-amber-900">
+    <div className="relative min-h-screen w-full bg-white text-gray-900 selection:bg-[#1E7CBC]/20 selection:text-[#1E7CBC]">
       {/* 1. HERO SECTION */}
       <MarketingHero />
 
-      {/* 2. MAIN KRAFTSHALA SECTION (Comparison, Sticky Navigation & Benefits) */}
-      <KraftshalaSection applyUrl="#application-form" panels={panels} />
+      {/* 2. COMPANIES WAITING FOR YOU */}
+      <PartnersSlider />
 
-      {/* 3. LIVE PROJECTS & SKILLS SECTION */}
-      <ProjectsSection id="projects" />
+      {/* 3. COMPARISON, STICKY NAVIGATION & BENEFITS SECTION */}
+      <KraftshalaSection applyUrl="#application-form">
+        {/* 1. STICKY-ON-SCROLL CARDS (LIVE PROJECTS & SKILLS SECTION) */}
+        <ProjectsSection id="projects" />
 
-      {/* STICKY BOTTOM CONVERSION BAR */}
-      <StickyCTABar whatsappHref={whatsappHref} />
+        {/* EXPERTS SECTION */}
+        <div id="experts" className="w-full scroll-mt-20 lg:scroll-mt-24">
+          <DGMEducators educators={educators} />
+        </div>
+
+        {/* CERTIFICATIONS SECTION (BEFORE TESTIMONIALS/ALUMNI) */}
+        <CertificationsSection id="certifications" />
+
+        {/* ALUMNI / TESTIMONIALS SECTION */}
+        <AlumniSection id="alumni" />
+
+        {/* REAL PHOTOS OF SKILLYARDS CAMPUS SECTION */}
+        <CampusPhotosSection id="campus" />
+
+        {/* FAQS SECTION */}
+        <div id="faqs" className="w-full scroll-mt-20 lg:scroll-mt-24">
+          <DGMFAQ faqs={faqs} />
+        </div>
+      </KraftshalaSection>
+
+      {/* FOOTER */}
+      <CampaignFooter />
     </div>
   );
 }

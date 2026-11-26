@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { Menu, X, ArrowRight, Phone } from "lucide-react";
 import FloatingIcons from "./floating-icons";
 
 /* =================================
@@ -80,6 +82,7 @@ const recruiters = [
 ================================= */
 
 const MarketingHero = () => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -106,7 +109,7 @@ const MarketingHero = () => {
 
       {/* NAVBAR */}
 
-      <header className="relative z-20 mx-auto flex w-full max-w-[1600px] shrink-0 items-center justify-between px-[5%] py-5 lg:h-[11%] lg:py-0">
+      <header className="relative z-30 mx-auto flex w-full max-w-[1600px] shrink-0 items-center justify-between px-[5%] py-4 sm:py-5 lg:h-[11%] lg:py-0">
 
         {/* LOGO */}
 
@@ -116,34 +119,140 @@ const MarketingHero = () => {
 
         </div>
 
-        {/* NAVIGATION */}
+        {/* DESKTOP NAVIGATION */}
 
-        <nav className="hidden items-center gap-[clamp(20px,3vw,48px)] text-[clamp(14px,1.3vw,21px)] text-[#555] lg:flex">
+        <nav className="hidden items-center gap-[clamp(20px,3vw,48px)] text-[clamp(14px,1.3vw,21px)] font-normal text-[#666666] lg:flex">
 
-          <a href="#" className="transition hover:text-yellow-500">
+          <a
+            href="/programs"
+            style={{ color: "#666666" }}
+            className="text-[#666666] transition hover:text-[#1E7CBC] hover:!text-[#1E7CBC]"
+          >
             Programs <span className="text-xs">▼</span>
           </a>
 
-          <a href="#" className="transition hover:text-yellow-500">
+          <a
+            href="/blog"
+            style={{ color: "#666666" }}
+            className="text-[#666666] transition hover:text-[#1E7CBC] hover:!text-[#1E7CBC]"
+          >
             Free Resources <span className="text-xs">▼</span>
           </a>
 
-          <a href="#" className="transition hover:text-yellow-500">
+          <a
+            href="#benefits"
+            style={{ color: "#666666" }}
+            className="text-[#666666] transition hover:text-[#1E7CBC] hover:!text-[#1E7CBC]"
+          >
             Placements
           </a>
 
-          <a href="#" className="transition hover:text-yellow-500">
+          <a
+            href="/contact"
+            style={{ color: "#666666" }}
+            className="text-[#666666] transition hover:text-[#1E7CBC] hover:!text-[#1E7CBC]"
+          >
             Hire From Us
           </a>
 
         </nav>
 
-        <a
-          href="#application-form"
-          className="rounded-full bg-[#f5ad0b] px-4 py-2 text-sm font-semibold text-white lg:hidden"
-        >
-          Apply Now
-        </a>
+        {/* MOBILE & TABLET ACTIONS */}
+        <div className="flex items-center gap-2 lg:hidden">
+          <a
+            href="#hero-form"
+            className="rounded-full bg-[#1E7CBC] px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-[#183D71] transition-colors"
+          >
+            Apply Now
+          </a>
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="cursor-pointer p-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+            aria-label="Toggle Navigation Menu"
+          >
+            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+
+        {/* MOBILE MENU DROPDOWN */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden absolute top-full left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-xl px-[5%] py-4 animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="flex flex-col gap-1 font-semibold text-gray-800 text-sm">
+              <a
+                href="#benefits"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
+              >
+                <span>Benefits & Comparison</span>
+                <ArrowRight size={14} className="text-gray-400" />
+              </a>
+              <a
+                href="#projects"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
+              >
+                <span>Live Agency Projects</span>
+                <ArrowRight size={14} className="text-gray-400" />
+              </a>
+              <a
+                href="#experts"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
+              >
+                <span>Expert Mentors</span>
+                <ArrowRight size={14} className="text-gray-400" />
+              </a>
+              <a
+                href="#certifications"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
+              >
+                <span>Industry Certifications</span>
+                <ArrowRight size={14} className="text-gray-400" />
+              </a>
+              <a
+                href="#alumni"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
+              >
+                <span>Alumni Reviews</span>
+                <ArrowRight size={14} className="text-gray-400" />
+              </a>
+              <a
+                href="#campus"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
+              >
+                <span>Sanjay Place Campus Photos</span>
+                <ArrowRight size={14} className="text-gray-400" />
+              </a>
+              <a
+                href="#faqs"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
+              >
+                <span>Frequently Asked Questions</span>
+                <ArrowRight size={14} className="text-gray-400" />
+              </a>
+              <div className="pt-3 flex gap-2">
+                <a
+                  href="tel:+917060100561"
+                  className="flex-1 rounded-xl bg-gray-100 text-gray-800 font-bold py-2.5 text-center text-xs flex items-center justify-center gap-1.5"
+                >
+                  <Phone size={14} /> Call Campus
+                </a>
+                <a
+                  href="#hero-form"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex-1 rounded-xl bg-[#1E7CBC] text-white font-bold py-2.5 text-center text-xs flex items-center justify-center gap-1.5 shadow-md shadow-[#1E7CBC]/25"
+                >
+                  Apply Now
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
 
       </header>
 
@@ -177,7 +286,7 @@ const MarketingHero = () => {
 
           <div className="flex items-center gap-[clamp(12px,1.5vw,24px)]">
 
-            <span className="text-[clamp(55px,6.5vw,90px)] font-extrabold leading-none text-[#f5ad0b]">
+            <span className="text-[clamp(55px,6.5vw,90px)] font-extrabold leading-none text-[#1E7CBC]">
               #1
             </span>
 
@@ -245,7 +354,7 @@ const MarketingHero = () => {
 
             {/* FORM HEADER */}
 
-            <div className="bg-[#f5ad0b] px-4 py-[clamp(10px,1.8vh,22px)] text-center">
+            <div className="bg-[#1E7CBC] px-4 py-[clamp(10px,1.8vh,22px)] text-center">
 
               <h2 className="text-[clamp(16px,1.7vw,25px)] font-bold text-white">
                 Apply for the Marketing Launchpad
@@ -265,7 +374,7 @@ const MarketingHero = () => {
                 name="name"
                 placeholder="Name*"
                 required
-                className="w-full border-b border-[#999] bg-transparent pb-[clamp(6px,1vh,12px)] text-[clamp(14px,1.2vw,18px)] outline-none focus:border-yellow-500"
+                className="w-full border-b border-[#999] bg-transparent pb-[clamp(6px,1vh,12px)] text-[clamp(14px,1.2vw,18px)] outline-none focus:border-[#1E7CBC]"
               />
 
               <input
@@ -273,7 +382,7 @@ const MarketingHero = () => {
                 name="email"
                 placeholder="Email*"
                 required
-                className="w-full border-b border-[#999] bg-transparent pb-[clamp(6px,1vh,12px)] text-[clamp(14px,1.2vw,18px)] outline-none focus:border-yellow-500"
+                className="w-full border-b border-[#999] bg-transparent pb-[clamp(6px,1vh,12px)] text-[clamp(14px,1.2vw,18px)] outline-none focus:border-[#1E7CBC]"
               />
 
               {/* PHONE */}
@@ -332,7 +441,7 @@ const MarketingHero = () => {
                       name="whatsapp"
                       value="yes"
                       defaultChecked
-                      className="h-5 w-5 accent-yellow-500"
+                      className="h-5 w-5 accent-[#1E7CBC]"
                     />
 
                     Yes
@@ -345,7 +454,7 @@ const MarketingHero = () => {
                       type="radio"
                       name="whatsapp"
                       value="no"
-                      className="h-5 w-5 accent-yellow-500"
+                      className="h-5 w-5 accent-[#1E7CBC]"
                     />
 
                     No
@@ -386,7 +495,7 @@ const MarketingHero = () => {
 
               <button
                 type="submit"
-                className="w-full rounded-full bg-[#f5ad0b] px-4 py-[clamp(9px,1.5vh,15px)] text-[clamp(14px,1.4vw,20px)] font-bold text-white transition duration-300 hover:bg-[#e99c00] hover:shadow-lg"
+                className="w-full rounded-full bg-[#1E7CBC] px-4 py-[clamp(9px,1.5vh,15px)] text-[clamp(14px,1.4vw,20px)] font-bold text-white transition duration-300 hover:bg-[#166091] hover:shadow-lg"
               >
                 Start your marketing journey
               </button>
