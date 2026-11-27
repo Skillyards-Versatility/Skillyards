@@ -8,10 +8,10 @@ import { FiArrowUpRight } from "react-icons/fi";
 const mainTabs = [
   "Benefits",
   "Placements",
-  "Projects",
+  "What You’ll Learn",
   "Experts",
   "Certifications",
-  "Alumni",
+  "Reviews",
   "Campus",
   "FAQs",
 ];
@@ -649,6 +649,12 @@ export default function KraftshalaSection({
         const top = el.getBoundingClientRect().top + window.scrollY - 70;
         window.scrollTo({ top, behavior: "smooth" });
       }
+    } else if (tab === "What You’ll Learn" || tab === "What You'll Learn" || tab === "Projects") {
+      const el = document.getElementById("projects");
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 70;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
     } else {
       const targetId = tab.toLowerCase();
       const el = document.getElementById(targetId);
@@ -681,10 +687,10 @@ export default function KraftshalaSection({
       const sections = [
         { id: "faqs", tab: "FAQs" },
         { id: "campus", tab: "Campus" },
-        { id: "alumni", tab: "Alumni" },
+        { id: "reviews", tab: "Reviews" },
         { id: "certifications", tab: "Certifications" },
         { id: "experts", tab: "Experts" },
-        { id: "projects", tab: "Projects" },
+        { id: "projects", tab: "What You’ll Learn" },
         { id: "benefits", tab: "Benefits" },
       ];
 

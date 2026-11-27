@@ -4,7 +4,8 @@ import dynamic from "next/dynamic";
 import MarketingHero from "./marketing-hero";
 import KraftshalaSection from "./skillyards-section";
 import ProjectsSection from "./projects-section";
-import AlumniSection from "./alumni-section";
+import ExpertsSection from "./experts-section";
+import ReviewsSection from "./reviews-section";
 import CertificationsSection from "./certifications-section";
 import CampusPhotosSection from "./campus-photos-section";
 import CampaignFooter from "./CampaignFooter";
@@ -13,9 +14,6 @@ const PartnersSlider = dynamic(
   () => import("@/components/common/PartnersSlider")
 );
 
-const DGMEducators = dynamic(() =>
-  import("@/components/landingPageDGM/Educators").then((m) => m.DGMEducators)
-);
 const DGMFAQ = dynamic(() =>
   import("@/components/landingPageDGM/FAQ").then((m) => m.DGMFAQ)
 );
@@ -40,16 +38,15 @@ export default function DigitalMarketingCampaignClient({ faqs = [], educators = 
         {/* 1. STICKY-ON-SCROLL CARDS (LIVE PROJECTS & SKILLS SECTION) */}
         <ProjectsSection id="projects" />
 
-        {/* EXPERTS SECTION */}
-        <div id="experts" className="w-full scroll-mt-20 lg:scroll-mt-24">
-          <DGMEducators educators={educators} />
-        </div>
+        {/* EXPERTS / MENTORS SECTION */}
+        <ExpertsSection id="experts" educators={educators} />
 
         {/* CERTIFICATIONS SECTION (BEFORE TESTIMONIALS/ALUMNI) */}
         <CertificationsSection id="certifications" />
 
-        {/* ALUMNI / TESTIMONIALS SECTION */}
-        <AlumniSection id="alumni" />
+        {/* REVIEWS / STUDENT TESTIMONIALS SECTION */}
+        <div id="alumni" className="-scroll-mt-24" />
+        <ReviewsSection id="reviews" />
 
         {/* REAL PHOTOS OF SKILLYARDS CAMPUS SECTION */}
         <CampusPhotosSection id="campus" />
