@@ -3,16 +3,17 @@
 import dynamic from "next/dynamic";
 import MarketingHero from "./marketing-hero";
 import KraftshalaSection from "./skillyards-section";
-import ProjectsSection from "./projects-section";
-import ExpertsSection from "./experts-section";
-import ReviewsSection from "./reviews-section";
-import CertificationsSection from "./certifications-section";
-import CampusPhotosSection from "./campus-photos-section";
-import CampaignFooter from "./CampaignFooter";
 
 const PartnersSlider = dynamic(
   () => import("@/components/common/PartnersSlider")
 );
+
+const ProjectsSection = dynamic(() => import("./projects-section"));
+const ExpertsSection = dynamic(() => import("./experts-section"));
+const CertificationsSection = dynamic(() => import("./certifications-section"));
+const ReviewsSection = dynamic(() => import("./reviews-section"));
+const CampusPhotosSection = dynamic(() => import("./campus-photos-section"));
+const CampaignFooter = dynamic(() => import("./CampaignFooter"));
 
 const DGMFAQ = dynamic(() =>
   import("@/components/landingPageDGM/FAQ").then((m) => m.DGMFAQ)

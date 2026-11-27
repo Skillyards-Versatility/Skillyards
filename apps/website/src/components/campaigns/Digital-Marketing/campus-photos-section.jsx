@@ -294,6 +294,10 @@ export default function CampusPhotosSection({ id = "campus" }) {
                 <img
                   src={photo.src}
                   alt={photo.alt}
+                  loading="lazy"
+                  decoding="async"
+                  width={320}
+                  height={224}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-108"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent p-4 flex flex-col justify-between">
@@ -337,6 +341,10 @@ export default function CampusPhotosSection({ id = "campus" }) {
                   <img
                     src={photo.src}
                     alt={photo.alt}
+                    loading="lazy"
+                    decoding="async"
+                    width={320}
+                    height={224}
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-108"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent p-4 flex flex-col justify-between">

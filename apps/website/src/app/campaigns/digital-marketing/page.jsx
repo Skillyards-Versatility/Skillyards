@@ -2,6 +2,8 @@ import DigitalMarketingCampaignClient from "@/components/campaigns/Digital-Marke
 import { getPageFaqs } from "@/lib/seo/getFaqs";
 import { getTeamMembersByGroup } from "@/lib/sanity/getTeamMembers";
 
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Digital Marketing Course with Placement Guarantee | SkillYards",
   description:
@@ -14,20 +16,20 @@ export const metadata = {
 };
 
 export default async function DigitalMarketingCampaignPage() {
-  let faqs = [];
-  let educators = [];
+  const [faqsResult, educatorsResult] = await Promise.allSettled([
+    getPageFaqs("digitalmarketing", 8).catch((e) => {
+      console.error("Failed to load FAQs for digital marketing campaign:", e);
+      return [];
+    }),
+    getTeamMembersByGroup("dgmEducators").catch((e) => {
+      console.error("Failed to load educators for digital marketing campaign:", e);
+      return [];
+    }),
+  ]);
 
-  try {
-    faqs = await getPageFaqs("digitalmarketing", 8);
-  } catch (e) {
-    console.error("Failed to load FAQs for digital marketing campaign:", e);
-  }
-
-  try {
-    educators = await getTeamMembersByGroup("dgmEducators");
-  } catch (e) {
-    console.error("Failed to load educators for digital marketing campaign:", e);
-  }
+  const faqs = faqsResult.status === "fulfilled" ? faqsResult.value || [] : [];
+  const educators =
+    educatorsResult.status === "fulfilled" ? educatorsResult.value || [] : [];
 
   return (
     <main className="w-full min-h-screen">

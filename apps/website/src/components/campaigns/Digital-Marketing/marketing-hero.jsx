@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Menu, X, ArrowRight, Phone, Star, CheckCircle2 } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { SiMeta, SiSemrush, SiHubspot } from "react-icons/si";
-import FloatingIcons from "./floating-icons";
+
+const FloatingIcons = dynamic(() => import("./floating-icons"), {
+  ssr: false,
+});
 
 /* =================================
    STATIC DATA (FROM CAMPAIGN HERO)
@@ -83,7 +87,15 @@ const MarketingHero = () => {
 
         <div className="relative">
 
-          <img src="/images/logo-light.svg" alt="SkillYards logo" width={150} height={42} className="h-auto w-[130px] sm:w-[150px]" />
+          <img
+            src="/images/logo-light.svg"
+            alt="SkillYards logo"
+            width={150}
+            height={42}
+            fetchPriority="high"
+            decoding="async"
+            className="h-auto w-[130px] sm:w-[150px]"
+          />
 
         </div>
 
@@ -289,7 +301,7 @@ const MarketingHero = () => {
             </div>
 
             <span className="text-xs sm:text-sm text-gray-500 font-medium">
-              116+ Google Reviews
+              220+ Google Reviews
             </span>
 
           </div>

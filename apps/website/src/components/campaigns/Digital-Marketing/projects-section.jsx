@@ -457,7 +457,6 @@ const projectsData = [
       "Microsoft (Bing) Ads",
       "Snapchat & Telegram Ads",
       "ChatGPT & TikTok Advertising",
-      "Audience Research & Competitor Analysis",
       "Media Planning & Budget Allocation",
       "Advanced Bidding & Retargeting Strategies",
       "Conversion Tracking & Attribution",
@@ -475,8 +474,7 @@ const projectsData = [
       { name: "ChatGPT Ads", type: "chatgpt" },
       { name: "TikTok Ads", type: "tiktok-ads" },
       { name: "Google Analytics (GA4)", type: "ga" },
-      { name: "Google Tag Manager (GTM)", type: "gtm" },
-      { name: "Meta Ad Library", type: "meta-ad-lib" },
+      { name: "Google Tag Manager (GTM)", type: "gtm" }
     ],
     buildTitle: "What You'll Build",
     buildDesc:
@@ -1252,110 +1250,125 @@ export default function ProjectsSection({ id = "projects" }) {
               style={{
                 zIndex: index + 10,
               }}
-              className="sticky top-[74px] sm:top-[78px] mb-12 sm:mb-16 lg:mb-20 last:mb-0 h-auto lg:h-[calc(100dvh-92px)] min-h-[calc(100dvh-92px)] flex flex-col justify-between rounded-[24px] sm:rounded-[28px] border border-gray-200/90 bg-white p-4 sm:p-6 lg:p-7 shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-200 hover:border-[#1E7CBC]/50 overflow-hidden"
+              className="sticky top-[74px] sm:top-[78px] mb-12 sm:mb-16 lg:mb-20 last:mb-0 h-auto lg:h-[calc(100dvh-92px)] min-h-[calc(100dvh-92px)] flex flex-col justify-between rounded-[24px] sm:rounded-[28px] border border-gray-200/90 bg-white p-5 sm:p-7 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-200 hover:border-[#1E7CBC]/50 overflow-hidden"
             >
-              <div className="grid grid-cols-1 gap-5 lg:grid-cols-12 lg:gap-8 flex-1 min-h-0">
+              {/* TOP SECTION: Module Overview (Left) + Learning Journey (Right) */}
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8 min-h-0">
                 {/* Left Column: Project Overview */}
-                <div className="flex flex-col justify-start gap-2.5 lg:col-span-6 min-h-0">
-                  <div>
-                    <span className={`block text-xs font-bold uppercase tracking-wider ${project.tagColor}`}>
-                      {project.tag}
+                <div className="lg:col-span-5 min-h-0">
+                  <span className={`block text-xs sm:text-[13px] font-bold uppercase tracking-wider ${project.tagColor}`}>
+                    {project.tag}
+                  </span>
+
+                  <h3 className="mt-1 text-2xl sm:text-3xl lg:text-[28px] font-extrabold tracking-tight text-gray-900 leading-tight">
+                    {project.title}
+                  </h3>
+
+                  {project.duration && (
+                    <p className="mt-1 text-xs sm:text-sm font-semibold text-gray-500">
+                      Duration: {project.duration}
+                    </p>
+                  )}
+
+                  <div className="mt-3 sm:mt-4">
+                    <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
+                      {project.learnTitle || "What You'll Learn"}
                     </span>
-
-                    <h3 className="mt-0.5 text-xl font-bold tracking-tight text-[#333] sm:text-2xl lg:text-[25px] leading-tight">
-                      {project.title}
-                    </h3>
-
-                    {project.duration && (
-                      <p className="mt-1 text-xs font-semibold text-[#555] sm:text-sm">
-                        Duration: {project.duration}
-                      </p>
-                    )}
-
-                    <div className="mt-2.5">
-                      <span className="block text-[11px] font-bold text-[#444] uppercase tracking-wider">
-                        {project.learnTitle || "What You'll Learn"}
-                      </span>
-                      <p className="mt-0.5 text-xs sm:text-sm leading-relaxed text-[#666]">
-                        {project.description}
-                      </p>
-                    </div>
-
-                    {project.practicalProject && (
-                      <div className="mt-3 rounded-xl bg-[#1E7CBC]/5 border border-[#1E7CBC]/20 p-2.5 sm:p-3">
-                        <span className="block text-[11px] font-bold uppercase tracking-wider text-[#1E7CBC]">
-                          Practical Project
-                        </span>
-                        <p className="mt-0.5 text-xs sm:text-[13px] font-medium leading-snug text-gray-800">
-                          {project.practicalProject}
-                        </p>
-                      </div>
-                    )}
+                    <p className="text-sm sm:text-[15px] leading-relaxed text-gray-600">
+                      {project.description}
+                    </p>
                   </div>
                 </div>
 
-                {/* Right Column: Checklist & What You'll Build */}
-                <div className="flex flex-col justify-start gap-2.5 lg:col-span-6 min-h-0">
-                  <div>
-                    {project.checklistTitle && (
-                      <span className="mb-2 block text-xs font-bold uppercase tracking-wider text-gray-700">
+                {/* Right Column: Checklist */}
+                <div className="lg:col-span-7 min-h-0">
+                  {project.checklistTitle && (
+                    <div className="flex items-center justify-between mb-2.5 sm:mb-3">
+                      <span className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-gray-800">
                         {project.checklistTitle}
                       </span>
-                    )}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-1.5 sm:gap-y-2">
-                      <ul className="space-y-1.5 sm:space-y-2">
-                        {project.checklist.slice(0, Math.ceil(project.checklist.length / 2)).map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-1.5 text-xs sm:text-[13px] leading-snug text-[#555]">
-                            <svg
-                              className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#1E7CBC]"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2.5}
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      <ul className="space-y-1.5 sm:space-y-2">
-                        {project.checklist.slice(Math.ceil(project.checklist.length / 2)).map((item, idx) => (
-                          <li key={idx} className="flex items-start gap-1.5 text-xs sm:text-[13px] leading-snug text-[#555]">
-                            <svg
-                              className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#1E7CBC]"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                              strokeWidth={2.5}
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span>{item}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      <span className="text-xs font-semibold text-gray-400">
+                        {project.checklist.length} Topics
+                      </span>
                     </div>
+                  )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5 sm:gap-y-3">
+                    <ul className="space-y-2 sm:space-y-2.5">
+                      {project.checklist.slice(0, Math.ceil(project.checklist.length / 2)).map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm sm:text-[14.5px] leading-snug text-gray-700 font-medium">
+                          <svg
+                            className="mt-0.5 h-4 w-4 shrink-0 text-[#1E7CBC]"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <ul className="space-y-2 sm:space-y-2.5">
+                      {project.checklist.slice(Math.ceil(project.checklist.length / 2)).map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-2 text-sm sm:text-[14.5px] leading-snug text-gray-700 font-medium">
+                          <svg
+                            className="mt-0.5 h-4 w-4 shrink-0 text-[#1E7CBC]"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2.5}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                          </svg>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
+                </div>
+              </div>
 
-                  {/* What You'll Build (moved up right under Learning Journey) */}
+              {/* MIDDLE SECTION: Practical Project AND What You'll Build IN ONE LINE SIDE-BY-SIDE */}
+              {(project.practicalProject || project.buildDesc || project.presentation) && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-5 w-full mt-4 sm:mt-5">
+                  {/* Practical Project Card */}
+                  {project.practicalProject && (
+                    <div className="h-full rounded-2xl bg-[#1E7CBC]/5 border border-[#1E7CBC]/20 p-3.5 sm:p-4 flex flex-col justify-center">
+                      <div className="flex items-center gap-1.5 text-[#1E7CBC] font-bold">
+                        <svg className="h-4 w-4 shrink-0 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        <span className="text-xs uppercase tracking-wider font-bold">
+                          Practical Project
+                        </span>
+                      </div>
+                      <p className="mt-1.5 text-sm sm:text-[14.5px] font-semibold text-gray-800 leading-snug">
+                        {project.practicalProject}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* What You'll Build Card */}
                   {project.buildDesc ? (
-                    <div className="mt-1 rounded-xl border border-emerald-200 bg-emerald-50/70 p-2.5 sm:p-3">
+                    <div className="h-full rounded-2xl border border-emerald-200/90 bg-emerald-50/70 p-3.5 sm:p-4 flex flex-col justify-center">
                       <div className="flex items-center gap-1.5 font-bold text-emerald-800">
                         <svg className="h-4 w-4 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="text-[11px] uppercase tracking-wider sm:text-xs">{project.buildTitle || "What You'll Build"}</span>
+                        <span className="text-xs uppercase tracking-wider font-bold">
+                          {project.buildTitle || "What You'll Build"}
+                        </span>
                       </div>
-                      <p className="mt-1 text-xs font-medium text-emerald-950 leading-snug">
+                      <p className="mt-1.5 text-sm sm:text-[14.5px] font-semibold text-emerald-950 leading-snug">
                         {project.buildDesc}
                       </p>
                     </div>
                   ) : project.presentation ? (
-                    <div className="mt-1 flex flex-col items-start gap-1">
+                    <div className="h-full rounded-2xl border border-gray-200 bg-gray-50/70 p-3.5 sm:p-4 flex flex-col justify-center">
                       <div className="flex items-center gap-2 font-bold">
                         <svg
-                          className={`h-5 w-5 shrink-0 ${project.tagColor}`}
+                          className={`h-4 w-4 shrink-0 ${project.tagColor}`}
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
@@ -1365,50 +1378,26 @@ export default function ProjectsSection({ id = "projects" }) {
                           <circle cx="12" cy="12" r="5" />
                           <circle cx="12" cy="12" r="2" />
                         </svg>
-                        <span className={`text-xs sm:text-sm ${project.tagColor}`}>
+                        <span className={`text-xs uppercase tracking-wider font-bold ${project.tagColor}`}>
                           {project.presentation}
                         </span>
                       </div>
-
                       {project.footnote && (
-                        <span className="text-[11px] italic text-gray-400">
+                        <p className="mt-1 text-xs italic text-gray-500">
                           {project.footnote}
-                        </span>
+                        </p>
                       )}
                     </div>
                   ) : null}
                 </div>
-              </div>
+              )}
 
-              {/* Full Width: Tools Shelf (Icons Only) */}
+              {/* BOTTOM SECTION: Full Width Tools Shelf (Icons Only) */}
               {project.tools && project.tools.length > 0 && (
-                <div className="mt-3 shrink-0 rounded-xl sm:rounded-2xl bg-[#fafafa] px-4 py-2.5 sm:px-5 sm:py-3 border border-[#f0eee9] flex flex-wrap items-center gap-3 sm:gap-5">
+                <div className="mt-4 sm:mt-5 shrink-0 rounded-xl sm:rounded-2xl bg-[#fafafa] px-5 py-3 sm:px-6 sm:py-3.5 border border-[#f0eee9] flex flex-wrap items-center gap-4 sm:gap-6">
                   {project.tools.map((tool, idx) => (
                     <ToolBadge key={idx} tool={tool} />
                   ))}
-                </div>
-              )}
-
-              {/* Full Width: Applied AI Examples */}
-              {project.aiExamples && project.aiExamples.length > 0 && (
-                <div className={`mt-2.5 sm:mt-3 shrink-0 rounded-xl sm:rounded-2xl p-3 sm:p-3.5 ${project.aiBg}`}>
-                  <h4 className={`text-xs font-bold uppercase tracking-wide ${project.aiTitleColor} mb-2`}>
-                    Applied AI Examples
-                  </h4>
-
-                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
-                    {project.aiExamples.map((ex, idx) => (
-                      <div
-                        key={idx}
-                        className={`rounded-lg bg-white p-2.5 sm:p-3 shadow-2xs border-l-4 ${project.aiAccent}`}
-                      >
-                        <p className="text-xs leading-relaxed text-[#444]">
-                          <strong className="text-[#222]">{ex.title} </strong>
-                          {ex.desc}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               )}
             </div>
