@@ -1,18 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import { GoogleMapEmbed } from "@/components/ui/GoogleMapEmbed";
 import Logo from "@/components/logo";
-import {
-  Accordion,
-  AccordionItem,
-  AccordionTrigger,
-  AccordionContent,
-} from "@/components/ui/accordion";
 import SocialLinks from "@/components/SocialLinks";
 
 export default function CampaignFooter() {
+  const [openSection, setOpenSection] = useState(null);
   const year = useMemo(() => new Date().getFullYear(), []);
 
   const footerSections = [
@@ -101,15 +97,26 @@ export default function CampaignFooter() {
         ))}
 
         {/* Mobile accordion */}
-        <div className="md:hidden">
-          <Accordion type="single" collapsible>
-            {footerSections.map((section) => (
-              <AccordionItem key={section.title} value={section.title}>
-                <AccordionTrigger className="text-gray-700 dark:text-gray-300 font-semibold">
-                  {section.title}
-                </AccordionTrigger>
-                <AccordionContent>
-                  <ul className="space-y-2 text-sm">
+        <div className="md:hidden divide-y divide-gray-200 dark:divide-zinc-800 border-y border-gray-200 dark:border-zinc-800">
+          {footerSections.map((section) => {
+            const isOpen = openSection === section.title;
+            return (
+              <div key={section.title} className="py-0.5">
+                <button
+                  type="button"
+                  onClick={() => setOpenSection(isOpen ? null : section.title)}
+                  className="flex w-full items-center justify-between py-3.5 text-left font-semibold text-gray-700 dark:text-gray-300 transition-colors cursor-pointer"
+                  aria-expanded={isOpen}
+                >
+                  <span>{section.title}</span>
+                  <ChevronDown
+                    className={`size-4 shrink-0 transition-transform duration-200 text-gray-400 ${
+                      isOpen ? "rotate-180 text-[#1E7CBC]" : ""
+                    }`}
+                  />
+                </button>
+                {isOpen && (
+                  <ul className="space-y-2 pb-3.5 pt-0.5 text-sm animate-in fade-in-0 duration-150">
                     {section.links.map((link) => (
                       <li key={link.href}>
                         <Link
@@ -121,10 +128,10 @@ export default function CampaignFooter() {
                       </li>
                     ))}
                   </ul>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Map column (Visible on all devices) */}

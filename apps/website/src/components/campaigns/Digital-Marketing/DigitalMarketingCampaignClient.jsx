@@ -13,13 +13,14 @@ const ExpertsSection = dynamic(() => import("./experts-section"));
 const CertificationsSection = dynamic(() => import("./certifications-section"));
 const ReviewsSection = dynamic(() => import("./reviews-section"));
 const CampusPhotosSection = dynamic(() => import("./campus-photos-section"));
+const CampaignFAQ = dynamic(() => import("./CampaignFAQ"));
 const CampaignFooter = dynamic(() => import("./CampaignFooter"));
 
-const DGMFAQ = dynamic(() =>
-  import("@/components/landingPageDGM/FAQ").then((m) => m.DGMFAQ)
-);
-
-export default function DigitalMarketingCampaignClient({ faqs = [], educators = [] }) {
+export default function DigitalMarketingCampaignClient({
+  faqs = [],
+  educators = [],
+  reviewsData = null,
+}) {
   const whatsappNumber =
     process.env.NEXT_PUBLIC_PHONE?.replace(/\D/g, "") || "917060100561";
   const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
@@ -47,14 +48,14 @@ export default function DigitalMarketingCampaignClient({ faqs = [], educators = 
 
         {/* REVIEWS / STUDENT TESTIMONIALS SECTION */}
         <div id="alumni" className="-scroll-mt-24" />
-        <ReviewsSection id="reviews" />
+        <ReviewsSection id="reviews" data={reviewsData} />
 
         {/* REAL PHOTOS OF SKILLYARDS CAMPUS SECTION */}
         <CampusPhotosSection id="campus" />
 
         {/* FAQS SECTION */}
         <div id="faqs" className="w-full scroll-mt-20 lg:scroll-mt-24">
-          <DGMFAQ faqs={faqs} />
+          <CampaignFAQ />
         </div>
       </KraftshalaSection>
 

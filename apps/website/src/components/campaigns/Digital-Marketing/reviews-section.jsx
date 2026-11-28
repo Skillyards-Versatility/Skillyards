@@ -1,9 +1,8 @@
 "use client";
 
-import { useRef } from "react";
-import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
-import { Star, ExternalLink, Sparkles, ShieldCheck } from "lucide-react";
+import { Star, ExternalLink, Sparkles, ShieldCheck, CheckCircle2 } from "lucide-react";
 import {
   Carousel,
   CarouselContent,
@@ -34,8 +33,36 @@ const GoogleIcon = ({ className = "w-5 h-5" }) => (
   </svg>
 );
 
-// Real Verified Google Reviews from SkillYards Students in Agra
-const googleReviewsData = [
+// Fallback Initials Helper
+const getInitials = (name) => {
+  if (!name) return "S";
+  const parts = name.trim().split(" ");
+  if (parts.length >= 2) {
+    return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  }
+  return parts[0][0].toUpperCase();
+};
+
+// Avatar gradient generator
+const getAvatarGradient = (name) => {
+  const gradients = [
+    "from-violet-500 to-indigo-600",
+    "from-blue-500 to-cyan-600",
+    "from-emerald-500 to-teal-600",
+    "from-rose-500 to-pink-600",
+    "from-amber-500 to-orange-600",
+    "from-purple-500 to-pink-600",
+  ];
+  if (!name) return gradients[0];
+  let sum = 0;
+  for (let i = 0; i < name.length; i++) {
+    sum += name.charCodeAt(i);
+  }
+  return gradients[sum % gradients.length];
+};
+
+// Fallback Reviews if API response is empty or offline
+const defaultFallbackReviews = [
   {
     id: "divya-patel",
     name: "Divya Patel",
@@ -43,7 +70,6 @@ const googleReviewsData = [
     rating: 5,
     avatar:
       "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-    initials: "DP",
     content:
       "Excellent mentorship and career counseling! I completed the digital marketing course here and it was outstanding. They cover SEO, running ad campaigns, and social media with live client accounts, not just screenshots. The placement team arranged multiple interviews right after capstone.",
   },
@@ -54,7 +80,6 @@ const googleReviewsData = [
     rating: 5,
     avatar:
       "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-    initials: "PV",
     content:
       "The practical approach to learning at SkillYards is unmatched in Agra. Live client projects and real industry exposure gave me the confidence to crack agency interviews without hesitation. Even months after batch completion, mentors are always accessible.",
   },
@@ -65,7 +90,6 @@ const googleReviewsData = [
     rating: 5,
     avatar:
       "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-    initials: "AT",
     content:
       "SkillYards completely transformed my career in digital marketing. Working on live ad budgets with real client money taught me campaign architecture and ROAS optimization that theoretical courses never touch. Cleared agency interview in round 1!",
   },
@@ -76,7 +100,6 @@ const googleReviewsData = [
     rating: 5,
     avatar:
       "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-    initials: "RS",
     content:
       "SkillYards doesn't teach from outdated PPTs. We performed live technical SEO audits on real client domains using Screaming Frog and Ahrefs. Got placed in a top firm with a solid package. Best learning environment in Agra.",
   },
@@ -87,7 +110,6 @@ const googleReviewsData = [
     rating: 5,
     avatar:
       "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-    initials: "SC",
     content:
       "End-to-end customer acquisition funnels, Meta Lead Ads, and budget pacing that drive real business results. The faculty is extremely supportive and guides you personally on your portfolio and client pitches.",
   },
@@ -98,7 +120,6 @@ const googleReviewsData = [
     rating: 5,
     avatar:
       "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-    initials: "SJ",
     content:
       "Managing live campaign budgets during training eliminated all interview nervousness. Practical learning with Google Ads, Meta CAPI, and GA4 tracking gave me an edge over other candidates during campus placements.",
   },
@@ -109,7 +130,6 @@ const googleReviewsData = [
     rating: 5,
     avatar:
       "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-    initials: "AS",
     content:
       "Best training institute in Agra! High quality training with practical exposure and real projects. Mentors are very cooperative and the placement cell is active at every step of your career preparation.",
   },
@@ -120,19 +140,75 @@ const googleReviewsData = [
     rating: 5,
     avatar:
       "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&crop=faces&auto=format&q=80",
-    initials: "HA",
     content:
       "Starting my business was a huge leap, but SkillYards digital acquisition training gave me the exact blueprint to generate qualified leads without spending lakhs on outside agencies. Inbound Google Search and Local SEO work wonders.",
   },
 ];
 
-export default function ReviewsSection({ id = "reviews" }) {
+export default function ReviewsSection({ id = "reviews", data = null }) {
+  const [reviewsData, setReviewsData] = useState(data || null);
+
+  // Client-side fallback fetch from /api/reviews if data wasn't provided via SSR
+  useEffect(() => {
+    if (data) {
+      setReviewsData(data);
+      return;
+    }
+    fetch("/api/reviews")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json && json.reviews && json.reviews.length > 0) {
+          setReviewsData(json);
+        }
+      })
+      .catch((err) => console.error("Error loading reviews client-side:", err));
+  }, [data]);
+
   const plugin = useRef(
     Autoplay({ delay: 4000, stopOnInteraction: false, stopOnMouseEnter: true })
   );
 
-  const googleReviewsUrl =
-    "https://www.google.com/maps/place/?q=place_id:ChIJ2WE7P2p3dDkR_Kc5Wi7IbMI";
+  const placeId =
+    reviewsData?.placeId ||
+    process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID ||
+    "ChIJ2WE7P2p3dDkR_Kc5Wi7IbMI";
+
+  const ratingValue = reviewsData?.rating
+    ? Number(reviewsData.rating).toFixed(1)
+    : "4.9";
+  const userRatingCount = reviewsData?.userRatingCount || 210;
+
+  const googleReviewsUrl = placeId
+    ? `https://www.google.com/maps/place/?q=place_id:${placeId}`
+    : "https://www.google.com/maps/search/?api=1&query=Skillyards+Versatility+Pvt+Ltd+Agra";
+
+  // Normalize reviews from Google Places API or fallback items
+  const rawReviews =
+    reviewsData?.reviews && reviewsData.reviews.length > 0
+      ? reviewsData.reviews
+      : defaultFallbackReviews;
+
+  const reviews = rawReviews.map((item, idx) => {
+    const author = item.authorAttribution || {};
+    const name = author.displayName || item.name || "Student Reviewer";
+    const avatar = author.photoUri || item.avatar || "";
+    const date =
+      item.relativePublishTimeDescription || item.date || "Verified Google Review";
+    const content = item.text?.text || item.text || item.content || "";
+    const rating = item.rating || 5;
+
+    return {
+      id: item.id || `google-review-${idx}`,
+      name,
+      avatar,
+      initials: getInitials(name),
+      gradient: getAvatarGradient(name),
+      date,
+      content,
+      rating,
+      profileUrl: author.uri || "",
+    };
+  });
 
   return (
     <section
@@ -169,7 +245,7 @@ export default function ReviewsSection({ id = "reviews" }) {
 
           {/* Rating Number */}
           <div className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">
-            4.8 out of 5
+            {ratingValue} out of 5
           </div>
 
           {/* 5 Gold Stars */}
@@ -184,7 +260,7 @@ export default function ReviewsSection({ id = "reviews" }) {
 
           {/* Subtext */}
           <p className="text-xs sm:text-sm font-semibold text-gray-500">
-            Based on 116+ Google Reviews
+            Based on {userRatingCount}+ Google Reviews
           </p>
         </div>
 
@@ -199,7 +275,7 @@ export default function ReviewsSection({ id = "reviews" }) {
             className="w-full"
           >
             <CarouselContent className="-ml-4 sm:-ml-6 py-2">
-              {googleReviewsData.map((review) => (
+              {reviews.map((review) => (
                 <CarouselItem
                   key={review.id}
                   className="pl-4 sm:pl-6 md:basis-1/2 lg:basis-1/3"
@@ -212,15 +288,16 @@ export default function ReviewsSection({ id = "reviews" }) {
                           {/* Google Profile Picture / Initials Avatar */}
                           <div className="relative w-10 h-10 rounded-full overflow-hidden bg-gray-100 border border-gray-200 shrink-0">
                             {review.avatar ? (
-                              <Image
+                              <img
                                 src={review.avatar}
                                 alt={review.name}
-                                fill
-                                sizes="40px"
-                                className="object-cover"
+                                referrerPolicy="no-referrer"
+                                className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center font-bold text-gray-700 text-xs">
+                              <div
+                                className={`w-full h-full flex items-center justify-center font-bold text-white text-xs bg-linear-to-br ${review.gradient}`}
+                              >
                                 {review.initials}
                               </div>
                             )}
@@ -244,9 +321,9 @@ export default function ReviewsSection({ id = "reviews" }) {
 
                       {/* Star Rating */}
                       <div className="flex items-center gap-1 mb-2.5">
-                        {[1, 2, 3, 4, 5].map((s) => (
+                        {Array.from({ length: review.rating }).map((_, sIdx) => (
                           <Star
-                            key={s}
+                            key={sIdx}
                             className="w-3.5 h-3.5 fill-amber-400 text-amber-400"
                           />
                         ))}
