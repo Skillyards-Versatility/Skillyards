@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { HelpCircle, Plus, Minus, CheckCircle2, MapPin, ArrowRight } from "lucide-react";
+import { HelpCircle, Plus, Minus, CheckCircle2, MapPin, ArrowRight, ChevronDown } from "lucide-react";
 import { getFaqAnchorId } from "@/lib/seo/faqUtils";
 
 const campaignFaqs = [
@@ -111,6 +111,8 @@ const campaignFaqs = [
 
 export default function CampaignFAQ() {
   const [openIndex, setOpenIndex] = useState(0);
+  const [showAllFaqs, setShowAllFaqs] = useState(false);
+  const visibleFaqs = showAllFaqs ? campaignFaqs : campaignFaqs.slice(0, 5);
 
   const toggleAccordion = (idx) => {
     setOpenIndex(openIndex === idx ? null : idx);
@@ -140,99 +142,126 @@ export default function CampaignFAQ() {
         </div>
 
         {/* FAQ Accordion List */}
-        <div className="space-y-3 sm:space-y-3.5">
-          {campaignFaqs.map((faq, idx) => {
-            const isOpen = openIndex === idx;
-            const anchorId = getFaqAnchorId({ question: faq.question });
+        <div className="relative">
+          <div className="space-y-3 sm:space-y-3.5">
+            {visibleFaqs.map((faq, idx) => {
+              const isOpen = openIndex === idx;
+              const anchorId = getFaqAnchorId({ question: faq.question });
 
-            return (
-              <div
-                key={faq.id}
-                id={anchorId}
-                className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
-                  isOpen
-                    ? "border-[#1E7CBC]/40 bg-[#f7faff] shadow-md shadow-[#1E7CBC]/5"
-                    : "border-gray-200/80 bg-white hover:border-gray-300 hover:bg-gray-50/50 shadow-2xs"
-                }`}
-              >
-                <h3>
-                  <button
-                    type="button"
-                    aria-expanded={isOpen}
-                    aria-controls={`campaign-faq-panel-${idx}`}
-                    id={`campaign-faq-trigger-${idx}`}
-                    onClick={() => toggleAccordion(idx)}
-                    className="flex w-full items-center justify-between gap-4 p-4.5 sm:p-5 text-left transition-colors cursor-pointer select-none"
-                  >
-                    <span
-                      className={`text-sm sm:text-base font-bold leading-snug transition-colors pr-2 ${
-                        isOpen ? "text-[#1E7CBC]" : "text-gray-900"
-                      }`}
-                    >
-                      {faq.question}
-                    </span>
-                    <span
-                      className={`shrink-0 flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 ${
-                        isOpen
-                          ? "bg-[#1E7CBC] text-white rotate-180"
-                          : "bg-gray-100 text-gray-500 hover:bg-gray-200"
-                      }`}
-                    >
-                      {isOpen ? (
-                        <Minus className="h-4 w-4" />
-                      ) : (
-                        <Plus className="h-4 w-4" />
-                      )}
-                    </span>
-                  </button>
-                </h3>
-
+              return (
                 <div
-                  id={`campaign-faq-panel-${idx}`}
-                  role="region"
-                  aria-labelledby={`campaign-faq-trigger-${idx}`}
-                  className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${
-                    isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                  key={faq.id}
+                  id={anchorId}
+                  className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+                    isOpen
+                      ? "border-[#1E7CBC]/40 bg-[#f7faff] shadow-md shadow-[#1E7CBC]/5"
+                      : "border-gray-200/80 bg-white hover:border-gray-300 hover:bg-gray-50/50 shadow-2xs"
                   }`}
                 >
-                  <div className="overflow-hidden">
-                    <div className="px-4.5 pb-5 sm:px-5 sm:pb-6 text-sm sm:text-[15px] leading-relaxed text-gray-600 border-t border-gray-100/90 pt-3.5">
-                      {/* Special format for Q10 (Career opportunities list) */}
-                      {faq.roles ? (
-                        <div className="space-y-3">
-                          <p>{faq.answerIntro}</p>
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 my-2 py-1">
-                            {faq.roles.map((role, rIdx) => (
-                              <div
-                                key={rIdx}
-                                className="flex items-center gap-2 rounded-lg bg-white border border-gray-200/80 px-3 py-2 text-xs sm:text-sm font-semibold text-gray-800 shadow-2xs"
-                              >
-                                <CheckCircle2 className="h-3.5 w-3.5 text-[#1E7CBC] shrink-0" />
-                                <span>{role}</span>
-                              </div>
-                            ))}
+                  <h3>
+                    <button
+                      type="button"
+                      aria-expanded={isOpen}
+                      aria-controls={`campaign-faq-panel-${idx}`}
+                      id={`campaign-faq-trigger-${idx}`}
+                      onClick={() => toggleAccordion(idx)}
+                      className="flex w-full items-center justify-between gap-4 p-4.5 sm:p-5 text-left transition-colors cursor-pointer select-none"
+                    >
+                      <span
+                        className={`text-sm sm:text-base font-bold leading-snug transition-colors pr-2 ${
+                          isOpen ? "text-[#1E7CBC]" : "text-gray-900"
+                        }`}
+                      >
+                        {faq.question}
+                      </span>
+                      <span
+                        className={`shrink-0 flex items-center justify-center w-8 h-8 rounded-full transition-all duration-200 ${
+                          isOpen
+                            ? "bg-[#1E7CBC] text-white rotate-180"
+                            : "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                        }`}
+                      >
+                        {isOpen ? (
+                          <Minus className="h-4 w-4" />
+                        ) : (
+                          <Plus className="h-4 w-4" />
+                        )}
+                      </span>
+                    </button>
+                  </h3>
+
+                  <div
+                    id={`campaign-faq-panel-${idx}`}
+                    role="region"
+                    aria-labelledby={`campaign-faq-trigger-${idx}`}
+                    className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${
+                      isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                    }`}
+                  >
+                    <div className="overflow-hidden">
+                      <div className="px-4.5 pb-5 sm:px-5 sm:pb-6 text-sm sm:text-[15px] leading-relaxed text-gray-600 border-t border-gray-100/90 pt-3.5">
+                        {/* Special format for Q10 (Career opportunities list) */}
+                        {faq.roles ? (
+                          <div className="space-y-3">
+                            <p>{faq.answerIntro}</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 my-2 py-1">
+                              {faq.roles.map((role, rIdx) => (
+                                <div
+                                  key={rIdx}
+                                  className="flex items-center gap-2 rounded-lg bg-white border border-gray-200/80 px-3 py-2 text-xs sm:text-sm font-semibold text-gray-800 shadow-2xs"
+                                >
+                                  <CheckCircle2 className="h-3.5 w-3.5 text-[#1E7CBC] shrink-0" />
+                                  <span>{role}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <p>{faq.answerOutro}</p>
                           </div>
-                          <p>{faq.answerOutro}</p>
-                        </div>
-                      ) : faq.address ? (
-                        /* Special format for Q14 (Address & Visit Note) */
-                        <div className="space-y-2.5">
-                          <div className="flex items-start gap-2.5 rounded-xl bg-white border border-gray-200/80 p-3.5 shadow-2xs">
-                            <MapPin className="h-5 w-5 text-[#1E7CBC] shrink-0 mt-0.5" />
-                            <p className="font-medium text-gray-800">{faq.address}</p>
+                        ) : faq.address ? (
+                          /* Special format for Q14 (Address & Visit Note) */
+                          <div className="space-y-2.5">
+                            <div className="flex items-start gap-2.5 rounded-xl bg-white border border-gray-200/80 p-3.5 shadow-2xs">
+                              <MapPin className="h-5 w-5 text-[#1E7CBC] shrink-0 mt-0.5" />
+                              <p className="font-medium text-gray-800">{faq.address}</p>
+                            </div>
+                            <p>{faq.visitNote}</p>
                           </div>
-                          <p>{faq.visitNote}</p>
-                        </div>
-                      ) : (
-                        /* Standard Answer */
-                        <p>{faq.answer}</p>
-                      )}
+                        ) : (
+                          /* Standard Answer */
+                          <p>{faq.answer}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+
+          {/* Subtle Gradient Fade Overlay when collapsed */}
+          {!showAllFaqs && (
+            <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white via-white/80 to-transparent" />
+          )}
+        </div>
+
+        {/* Show More / View All Button */}
+        <div className="mt-8 flex justify-center">
+          <button
+            type="button"
+            onClick={() => setShowAllFaqs(!showAllFaqs)}
+            className="inline-flex items-center gap-2.5 rounded-full border border-[#1E7CBC] bg-white px-7 py-3 text-sm sm:text-base font-bold text-[#1E7CBC] shadow-sm transition-all duration-200 hover:bg-[#1E7CBC] hover:text-white hover:shadow-md active:scale-98 cursor-pointer"
+          >
+            <span>
+              {showAllFaqs
+                ? "Show Less"
+                : `Click to view all (${campaignFaqs.length} FAQs)`}
+            </span>
+            <ChevronDown
+              className={`h-4.5 w-4.5 transition-transform duration-300 ${
+                showAllFaqs ? "rotate-180" : ""
+              }`}
+            />
+          </button>
         </div>
 
         {/* Bottom Call to Action Card */}

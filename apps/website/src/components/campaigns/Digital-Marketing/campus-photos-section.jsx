@@ -224,7 +224,6 @@ export default function CampusPhotosSection({ id = "campus" }) {
           </div>
 
           <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-gray-900 leading-tight">
-            Inside <span className="text-[#183D71]">Skill</span><span className="text-[#1E7CBC]">Yards</span>:{" "}
             <span className="bg-gradient-to-r from-[#1E7CBC] to-blue-600 bg-clip-text text-transparent">
               Where Marketers & Techies Train
             </span>

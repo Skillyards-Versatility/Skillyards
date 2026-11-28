@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import dynamic from "next/dynamic";
 import MarketingHero from "./marketing-hero";
 import KraftshalaSection from "./skillyards-section";
@@ -21,6 +22,24 @@ export default function DigitalMarketingCampaignClient({
   educators = [],
   reviewsData = null,
 }) {
+  // Ensure the campaign page is strictly light mode even if user set dark mode on main website
+  useEffect(() => {
+    const html = document.documentElement;
+    const hadDark = html.classList.contains("dark");
+    if (hadDark) {
+      html.classList.remove("dark");
+    }
+
+    return () => {
+      try {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") {
+          html.classList.add("dark");
+        }
+      } catch (e) {}
+    };
+  }, []);
+
   const whatsappNumber =
     process.env.NEXT_PUBLIC_PHONE?.replace(/\D/g, "") || "917060100561";
   const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
@@ -28,12 +47,25 @@ export default function DigitalMarketingCampaignClient({
   )}`;
 
   return (
-    <div className="relative min-h-screen w-full bg-white text-gray-900 selection:bg-[#1E7CBC]/20 selection:text-[#1E7CBC]">
+    <div
+      className="relative min-h-screen w-full bg-white text-gray-900 selection:bg-[#1E7CBC]/20 selection:text-[#1E7CBC] [color-scheme:light]"
+      style={{
+        "--background": "#ffffff",
+        "--foreground": "#111827",
+        "--card": "#ffffff",
+        "--card-foreground": "#111827",
+        "--popover": "#ffffff",
+        "--popover-foreground": "#111827",
+        "--border": "#e5e7eb",
+        "--muted": "#f3f4f6",
+        "--muted-foreground": "#6b7280",
+      }}
+    >
       {/* 1. HERO SECTION */}
       <MarketingHero />
 
       {/* 2. COMPANIES WAITING FOR YOU */}
-      <PartnersSlider />
+      <PartnersSlider forceLight={true} />
 
       {/* 3. COMPARISON, STICKY NAVIGATION & BENEFITS SECTION */}
       <KraftshalaSection applyUrl="#application-form">

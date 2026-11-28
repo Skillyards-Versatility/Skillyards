@@ -50,52 +50,31 @@ const icons = [
 
 const FloatingIcons = () => {
   return (
-    <div className="floating-icons-layer pointer-events-none absolute inset-0 -z-0 overflow-hidden hidden md:block" aria-hidden="true">
-
+    <div
+      className="pointer-events-none absolute inset-0 -z-0 overflow-hidden hidden md:block"
+      aria-hidden="true"
+    >
       {icons.map(({ Icon, color, duration, delay, ...position }, index) => (
         <div
           key={index}
-          className={`floating-icon-card floating-icon-${index}`}
+          className="absolute flex items-center justify-center rounded-[14px] bg-white/95 backdrop-blur-md border border-black/[0.06] shadow-[0_10px_25px_-4px_rgba(0,0,0,0.08),0_4px_6px_-2px_rgba(0,0,0,0.04)] w-[clamp(38px,3.2vw,50px)] h-[clamp(38px,3.2vw,50px)] will-change-transform"
           style={{
-            ...position,
-            "--duration": duration,
-            "--delay": delay,
+            position: "absolute",
+            top: position.top,
+            left: position.left,
+            right: position.right,
+            bottom: position.bottom,
+            animation: `floatCard ${duration} ease-in-out infinite ${delay}`,
           }}
         >
           <Icon
             style={{ color }}
-            className="floating-brand-icon"
+            className="w-[clamp(20px,1.8vw,26px)] h-[clamp(20px,1.8vw,26px)] shrink-0"
           />
         </div>
       ))}
 
-      <style jsx>{`
-        .floating-icons-layer {
-          position: absolute;
-          inset: 0;
-        }
-
-        .floating-icon-card {
-          position: absolute;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: clamp(38px, 3.2vw, 50px);
-          height: clamp(38px, 3.2vw, 50px);
-          border-radius: 14px;
-          background-color: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(8px);
-          border: 1px solid rgba(0, 0, 0, 0.06);
-          box-shadow: 0 10px 25px -4px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-          animation: floatCard var(--duration, 8s) ease-in-out infinite var(--delay, 0s);
-          will-change: transform;
-        }
-
-        .floating-brand-icon {
-          width: clamp(20px, 1.8vw, 26px);
-          height: clamp(20px, 1.8vw, 26px);
-        }
-
+      <style>{`
         @keyframes floatCard {
           0%, 100% {
             transform: translateY(0px) rotate(0deg);
@@ -106,12 +85,13 @@ const FloatingIcons = () => {
         }
 
         @media (prefers-reduced-motion: reduce) {
-          .floating-icon-card {
-            animation: none;
+          @keyframes floatCard {
+            0%, 100% {
+              transform: none;
+            }
           }
         }
       `}</style>
-
     </div>
   );
 };

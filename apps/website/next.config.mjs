@@ -4,6 +4,17 @@ console.log("NODE_ENV:", process.env.NODE_ENV);
 
 const nextConfig = {
   reactCompiler: false,
+  compress: true,
+  experimental: {
+    optimizePackageImports: [
+      "lucide-react",
+      "react-icons",
+      "@radix-ui/react-accordion",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "embla-carousel-react",
+    ],
+  },
 
   async headers() {
     const isDev = process.env.NODE_ENV !== "production";

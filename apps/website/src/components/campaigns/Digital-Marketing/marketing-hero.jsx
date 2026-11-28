@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import {
   Menu,
   X,
@@ -11,6 +13,7 @@ import {
   Star,
   CheckCircle2,
   ChevronDown,
+  Loader2,
 } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { SiMeta, SiSemrush, SiHubspot } from "react-icons/si";
@@ -20,7 +23,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import FloatingIcons from "./floating-icons";
+const FloatingIcons = dynamic(() => import("./floating-icons"), {
+  ssr: false,
+});
 
 /* =================================
    PROGRAM GROUPS DATA
@@ -95,14 +100,89 @@ const MarketingHero = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileProgramsOpen, setMobileProgramsOpen] = useState(false);
 
-  const handleSubmit = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  const router = useRouter();
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
 
-    const formData = new FormData(e.currentTarget);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
 
-    console.log(Object.fromEntries(formData.entries()));
+    const fullName = (formData.get("name") || "").trim();
+    const email = (formData.get("email") || "").trim();
+    const phone = (formData.get("phone") || "").trim();
+    const whatsappUpdates = formData.get("whatsapp_updates") === "on";
 
-    alert("Application submitted successfully!");
+    const nameParts = fullName.split(" ");
+    const firstName = nameParts[0] || fullName;
+    const lastName = nameParts.slice(1).join(" ") || "";
+
+    if (!firstName || !email || !phone) {
+      setError("Please fill in all required fields.");
+      setLoading(false);
+      return;
+    }
+
+    const cleanPhone = phone.replace(/\D/g, "");
+    if (cleanPhone.length < 10) {
+      setError("Please enter a valid 10-digit mobile number.");
+      setLoading(false);
+      return;
+    }
+
+    let token = "";
+    if (executeRecaptcha) {
+      try {
+        token = await executeRecaptcha("contact_form");
+      } catch (captchaErr) {
+        console.warn("reCAPTCHA execution skipped/failed:", captchaErr);
+      }
+    }
+
+    const payload = {
+      firstName,
+      lastName,
+      email,
+      phone: cleanPhone,
+      message: `Demo Class Request - Digital Marketing Course (Campaign Page)${whatsappUpdates ? " [WhatsApp Updates: Opted-In]" : ""}`,
+      captchaToken: token || "development_bypass_token",
+    };
+
+    try {
+      const res = await fetch("/api/contact-submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Failed to submit demo request.");
+      }
+
+      setSuccess(true);
+      form.reset();
+
+      if (data.redirectUrl) {
+        router.push(data.redirectUrl);
+      }
+    } catch (err) {
+      console.error("Submission error:", err);
+      setError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -478,78 +558,104 @@ const MarketingHero = () => {
 
             {/* FORM BODY */}
 
-            <form
-              id="hero-form"
-              onSubmit={handleSubmit}
-              className="flex flex-col gap-3.5 p-6 pt-3"
-            >
-
-              <input
-                type="text"
-                name="name"
-                placeholder="Full Name*"
-                required
-                className="w-full rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3 text-xs sm:text-sm text-gray-800 outline-none transition focus:border-[#1E7CBC] focus:bg-white"
-              />
-
-              <input
-                type="email"
-                name="email"
-                placeholder="Email Address*"
-                required
-                className="w-full rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3 text-xs sm:text-sm text-gray-800 outline-none transition focus:border-[#1E7CBC] focus:bg-white"
-              />
-
-              {/* PHONE WITH COUNTRY CODE */}
-
-              <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50/60 px-3 py-2 text-xs sm:text-sm text-gray-800 focus-within:border-[#1E7CBC] focus-within:bg-white transition">
-
-                <span className="text-base mr-1">🇮🇳</span>
-
-                <span className="font-semibold text-gray-700 mr-2">+91</span>
-
-                <input
-                  type="tel"
-                  name="phone"
-                  placeholder="Mobile Number*"
-                  required
-                  pattern="[0-9]{10}"
-                  className="min-w-0 flex-1 bg-transparent text-xs sm:text-sm text-gray-800 outline-none"
-                />
-
+            {success ? (
+              <div className="flex flex-col items-center justify-center p-6 py-8 text-center">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-3.5 shadow-2xs">
+                  <CheckCircle2 className="h-8 w-8" />
+                </div>
+                <h4 className="text-lg sm:text-xl font-bold text-gray-900 tracking-tight">
+                  Demo Class Booked!
+                </h4>
+                <p className="mt-2 text-xs sm:text-sm text-gray-600 leading-relaxed max-w-xs">
+                  Thank you! Your enquiry has been received. Our admission counsellor will contact you shortly on your provided mobile number.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setSuccess(false)}
+                  className="mt-5 rounded-full border border-gray-300 bg-white px-5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition cursor-pointer shadow-2xs"
+                >
+                  Book Another Demo
+                </button>
               </div>
-
-              {/* WHATSAPP OPT-IN CHECKBOX */}
-
-              <label className="flex items-center gap-2.5 cursor-pointer text-xs text-gray-700 select-none pt-1">
+            ) : (
+              <form
+                id="hero-form"
+                onSubmit={handleSubmit}
+                className="flex flex-col gap-3.5 p-6 pt-3"
+              >
+                {error && (
+                  <div className="rounded-xl bg-red-50 border border-red-200 px-3.5 py-2.5 text-xs text-red-600 font-medium">
+                    {error}
+                  </div>
+                )}
 
                 <input
-                  type="checkbox"
-                  name="whatsapp_updates"
-                  defaultChecked
-                  className="h-4 w-4 rounded border-gray-300 text-[#1E7CBC] focus:ring-[#1E7CBC] accent-[#1E7CBC]"
+                  type="text"
+                  name="name"
+                  placeholder="Full Name*"
+                  required
+                  disabled={loading}
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3 text-xs sm:text-sm text-gray-800 outline-none transition focus:border-[#1E7CBC] focus:bg-white disabled:opacity-60"
                 />
 
-                <span>Receive demo details on WhatsApp</span>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email Address*"
+                  required
+                  disabled={loading}
+                  className="w-full rounded-xl border border-gray-200 bg-gray-50/60 px-4 py-3 text-xs sm:text-sm text-gray-800 outline-none transition focus:border-[#1E7CBC] focus:bg-white disabled:opacity-60"
+                />
 
-              </label>
+                {/* PHONE WITH COUNTRY CODE */}
+                <div className="flex items-center rounded-xl border border-gray-200 bg-gray-50/60 px-3 py-2 text-xs sm:text-sm text-gray-800 focus-within:border-[#1E7CBC] focus-within:bg-white transition">
+                  <span className="text-base mr-1">🇮🇳</span>
+                  <span className="font-semibold text-gray-700 mr-2">+91</span>
+                  <input
+                    type="tel"
+                    name="phone"
+                    placeholder="Mobile Number*"
+                    required
+                    disabled={loading}
+                    pattern="[0-9]{10}"
+                    className="min-w-0 flex-1 bg-transparent text-xs sm:text-sm text-gray-800 outline-none disabled:opacity-60"
+                  />
+                </div>
 
-              {/* SUBMIT BUTTON */}
+                {/* WHATSAPP OPT-IN CHECKBOX */}
+                <label className="flex items-center gap-2.5 cursor-pointer text-xs text-gray-700 select-none pt-1">
+                  <input
+                    type="checkbox"
+                    name="whatsapp_updates"
+                    defaultChecked
+                    disabled={loading}
+                    className="h-4 w-4 rounded border-gray-300 text-[#1E7CBC] focus:ring-[#1E7CBC] accent-[#1E7CBC]"
+                  />
+                  <span>Receive demo details on WhatsApp</span>
+                </label>
 
-              <button
-                type="submit"
-                className="cursor-pointer w-full rounded-full bg-[#1E7CBC] py-3.5 text-sm sm:text-base font-bold text-white shadow-md shadow-[#1E7CBC]/25 transition duration-200 hover:bg-[#166091] hover:shadow-lg active:scale-[0.99] mt-2"
-              >
-                Book My Free Demo
-              </button>
+                {/* SUBMIT BUTTON */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="cursor-pointer w-full rounded-full bg-[#1E7CBC] py-3.5 text-sm sm:text-base font-bold text-white shadow-md shadow-[#1E7CBC]/25 transition duration-200 hover:bg-[#166091] hover:shadow-lg active:scale-[0.99] mt-2 disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin text-white" />
+                      <span>Booking Your Demo...</span>
+                    </>
+                  ) : (
+                    <span>Book My Free Demo</span>
+                  )}
+                </button>
 
-              {/* FOOTER NOTE */}
-
-              <p className="text-center text-xs text-gray-500 font-medium">
-                No Payment. No Commitment.
-              </p>
-
-            </form>
+                {/* FOOTER NOTE */}
+                <p className="text-center text-xs text-gray-500 font-medium">
+                  No Payment. No Commitment.
+                </p>
+              </form>
+            )}
 
           </div>
 

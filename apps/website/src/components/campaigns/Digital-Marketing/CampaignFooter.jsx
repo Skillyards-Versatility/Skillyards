@@ -50,7 +50,7 @@ export default function CampaignFooter() {
   ];
 
   return (
-    <footer className="border-t border-gray-200 dark:border-zinc-800 bg-white/95 dark:bg-neutral-950/95 backdrop-blur-md pt-8 text-gray-900 dark:text-gray-100">
+    <footer className="border-t border-gray-200 bg-white/95 backdrop-blur-md pt-8 text-gray-900">
       {/* Top */}
       <div className="mx-auto grid max-w-[90rem] grid-cols-1 gap-12 sm:gap-6 md:grid-cols-5 desk:gap-x-8 desk:gap-y-5 lg:gap-x-12 lg:gap-y-8 px-6 desk:px-8 lg:px-12 py-10 sm:py-12 lg:py-20 desk:grid-cols-8 lg:grid-cols-7">
         {/* Brand & Address */}
@@ -59,7 +59,7 @@ export default function CampaignFooter() {
             <Logo />
           </Link>
 
-          <address className="not-italic text-xs lg:text-sm text-gray-600 dark:text-gray-400 mb-4 lg:mb-6 leading-relaxed max-w-[15rem] lg:max-w-xs flex items-start gap-2">
+          <address className="not-italic text-xs lg:text-sm text-gray-600 mb-4 lg:mb-6 leading-relaxed max-w-[15rem] lg:max-w-xs flex items-start gap-2">
             <span className="shrink-0 mt-0.5 pointer-events-none">📍</span>
             <span>
               A-3, behind Manoj Dhaba, Bhagwan Talkies crossing, Indra Puri, New
@@ -77,7 +77,7 @@ export default function CampaignFooter() {
         {/* Desktop columns */}
         {footerSections.map((section) => (
           <div key={section.title} className="hidden md:block md:col-span-1">
-            <div className="footer-heading mb-2 lg:mb-4 text-sm lg:text-lg font-semibold text-gray-500 dark:text-gray-400">
+            <div className="footer-heading mb-2 lg:mb-4 text-sm lg:text-lg font-semibold text-gray-500">
               {section.title}
             </div>
 
@@ -86,7 +86,7 @@ export default function CampaignFooter() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-gray-600 dark:text-gray-400 transition-colors hover:text-[#1E7CBC] dark:hover:text-[#1E7CBC]"
+                    className="text-gray-600 transition-colors hover:text-[#1E7CBC]"
                   >
                     {link.label}
                   </Link>
@@ -97,7 +97,7 @@ export default function CampaignFooter() {
         ))}
 
         {/* Mobile accordion */}
-        <div className="md:hidden divide-y divide-gray-200 dark:divide-zinc-800 border-y border-gray-200 dark:border-zinc-800">
+        <div className="md:hidden divide-y divide-gray-200 border-y border-gray-200">
           {footerSections.map((section) => {
             const isOpen = openSection === section.title;
             return (
@@ -105,7 +105,7 @@ export default function CampaignFooter() {
                 <button
                   type="button"
                   onClick={() => setOpenSection(isOpen ? null : section.title)}
-                  className="flex w-full items-center justify-between py-3.5 text-left font-semibold text-gray-700 dark:text-gray-300 transition-colors cursor-pointer"
+                  className="flex w-full items-center justify-between py-3.5 text-left font-semibold text-gray-700 transition-colors cursor-pointer"
                   aria-expanded={isOpen}
                 >
                   <span>{section.title}</span>
@@ -121,7 +121,7 @@ export default function CampaignFooter() {
                       <li key={link.href}>
                         <Link
                           href={link.href}
-                          className="transition-colors text-gray-600 dark:text-gray-400 hover:text-[#1E7CBC]"
+                          className="transition-colors text-gray-600 hover:text-[#1E7CBC]"
                         >
                           {link.label}
                         </Link>
@@ -136,18 +136,18 @@ export default function CampaignFooter() {
 
         {/* Map column (Visible on all devices) */}
         <div className="block md:col-span-5 desk:col-span-3 lg:col-span-2 desk:pl-2 lg:pl-4">
-          <div className="footer-heading mb-3 lg:mb-4 text-base lg:text-lg font-semibold text-gray-500 dark:text-gray-400">
+          <div className="footer-heading mb-3 lg:mb-4 text-base lg:text-lg font-semibold text-gray-500">
             Our Location
           </div>
-          <div className="w-full h-52 md:h-56 lg:h-56 desk:h-full min-h-[13rem] lg:min-h-[16rem] relative rounded-[1.5rem] overflow-hidden shadow-lg border border-gray-200 dark:border-zinc-800 group">
-            <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-black/5 dark:ring-white/10 rounded-[1.5rem] z-10" />
+          <div className="w-full h-52 md:h-56 lg:h-56 desk:h-full min-h-[13rem] lg:min-h-[16rem] relative rounded-[1.5rem] overflow-hidden shadow-lg border border-gray-200 group">
+            <div className="absolute inset-0 pointer-events-none ring-1 ring-inset ring-black/5 rounded-[1.5rem] z-10" />
             <GoogleMapEmbed />
           </div>
         </div>
       </div>
 
-      <div className="border-t border-gray-200 dark:border-zinc-800 py-4">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-4 px-6 text-sm text-gray-500 dark:text-gray-400 sm:flex-row">
+      <div className="border-t border-gray-200 py-4">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-4 px-6 text-sm text-gray-500 sm:flex-row">
           <div className="text-center sm:text-left">
             © {year} SkillYards Versatility
           </div>

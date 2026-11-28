@@ -1,3 +1,8 @@
+"use client";
+
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+
 // =========================================================================
 // 1. DIGITAL MARKETING SKILLS (39 High-Demand Industry Skills in Sequential Order)
 // =========================================================================
@@ -1156,7 +1161,9 @@ function ToolBadge({ tool }) {
 // 4. MAIN PROJECTS SECTION COMPONENT (Single self-contained file)
 // =========================================================================
 export default function ProjectsSection({ id = "projects" }) {
+  const [showAllSkills, setShowAllSkills] = useState(false);
   const filteredProjects = projectsData;
+  const visibleSkills = showAllSkills ? skillsData : skillsData.slice(0, 15);
 
   return (
     <section id={id} className="w-full bg-[#faf9f6] px-4 py-16 font-sans sm:px-6 lg:px-8 lg:py-24 scroll-mt-20 lg:scroll-mt-24">
@@ -1186,33 +1193,60 @@ export default function ProjectsSection({ id = "projects" }) {
           </p>
 
           {/* 3-Column Skills Grid (39 skills = 13 rows x 3 columns) */}
-          <div className="mt-12 grid grid-cols-1 gap-x-6 gap-y-3.5 text-left sm:grid-cols-2 lg:grid-cols-3">
-            {skillsData.map((skill, index) => (
-              <div
-                key={index}
-                className="group flex items-center gap-3.5 rounded-xl bg-white border border-gray-100 p-3.5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(30,124,188,0.08)] hover:border-[#1E7CBC]/30 sm:p-4"
-              >
-                {/* Blue Skill Icon */}
-                <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#1E7CBC]/10 transition-colors group-hover:bg-[#1E7CBC]/20">
-                  {skill.icon}
+          <div className="relative mt-12">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-3.5 text-left sm:grid-cols-2 lg:grid-cols-3">
+              {visibleSkills.map((skill, index) => (
+                <div
+                  key={index}
+                  className="group flex items-center gap-3.5 rounded-xl bg-white border border-gray-100 p-3.5 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(30,124,188,0.08)] hover:border-[#1E7CBC]/30 sm:p-4"
+                >
+                  {/* Blue Skill Icon */}
+                  <div className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#1E7CBC]/10 transition-colors group-hover:bg-[#1E7CBC]/20">
+                    {skill.icon}
 
-                  {/* AI Badge on AI Skills */}
-                  {skill.isAI && (
-                    <span className="absolute -top-1 -right-1 rounded bg-[#1E7CBC] px-1 py-0.2 text-[9px] font-bold uppercase text-white shadow-xs">
-                      AI
-                    </span>
-                  )}
+                    {/* AI Badge on AI Skills */}
+                    {skill.isAI && (
+                      <span className="absolute -top-1 -right-1 rounded bg-[#1E7CBC] px-1 py-0.2 text-[9px] font-bold uppercase text-white shadow-xs">
+                        AI
+                      </span>
+                    )}
+                  </div>
+
+                  <span className="text-[15px] font-medium leading-snug text-gray-700 transition-colors group-hover:text-gray-900 sm:text-base">
+                    {skill.name}
+                  </span>
                 </div>
+              ))}
+            </div>
 
-                <span className="text-[15px] font-medium leading-snug text-gray-700 transition-colors group-hover:text-gray-900 sm:text-base">
-                  {skill.name}
-                </span>
-              </div>
-            ))}
+            {/* Subtle Gradient Fade Overlay when collapsed */}
+            {!showAllSkills && (
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#faf9f6] via-[#faf9f6]/80 to-transparent" />
+            )}
+          </div>
+
+          {/* Show More / Click to view all Button */}
+          <div className="mt-8 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAllSkills(!showAllSkills)}
+              className="inline-flex items-center gap-2.5 rounded-full border border-[#1E7CBC] bg-white px-7 py-3 text-sm sm:text-base font-bold text-[#1E7CBC] shadow-sm transition-all duration-200 hover:bg-[#1E7CBC] hover:text-white hover:shadow-md active:scale-98 cursor-pointer"
+            >
+              <span>
+                {showAllSkills
+                  ? "Show Less"
+                  : `Click to view all (${skillsData.length} Skills)`}
+              </span>
+              <ChevronDown
+                className={`h-4.5 w-4.5 transition-transform duration-300 ${
+                  showAllSkills ? "rotate-180" : ""
+                }`}
+              />
+            </button>
           </div>
 
           {/* Bottom Banner */}
-          <div className="mt-10 flex justify-center">
+          <div className="mt-8 flex justify-center">
             <div className="inline-flex items-center gap-2.5 rounded-full border border-gray-200 bg-white px-5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs sm:text-base">
               <span className="flex h-2 w-2 rounded-full bg-[#1E7CBC]" />
               <span>And more through hands-on training and 15+ practical projects.</span>
@@ -1250,27 +1284,27 @@ export default function ProjectsSection({ id = "projects" }) {
               style={{
                 zIndex: index + 10,
               }}
-              className="sticky top-[74px] sm:top-[78px] mb-12 sm:mb-16 lg:mb-20 last:mb-0 h-auto lg:h-[calc(100dvh-92px)] min-h-[calc(100dvh-92px)] flex flex-col justify-between rounded-[24px] sm:rounded-[28px] border border-gray-200/90 bg-white p-5 sm:p-7 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-200 hover:border-[#1E7CBC]/50 overflow-hidden"
+              className="sticky top-[70px] sm:top-[78px] mb-8 sm:mb-16 lg:mb-20 last:mb-0 h-auto lg:h-[calc(100dvh-92px)] min-h-0 lg:min-h-[calc(100dvh-92px)] flex flex-col justify-between rounded-[20px] sm:rounded-[28px] border border-gray-200/90 bg-white p-3.5 sm:p-6 lg:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.06)] transition-all duration-200 hover:border-[#1E7CBC]/50 overflow-hidden"
             >
               {/* TOP SECTION: Module Overview (Left) + Learning Journey (Right) */}
-              <div className="grid grid-cols-1 gap-6 lg:grid-cols-12 lg:gap-8 min-h-0">
+              <div className="grid grid-cols-1 gap-2.5 sm:gap-6 lg:grid-cols-12 lg:gap-8 min-h-0">
                 {/* Left Column: Project Overview */}
                 <div className="lg:col-span-5 min-h-0">
-                  <span className={`block text-xs sm:text-[13px] font-bold uppercase tracking-wider ${project.tagColor}`}>
+                  <span className={`block text-[11px] sm:text-xs lg:text-[13px] font-bold uppercase tracking-wider ${project.tagColor}`}>
                     {project.tag}
                   </span>
 
-                  <h3 className="mt-1 text-2xl sm:text-3xl lg:text-[28px] font-extrabold tracking-tight text-gray-900 leading-tight">
+                  <h3 className="mt-0.5 sm:mt-1 text-lg sm:text-2xl lg:text-[28px] font-extrabold tracking-tight text-gray-900 leading-tight">
                     {project.title}
                   </h3>
 
                   {project.duration && (
-                    <p className="mt-1 text-xs sm:text-sm font-semibold text-gray-500">
+                    <p className="mt-0.5 sm:mt-1 text-[11px] sm:text-xs lg:text-sm font-semibold text-gray-500">
                       Duration: {project.duration}
                     </p>
                   )}
 
-                  <div className="mt-3 sm:mt-4">
+                  <div className="hidden sm:block mt-3 sm:mt-4">
                     <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">
                       {project.learnTitle || "What You'll Learn"}
                     </span>
@@ -1283,21 +1317,21 @@ export default function ProjectsSection({ id = "projects" }) {
                 {/* Right Column: Checklist */}
                 <div className="lg:col-span-7 min-h-0">
                   {project.checklistTitle && (
-                    <div className="flex items-center justify-between mb-2.5 sm:mb-3">
-                      <span className="text-xs sm:text-[13px] font-bold uppercase tracking-wider text-gray-800">
+                    <div className="flex items-center justify-between mb-1.5 sm:mb-2.5 lg:mb-3">
+                      <span className="text-[11px] sm:text-xs lg:text-[13px] font-bold uppercase tracking-wider text-gray-800">
                         {project.checklistTitle}
                       </span>
-                      <span className="text-xs font-semibold text-gray-400">
+                      <span className="text-[10px] sm:text-xs font-semibold text-gray-400">
                         {project.checklist.length} Topics
                       </span>
                     </div>
                   )}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5 sm:gap-y-3">
-                    <ul className="space-y-2 sm:space-y-2.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 sm:gap-x-6 gap-y-1 sm:gap-y-2.5 lg:gap-y-3">
+                    <ul className="space-y-1 sm:space-y-2 lg:space-y-2.5">
                       {project.checklist.slice(0, Math.ceil(project.checklist.length / 2)).map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm sm:text-[14.5px] leading-snug text-gray-700 font-medium">
+                        <li key={idx} className="flex items-start gap-1.5 sm:gap-2 text-[11.5px] sm:text-sm lg:text-[14.5px] leading-tight sm:leading-snug text-gray-700 font-medium">
                           <svg
-                            className="mt-0.5 h-4 w-4 shrink-0 text-[#1E7CBC]"
+                            className="mt-0.5 h-3 w-3 sm:h-4 sm:w-4 shrink-0 text-[#1E7CBC]"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -1309,11 +1343,11 @@ export default function ProjectsSection({ id = "projects" }) {
                         </li>
                       ))}
                     </ul>
-                    <ul className="space-y-2 sm:space-y-2.5">
+                    <ul className="space-y-1 sm:space-y-2 lg:space-y-2.5">
                       {project.checklist.slice(Math.ceil(project.checklist.length / 2)).map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm sm:text-[14.5px] leading-snug text-gray-700 font-medium">
+                        <li key={idx} className="flex items-start gap-1.5 sm:gap-2 text-[11.5px] sm:text-sm lg:text-[14.5px] leading-tight sm:leading-snug text-gray-700 font-medium">
                           <svg
-                            className="mt-0.5 h-4 w-4 shrink-0 text-[#1E7CBC]"
+                            className="mt-0.5 h-3 w-3 sm:h-4 sm:w-4 shrink-0 text-[#1E7CBC]"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -1331,19 +1365,19 @@ export default function ProjectsSection({ id = "projects" }) {
 
               {/* MIDDLE SECTION: Practical Project AND What You'll Build IN ONE LINE SIDE-BY-SIDE */}
               {(project.practicalProject || project.buildDesc || project.presentation) && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-5 w-full mt-4 sm:mt-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3.5 lg:gap-5 w-full mt-2.5 sm:mt-4 lg:mt-5">
                   {/* Practical Project Card */}
                   {project.practicalProject && (
-                    <div className="h-full rounded-2xl bg-[#1E7CBC]/5 border border-[#1E7CBC]/20 p-3.5 sm:p-4 flex flex-col justify-center">
+                    <div className="h-full rounded-xl sm:rounded-2xl bg-[#1E7CBC]/5 border border-[#1E7CBC]/20 p-2.5 sm:p-3.5 lg:p-4 flex flex-col justify-center">
                       <div className="flex items-center gap-1.5 text-[#1E7CBC] font-bold">
-                        <svg className="h-4 w-4 shrink-0 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-[#1E7CBC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
-                        <span className="text-xs uppercase tracking-wider font-bold">
+                        <span className="text-[10px] sm:text-xs uppercase tracking-wider font-bold">
                           Practical Project
                         </span>
                       </div>
-                      <p className="mt-1.5 text-sm sm:text-[14.5px] font-semibold text-gray-800 leading-snug">
+                      <p className="mt-1 text-xs sm:text-sm lg:text-[14.5px] font-semibold text-gray-800 leading-snug">
                         {project.practicalProject}
                       </p>
                     </div>
@@ -1351,24 +1385,24 @@ export default function ProjectsSection({ id = "projects" }) {
 
                   {/* What You'll Build Card */}
                   {project.buildDesc ? (
-                    <div className="h-full rounded-2xl border border-emerald-200/90 bg-emerald-50/70 p-3.5 sm:p-4 flex flex-col justify-center">
+                    <div className="h-full rounded-xl sm:rounded-2xl border border-emerald-200/90 bg-emerald-50/70 p-2.5 sm:p-3.5 lg:p-4 flex flex-col justify-center">
                       <div className="flex items-center gap-1.5 font-bold text-emerald-800">
-                        <svg className="h-4 w-4 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <svg className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="text-xs uppercase tracking-wider font-bold">
+                        <span className="text-[10px] sm:text-xs uppercase tracking-wider font-bold">
                           {project.buildTitle || "What You'll Build"}
                         </span>
                       </div>
-                      <p className="mt-1.5 text-sm sm:text-[14.5px] font-semibold text-emerald-950 leading-snug">
+                      <p className="mt-1 text-xs sm:text-sm lg:text-[14.5px] font-semibold text-emerald-950 leading-snug">
                         {project.buildDesc}
                       </p>
                     </div>
                   ) : project.presentation ? (
-                    <div className="h-full rounded-2xl border border-gray-200 bg-gray-50/70 p-3.5 sm:p-4 flex flex-col justify-center">
-                      <div className="flex items-center gap-2 font-bold">
+                    <div className="h-full rounded-xl sm:rounded-2xl border border-gray-200 bg-gray-50/70 p-2.5 sm:p-3.5 lg:p-4 flex flex-col justify-center">
+                      <div className="flex items-center gap-1.5 sm:gap-2 font-bold">
                         <svg
-                          className={`h-4 w-4 shrink-0 ${project.tagColor}`}
+                          className={`h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 ${project.tagColor}`}
                           viewBox="0 0 24 24"
                           fill="none"
                           stroke="currentColor"
@@ -1378,12 +1412,12 @@ export default function ProjectsSection({ id = "projects" }) {
                           <circle cx="12" cy="12" r="5" />
                           <circle cx="12" cy="12" r="2" />
                         </svg>
-                        <span className={`text-xs uppercase tracking-wider font-bold ${project.tagColor}`}>
+                        <span className={`text-[10px] sm:text-xs uppercase tracking-wider font-bold ${project.tagColor}`}>
                           {project.presentation}
                         </span>
                       </div>
                       {project.footnote && (
-                        <p className="mt-1 text-xs italic text-gray-500">
+                        <p className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs italic text-gray-500">
                           {project.footnote}
                         </p>
                       )}
@@ -1394,7 +1428,7 @@ export default function ProjectsSection({ id = "projects" }) {
 
               {/* BOTTOM SECTION: Full Width Tools Shelf (Icons Only) */}
               {project.tools && project.tools.length > 0 && (
-                <div className="mt-4 sm:mt-5 shrink-0 rounded-xl sm:rounded-2xl bg-[#fafafa] px-5 py-3 sm:px-6 sm:py-3.5 border border-[#f0eee9] flex flex-wrap items-center gap-4 sm:gap-6">
+                <div className="mt-2.5 sm:mt-4 lg:mt-5 shrink-0 rounded-xl sm:rounded-2xl bg-[#fafafa] px-3.5 py-2 sm:px-6 sm:py-3.5 border border-[#f0eee9] flex flex-wrap items-center gap-2.5 sm:gap-4 lg:gap-6">
                   {project.tools.map((tool, idx) => (
                     <ToolBadge key={idx} tool={tool} />
                   ))}

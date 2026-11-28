@@ -7,23 +7,42 @@ export default function ReCaptchaProvider({ children }) {
   const [loadCaptcha, setLoadCaptcha] = React.useState(false);
 
   React.useEffect(() => {
-    const handleTrigger = () => setLoadCaptcha(true);
+    let triggered = false;
+    const handleTrigger = () => {
+      if (triggered) return;
+      triggered = true;
+      setLoadCaptcha(true);
+      removeListeners();
+    };
 
-    // Load immediately if user scrolls, taps, moves mouse, or focuses input
-    window.addEventListener("scroll", handleTrigger, { passive: true, once: true });
-    window.addEventListener("pointerdown", handleTrigger, { passive: true, once: true });
-    window.addEventListener("touchstart", handleTrigger, { passive: true, once: true });
-    window.addEventListener("keydown", handleTrigger, { passive: true, once: true });
-
-    // Fallback: load after 4 seconds regardless so forms are always ready
-    const timer = setTimeout(handleTrigger, 4000);
-
-    return () => {
-      clearTimeout(timer);
+    const removeListeners = () => {
       window.removeEventListener("scroll", handleTrigger);
       window.removeEventListener("pointerdown", handleTrigger);
       window.removeEventListener("touchstart", handleTrigger);
+      window.removeEventListener("focusin", handleTrigger);
       window.removeEventListener("keydown", handleTrigger);
+    };
+
+    // Load immediately if user scrolls, taps, clicks into any input, or types
+    window.addEventListener("scroll", handleTrigger, { passive: true, once: true });
+    window.addEventListener("pointerdown", handleTrigger, { passive: true, once: true });
+    window.addEventListener("touchstart", handleTrigger, { passive: true, once: true });
+    window.addEventListener("focusin", handleTrigger, { passive: true, once: true });
+    window.addEventListener("keydown", handleTrigger, { passive: true, once: true });
+
+    // Fallback: load after idle / delayed timer so forms are always ready
+    const scheduleLoad = () => {
+      if (typeof window !== "undefined" && "requestIdleCallback" in window) {
+        window.requestIdleCallback(() => handleTrigger(), { timeout: 3000 });
+      } else {
+        handleTrigger();
+      }
+    };
+    const timer = setTimeout(scheduleLoad, 9000);
+
+    return () => {
+      clearTimeout(timer);
+      removeListeners();
     };
   }, []);
 
