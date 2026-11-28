@@ -51,7 +51,10 @@ export default function RootLayout({ children }) {
         <JsonLd data={websiteSchema} id="website-schema" />
       </head>
 
-      <body className={`antialiased bg-background text-foreground`}>
+      <body
+        suppressHydrationWarning
+        className={`antialiased bg-background text-foreground`}
+      >
         <noscript>
           <iframe
             src={`https://www.googletagmanager.com/ns.html?id=${process.env.NEXT_PUBLIC_GOOGLE_TAG_MANAGER}`}
