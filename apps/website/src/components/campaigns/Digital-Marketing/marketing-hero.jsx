@@ -1,14 +1,52 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import dynamic from "next/dynamic";
-import { Menu, X, ArrowRight, Phone, Star, CheckCircle2 } from "lucide-react";
+import {
+  Menu,
+  X,
+  ArrowRight,
+  Phone,
+  Star,
+  CheckCircle2,
+  ChevronDown,
+} from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { SiMeta, SiSemrush, SiHubspot } from "react-icons/si";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const FloatingIcons = dynamic(() => import("./floating-icons"), {
-  ssr: false,
-});
+import FloatingIcons from "./floating-icons";
+
+/* =================================
+   PROGRAM GROUPS DATA
+================================= */
+
+const programGroups = [
+  {
+    title: "On-Job Degree",
+    href: "/programs/on-job-degree",
+    items: [
+      { label: "BCA", href: "/bca-training-program-in-agra" },
+      { label: "BBA", href: "/bba-training-program-in-agra" },
+    ],
+  },
+  {
+    title: "On-Job Training",
+    href: "/programs/on-job-training",
+    items: [
+      {
+        label: "Full-Stack Development",
+        href: "/full-stack-web-development-training-in-agra",
+      },
+      { label: "Digital Marketing", href: "/digital-marketing-course-in-agra" },
+    ],
+  },
+];
 
 /* =================================
    STATIC DATA (FROM CAMPAIGN HERO)
@@ -55,6 +93,7 @@ const certificationLogos = [
 
 const MarketingHero = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileProgramsOpen, setMobileProgramsOpen] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -103,37 +142,86 @@ const MarketingHero = () => {
 
         <nav className="hidden items-center gap-[clamp(20px,3vw,48px)] text-[clamp(14px,1.3vw,21px)] font-normal text-[#666666] lg:flex">
 
-          <a
-            href="/programs"
-            style={{ color: "#666666" }}
-            className="text-[#666666] transition hover:text-[#1E7CBC] hover:!text-[#1E7CBC]"
+          <Link
+            href="/"
+            className="text-[#666666] transition hover:text-[#1E7CBC]"
           >
-            Programs <span className="text-xs">▼</span>
-          </a>
+            Home
+          </Link>
 
-          <a
+          {/* PROGRAMS DROPDOWN */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="group flex cursor-pointer items-center gap-1.5 text-[clamp(14px,1.3vw,21px)] font-normal text-[#666666] hover:text-[#1E7CBC] data-[state=open]:text-[#1E7CBC] transition-colors outline-none">
+              <span>Programs</span>
+              <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-data-[state=open]:rotate-180 opacity-70 group-hover:opacity-100" />
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="center"
+              sideOffset={12}
+              className="w-[34rem] rounded-3xl border border-border/70 bg-popover/95 p-4 shadow-xl backdrop-blur-md z-50 animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95"
+            >
+              <Link
+                href="/programs"
+                className="mb-4 block rounded-2xl border border-border/60 bg-card/50 px-4 py-3 transition hover:border-primary/30 hover:bg-accent/40"
+              >
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-primary">
+                  All Programs
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Choose between degree-led paths and focused job training tracks.
+                </p>
+              </Link>
+
+              <div className="grid grid-cols-2 gap-4">
+                {programGroups.map((group) => (
+                  <div
+                    key={group.title}
+                    className="rounded-2xl border border-border/60 bg-background p-4"
+                  >
+                    <Link
+                      href={group.href}
+                      className="inline-block text-sm font-bold uppercase tracking-[0.16em] text-foreground transition hover:text-primary"
+                    >
+                      {group.title}
+                    </Link>
+                    <div className="mt-3 flex flex-col gap-2">
+                      {group.items.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="rounded-xl border border-transparent px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:border-primary/20 hover:bg-accent/50 hover:text-foreground"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Link
             href="/blog"
-            style={{ color: "#666666" }}
-            className="text-[#666666] transition hover:text-[#1E7CBC] hover:!text-[#1E7CBC]"
+            className="text-[#666666] transition hover:text-[#1E7CBC]"
           >
-            Free Resources <span className="text-xs">▼</span>
-          </a>
+            Blog
+          </Link>
 
-          <a
-            href="#benefits"
-            style={{ color: "#666666" }}
-            className="text-[#666666] transition hover:text-[#1E7CBC] hover:!text-[#1E7CBC]"
+          <Link
+            href="/about"
+            className="text-[#666666] transition hover:text-[#1E7CBC]"
           >
-            Placements
-          </a>
+            About
+          </Link>
 
-          <a
+          <Link
             href="/contact"
-            style={{ color: "#666666" }}
-            className="text-[#666666] transition hover:text-[#1E7CBC] hover:!text-[#1E7CBC]"
+            className="text-[#666666] transition hover:text-[#1E7CBC]"
           >
-            Hire From Us
-          </a>
+            Contact
+          </Link>
 
         </nav>
 
@@ -157,79 +245,102 @@ const MarketingHero = () => {
 
         {/* MOBILE MENU DROPDOWN */}
         {mobileMenuOpen && (
-          <div className="lg:hidden absolute top-full left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-xl px-[5%] py-4 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="lg:hidden absolute top-full left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-xl px-[5%] py-4 animate-in fade-in slide-in-from-top-2 duration-200 max-h-[calc(100vh-5rem)] overflow-y-auto">
             <div className="flex flex-col gap-1 font-semibold text-gray-800 text-sm">
-              <a
-                href="#benefits"
+              <Link
+                href="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
+                className="py-2.5 px-3 rounded-xl text-gray-800 hover:text-[#1E7CBC] hover:bg-gray-50 transition border-b border-gray-100"
               >
-                <span>Benefits & Comparison</span>
-                <ArrowRight size={14} className="text-gray-400" />
-              </a>
-              <a
-                href="#projects"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
-              >
-                <span>What You’ll Learn</span>
-                <ArrowRight size={14} className="text-gray-400" />
-              </a>
-              <a
-                href="#experts"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
-              >
-                <span>Expert Mentors</span>
-                <ArrowRight size={14} className="text-gray-400" />
-              </a>
-              <a
-                href="#certifications"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
-              >
-                <span>Industry Certifications</span>
-                <ArrowRight size={14} className="text-gray-400" />
-              </a>
-              <a
-                href="#reviews"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
-              >
-                <span>Student Reviews</span>
-                <ArrowRight size={14} className="text-gray-400" />
-              </a>
-              <a
-                href="#campus"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
-              >
-                <span>Sanjay Place Campus Photos</span>
-                <ArrowRight size={14} className="text-gray-400" />
-              </a>
-              <a
-                href="#faqs"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center justify-between py-2.5 border-b border-gray-100 hover:text-[#1E7CBC]"
-              >
-                <span>Frequently Asked Questions</span>
-                <ArrowRight size={14} className="text-gray-400" />
-              </a>
-              <div className="pt-3 flex gap-2">
-                <a
-                  href="tel:+917060100561"
-                  className="flex-1 rounded-xl bg-gray-100 text-gray-800 font-bold py-2.5 text-center text-xs flex items-center justify-center gap-1.5"
+                Home
+              </Link>
+
+              {/* Expandable Programs in Mobile Menu */}
+              <div className="border-b border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setMobileProgramsOpen(!mobileProgramsOpen)}
+                  className="w-full flex items-center justify-between py-2.5 px-3 rounded-xl hover:text-[#1E7CBC] hover:bg-gray-50 text-left cursor-pointer transition"
                 >
-                  <Phone size={14} /> Call Campus
-                </a>
-                <a
-                  href="#hero-form"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="flex-1 rounded-xl bg-[#1E7CBC] text-white font-bold py-2.5 text-center text-xs flex items-center justify-center gap-1.5 shadow-md shadow-[#1E7CBC]/25"
-                >
-                  Apply Now
-                </a>
+                  <span>Programs</span>
+                  <ChevronDown
+                    size={16}
+                    className={`text-gray-400 transition-transform duration-200 ${
+                      mobileProgramsOpen ? "rotate-180 text-[#1E7CBC]" : ""
+                    }`}
+                  />
+                </button>
+
+                {mobileProgramsOpen && (
+                  <div className="p-3 my-1.5 rounded-2xl border border-border/70 bg-popover/95 shadow-md flex flex-col gap-3 animate-in fade-in-0 duration-150">
+                    <Link
+                      href="/programs"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block rounded-xl border border-border/60 bg-card/60 p-3 transition hover:border-primary/30 hover:bg-accent/40"
+                    >
+                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-primary">
+                        All Programs
+                      </p>
+                      <p className="mt-0.5 text-xs text-muted-foreground leading-snug">
+                        Choose between degree-led paths and focused job training tracks.
+                      </p>
+                    </Link>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      {programGroups.map((group) => (
+                        <div
+                          key={group.title}
+                          className="rounded-xl border border-border/60 bg-background p-3"
+                        >
+                          <Link
+                            href={group.href}
+                            onClick={() => setMobileMenuOpen(false)}
+                            className="inline-block text-xs font-bold uppercase tracking-[0.14em] text-foreground transition hover:text-primary"
+                          >
+                            {group.title}
+                          </Link>
+                          <div className="mt-2 flex flex-col gap-1.5">
+                            {group.items.map((item) => (
+                              <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="rounded-lg px-2 py-1 text-xs font-medium text-muted-foreground transition hover:bg-accent/50 hover:text-foreground"
+                              >
+                                {item.label}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
+
+              <Link
+                href="/blog"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2.5 px-3 rounded-xl text-gray-800 hover:text-[#1E7CBC] hover:bg-gray-50 transition border-b border-gray-100"
+              >
+                Blog
+              </Link>
+
+              <Link
+                href="/about"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2.5 px-3 rounded-xl text-gray-800 hover:text-[#1E7CBC] hover:bg-gray-50 transition border-b border-gray-100"
+              >
+                About
+              </Link>
+
+              <Link
+                href="/contact"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2.5 px-3 rounded-xl text-gray-800 hover:text-[#1E7CBC] hover:bg-gray-50 transition border-b border-gray-100"
+              >
+                Contact
+              </Link>
             </div>
           </div>
         )}

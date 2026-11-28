@@ -1,13 +1,24 @@
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
 import { FiArrowUpRight } from "react-icons/fi";
+import {
+  Palette,
+  Globe,
+  ShoppingBag,
+  Megaphone,
+  Search,
+  Share2,
+  BarChart3,
+  Bot,
+  Briefcase,
+  CheckCircle2,
+  Sparkles,
+} from "lucide-react";
 
 // MAIN NAVIGATION
 const mainTabs = [
   "Benefits",
-  "Placements",
   "What You’ll Learn",
   "Experts",
   "Certifications",
@@ -16,571 +27,233 @@ const mainTabs = [
   "FAQs",
 ];
 
-// ROI TABLE DATA
-const comparisonData = [
+// ==========================================
+// THE SKILLYARDS ADVANTAGE COMPARISON DATA
+// ==========================================
+const advantageRows = [
   {
-    label: "Cost (excluding GST)",
-    values: [
-      <>₹1.64 L, if you get a job<br />of ₹4.5L or more</>,
-      "N/A",
-      "₹8L - 15 L",
-      "₹0.7 - 3 L",
-    ],
+    icon: Palette,
+    area: "Graphic Design",
+    concept: "Learn design principles and tools.",
+    approach: "Create professional brand identities and advertising creatives.",
   },
   {
-    label: <>Cost, if unemployed<br />post completion</>,
-    values: ["₹65.6K", "N/A", "₹8L - 15 L", "₹0.7 - 3 L"],
+    icon: Globe,
+    area: "Website Development",
+    concept: "Understand how websites work.",
+    approach: "Build and deploy your own functional website.",
   },
   {
-    label: "Time investment",
-    values: ["6 Months", "3–6 Months", "12–24 months", "4–12 months"],
+    icon: ShoppingBag,
+    area: "E-Commerce",
+    concept: "Study online business models.",
+    approach: "Build a Shopify store and develop a product launch strategy.",
   },
   {
-    label: "Cost of travel",
-    values: [
-      <>No Cost as<br />Program is Online</>,
-      "May need relocation",
-      <>Full Time,<br />needs relocation</>,
-      "Yes, if Offline",
-    ],
+    icon: Megaphone,
+    area: "Paid Advertising",
+    concept: "Understand advertising platforms.",
+    approach: "Create multi-platform ad campaigns and optimize performance.",
   },
   {
-    label: <>Practical exposure in<br />marketing</>,
-    values: [
-      <>High<br /><span className="text-sm italic text-gray-500">Industry-focused learning</span></>,
-      "Medium",
-      "Low",
-      "Low-Medium",
-    ],
+    icon: Search,
+    area: "SEO & AI Search",
+    concept: "Learn keywords and ranking factors.",
+    approach: "Conduct SEO audits and optimize websites for traditional and AI search.",
   },
   {
-    label: <>Behavioural skill<br />development</>,
-    values: ["High", "Low-Medium", "Medium", "Low"],
+    icon: Share2,
+    area: "Social Media Marketing",
+    concept: "Learn content and engagement strategies.",
+    approach: "Build a complete 30-day brand growth campaign.",
   },
   {
-    label: "AI Integration",
-    values: [
-      "Fully Integrated",
-      "N/A",
-      <>1–2 lectures on what is<br />AI and its importance</>,
-      "Basic ChatGPT usage",
-    ],
-  },
-];
-
-// PLACEMENTS TABLE DATA
-const placementsComparisonData = [
-  {
-    label: "Minimum CTC",
-    values: ["₹4.5LPA", "N/A", "Not Defined", "Not Defined"],
+    icon: BarChart3,
+    area: "Marketing Analytics",
+    concept: "Understand marketing metrics.",
+    approach: "Analyse campaign data and create professional performance reports.",
   },
   {
-    label: "Placement Reports",
-    values: [
-      <>Published 100%<br />since first batch</>,
-      "N/A",
-      "No",
-      "No",
-    ],
+    icon: Bot,
+    area: "AI & Automation",
+    concept: "Explore AI tools and automation concepts.",
+    approach: "Build AI agents and automated marketing workflows.",
   },
   {
-    label: "No. of Interviews",
-    values: [
-      "We keep going till you get placed at ₹4.5L or more",
-      "N/A",
-      <>Till placement process runs<br />(2–3 months)</>,
-      "Nothing specified",
-    ],
-  },
-  {
-    label: "Past Placement Records Published",
-    values: [
-      "All placement reports published online",
-      "N/A",
-      "N/A",
-      <>Not published/<br />available</>,
-    ],
-  },
-  {
-    label: "Kind of jobs",
-    values: [
-      "Full-Time jobs of ₹4.5–10.40L, else 60% fee refunded",
-      "Same as internship",
-      "No minimum bar for CTC and no job promised",
-      "No jobs promised",
-    ],
+    icon: Briefcase,
+    area: "Career Preparation",
+    concept: "Acquire theoretical subject knowledge.",
+    approach: "Build a professional portfolio backed by 15+ practical projects.",
   },
 ];
 
-// COMMUNITY TABLE DATA
-const communityComparisonData = [
-  {
-    label: "Career Mentors",
-    values: [
-      <>Take your pick from<br />200+ experts</>,
-      <>Depends, if people<br />have time</>,
-      "N/A",
-      "N/A",
-    ],
-  },
-  {
-    label: "Networking",
-    values: [
-      <>A very powerful growth<br />network</>,
-      "Limited",
-      "Your batchmates",
-      "Limited",
-    ],
-  },
-  {
-    label: "Lifelong upgradation",
-    values: [
-      <>Free pass to all sessions of the<br /><span className="text-[#183D71] font-bold">Skill</span><span className="text-[#1E7CBC] font-bold">Yards</span> community</>,
-      "N/A",
-      "N/A",
-      "N/A",
-    ],
-  },
-  {
-    label: "High potential peers",
-    values: ["Yes", "Maybe", "Maybe", "No"],
-  },
-];
-
-const comparisonColumns = [
-  "The Marketing LAUNCHPAD",
-  "Internships",
-  "MBA T2/T3",
-  "Other Digital Courses",
+const advantageStats = [
+  { value: "80%", label: "Practical Learning" },
+  { value: "15+", label: "Hands-on Projects" },
+  { value: "100%", label: "Placement Assistance" },
 ];
 
 // ==========================================
-// REUSABLE COMPARISON TABLE
+// BENEFITS CONTENT (THE SKILLYARDS ADVANTAGE)
 // ==========================================
-function ComparisonTable({ data }) {
-  const [mobileView, setMobileView] = useState("table");
-
+function Benefits() {
   return (
-    <div className="w-full">
-      {/* ───────────────────────────────────────────────────────── */}
-      {/* 1. MOBILE & TABLET HORIZONTAL VIEW (< lg)                 */}
-      {/* "table ko phone ya tablet pe jate hi vertical se horizontal kar dena" */}
-      {/* ───────────────────────────────────────────────────────── */}
-      <div className="block lg:hidden w-full">
-        {/* View Mode Toggle: Horizontal Transposed Table vs Cards */}
-        <div className="flex items-center justify-between mb-3 px-1">
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#1E7CBC]">
-            <span className="flex h-2 w-2 rounded-full bg-[#1E7CBC] animate-pulse" />
-            <span>Horizontal Comparison</span>
+    <section className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8 font-sans">
+      <div className="max-w-6xl mx-auto">
+        {/* ─── SECTION HEADER ─── */}
+        <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#1E7CBC]/30 bg-[#1E7CBC]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1E7CBC] mb-4">
+            <Sparkles className="h-3.5 w-3.5 text-[#1E7CBC]" />
+            <span>THE SKILLYARDS ADVANTAGE</span>
           </div>
 
-          <div className="inline-flex rounded-xl bg-gray-100 p-0.5 text-xs font-semibold">
-            <button
-              type="button"
-              onClick={() => setMobileView("table")}
-              className={`cursor-pointer rounded-lg px-2.5 sm:px-3 py-1 transition-all ${
-                mobileView === "table"
-                  ? "bg-white text-gray-900 shadow-xs font-bold"
-                  : "text-gray-500 hover:text-gray-900"
-              }`}
-            >
-              Table View
-            </button>
-            <button
-              type="button"
-              onClick={() => setMobileView("cards")}
-              className={`cursor-pointer rounded-lg px-2.5 sm:px-3 py-1 transition-all ${
-                mobileView === "cards"
-                  ? "bg-white text-gray-900 shadow-xs font-bold"
-                  : "text-gray-500 hover:text-gray-900"
-              }`}
-            >
-              Card View
-            </button>
-          </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extrabold tracking-tight text-gray-900 leading-tight">
+            Why Choose <span className="text-[#1E7CBC]">SkillYards</span> for Digital Marketing in Agra?
+          </h2>
+
+          <p className="mt-4 text-sm sm:text-base lg:text-lg text-gray-600 leading-relaxed max-w-2xl mx-auto">
+            Knowing how digital marketing works is one thing. Being able to execute it is another. Discover the difference between learning concepts and building real-world marketing skills.
+          </p>
         </div>
 
-        {mobileView === "table" ? (
-          /* ─── 1A. HORIZONTAL TRANSPOSED TABLE VIEW ─── */
-          <div className="relative w-full rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-            {/* Top Swipe Instruction Ribbon */}
-            <div className="flex items-center justify-between border-b border-gray-100 bg-blue-50/60 px-3.5 py-2 text-[11px] text-gray-600">
-              <span className="font-medium text-[#1E7CBC] flex items-center gap-1">
-                <span>👉</span> Swipe right to compare all metrics
-              </span>
-              <span className="text-[10px] text-gray-400 font-mono">
-                4 Programs · {data.length} Metrics
-              </span>
+        {/* ─── COMPARISON TABLE / MATRIX (DESKTOP & TABLET >= MD) ─── */}
+        <div className="hidden md:block rounded-3xl border border-gray-200/90 bg-white shadow-xs p-6 lg:p-8">
+          {/* Table Header Row */}
+          <div className="grid grid-cols-[1.3fr_1.3fr_2fr] gap-6 items-center pb-5 border-b border-gray-200">
+            <div className="text-sm font-bold text-gray-900 tracking-wide uppercase">
+              Learning Area
             </div>
-
-            <div className="w-full overflow-x-auto [scrollbar-width:thin] touch-pan-x">
-              <table className="w-full border-collapse text-left text-xs sm:text-sm">
-                <thead>
-                  <tr className="bg-gray-50 text-xs font-bold text-gray-700">
-                    {/* Sticky 1st Header */}
-                    <th className="sticky left-0 z-30 bg-gray-100/95 backdrop-blur-xs px-3.5 py-3 border-r border-b border-gray-200 min-w-[130px] sm:min-w-[160px] shadow-[3px_0_8px_rgba(0,0,0,0.04)]">
-                      Program
-                    </th>
-
-                    {/* Horizontal Metric Columns */}
-                    {data.map((row, i) => (
-                      <th
-                        key={i}
-                        className="min-w-[150px] sm:min-w-[180px] px-3.5 py-3 border-r border-b border-gray-200 text-center leading-snug font-semibold text-gray-800"
-                      >
-                        {row.label}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {comparisonColumns.map((colName, colIdx) => {
-                    const isSkillYards = colIdx === 0;
-
-                    return (
-                      <tr
-                        key={colIdx}
-                        className={
-                          isSkillYards
-                            ? "bg-[#1E7CBC]/5 font-medium"
-                            : "hover:bg-gray-50/70"
-                        }
-                      >
-                        {/* Sticky Program Name Column */}
-                        <th
-                          className={`sticky left-0 z-20 px-3.5 py-4 border-r border-b border-gray-200 shadow-[3px_0_8px_rgba(0,0,0,0.04)] min-w-[130px] sm:min-w-[160px] ${
-                            isSkillYards
-                              ? "bg-[#eef6fc] border-l-4 border-l-[#1E7CBC]"
-                              : "bg-white"
-                          }`}
-                        >
-                          {isSkillYards ? (
-                            <div className="flex flex-col gap-1">
-                              <span className="w-max rounded-full bg-[#1E7CBC] px-2 py-0.5 text-[9px] font-black uppercase tracking-wider text-white">
-                                ★ OUR PROGRAM
-                              </span>
-                              <span className="font-bold text-xs sm:text-sm text-[#183D71] leading-tight">
-                                SkillYards Launchpad
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="font-semibold text-xs sm:text-sm text-gray-800 leading-tight">
-                              {colName}
-                            </span>
-                          )}
-                        </th>
-
-                        {/* Horizontal Metric Values */}
-                        {data.map((row, rowIdx) => (
-                          <td
-                            key={rowIdx}
-                            className={`px-3.5 py-4 text-center border-r border-b border-gray-200 text-xs sm:text-sm leading-relaxed ${
-                              isSkillYards
-                                ? "bg-[#1E7CBC]/5 font-semibold text-gray-900"
-                                : "bg-white text-gray-600"
-                            }`}
-                          >
-                            {row.values[colIdx]}
-                          </td>
-                        ))}
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+            <div className="text-sm font-bold text-gray-900 tracking-wide uppercase">
+              Concept-Based Learning
+            </div>
+            <div>
+              <div className="rounded-2xl bg-[#1E7CBC] text-white py-3 px-5 text-center shadow-md shadow-[#1E7CBC]/20">
+                <p className="font-bold text-sm sm:text-base leading-snug tracking-wide">
+                  The SkillYards Approach
+                </p>
+                <p className="text-xs text-blue-100 font-medium mt-0.5">
+                  Learn. Build. Execute.
+                </p>
+              </div>
             </div>
           </div>
-        ) : (
-          /* ─── 1B. HORIZONTAL SWIPEABLE CARDS VIEW ─── */
-          <div className="w-full">
-            <div className="flex items-center gap-1 text-[11px] text-gray-500 mb-2 px-1">
-              <span>👉</span> Swipe left & right to compare programs:
-            </div>
 
-            <div className="flex gap-3.5 overflow-x-auto pb-4 pt-1 snap-x snap-mandatory [scrollbar-width:thin] touch-pan-x">
-              {comparisonColumns.map((colName, colIdx) => {
-                const isSkillYards = colIdx === 0;
-
-                return (
-                  <div
-                    key={colIdx}
-                    className={`snap-center w-[85vw] max-w-[320px] shrink-0 rounded-2xl border-2 p-5 bg-white transition-all ${
-                      isSkillYards
-                        ? "border-[#1E7CBC] shadow-lg shadow-[#1E7CBC]/10 bg-gradient-to-b from-blue-50/40 to-white"
-                        : "border-gray-200 shadow-sm"
-                    }`}
-                  >
-                    <div className="border-b border-gray-100 pb-3 mb-3">
-                      {isSkillYards ? (
-                        <div className="space-y-1">
-                          <span className="inline-block rounded-full bg-[#1E7CBC] px-2.5 py-0.5 text-[10px] font-black uppercase tracking-wider text-white">
-                            ★ OUR PROGRAM
-                          </span>
-                          <h4 className="text-base font-extrabold text-[#183D71]">
-                            The Marketing LAUNCHPAD
-                          </h4>
-                        </div>
-                      ) : (
-                        <h4 className="text-base font-bold text-gray-800">
-                          {colName}
-                        </h4>
-                      )}
+          {/* Table Body Rows */}
+          <div className="divide-y divide-gray-100">
+            {advantageRows.map((row, idx) => {
+              const Icon = row.icon;
+              return (
+                <div
+                  key={idx}
+                  className="grid grid-cols-[1.3fr_1.3fr_2fr] gap-6 items-center py-4 hover:bg-gray-50/70 rounded-xl px-2 transition-colors"
+                >
+                  {/* Column 1: Learning Area */}
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-xl bg-blue-50 text-[#1E7CBC] flex items-center justify-center shrink-0 border border-blue-100 shadow-2xs">
+                      <Icon className="h-4.5 w-4.5" />
                     </div>
+                    <span className="font-bold text-sm sm:text-[15px] text-gray-900">
+                      {row.area}
+                    </span>
+                  </div>
 
-                    {/* Metrics list */}
-                    <div className="space-y-2.5">
-                      {data.map((row, rowIdx) => (
-                        <div
-                          key={rowIdx}
-                          className="flex flex-col gap-0.5 rounded-lg bg-gray-50/80 p-2.5"
-                        >
-                          <span className="text-[11px] font-medium text-gray-500">
-                            {row.label}
-                          </span>
-                          <div
-                            className={`text-xs sm:text-sm leading-snug ${
-                              isSkillYards
-                                ? "font-bold text-[#183D71]"
-                                : "font-normal text-gray-700"
-                            }`}
-                          >
-                            {row.values[colIdx]}
-                          </div>
-                        </div>
-                      ))}
+                  {/* Column 2: Concept-Based Learning */}
+                  <div className="text-xs sm:text-sm text-gray-500 font-normal leading-relaxed pr-3">
+                    {row.concept}
+                  </div>
+
+                  {/* Column 3: The SkillYards Approach */}
+                  <div>
+                    <div className="rounded-xl bg-[#eef6fc] border border-[#d2e8f8] px-4 py-3 flex items-center gap-3 shadow-2xs transition-all hover:bg-[#e6f2fb]">
+                      <CheckCircle2 className="h-4.5 w-4.5 text-[#1E7CBC] shrink-0" />
+                      <span className="text-xs sm:text-sm font-semibold text-gray-800 leading-snug">
+                        {row.approach}
+                      </span>
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                </div>
+              );
+            })}
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* ───────────────────────────────────────────────────────── */}
-      {/* 2. DESKTOP COMPARISON TABLE (lg:block)                    */}
-      {/* ───────────────────────────────────────────────────────── */}
-      <div className="hidden lg:block w-full overflow-x-auto rounded-2xl border border-[#e5e5e5] bg-white shadow-[0_2px_14px_rgba(0,0,0,0.03)] [scrollbar-width:thin]">
-        <table className="w-full min-w-[1000px] table-fixed border-collapse text-center">
-          <colgroup>
-            <col className="w-[23%]" />
-            <col className="w-[27%]" />
-            <col className="w-[16%]" />
-            <col className="w-[16%]" />
-            <col className="w-[18%]" />
-          </colgroup>
+        {/* ─── COMPARISON CARDS (MOBILE < MD) ─── */}
+        <div className="flex flex-col gap-3.5 md:hidden">
+          {advantageRows.map((row, idx) => {
+            const Icon = row.icon;
+            return (
+              <div
+                key={idx}
+                className="rounded-2xl border border-gray-200/90 bg-white p-4.5 shadow-xs flex flex-col gap-3"
+              >
+                {/* Learning Area Header */}
+                <div className="flex items-center gap-2.5 pb-2.5 border-b border-gray-100">
+                  <div className="h-8 w-8 rounded-lg bg-blue-50 text-[#1E7CBC] flex items-center justify-center shrink-0 border border-blue-100">
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <h4 className="font-bold text-sm text-gray-900">{row.area}</h4>
+                </div>
 
-          <thead>
-            <tr>
-              <th className="border-b border-r border-[#e5e5e5] bg-white p-5" />
+                {/* Concept-Based Learning */}
+                <div className="text-xs text-gray-600 bg-gray-50/80 rounded-xl p-3">
+                  <span className="font-bold text-gray-800 block mb-1">
+                    Concept-Based Learning:
+                  </span>
+                  {row.concept}
+                </div>
 
-              {comparisonColumns.map((column, index) => (
-                <th
-                  key={index}
-                  className={`h-[125px] border-b border-r border-[#e5e5e5] px-4 py-5 text-lg font-bold text-[#555] ${
-                    index === 0
-                      ? "border-x-2 border-t-2 border-[#1E7CBC] bg-[#1E7CBC]/5 rounded-t-2xl"
-                      : "bg-white"
-                  } ${index === comparisonColumns.length - 1 ? "border-r-0" : ""}`}
-                >
-                  {index === 0 ? (
-                    <div className="relative flex items-center justify-between text-left">
-                      <div>
-                        <span className="block text-sm sm:text-base font-normal text-gray-400">
-                          The Marketing
-                        </span>
-                        <span className="block text-2xl sm:text-[30px] font-normal leading-none tracking-tight text-[#444]">
-                          LAUNCHPAD
-                        </span>
-                      </div>
-                      <div className="relative flex items-center gap-1.5 shrink-0 pl-1">
-                        <div className="flex gap-1 pb-2">
-                          <span className="h-1 w-1 rounded-full bg-[#1E7CBC]" />
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#1E7CBC]" />
-                          <span className="h-2 w-2 rounded-full bg-[#1E7CBC]" />
-                        </div>
-                        <svg
-                          className="h-8 w-8 text-[#1E7CBC]"
-                          viewBox="0 0 40 40"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                          aria-hidden="true"
-                        >
-                          <polygon points="32,8 14,24 22,25" fill="#1E7CBC" />
-                          <polygon points="32,8 22,25 36,22" fill="#166091" />
-                          <polygon points="14,24 22,25 20,34" fill="#1E7CBC" />
-                          <polygon points="8,18 14,24 20,18" fill="#4fa6e8" />
-                        </svg>
-                      </div>
-                    </div>
-                  ) : index === 3 ? (
-                    <>
-                      Other Digital
-                      <br />
-                      Courses
-                    </>
-                  ) : (
-                    column
-                  )}
-                </th>
-              ))}
-            </tr>
-          </thead>
+                {/* The SkillYards Approach */}
+                <div className="rounded-xl bg-[#eef6fc] border border-[#d2e8f8] p-3 flex items-start gap-2.5 shadow-2xs">
+                  <CheckCircle2 className="h-4 w-4 text-[#1E7CBC] shrink-0 mt-0.5" />
+                  <div>
+                    <span className="text-[10px] font-black uppercase tracking-wider text-[#1E7CBC] block mb-0.5">
+                      The SkillYards Approach (Learn. Build. Execute.)
+                    </span>
+                    <p className="text-xs font-semibold text-gray-800 leading-snug">
+                      {row.approach}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
 
-          <tbody>
-            {data.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                <th className="border-r border-t border-[#e5e5e5] bg-white px-5 py-4 text-left text-base font-normal leading-6 text-[#555] sm:text-lg">
-                  {row.label}
-                </th>
-
-                {row.values.map((value, colIndex) => (
-                  <td
-                    key={colIndex}
-                    className={`border-r border-t border-[#e5e5e5] px-3 py-4 text-base leading-6 text-[#666] sm:text-lg ${
-                      colIndex === 0
-                        ? "border-x-2 border-[#1E7CBC] bg-[#1E7CBC]/5 font-normal text-[#333]"
-                        : "bg-white"
-                    } ${
-                      rowIndex === data.length - 1 && colIndex === 0
-                        ? "border-b-2 border-[#1E7CBC] rounded-b-2xl"
-                        : ""
-                    } ${colIndex === row.values.length - 1 ? "border-r-0" : ""}`}
-                  >
-                    {value}
-                  </td>
-                ))}
-              </tr>
+        {/* ─── STATS & HIGHLIGHTS BAR ─── */}
+        <div className="mt-14 sm:mt-18 pt-8 sm:pt-10 border-t border-gray-200">
+          <div className="grid grid-cols-3 gap-2 sm:gap-6 max-w-2xl mx-auto text-center">
+            {advantageStats.map((stat, idx) => (
+              <div key={idx} className="flex flex-col items-center">
+                <span className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1E7CBC] tracking-tight">
+                  {stat.value}
+                </span>
+                <span className="text-xs sm:text-sm font-medium text-gray-500 mt-1 leading-snug">
+                  {stat.label}
+                </span>
+              </div>
             ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
+          </div>
 
-// ==========================================
-// INNER TABS: ROI / PLACEMENTS / COMMUNITY
-// ==========================================
+          {/* ─── CTA BLOCK ─── */}
+          <div className="mt-10 sm:mt-12 flex flex-col items-center text-center gap-3.5">
+            <h3 className="text-lg sm:text-2xl font-bold text-gray-900 tracking-tight">
+              Experience the Difference Before You Enrol.
+            </h3>
 
-function ROISection({
-  innerPanels = {},
-  activeInnerTab = "ROI",
-  setActiveInnerTab,
-}) {
-  const innerTabs = ["ROI", "Placements", "Community"];
-
-  return (
-    <section className="w-full px-4 pb-20 pt-8 sm:px-8 sm:pt-10">
-
-      {/* INNER TAB NAVIGATION */}
-      <div className="mx-auto mb-12 flex h-[90px] w-full max-w-[560px] items-center rounded-full bg-white p-2 shadow-[0_8px_30px_rgba(0,0,0,0.07)] border border-gray-100 sm:mb-14">
-
-        {innerTabs.map((tab) => {
-          const active = activeInnerTab === tab;
-
-          return (
-            <button
-              key={tab}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => setActiveInnerTab && setActiveInnerTab(tab)}
-              className={`flex h-full min-w-0 flex-1 items-center justify-center rounded-full text-sm sm:text-lg font-bold transition-all duration-300 ${
-                active
-                  ? "bg-[#1E7CBC] text-white shadow-[0_6px_20px_rgba(30,124,188,0.35)] scale-102"
-                  : "text-[#555] hover:bg-[#1E7CBC]/10"
-              }`}
+            <a
+              href="#hero-form"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-full bg-[#1E7CBC] hover:bg-[#166091] text-white font-bold px-8 sm:px-12 py-3.5 sm:py-4 text-sm sm:text-base shadow-lg shadow-[#1E7CBC]/25 transition duration-200 hover:shadow-xl active:scale-98 cursor-pointer"
             >
-              {tab}
-            </button>
-          );
-        })}
+              Book Your Free Demo Class
+            </a>
 
+            <p className="text-xs sm:text-sm text-gray-500 font-medium">
+              No Payment. No Commitment.
+            </p>
+          </div>
+        </div>
       </div>
-
-      {/* INNER TAB CONTENT */}
-      <div
-        key={activeInnerTab}
-        role="tabpanel"
-        className="mx-auto w-11/12 animate-[innerFade_.3s_ease-out]"
-      >
-
-        {activeInnerTab === "ROI" ? (
-          <ComparisonTable data={comparisonData} />
-        ) : activeInnerTab === "Placements" ? (
-          innerPanels.placements || <ComparisonTable data={placementsComparisonData} />
-        ) : activeInnerTab === "Community" ? (
-          innerPanels.community || <ComparisonTable data={communityComparisonData} />
-        ) : (
-          innerPanels[activeInnerTab.toLowerCase()] || (
-            <div className="flex min-h-[350px] items-center justify-center rounded-2xl border border-dashed border-gray-300 p-8 text-center text-gray-500">
-              Add your {activeInnerTab} component through innerPanels.
-            </div>
-          )
-        )}
-
-      </div>
-
-      <style>{`
-        @keyframes innerFade {
-          from {
-            opacity: 0;
-            transform: translateY(10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          .animate-\\[innerFade_\\.3s_ease-out\\] {
-            animation: none;
-          }
-        }
-      `}</style>
-
     </section>
-  );
-}
-
-// ==========================================
-// BENEFITS CONTENT (DEFAULT MAIN TAB)
-// ==========================================
-function Benefits({
-  innerPanels,
-  activeInnerTab = "ROI",
-  setActiveInnerTab,
-}) {
-  return (
-    <>
-      <section className="px-5 pb-6 pt-16 text-center sm:px-8 sm:pt-20">
-        <div className="inline-flex items-center gap-2 rounded-full border border-[#1E7CBC]/30 bg-[#1E7CBC]/10 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-[#1E7CBC] mb-4">
-          <span className="text-[#183D71]">SKILL</span><span className="text-[#1E7CBC]">YARDS</span> VS OTHERS
-        </div>
-
-        <h1 className="mx-auto max-w-4xl text-2xl sm:text-4xl lg:text-[42px] font-extrabold leading-tight tracking-tight text-gray-900">
-          Why Choose <span className="text-[#183D71]">Skill</span><span className="text-[#1E7CBC]">Yards</span> Digital Marketing Course in India?
-        </h1>
-
-        <div className="relative mx-auto mt-4 h-[6px] w-[220px] sm:w-[450px]">
-          <img src="/bottom-line.png" alt="bottom-line" />
-        </div>
-
-        <p className="mx-auto mt-6 max-w-3xl text-base leading-relaxed text-gray-600 sm:text-lg">
-          Choosing the right online digital marketing course is a crucial step to learn digital marketing online. Here&apos;s what makes <span className="text-[#183D71] font-bold">Skill</span><span className="text-[#1E7CBC] font-bold">Yards</span> the best digital marketing course in India with placement.
-        </p>
-      </section>
-
-      {/* INTEGRATED INNER TABS */}
-      <ROISection
-        innerPanels={innerPanels}
-        activeInnerTab={activeInnerTab}
-        setActiveInnerTab={setActiveInnerTab}
-      />
-    </>
   );
 }
 
@@ -595,8 +268,7 @@ export default function KraftshalaSection({
 }) {
 
   const [activeTab, setActiveTab] = useState("Benefits");
-  const [activeInnerTab, setActiveInnerTab] = useState("ROI");
-  const lastSelectedTabRef = useRef("Benefits");
+  
   const isManualScrollingRef = useRef(false);
   const scrollTimeoutRef = useRef(null);
   const [isStuck, setIsStuck] = useState(false);
@@ -628,7 +300,6 @@ export default function KraftshalaSection({
   // MAIN TAB SWITCHING & SMOOTH SCROLLING
   const handleMainTab = (tab) => {
     setActiveTab(tab);
-    lastSelectedTabRef.current = tab;
     isManualScrollingRef.current = true;
     clearTimeout(scrollTimeoutRef.current);
     scrollTimeoutRef.current = setTimeout(() => {
@@ -636,14 +307,6 @@ export default function KraftshalaSection({
     }, 850);
 
     if (tab === "Benefits") {
-      setActiveInnerTab("ROI");
-      const el = document.getElementById("benefits");
-      if (el) {
-        const top = el.getBoundingClientRect().top + window.scrollY - 70;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
-    } else if (tab === "Placements") {
-      setActiveInnerTab("Placements");
       const el = document.getElementById("benefits");
       if (el) {
         const top = el.getBoundingClientRect().top + window.scrollY - 70;
@@ -699,11 +362,7 @@ export default function KraftshalaSection({
         if (el) {
           const rect = el.getBoundingClientRect();
           if (rect.top <= 160 && rect.bottom > 160) {
-            if (sec.tab === "Benefits" && lastSelectedTabRef.current === "Placements") {
-              setActiveTab("Placements");
-            } else {
-              setActiveTab(sec.tab);
-            }
+            setActiveTab(sec.tab);
             return;
           }
         }
@@ -854,11 +513,7 @@ export default function KraftshalaSection({
         tabIndex={0}
         className="outline-none scroll-mt-20 lg:scroll-mt-24"
       >
-        <Benefits
-          innerPanels={innerPanels}
-          activeInnerTab={activeInnerTab}
-          setActiveInnerTab={setActiveInnerTab}
-        />
+        <Benefits />
       </div>
 
       {/* ADDITIONAL SECTIONS (like ProjectsSection) SO NAVBAR REMAINS STICKY */}

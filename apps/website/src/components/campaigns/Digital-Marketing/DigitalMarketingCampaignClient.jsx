@@ -13,11 +13,8 @@ const ExpertsSection = dynamic(() => import("./experts-section"));
 const CertificationsSection = dynamic(() => import("./certifications-section"));
 const ReviewsSection = dynamic(() => import("./reviews-section"));
 const CampusPhotosSection = dynamic(() => import("./campus-photos-section"));
+const CampaignFAQ = dynamic(() => import("./CampaignFAQ"));
 const CampaignFooter = dynamic(() => import("./CampaignFooter"));
-
-const DGMFAQ = dynamic(() =>
-  import("@/components/landingPageDGM/FAQ").then((m) => m.DGMFAQ)
-);
 
 export default function DigitalMarketingCampaignClient({ faqs = [], educators = [] }) {
   const whatsappNumber =
@@ -54,7 +51,7 @@ export default function DigitalMarketingCampaignClient({ faqs = [], educators = 
 
         {/* FAQS SECTION */}
         <div id="faqs" className="w-full scroll-mt-20 lg:scroll-mt-24">
-          <DGMFAQ faqs={faqs} />
+          <CampaignFAQ />
         </div>
       </KraftshalaSection>
 
