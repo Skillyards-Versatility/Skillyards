@@ -16,7 +16,11 @@ const CampusPhotosSection = dynamic(() => import("./campus-photos-section"));
 const CampaignFAQ = dynamic(() => import("./CampaignFAQ"));
 const CampaignFooter = dynamic(() => import("./CampaignFooter"));
 
-export default function DigitalMarketingCampaignClient({ faqs = [], educators = [] }) {
+export default function DigitalMarketingCampaignClient({
+  faqs = [],
+  educators = [],
+  reviewsData = null,
+}) {
   const whatsappNumber =
     process.env.NEXT_PUBLIC_PHONE?.replace(/\D/g, "") || "917060100561";
   const whatsappHref = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
@@ -44,7 +48,7 @@ export default function DigitalMarketingCampaignClient({ faqs = [], educators = 
 
         {/* REVIEWS / STUDENT TESTIMONIALS SECTION */}
         <div id="alumni" className="-scroll-mt-24" />
-        <ReviewsSection id="reviews" />
+        <ReviewsSection id="reviews" data={reviewsData} />
 
         {/* REAL PHOTOS OF SKILLYARDS CAMPUS SECTION */}
         <CampusPhotosSection id="campus" />
