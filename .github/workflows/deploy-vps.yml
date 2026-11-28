@@ -76,6 +76,13 @@ jobs:
               pm2 reload skillyards-pdf
             fi
 
+      - name: Notify success on ntfy
+        if: success()
+        run: |
+          curl -s -H "Title: Skillyards Deploy OK" -H "Priority: default" \
+            -d "Deployed ${{ github.sha }} to VPS" \
+            https://ntfy.sh/Skillyards-vps-989759 || true
+
       - name: Notify failure on ntfy
         if: failure()
         run: |
